@@ -1,0 +1,463 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Script file="ServerMembersEditWindow.lua" />
+	<Frame name="LootReserveServerMembersEditItemTemplate" virtual="true">
+		<Size x="18" y="18" />
+		<Frames>
+			<Button parentKey="Icon" enableMouse="true" setAllPoints="true">
+				<Layers>
+					<Layer>
+						<Texture parentKey="Texture" setAllPoints="true" nonBlocking="true" />
+						<FontString parentKey="Name" inherits="GameFontNormal" hidden="true" wordwrap="false" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT" x="5" />
+								<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						if button == "LeftButton" then
+							HandleModifiedItemClick(self:GetParent().Link);
+						end
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetHyperlink("item:" .. self:GetParent().Item);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+	<Frame name="LootReserveServerMembersEditMemberTemplate" virtual="true">
+		<Size y="20" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Alt" file="Interface\DialogFrame\UI-DialogBox-Background" alpha="0.75" setAllPoints="true" />
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Highlight" file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD" alpha="0.5" setAllPoints="true">
+					<Color r="1" g="1" b="1" />
+				</Texture>
+				<FontString parentKey="Name" inherits="GameFontNormal" justifyH="LEFT" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.Name" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Name" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="WonRolls" inherits="GameFontNormal" justifyH="CENTER" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.WonRolls" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.WonRolls" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Locked" inherits="GameFontNormal" justifyH="CENTER" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.Locked" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Locked" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Count" inherits="GameFontNormal" justifyH="CENTER" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.Count" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Count" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Reserves" inherits="GameFontNormal" justifyH="LEFT" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.Reserves" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Reserves" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="NameFrame" inherits="LootReserveTextWithButtonsTemplate">
+				<Anchors>
+					<Anchor point="TOP" />
+					<Anchor point="BOTTOM" />
+					<Anchor point="LEFT" relativeKey="$parent.Name" />
+					<Anchor point="RIGHT" relativeKey="$parent.Name" />
+				</Anchors>
+				<Frames>
+					<Button parentKey="ButtonWhisper" parentArray="Buttons" hidden="true">
+						<Anchors>
+							<Anchor point="TOP" />
+							<Anchor point="BOTTOM" />
+						</Anchors>
+						<ButtonText parentKey="Text" inherits="GameFontNormal" text=" /w " setAllPoints="true" />
+						<Scripts>
+							<OnLoad>
+								local info = ChatTypeInfo["WHISPER"];
+								self.Text:SetTextColor(info.r, info.g, info.b);
+								self:SetWidth(self.Text:GetStringWidth());
+							</OnLoad>
+							<OnClick>
+								ChatFrame_SendTell(self:GetParent():GetParent().Player);
+							</OnClick>
+						</Scripts>
+					</Button>
+				</Frames>
+			</Frame>
+			<Button parentKey="ButtonWonRolls">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="CENTER" relativeKey="$parent.WonRolls" relativePoint="CENTER" />
+				</Anchors>
+				<Scripts>
+					<OnLoad>
+						self.UpdateTooltip = function(self)
+							local player = self:GetParent().Player;
+							local won = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members[player] and LootReserve.Server.CurrentSession.Members[player].WonRolls;
+							if won then
+								local missing = false;
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText("Won in the Current Session");
+								local width = 0;
+								for i, roll in ipairs(won) do
+									local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(roll.Item);
+									if not link then
+										missing = true;
+									end
+
+									local phaseText;
+									local phaseColor;
+									if roll.Phase == LootReserve.Constants.WonRollPhase.Reserve then
+										phaseText = "Reserved";
+										phaseColor = NORMAL_FONT_COLOR;
+									elseif roll.Phase == LootReserve.Constants.WonRollPhase.RaidRoll then
+										phaseText = "Raid-Roll";
+										phaseColor = GRAY_FONT_COLOR;
+									elseif type(roll.Phase) == "string" then
+										phaseText = roll.Phase;
+										phaseColor = GREEN_FONT_COLOR;
+									else
+										phaseText = "Custom Roll";
+										phaseColor = HIGHLIGHT_FONT_COLOR;
+									end
+
+									local timeText;
+									local age = time() - roll.Time;
+									if age >= 3600 then
+										timeText = format("%d |4hour:hours; %d |4min:mins; ago", math.floor(age / 3600), math.floor((age % 3600) / 60));
+									elseif age >= 60 then
+										timeText = format("%d |4min:mins; ago", math.floor(age / 60));
+									else
+										timeText = "&lt;1 min ago";
+									end
+
+									GameTooltip:AddDoubleLine(format("|T%d:0|t %s|cFF808080 (%s)|r", texture, (link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""), timeText), phaseText, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, phaseColor.r, phaseColor.g, phaseColor.b);
+								end
+								GameTooltip:Show();
+
+								if missing then
+									C_Timer.After(0.25, function()
+										if GameTooltip:IsOwned(self) then
+											self:UpdateTooltip();
+										end
+									end);
+								end
+							end
+						end
+					</OnLoad>
+					<OnEnter>
+						self:UpdateTooltip();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<CheckButton parentKey="CheckButtonLocked" inherits="LootReserveCheckBoxTemplate">
+				<Anchors>
+					<Anchor point="CENTER" relativeKey="$parent.Locked" relativePoint="CENTER" />
+				</Anchors>
+				<Scripts>
+					<OnLoad inherit="prepend">
+						self:SetHitRectInsets(2, 3, 3, 4);
+					</OnLoad>
+					<OnClick inherit="prepend">
+						self:GetParent().Member.Locked = self:GetChecked();
+						if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.AcceptingReserves then
+							if LootReserve:IsPlayerOnline(self:GetParent().Player) then
+								LootReserve.Comm:SendSessionInfo(self:GetParent().Player);
+							end
+						end
+					</OnClick>
+				</Scripts>
+			</CheckButton>
+			<Frame parentKey="ReservesFrame">
+				<Anchors>
+					<Anchor point="TOP" />
+					<Anchor point="BOTTOM" />
+					<Anchor point="LEFT" relativeKey="$parent.Reserves" />
+					<Anchor point="RIGHT" relativeKey="$parent.Reserves" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnUpdate>
+				local hovered = self:IsMouseOver() and self:GetParent():GetParent():IsMouseOver();
+				if self.hovered ~= hovered then
+					self.hovered = hovered;
+					self.Highlight:SetShown(hovered);
+					self.NameFrame.ButtonWhisper:SetShown(hovered);
+				end
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+	<Frame name="LootReserveServerMembersEditWindow" parent="UIParent" inherits="BasicFrameTemplateWithInset" toplevel="true" movable="true" resizable="true" enableMouse="true" clampedToScreen="true" hidden="true">
+		<Size x="450" y="250" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Frames>
+			<Button inherits="LootReserveCommonFrameMovingHeaderTemplate" />
+			<Button inherits="LootReserveCommonFrameSizeGrabberTemplate" />
+			<Frame parentKey="Header">
+				<Size y="20" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="8" y="-28" />
+					<Anchor point="TOPRIGHT" x="-10" y="-28" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Name" inherits="GameFontNormal" justifyH="LEFT" text="Player">
+							<Size x="200" />
+							<Anchors>
+								<Anchor point="LEFT" x="5" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="WonRolls" inherits="GameFontNormal" justifyH="CENTER" text="">
+							<Size x="32" />
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="Locked" inherits="GameFontNormal" justifyH="CENTER" text="">
+							<Size x="32" />
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.WonRolls" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="Count" inherits="GameFontNormal" justifyH="CENTER" text="">
+							<Size x="32" />
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.Locked" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="Reserves" inherits="GameFontNormal" justifyH="LEFT" text="Reserves">
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.Count" relativePoint="RIGHT" x="5" />
+								<Anchor point="RIGHT" x="-16" />
+							</Anchors>
+						</FontString>
+					</Layer>
+					<Layer level="ARTWORK">
+						<Texture parentKey="HeaderGlowMiddle" alpha="0.25" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Size y="12" />
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" x="64" />
+								<Anchor point="BOTTOMRIGHT" x="-64" />
+							</Anchors>
+							<TexCoords left="0.5" right="0.5" top="0" bottom="1" />
+							<Color r="1" g="0.82" b="0" />
+						</Texture>
+						<Texture parentKey="HeaderGlowLeft" alpha="0.25" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" />
+								<Anchor point="TOPRIGHT" relativeKey="$parent.HeaderGlowMiddle" relativePoint="TOPLEFT" />
+							</Anchors>
+							<TexCoords left="0" right="0.5" top="0" bottom="1" />
+							<Color r="1" g="0.82" b="0" />
+						</Texture>
+						<Texture parentKey="HeaderGlowRight" alpha="0.25" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeKey="$parent.HeaderGlowMiddle" relativePoint="TOPRIGHT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<TexCoords left="0.5" right="1" top="0" bottom="1" />
+							<Color r="1" g="0.82" b="0" />
+						</Texture>
+						<Texture alpha=".5" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Size y="3" />
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativeKey="$parent.HeaderGlowMiddle" />
+								<Anchor point="BOTTOMRIGHT" relativeKey="$parent.HeaderGlowMiddle" />
+							</Anchors>
+							<TexCoords left="0.5" right="0.5" top="0" bottom="1" />
+							<Color r="1" g="1" b="1" />
+						</Texture>
+						<Texture alpha=".5" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Size y="3" />
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativeKey="$parent.HeaderGlowLeft" x="16" />
+								<Anchor point="BOTTOMRIGHT" relativeKey="$parent.HeaderGlowLeft" />
+							</Anchors>
+							<TexCoords left="0" right="0.5" top="0" bottom="1" />
+							<Color r="1" g="1" b="1" />
+						</Texture>
+						<Texture alpha=".5" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Size y="3" />
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativeKey="$parent.HeaderGlowRight" />
+								<Anchor point="BOTTOMRIGHT" relativeKey="$parent.HeaderGlowRight" x="-16" />
+							</Anchors>
+							<TexCoords left="0.5" right="1" top="0" bottom="1" />
+							<Color r="1" g="1" b="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame>
+						<Size x="16" y="16" />
+						<Anchors>
+							<Anchor point="CENTER" relativeKey="$parent.WonRolls" />
+						</Anchors>
+						<Layers>
+							<Layer>
+								<Texture file="Interface\GossipFrame\VendorGossipIcon">
+									<Size x="16" y="16" />
+									<Anchors>
+										<Anchor point="CENTER" />
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText("Items Won");
+								GameTooltip:AddLine("Color represents the highest item quality the player has won", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave function="GameTooltip_Hide" />
+						</Scripts>
+					</Frame>
+					<Frame parentKey="LockedIcon">
+						<Size x="16" y="16" />
+						<Anchors>
+							<Anchor point="CENTER" relativeKey="$parent.Locked" />
+						</Anchors>
+						<Layers>
+							<Layer>
+								<Texture parentKey="Icon" file="Interface\Buttons\LockButton-Unlocked-Up" setAllPoints="true">
+									<Size x="8" y="10" />
+									<Anchors>
+										<Anchor point="CENTER" />
+									</Anchors>
+									<TexCoords left="0.375" right="0.625" top="0.34375" bottom="0.65625" />
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								self.Icon:SetDesaturated(true);
+							</OnLoad>
+							<OnEnter>
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText("Reserves Locked-in");
+								if LootReserve.Server.CurrentSession and not LootReserve.Server.CurrentSession.Settings.Lock then
+									GameTooltip:AddLine("Meaningless when the \"Lock-in\" option is not enabled for this session", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								end
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave function="GameTooltip_Hide" />
+						</Scripts>
+					</Frame>
+					<Frame>
+						<Size x="16" y="16" />
+						<Anchors>
+							<Anchor point="CENTER" relativeKey="$parent.Count" />
+						</Anchors>
+						<Layers>
+							<Layer>
+								<Texture file="Interface\Buttons\UI-GroupLoot-Dice-Up">
+									<Size x="20" y="20" />
+									<Anchors>
+										<Anchor point="CENTER" y="-2" />
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnEnter>
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText("Number of Reserves Made");
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave function="GameTooltip_Hide" />
+						</Scripts>
+					</Frame>
+				</Frames>
+			</Frame>
+			<Button parentKey="ImportExportButton" inherits="UIMenuButtonStretchTemplate" text="Import/Export">
+				<Size x="90" y="20" />
+				<Anchors>
+					<Anchor point="RIGHT" relativeKey="$parent.Header" relativePoint="RIGHT" />
+				</Anchors>
+				<Frames>
+					<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
+				</Frames>
+				<Scripts>
+					<OnClick>
+						if LootReserve.Server.CurrentSession then
+							LootReserve.Server.Export.Window:SetShown(not LootReserve.Server.Export.Window:IsShown());
+							return;
+						end
+
+						local menu =
+						{
+							{ text = "Import from CSV", disabled = LootReserve.Server.CurrentSession ~= nil, func = function() LootReserve.Server.Import.Window:Show(); end },
+							{ text = "Export to CSV", func = function() LootReserve.Server.Export.Window:Show(); end },
+							{ text = "Clear Imported Data", disabled = LootReserve.Server.CurrentSession or not next(LootReserve.Server.NewSessionSettings.ImportedMembers), func = function() LootReserve.Server.MembersEdit:ClearImported(); end },
+							LootReserve:MakeMenuSeparator(),
+							{ text = "Close" },
+						};
+						LootReserve:OpenMenu(menu, self.Menu, self);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<ScrollFrame parentKey="Scroll" inherits="LootReserveScrollTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" y="-1" />
+					<Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT" x="-16" y="-1" />
+					<Anchor point="BOTTOM" y="7" />
+				</Anchors>
+			</ScrollFrame>
+		</Frames>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="NoSession" inherits="GameFontDisable" text="Session not started">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Scroll" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Scroll" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				LootReserve.Server.MembersEdit:OnWindowLoad(self);
+			</OnLoad>
+			<OnShow>
+				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
+				LootReserve.Server.MembersEdit:UpdateMembersList();
+			</OnShow>
+			<OnHide>
+				CloseMenus();
+				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
+			</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

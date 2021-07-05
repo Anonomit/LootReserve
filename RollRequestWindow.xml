@@ -1,0 +1,167 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Script file="RollRequestWindow.lua" />
+	<Frame name="LootReserveRollRequestWindow" parent="UIParent" toplevel="true" movable="true" resizable="true" enableMouse="true" clampedToScreen="true" hidden="true" inherits="LootReserveBackdropTemplate">
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+		</KeyValues>
+		<Size x="300" y="90" />
+		<Anchors>
+			<Anchor point="BOTTOM" y="200" />
+		</Anchors>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
+			<BackgroundInsets left="4" right="4" top="4" bottom="4" />
+			<EdgeSize val="16" />
+		</Backdrop>
+		<Frames>
+			<Frame parentKey="DurationFrame">
+				<Size y="20" />
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" y="1" />
+					<Anchor point="BOTTOMRIGHT" y="1" />
+				</Anchors>
+				<Frames>
+					<StatusBar parentKey="Duration" inherits="LootReserveDurationStatusBar">
+						<KeyValues>
+							<KeyValue key="server" value="false" type="boolean" />
+							<KeyValue key="roll" value="true" type="boolean" />
+						</KeyValues>
+						<Anchors>
+							<Anchor point="LEFT" x="16" />
+							<Anchor point="RIGHT" x="-16" />
+							<Anchor point="BOTTOM" y="15" />
+						</Anchors>
+					</StatusBar>
+				</Frames>
+			</Frame>
+		</Frames>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture alpha="0.25" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+					<Size y="32" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.DurationFrame" relativePoint="TOPLEFT" x="4" y="4" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.DurationFrame" relativePoint="TOP" y="4" />
+					</Anchors>
+					<TexCoords left="0" right="0.25" top="0" bottom="1" />
+					<Color r="1" g="0.82" b="0" />
+				</Texture>
+				<Texture alpha="0.25" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+					<Size y="32" />
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativeKey="$parent.DurationFrame" relativePoint="TOP" y="4" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.DurationFrame" relativePoint="TOPRIGHT" x="-4" y="4" />
+					</Anchors>
+					<TexCoords left="0.75" right="1" top="0" bottom="1" />
+					<Color r="1" g="0.82" b="0" />
+				</Texture>
+			</Layer>
+			<Layer>
+				<FontString parentKey="LabelSender" inherits="GameFontNormal">
+					<Size y="30" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="16" y="-8" />
+						<Anchor point="TOPRIGHT" x="-16" y="-8" />
+					</Anchors>
+					<Color r="1" g="1" b="1" />
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button inherits="LootReserveCommonFrameMovingHeaderTemplate">
+				<Size y="42" />
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="TOPRIGHT" />
+				</Anchors>
+			</Button>
+			<Button inherits="LootReserveCommonFrameSizeGrabberTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-1" y="1" />
+				</Anchors>
+			</Button>
+			<Button parentKey="ItemFrame" inherits="LootReserveItemButtomTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.LabelSender" relativePoint="BOTTOMLEFT" x="0" y="-5" />
+					<Anchor point="TOPRIGHT" relativeKey="$parent.LabelSender" relativePoint="BOTTOMRIGHT" x="-58" y="-5" />
+				</Anchors>
+			</Button>
+			<Button parentKey="ButtonRoll">
+				<Size x="32" y="32" />
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.ItemFrame" relativePoint="RIGHT" x="5" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Multi" inherits="GameFontNormalOutline" justifyV="BOTTOM" setAllPoints="true">
+							<Color r="0" g="1" b="0" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						LootReserve.Client:RespondToRollRequest(true);
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(ROLL);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up" />
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD" />
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down" />
+			</Button>
+			<Button parentKey="ButtonPass">
+				<Size x="16" y="16" />
+				<Anchors>
+					<Anchor point="LEFT" relativeKey="$parent.ButtonRoll" relativePoint="RIGHT" x="5" y="2" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootReserve.Client:RespondToRollRequest(false);
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(PASS);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Pass-Up" />
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Pass-Highlight" alphaMode="ADD" />
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Pass-Down" />
+			</Button>
+			<Button parentKey="ButtonClose" frameLevel="-1">
+				<Size x="14" y="14" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-5" y="-5" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						self:GetParent():Hide();
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-StopButton" alpha="0.5" />
+				<PushedTexture file="Interface\Buttons\UI-StopButton" alpha="0.25" />
+				<HighlightTexture file="Interface\Buttons\UI-StopButton" alpha="0.5" alphaMode="ADD" />
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad inherit="prepend">
+				self.ItemFrame.Name:SetPoint("TOPLEFT", self.ItemFrame.Icon, "TOPRIGHT", 10, 0);
+			</OnLoad>
+			<OnUpdate>
+				local roll = LootReserve.Client.RollRequest;
+				if roll and roll.Duration and roll.Duration > 0 then
+					if roll.Duration > elapsed then
+						roll.Duration = roll.Duration - elapsed;
+					else
+						LootReserve.Client.RollRequest = nil;
+						self:Hide();
+					end
+				end
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+</Ui>

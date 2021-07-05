@@ -1,0 +1,523 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Script file="ServerImportWindow.lua" />
+	<Frame name="LootReserveServerImportItemTemplate" virtual="true">
+		<Size x="18" y="18" />
+		<Frames>
+			<Button parentKey="Icon" enableMouse="true" setAllPoints="true">
+				<Layers>
+					<Layer>
+						<Texture parentKey="Texture" setAllPoints="true" nonBlocking="true" />
+						<FontString parentKey="Name" inherits="GameFontNormal" hidden="true" wordwrap="false" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="LEFT" relativePoint="RIGHT" x="5" />
+								<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						if button == "LeftButton" then
+							HandleModifiedItemClick(self:GetParent().Link);
+						end
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						if self:GetParent().Tooltip then
+							GameTooltip:SetText(self:GetParent().Tooltip, 1, 0, 0);
+						else
+							GameTooltip:SetHyperlink("item:" .. self:GetParent().Item);
+						end
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+	<Frame name="LootReserveServerImportReserveTemplate" virtual="true">
+		<Size y="20" />
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="Alt" file="Interface\DialogFrame\UI-DialogBox-Background" alpha="0.75" setAllPoints="true" />
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture parentKey="Highlight" file="Interface\QuestFrame\UI-QuestTitleHighlight" alphaMode="ADD" alpha="0.5" setAllPoints="true">
+					<Color r="1" g="1" b="1" />
+				</Texture>
+				<FontString parentKey="Name" inherits="GameFontNormal" justifyH="LEFT" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.Name" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Name" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Reserves" inherits="GameFontNormal" justifyH="LEFT" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.Reserves" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Reserves" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="ReservesFrame">
+				<Anchors>
+					<Anchor point="TOP" />
+					<Anchor point="BOTTOM" />
+					<Anchor point="LEFT" relativeKey="$parent.Reserves" />
+					<Anchor point="RIGHT" relativeKey="$parent.Reserves" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnUpdate>
+				local hovered = self:IsMouseOver() and self:GetParent():GetParent():IsMouseOver();
+				if self.hovered ~= hovered then
+					self.hovered = hovered;
+					self.Highlight:SetShown(hovered);
+				end
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+	<Frame name="LootReserveServerImportOptionTemplate" virtual="true" inherits="UIDropDownMenuTemplate">
+		<KeyValues>
+			<!--
+			<KeyValue key="name" type="string" value="Option" />
+			<KeyValue key="field" type="string" value="Field" />
+			<KeyValue key="index" type="number" value="1" />
+			<KeyValue key="values" type="string" value="A|B|C" />
+			<KeyValue key="width" type="number" value="100" />
+			<KeyValue key="justify" type="string" value="LEFT" />
+			-->
+		</KeyValues>
+		<Size y="32" />
+		<Anchors>
+			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
+		</Anchors>
+		<Layers>
+			<Layer>
+				<FontString parentKey="Header" inherits="GameFontNormalSmall">
+					<Anchors>
+						<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="25" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.init = function(self)
+					local options = { };
+					for _, text in ipairs({ strsplit("$", self.values) }) do
+						local name, value = strsplit("=", text);
+						value = value or name;
+						value = tonumber(value) or value;
+						value = value == "\\t" and "\t" or value;
+						table.insert(options, { name = name, value = value });
+					end
+					local function GetOptionName(value)
+						for _, option in ipairs(options) do
+							if option.value == value then
+								return option.name;
+							end
+						end
+					end
+
+					self.Header:SetText(self.name or "");
+					if self.width then
+						UIDropDownMenu_SetWidth(self, math.max(self.width, self.Header:GetStringWidth()));
+					end
+					UIDropDownMenu_JustifyText(self, self.justify or "LEFT");
+					UIDropDownMenu_Initialize(self, function(frame, level, menuList)
+						local info = UIDropDownMenu_CreateInfo();
+						info.minWidth = self:GetWidth() - 40;
+						info.func = function(info)
+							if self.index then
+								LootReserve.Server.Import[self.field][self.index] = info.value;
+							else
+								LootReserve.Server.Import[self.field] = info.value;
+							end
+							UIDropDownMenu_SetSelectedValue(self, info.value);
+							C_Timer.After(0, function() LootReserve.Server.Import:InputOptionsUpdated(); end);
+						end
+						for _, option in ipairs(options) do
+							info.text = option.name;
+							info.value = option.value;
+							UIDropDownMenu_AddButton(info);
+							info.checked = false;
+						end
+					end);
+					local value;
+					if self.index then
+						value = LootReserve.Server.Import[self.field][self.index];
+					else
+						value = LootReserve.Server.Import[self.field];
+					end
+					UIDropDownMenu_SetText(self, GetOptionName(value));
+					self.selectedValue = value;
+				end
+			</OnLoad>
+			<OnSizeChanged>
+				if not self.width then
+					UIDropDownMenu_SetWidth(self, self:GetWidth() - 50);
+				end
+			</OnSizeChanged>
+		</Scripts>
+	</Frame>
+	<Frame name="LootReserveServerImportOptionColumnTemplate" virtual="true" inherits="LootReserveServerImportOptionTemplate" parentArray="Columns">
+		<KeyValues>
+			<KeyValue key="field" type="string" value="Columns" />
+			<KeyValue key="values" type="string" value="|cFF808080Unused|r=Unused$Player$Item$Count" />
+			<KeyValue key="width" type="number" value="65" />
+			<KeyValue key="justify" type="string" value="LEFT" />
+		</KeyValues>
+		<Size y="32" />
+		<Frames>
+			<Frame parentKey="Rows" clipChildren="true">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT" x="25" />
+					<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT" x="-25" />
+					<Anchor point="BOTTOM" relativeKey="$parent.$parent" />
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString parentKey="Text" inherits="GameFontWhiteSmall" justifyH="LEFT" justifyV="TOP">
+							<Anchors>
+								<Anchor point="TOPLEFT" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+			</Frame>
+		</Frames>
+	</Frame>
+	<Frame name="LootReserveServerImportWindow" parent="UIParent" inherits="BasicFrameTemplateWithInset" toplevel="true" movable="true" resizable="true" enableMouse="true" clampedToScreen="true" hidden="true">
+		<Size x="450" y="550" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Frames>
+			<Button inherits="LootReserveCommonFrameMovingHeaderTemplate" />
+			<Button inherits="LootReserveCommonFrameSizeGrabberTemplate" />
+			<Frame parentKey="Input">
+				<Size y="100" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="8" y="-28" />
+					<Anchor point="TOPRIGHT" x="-10" y="-28" />
+				</Anchors>
+				<Frames>
+					<ScrollFrame parentKey="Scroll" inherits="InputScrollFrameTemplate">
+						<KeyValues>
+							<KeyValue key="hideCharCount" value="true" type="boolean" />
+							<KeyValue key="instructions" value="Paste CSV text here..." type="string" />
+						</KeyValues>
+						<Anchors>
+							<Anchor point="TOPLEFT" x="5" y="-4" />
+							<Anchor point="BOTTOMRIGHT" x="-5" y="4" />
+						</Anchors>
+					</ScrollFrame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self.Scroll.EditBox:HookScript("OnTextChanged", function(editbox)
+							LootReserve.Server.Import:InputUpdated();
+						end);
+					</OnLoad>
+					<OnSizeChanged>
+						self.Scroll.EditBox:SetWidth(self.Scroll:GetWidth() - self.Scroll.ScrollBar:GetWidth() - 1);
+					</OnSizeChanged>
+				</Scripts>
+			</Frame>
+			<Frame parentKey="InputOptions">
+				<Size y="150" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.Input" relativePoint="BOTTOMLEFT" y="-5" />
+					<Anchor point="TOPRIGHT" relativeKey="$parent.Input" relativePoint="BOTTOMRIGHT" y="-5" />
+				</Anchors>
+				<Frames>
+					<Frame parentKey="Input" inherits="LootReserveBackdropTemplate">
+						<KeyValues>
+							<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+						</KeyValues>
+						<Size x="150" />
+						<Anchors>
+							<Anchor point="TOPLEFT" y="-12" />
+							<Anchor point="BOTTOMLEFT" />
+						</Anchors>
+						<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
+							<BackgroundInsets left="5" right="5" top="5" bottom="5" />
+							<EdgeSize val="16" />
+						</Backdrop>
+						<Layers>
+							<Layer>
+								<FontString inherits="GameFontNormalSmall" text="Import Settings">
+									<Anchors>
+										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="5" y="2" />
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<Frame parentKey="Separator" inherits="LootReserveServerImportOptionTemplate">
+								<KeyValues>
+									<KeyValue key="name" type="string" value="Value Separator" />
+									<KeyValue key="field" type="string" value="Separator" />
+									<KeyValue key="values" type="string" value="Comma=,$Semicolon=;$Tab=\t" />
+								</KeyValues>
+								<Anchors>
+									<Anchor point="TOPLEFT" x="-10" y="-17" />
+									<Anchor point="TOPRIGHT" x="9" y="-17" />
+								</Anchors>
+							</Frame>
+							<CheckButton parentKey="UseHeaders" inherits="LootReserveCheckBoxTemplate">
+								<KeyValues>
+									<KeyValue key="text" value="Has Headers" type="string" />
+									<KeyValue key="tooltipText" value="Has Headers" type="string" />
+									<KeyValue key="tooltipSubtext" value="First line of the input contains column names." type="string" />
+								</KeyValues>
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeKey="$parent.Separator" relativePoint="BOTTOMLEFT" x="15" />
+								</Anchors>
+								<Scripts>
+									<OnClick inherit="prepend">
+										LootReserve.Server.Import.UseHeaders = self:GetChecked();
+										LootReserve.Server.Import:InputOptionsUpdated();
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+							<CheckButton parentKey="MatchNames" inherits="LootReserveCheckBoxTemplate">
+								<KeyValues>
+									<KeyValue key="text" value="Best Name Match" type="string" />
+									<KeyValue key="tooltipText" value="Best Name Match" type="string" />
+									<KeyValue key="tooltipSubtext" value="Attempt to ignore realm names and special characters in player names (e.g. treat Ø as O) and try to match imported names to current raid members." type="string" />
+								</KeyValues>
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeKey="$parent.UseHeaders" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+								<Scripts>
+									<OnClick inherit="prepend">
+										LootReserve.Server.Import.MatchNames = self:GetChecked();
+										LootReserve.Server.Import:SessionSettingsUpdated();
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+							<CheckButton parentKey="SkipNotInRaid" inherits="LootReserveCheckBoxTemplate">
+								<KeyValues>
+									<KeyValue key="text" value="Skip Not In Raid" type="string" />
+									<KeyValue key="tooltipText" value="Skip Not In Raid" type="string" />
+									<KeyValue key="tooltipSubtext" value="Only import reserves of players who are currently in the raid." type="string" />
+								</KeyValues>
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeKey="$parent.MatchNames" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+								<Scripts>
+									<OnClick inherit="prepend">
+										LootReserve.Server.Import.SkipNotInRaid = self:GetChecked();
+										LootReserve.Server.Import:SessionSettingsUpdated();
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+						</Frames>
+					</Frame>
+					<Frame parentKey="Columns" inherits="LootReserveBackdropTemplate">
+						<KeyValues>
+							<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+						</KeyValues>
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.Input" relativePoint="TOPRIGHT" />
+							<Anchor point="BOTTOMRIGHT" />
+						</Anchors>
+						<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
+							<BackgroundInsets left="5" right="5" top="5" bottom="5" />
+							<EdgeSize val="16" />
+						</Backdrop>
+						<Layers>
+							<Layer>
+								<FontString inherits="GameFontNormalSmall" text="Column Assignments">
+									<Anchors>
+										<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="5" y="2" />
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<ScrollFrame parentKey="Scroll" inherits="UIPanelScrollFrameCodeTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT" x="5" y="-5" />
+									<Anchor point="BOTTOMRIGHT" x="-5" y="5" />
+								</Anchors>
+								<ScrollChild>
+									<Frame parentKey="Container">
+										<Size x="1" />
+									</Frame>
+								</ScrollChild>
+								<Frames>
+									<Slider parentKey="ScrollBar" orientation="HORIZONTAL" hidden="true">
+										<Size x="0" y="16" />
+										<Anchors>
+											<Anchor point="BOTTOMLEFT" />
+											<Anchor point="BOTTOMRIGHT" />
+										</Anchors>
+										<ThumbTexture inherits="UIPanelScrollBarButton" file="Interface\Buttons\UI-ScrollBar-Knob">
+											<Size x="18" y="24" />
+											<TexCoords left="0.20" right="0.80" top="0.125" bottom="0.875"/>
+										</ThumbTexture>
+										<Scripts>
+											<OnValueChanged>
+												self:GetParent():SetHorizontalScroll(value);
+											</OnValueChanged>
+										</Scripts>
+									</Slider>
+								</Frames>
+								<Scripts>
+									<OnLoad>
+										self.ScrollBar:SetMinMaxValues(0, 0);
+										self.ScrollBar:SetValue(0);
+										self.offset = 0;
+									</OnLoad>
+									<OnScrollRangeChanged>
+										if not xrange then
+											xrange = self:GetVerticalScrollRange();
+										end
+										xrange = floor(xrange);
+										local value = min(self.ScrollBar:GetValue(), xrange);
+										self.ScrollBar:SetMinMaxValues(0, xrange);
+										self.ScrollBar:SetValue(value);
+										self.ScrollBar:SetShown(xrange ~= 0);
+									</OnScrollRangeChanged>
+									<OnHorizontalScroll>
+										self.ScrollBar:SetValue(offset);
+									</OnHorizontalScroll>
+									<OnSizeChanged>
+										self.Container:SetHeight(self:GetHeight() - self.ScrollBar:GetHeight() - 1);
+									</OnSizeChanged>
+								</Scripts>
+							</ScrollFrame>
+						</Frames>
+					</Frame>
+				</Frames>
+			</Frame>
+			<Frame parentKey="Header">
+				<Size y="20" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.InputOptions" relativePoint="BOTTOMLEFT" y="-5" />
+					<Anchor point="TOPRIGHT" relativeKey="$parent.InputOptions" relativePoint="BOTTOMRIGHT" y="-5" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Name" inherits="GameFontNormal" justifyH="LEFT" text="Player">
+							<Size x="200" />
+							<Anchors>
+								<Anchor point="LEFT" x="5" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="Reserves" inherits="GameFontNormal" justifyH="LEFT" text="Reserves">
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="5" />
+								<Anchor point="RIGHT" x="-16" />
+							</Anchors>
+						</FontString>
+					</Layer>
+					<Layer level="ARTWORK">
+						<Texture parentKey="HeaderGlowMiddle" alpha="0.25" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Size y="12" />
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" x="64" />
+								<Anchor point="BOTTOMRIGHT" x="-64" />
+							</Anchors>
+							<TexCoords left="0.5" right="0.5" top="0" bottom="1" />
+							<Color r="1" g="0.82" b="0" />
+						</Texture>
+						<Texture parentKey="HeaderGlowLeft" alpha="0.25" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" />
+								<Anchor point="TOPRIGHT" relativeKey="$parent.HeaderGlowMiddle" relativePoint="TOPLEFT" />
+							</Anchors>
+							<TexCoords left="0" right="0.5" top="0" bottom="1" />
+							<Color r="1" g="0.82" b="0" />
+						</Texture>
+						<Texture parentKey="HeaderGlowRight" alpha="0.25" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Anchors>
+								<Anchor point="TOPLEFT" relativeKey="$parent.HeaderGlowMiddle" relativePoint="TOPRIGHT" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<TexCoords left="0.5" right="1" top="0" bottom="1" />
+							<Color r="1" g="0.82" b="0" />
+						</Texture>
+						<Texture alpha=".5" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Size y="3" />
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativeKey="$parent.HeaderGlowMiddle" />
+								<Anchor point="BOTTOMRIGHT" relativeKey="$parent.HeaderGlowMiddle" />
+							</Anchors>
+							<TexCoords left="0.5" right="0.5" top="0" bottom="1" />
+							<Color r="1" g="1" b="1" />
+						</Texture>
+						<Texture alpha=".5" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Size y="3" />
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativeKey="$parent.HeaderGlowLeft" x="16" />
+								<Anchor point="BOTTOMRIGHT" relativeKey="$parent.HeaderGlowLeft" />
+							</Anchors>
+							<TexCoords left="0" right="0.5" top="0" bottom="1" />
+							<Color r="1" g="1" b="1" />
+						</Texture>
+						<Texture alpha=".5" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
+							<Size y="3" />
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativeKey="$parent.HeaderGlowRight" />
+								<Anchor point="BOTTOMRIGHT" relativeKey="$parent.HeaderGlowRight" x="-16" />
+							</Anchors>
+							<TexCoords left="0.5" right="1" top="0" bottom="1" />
+							<Color r="1" g="1" b="1" />
+						</Texture>
+					</Layer>
+				</Layers>
+			</Frame>
+			<Button parentKey="ImportButton" inherits="UIPanelButtonTemplate" text="Import">
+				<Size x="80" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOM" y="10" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootReserve.Server.Import:Import();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<ScrollFrame parentKey="Scroll" inherits="LootReserveScrollTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.Header" relativePoint="BOTTOMLEFT" y="-1" />
+					<Anchor point="TOPRIGHT" relativeKey="$parent.Header" relativePoint="BOTTOMRIGHT" x="-16" y="-1" />
+					<Anchor point="BOTTOM" relativeKey="$parent.ImportButton" relativePoint="TOP" y="3" />
+				</Anchors>
+			</ScrollFrame>
+		</Frames>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="Error" inherits="GameFontDisable" text="">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Scroll" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Scroll" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				LootReserve.Server.Import:OnWindowLoad(self);
+			</OnLoad>
+			<OnShow>
+				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
+				LootReserve.Server.Import:UpdateReservesList();
+			</OnShow>
+			<OnHide>
+				CloseMenus();
+				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
+			</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

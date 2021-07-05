@@ -1,0 +1,28 @@
+## Interface: 20501
+## Title: LootReserve
+## Notes: Soft reserves management addon
+## Version: 2021-06-26
+## X-Min-Allowed-Version: 2021-06-23
+## Author: Tagar-NethergardeKeep|nContributions by Damage-Incendius
+## SavedVariables: LootReserveGlobalSave
+## SavedVariablesPerCharacter: LootReserveCharacterSave
+
+embeds.xml
+
+LootReserve.lua
+Constants.lua
+Client.lua
+Server.lua
+Comm.lua
+Data.lua
+ItemConditions.lua
+ItemSearch.lua
+Common-BCC.xml
+Common.xml
+ClientWindow.xml
+ServerWindow.xml
+RollRequestWindow.xml
+ServerLootEditWindow.xml
+ServerMembersEditWindow.xml
+ServerImportWindow.xml
+ServerExportWindow.xml

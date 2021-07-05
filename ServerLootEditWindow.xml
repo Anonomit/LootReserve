@@ -1,0 +1,691 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="ServerLootEditWindow.lua" />
+	<Frame name="LootReserveLootEditListTemplate" virtual="true" enableMouse="true" inherits="LootReserveBackdropTemplate">
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_TOOLTIP_0_16_5555" type="global" />
+			<KeyValue key="backdropBorderColor" value="NORMAL_FONT_COLOR" type="global" />
+			<KeyValue key="backdropBorderColorAlpha" value="0" type="number" />
+		</KeyValues>
+		<Size y="44" />
+		<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border">
+			<EdgeSize val="16" />
+			<BorderColor r="1" g="0.82" b="0" a="0" />
+		</Backdrop>
+		<Frames>
+			<Frame parentKey="ConditionsFrame">
+				<Size x="112" y="32" />
+				<Anchors>
+					<Anchor point="RIGHT" x="-6" y="0" />
+				</Anchors>
+				<Frames>
+					<Button parentKey="ClassMask" inherits="UIMenuButtonStretchTemplate">
+						<Size y="20" />
+						<Anchors>
+							<Anchor point="TOPRIGHT" x="3" y="3" />
+						</Anchors>
+						<Scripts>
+							<OnLoad inherit="prepend">
+								self.Update = function(self)
+									local item = self:GetParent():GetParent().Item;
+									local conditions = LootReserve.ItemConditions:Get(item, true);
+									if conditions and conditions.ClassMask then
+										local text = "";
+										for i = 1, LootReserve:GetNumClasses() do
+											local name, file, id = LootReserve:GetClassInfo(i);
+											if id and LootReserve.ItemConditions:TestClassMask(conditions.ClassMask, id) then
+												text = text .. (#text > 0 and ", " or "") .. format("|c%s%s|r", RAID_CLASS_COLORS[file].colorStr, name);
+											end
+										end
+										self:SetText(text);
+										self.any = false;
+									else
+										self:SetText("|cFF808080Any Class|r");
+										self.any = true;
+									end
+									self:SetShown(self:GetParent():GetParent().hovered or not self.any);
+									self:SetWidth(10 + self.Text:GetStringWidth() + 10);
+									if self:GetParent().Update then
+										self:GetParent():Update();
+									end
+								end;
+								self:Update();
+							</OnLoad>
+							<OnClick>
+								local item = self:GetParent():GetParent().Item;
+								local conditions = LootReserve.ItemConditions:Get(item, true);
+								local menu =
+								{
+									LootReserve:MakeMenuSeparator(),
+									{ text = "Close" },
+								};
+								local index = 0;
+								for i = 1, LootReserve:GetNumClasses() do
+									local name, file, id = LootReserve:GetClassInfo(i);
+									if name and file and id then
+										index = index + 1;
+										table.insert(menu, index,
+										{
+											text = format("|c%s%s|r", RAID_CLASS_COLORS[file].colorStr, name),
+											checked = conditions and LootReserve.ItemConditions:TestClassMask(conditions.ClassMask, id) or false,
+											arg1 = id,
+											func = function(_, id, _, checked)
+												local conditions = LootReserve.ItemConditions:Make(item, true);
+												conditions.ClassMask = checked and bit.bor(conditions.ClassMask or 0, bit.lshift(1, id - 1)) or bit.band(conditions.ClassMask or 0, bit.bnot(bit.lshift(1, id - 1)));
+												LootReserve.ItemConditions:Save(item, true);
+											end
+										});
+									end
+								end
+								LootReserve:OpenMenu(menu, self:GetParent().ClassMaskMenu, self);
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Frame parentKey="ClassMaskMenu" inherits="UIDropDownMenuTemplate" hidden="true">
+						<KeyValues>
+							<KeyValue key="point" type="string" value="TOPRIGHT" />
+							<KeyValue key="relativePoint" type="string" value="BOTTOMRIGHT" />
+						</KeyValues>
+					</Frame>
+					<Button parentKey="State" inherits="UIMenuButtonStretchTemplate">
+						<Size y="20" />
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" x="3" y="-3" />
+						</Anchors>
+						<Scripts>
+							<OnLoad>
+								self.Update = function(self)
+									local item = self:GetParent():GetParent().Item;
+									local conditions = LootReserve.ItemConditions:Get(item, true);
+									self.shown = false;
+									self.disabled = false;
+									if not conditions then
+										self:SetText("Reservable");
+									elseif conditions.Custom then
+										self:SetText("Delete");
+									elseif conditions.Hidden then
+										self:SetText("|cFFFF0000Hidden|r");
+										self.shown = true;
+									elseif conditions.Faction and not LootReserve.ItemConditions:TestFaction(conditions.Faction) then
+										self:SetText(format("|cFFFF0000%s-only|r", conditions.Faction));
+										self.shown = true;
+										self.disabled = true;
+									else
+										self:SetText("Reservable");
+									end
+									self:SetShown(self.shown);
+									self:SetEnabled(self.enabled);
+									self:SetWidth(10 + self.Text:GetStringWidth() + 10);
+									if self:GetParent().Update then
+										self:GetParent():Update();
+									end
+								end;
+								self:Update();
+							</OnLoad>
+							<OnClick>
+								local item = self:GetParent():GetParent().Item;
+								local conditions = LootReserve.ItemConditions:Make(item, true);
+								if conditions.Custom then
+									LootReserve.ItemConditions:Delete(item, true);
+								else
+									conditions.Hidden = not conditions.Hidden;
+									LootReserve.ItemConditions:Save(item, true);
+								end
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Frame parentKey="Limit">
+						<Size x="90" y="20" />
+						<Anchors>
+							<Anchor point="RIGHT" relativeKey="$parent.State" relativePoint="LEFT" />
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString parentKey="Label" inherits="GameFontWhiteSmall" text="Max ">
+									<Size y="20" />
+									<Anchors>
+										<Anchor point="LEFT" />
+									</Anchors>
+								</FontString>
+							</Layer>
+						</Layers>
+						<Frames>
+							<Button parentKey="Decrement" inherits="UIMenuButtonStretchTemplate" text="−">
+								<Size x="20" y="20" />
+								<Anchors>
+									<Anchor point="LEFT" relativeKey="$parent.Label" relativePoint="RIGHT" />
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										self:GetParent().EditBox:ClearFocus();
+										local item = self:GetParent():GetParent():GetParent().Item;
+										local conditions = LootReserve.ItemConditions:Make(item, true);
+										if conditions.Limit and conditions.Limit > 1 then
+											conditions.Limit = conditions.Limit - 1;
+										else
+											conditions.Limit = nil;
+										end
+										LootReserve.ItemConditions:Save(item, true);
+									</OnClick>
+								</Scripts>
+							</Button>
+							<Button parentKey="Increment" inherits="UIMenuButtonStretchTemplate" text="+">
+								<Size x="20" y="20" />
+								<Anchors>
+									<Anchor point="RIGHT" />
+								</Anchors>
+								<Scripts>
+									<OnClick>
+										self:GetParent().EditBox:ClearFocus();
+										local item = self:GetParent():GetParent():GetParent().Item;
+										local conditions = LootReserve.ItemConditions:Make(item, true);
+										conditions.Limit = math.min(40, (conditions.Limit or 0) + 1);
+										LootReserve.ItemConditions:Save(item, true);
+									</OnClick>
+								</Scripts>
+							</Button>
+							<EditBox parentKey="EditBox" inherits="InputBoxTemplate" autoFocus="false">
+								<Size y="20" />
+								<Anchors>
+									<Anchor point="LEFT" relativeKey="$parent.Decrement" relativePoint="RIGHT" x="-2" />
+									<Anchor point="RIGHT" relativeKey="$parent.Increment" relativePoint="LEFT" x="2" />
+								</Anchors>
+								<Scripts>
+									<OnTextChanged>
+										local item = self:GetParent():GetParent():GetParent().Item;
+										local conditions = LootReserve.ItemConditions:Make(item, true);
+										conditions.Limit = tonumber(self:GetText()) and math.min(40, tonumber(self:GetText()));
+										LootReserve.ItemConditions:Save(item, true);
+									</OnTextChanged>
+									<OnEnterPressed function="EditBox_ClearFocus" />
+									<OnEditFocusGained inherit="prepend">
+										LootReserve.Server.LootEdit.FocusedEditBox = self;
+									</OnEditFocusGained>
+									<OnEditFocusLost inherit="prepend">
+										if LootReserve.Server.LootEdit.FocusedEditBox == self then
+											LootReserve.Server.LootEdit.FocusedEditBox = nil;
+										end
+									</OnEditFocusLost>
+								</Scripts>
+							</EditBox>
+						</Frames>
+						<Scripts>
+							<OnLoad>
+								self.Label:SetWidth(self.Label:GetStringWidth());
+								self.EditBox:SetJustifyH("CENTER");
+								self.EditBox.Left:SetPoint("LEFT", self.EditBox, "LEFT", 0, 0);
+								self.Update = function(self)
+									local item = self:GetParent():GetParent().Item;
+									local conditions = LootReserve.ItemConditions:Get(item, true);
+
+									self.Decrement:SetEnabled(conditions and conditions.Limit and conditions.Limit > 0);
+									self.Increment:SetEnabled(not conditions or not conditions.Limit or conditions.Limit &lt; 40);
+									local text = conditions and conditions.Limit and conditions.Limit > 0 and tostring(conditions.Limit) or "∞";
+									if self.EditBox:GetText() ~= text then
+										self.EditBox:SetText(text);
+									end
+									if self.EditBox:HasFocus() and not tonumber(self.EditBox:GetText()) then
+										self.EditBox:HighlightText();
+									end
+									self.shown = not conditions or not conditions.Hidden;
+
+									if self:GetParent().Update then
+										self:GetParent():Update();
+									end
+								end;
+								self:Update();
+							</OnLoad>
+						</Scripts>
+					</Frame>
+					<Frame parentKey="LimitNoHover">
+						<Size y="20" />
+						<Anchors>
+							<Anchor point="RIGHT" relativeKey="$parent.State" x="-10" />
+						</Anchors>
+						<Layers>
+							<Layer>
+								<FontString parentKey="Label" inherits="GameFontWhiteSmall" setAllPoints="true">
+									<Size y="20" />
+								</FontString>
+							</Layer>
+						</Layers>
+						<Scripts>
+							<OnLoad>
+								self.Update = function(self)
+									local item = self:GetParent():GetParent().Item;
+									local conditions = LootReserve.ItemConditions:Get(item, true);
+									if conditions and conditions.Limit and conditions.Limit > 0 and not conditions.Hidden then
+										self.Label:SetText(format("Max %d", conditions.Limit));
+										self:SetWidth(self.Label:GetStringWidth());
+										self.shown = true;
+									else
+										self:SetWidth(0.00001);
+										self.shown = false;
+									end
+									self:SetShown(self.shown);
+
+									if self:GetParent().Update then
+										self:GetParent():Update();
+									end
+								end;
+								self:Update();
+							</OnLoad>
+						</Scripts>
+					</Frame>
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self.Update = function(self)
+							self:SetWidth(math.max(self.ClassMask:IsShown() and self.ClassMask:GetWidth() or 0, (self.State:IsShown() and self.State:GetWidth() or 0) + math.max(self.Limit:IsShown() and self.Limit:GetWidth() or 0, self.LimitNoHover:GetWidth() + 10)) - 6);
+						end
+					</OnLoad>
+				</Scripts>
+			</Frame>
+			<Button parentKey="ItemFrame" inherits="LootReserveItemButtomTemplate">
+				<KeyValues>
+					<KeyValue key="tooltipRight" value="true" type="boolean" />
+				</KeyValues>
+				<Anchors>
+					<Anchor point="LEFT" x="6" />
+					<Anchor point="RIGHT" relativeKey="$parent.ConditionsFrame" relativePoint="LEFT" x="-5" />
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad inherit="prepend">
+				self.ConditionBackgrounds = { };
+				local parts = { "TopLeft", "TopRight", "BottomLeft", "BottomRight", "TopMiddle", "MiddleLeft", "MiddleRight", "BottomMiddle", "MiddleMiddle" };
+				for _, frame in ipairs({ self.ConditionsFrame:GetChildren() }) do
+					for _, part in ipairs(parts) do
+						if frame[part] then
+							table.insert(self.ConditionBackgrounds, frame[part]);
+						end
+					end
+				end
+			</OnLoad>
+			<OnUpdate>
+				local hovered = self:IsMouseOver() and self:GetParent():GetParent():IsMouseOver() and not UIDROPDOWNMENU_OPEN_MENU and not LootReserve.Server.LootEdit.FocusedEditBox
+				                or UIDROPDOWNMENU_OPEN_MENU == self.ConditionsFrame.ClassMaskMenu
+				                or self.ConditionsFrame.Limit.EditBox:HasFocus();
+				if self.hovered ~= hovered then
+					self.hovered = hovered;
+					local r, g, b = self:GetBackdropBorderColor();
+					self:SetBackdropBorderColor(r, g, b, hovered and 1 or 0);
+					self.ConditionsFrame.ClassMask:SetEnabled(hovered);
+					self.ConditionsFrame.ClassMask:SetShown(hovered or not self.ConditionsFrame.ClassMask.any);
+					self.ConditionsFrame.State:SetEnabled(hovered and not self.ConditionsFrame.State.disabled);
+					self.ConditionsFrame.State:SetShown(hovered or self.ConditionsFrame.State.shown);
+					self.ConditionsFrame.Limit:SetShown(hovered and self.ConditionsFrame.Limit.shown and not self.ConditionsFrame.State.disabled);
+					self.ConditionsFrame.LimitNoHover:SetShown(not hovered and self.ConditionsFrame.LimitNoHover.shown and not self.ConditionsFrame.State.disabled);
+					self.ConditionsFrame:Update();
+					for _, part in ipairs(self.ConditionBackgrounds) do
+						part:SetShown(hovered);
+					end
+				end
+			</OnUpdate>
+		</Scripts>
+	</Frame>
+	<Frame name="LootReserveLootEditRevertEditsFrame" virtual="true" enableMouse="true">
+		<Size y="44" />
+		<Frames>
+			<Button inherits="UIPanelButtonTemplate" text="Revert All Edits">
+				<Size x="120" y="23" />
+				<Anchors>
+					<Anchor point="CENTER" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootReserve.ItemConditions:Clear(LootReserve.Server.NewSessionSettings.LootCategory, true);
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+	</Frame>
+	<Frame name="LootReserveLootEditAddCustomFrame" virtual="true" enableMouse="true">
+		<Size y="44" />
+		<Frames>
+			<Button parentKey="ItemFrame">
+				<Size y="32" />
+				<Anchors>
+					<Anchor point="LEFT" />
+					<Anchor point="RIGHT" />
+				</Anchors>
+				<Frames>
+					<Button parentKey="Icon" enableMouse="true">
+						<Size x="32" y="32" />
+						<Anchors>
+							<Anchor point="LEFT" x="6" />
+						</Anchors>
+						<Layers>
+							<Layer level="BACKGROUND">
+								<Texture file="Interface\Buttons\UI-EmptySlot-Disabled">
+									<Size x="40" y="40" />
+									<Anchors>
+										<Anchor point="TOPLEFT" x="-4" y="4" />
+									</Anchors>
+									<TexCoords left="0.140625" right="0.84375" top="0.140625" bottom="0.84375" />
+								</Texture>
+							</Layer>
+							<Layer level="BORDER">
+								<Texture parentKey="Texture" setAllPoints="true" nonBlocking="true" />
+							</Layer>
+							<Layer level="OVERLAY">
+								<Texture parentKey="CancelIcon" file="Interface\Buttons\UI-GroupLoot-Pass-Up" hidden="true">
+									<Size x="16" y="16" />
+									<Anchors>
+										<Anchor point="CENTER" />
+									</Anchors>
+								</Texture>
+							</Layer>
+						</Layers>
+						<PushedTexture file="Interface\Buttons\UI-Quickslot-Depress"/>
+						<HighlightTexture file="Interface\Buttons\ButtonHilight-Square" alphaMode="ADD" />
+						<Scripts>
+							<OnLoad>
+								self:RegisterForDrag("LeftButton");
+								self.DropHandler = function(self)
+									local frame = self:GetParent():GetParent();
+									local type, item, link = GetCursorInfo();
+									ClearCursor();
+									if type == "item" and item then
+										frame:SetItem(item);
+										CloseMenus();
+									elseif frame.Item then
+										frame:SetItem(nil);
+										CloseMenus();
+									end
+								end
+							</OnLoad>
+							<OnClick>
+								self:DropHandler();
+							</OnClick>
+							<!--OnDragStart>
+								self:DropHandler();
+							</OnDragStart-->
+							<OnReceiveDrag>
+								self:DropHandler();
+							</OnReceiveDrag>
+							<OnEnter>
+								local frame = self:GetParent():GetParent();
+								if frame.Item and not CursorHasItem() then
+									self.CancelIcon:Show();
+								else
+									self.CancelIcon:Hide();
+								end
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText("Drop an item here");
+								GameTooltip:Show();
+							</OnEnter>
+							<OnLeave>
+								GameTooltip_Hide(self);
+								self.CancelIcon:Hide();
+							</OnLeave>
+						</Scripts>
+					</Button>
+					<Button parentKey="ButtonAdd" inherits="UIPanelButtonTemplate" text="Add">
+						<Size x="60" y="23" />
+						<Anchors>
+							<Anchor point="RIGHT" x="-6" />
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								local frame = self:GetParent():GetParent();
+								if frame.Item then
+									local conditions = LootReserve.ItemConditions:Make(frame.Item, true);
+									conditions.Custom = true;
+									LootReserve.ItemConditions:Save(frame.Item, true);
+									frame:SetItem(nil);
+								end
+							</OnClick>
+						</Scripts>
+					</Button>
+					<ScrollFrame parentKey="Scroll" inherits="InputScrollFrameTemplate">
+						<Size y="18" />
+						<KeyValues>
+							<KeyValue key="hideCharCount" value="true" type="boolean" />
+							<KeyValue key="instructions" value="Enter Item Name or ID..." type="string" />
+						</KeyValues>
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent.Icon" relativePoint="RIGHT" x="10" />
+							<Anchor point="RIGHT" relativeKey="$parent.ButtonAdd" relativePoint="LEFT" x="-5" />
+						</Anchors>
+					</ScrollFrame>
+					<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
+				</Frames>
+				<Scripts>
+					<OnLoad>
+						self.Icon.SetTexture = function(self, texture)
+							self.Texture:SetTexture(texture);
+						end
+					</OnLoad>
+					<OnClick>
+						if button == "LeftButton" then
+							HandleModifiedItemClick(self:GetParent().Link);
+						end
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				local function SelectItem(info)
+					self:SetItem(info.arg1);
+				end
+				self.ItemFrame.Scroll.EditBox:SetMultiLine(false);
+				self.ItemFrame.Scroll.EditBox:SetFontObject(GameFontHighlightLarge);
+				self.ItemFrame.Scroll.EditBox:SetPoint("TOPLEFT", self.ItemFrame.Scroll, "TOPLEFT", 0, 0);
+				self.ItemFrame.Scroll.EditBox:SetPoint("BOTTOMRIGHT", self.ItemFrame.Scroll, "BOTTOMRIGHT", 0, 0);
+				self.ItemFrame.Scroll.EditBox.Instructions:SetFontObject(GameFontDisableLarge);
+				self.ItemFrame.Scroll.EditBox.Instructions:SetJustifyH("LEFT");
+				self.ItemFrame.Scroll.EditBox.Instructions:SetJustifyV("MIDDLE");
+				self.ItemFrame.Scroll.EditBox.Instructions:SetPoint("TOPLEFT", self.ItemFrame.Scroll, "TOPLEFT", 0, 0);
+				self.ItemFrame.Scroll.EditBox.Instructions:SetPoint("BOTTOMRIGHT", self.ItemFrame.Scroll, "BOTTOMRIGHT", 0, 0);
+				self.ItemFrame.Scroll.EditBox:HookScript("OnEnterPressed", function(editbox)
+					editbox:ClearFocus();
+				end);
+				self.ItemFrame.Scroll.EditBox:HookScript("OnTextChanged", function(editbox)
+					if self.Name and #self.Name > 0 and editbox:GetText() == self.Name then return; end
+					if self.Item then
+						self:SetItem(nil);
+					end
+					local function UpdateText()
+						if not self:IsShown() then
+							CloseMenus();
+							return;
+						end
+						local text = editbox:GetText();
+						local item = tonumber(text);
+						local menu = { };
+						local missing = false;
+						if item and C_Item.DoesItemExistByID(item) then
+							local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+							if not name or not link then
+								C_Timer.After(0.25, UpdateText);
+								return;
+							end
+							table.insert(menu,
+							{
+								text = format("|T%d:0|t %s", texture, (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", "")),
+								arg1 = item,
+								func = SelectItem,
+							});
+						elseif not item and #LootReserve:TransformSearchText(text) >= 3 then
+							local results, progress = LootReserve.ItemSearch:Search(text);
+							if results then
+								for i, item in ipairs(results) do
+									if i > 10 then
+										table.insert(menu,
+										{
+											text = format("(and %d more...)", #results - 10),
+											disabled = true,
+										});
+										break;
+									else
+										local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+										if not link then
+											missing = true;
+										end
+										table.insert(menu,
+										{
+											text = format("|T%d:0|t %s", texture, (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", "")),
+											arg1 = item,
+											func = SelectItem,
+										});
+									end
+								end
+							else
+								table.insert(menu,
+								{
+									text = format("Loading search database... (%d%%)", progress),
+									disabled = true,
+								});
+								if not self.LoadingSearch then
+									self.LoadingSearch = true;
+									C_Timer.After(0.25, function()
+										self.LoadingSearch = nil;
+										UpdateText();
+									end);
+								end
+							end
+						end
+						CloseMenus();
+						if #menu > 0 then
+							LootReserve:OpenMenu(menu, self.ItemFrame.Menu, self.ItemFrame.Scroll);
+						end
+						if missing then
+							C_Timer.After(0.25, UpdateText);
+						end
+					end
+					UpdateText();
+				end);
+				self.SetItem = function(self, item)
+					if item then
+						self.Item = item;
+
+						local name, link, quality, _, _, _, _, _, _, texture = GetItemInfo(item);
+						self.Link = link;
+
+						if not name or not link then
+							C_Timer.After(0.25, function()
+								if self.Item == item then
+									self:SetItem(item);
+								end
+							end);
+							return;
+						end
+
+						local reservers = 0;
+						if LootReserve.Server.CurrentSession then
+							local reserve = LootReserve.Server.CurrentSession.ItemReserves[item];
+							reservers = reserve and #reserve.Players or 0;
+						end
+
+						local color = ITEM_QUALITY_COLORS[quality];
+
+						self.Name = name or "";
+						self.ItemFrame.Icon:SetTexture(texture);
+						--self.ItemFrame.Icon.CancelIcon:SetShown(GameTooltip:IsOwned(self.ItemFrame.Icon)); -- Looks better without it
+						self.ItemFrame.Scroll.EditBox:SetText(self.Name);
+						self.ItemFrame.Scroll.EditBox:SetTextColor(color.r, color.g, color.b);
+						self.ItemFrame.ButtonAdd:Enable();
+						self.ItemFrame.Scroll.EditBox:ClearFocus();
+					else
+						self.Item = nil;
+						self.Link = nil;
+						self.Name = "";
+						self.ItemFrame.Icon:SetTexture(nil);
+						self.ItemFrame.Icon.CancelIcon:Hide();
+						self.ItemFrame.Scroll.EditBox:SetText("");
+						self.ItemFrame.Scroll.EditBox:SetTextColor(1, 1, 1);
+						self.ItemFrame.ButtonAdd:Disable();
+					end
+				end
+				self:SetItem(nil);
+			</OnLoad>
+		</Scripts>
+	</Frame>
+	<Frame name="LootReserveServerLootEditWindow" parent="UIParent" inherits="BasicFrameTemplateWithInset" toplevel="true" movable="true" resizable="true" enableMouse="true" clampedToScreen="true" hidden="true">
+		<Size x="650" y="450" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Frames>
+			<Button inherits="LootReserveCommonFrameMovingHeaderTemplate" />
+			<Button inherits="LootReserveCommonFrameSizeGrabberTemplate" />
+			<EditBox parentKey="Search" inherits="SearchBoxTemplate">
+				<Size x="193" y="20" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="22" y="-37" />
+				</Anchors>
+				<Scripts>
+					<OnTextChanged inherit="prepend">
+						if #self:GetText() &gt; 0 then
+							for _, frame in ipairs(self:GetParent().Categories.Scroll.Container.Frames) do
+								if frame.Category.Search then
+									frame:Click();
+									break;
+								end
+							end
+						end
+						LootReserve.Server.LootEdit:UpdateLootList();
+					</OnTextChanged>
+				</Scripts>
+			</EditBox>
+			<Frame parentKey="Categories" inherits="LootReserveBackdropTemplate">
+				<KeyValues>
+					<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+				</KeyValues>
+				<Anchors>
+					<Anchor point="TOPRIGHT" relativeKey="$parent.Search" relativePoint="BOTTOMRIGHT" x="1" />
+					<Anchor point="BOTTOMLEFT" x="16" y="16" />
+				</Anchors>
+				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
+					<BackgroundInsets left="5" right="5" top="5" bottom="5" />
+					<EdgeSize val="16" />
+				</Backdrop>
+				<Frames>
+					<ScrollFrame parentKey="Scroll" inherits="LootReserveScrollTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" x="5" y="-5" />
+							<Anchor point="BOTTOMRIGHT" x="-21" y="5" />
+						</Anchors>
+					</ScrollFrame>
+				</Frames>
+			</Frame>
+			<Frame parentKey="Loot" inherits="LootReserveBackdropTemplate">
+				<KeyValues>
+					<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+				</KeyValues>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.Search" relativePoint="TOPRIGHT" />
+					<Anchor point="BOTTOMRIGHT" x="-16" y="16" />
+				</Anchors>
+				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
+					<BackgroundInsets left="5" right="5" top="5" bottom="5" />
+					<EdgeSize val="16" />
+				</Backdrop>
+				<Frames>
+					<ScrollFrame parentKey="Scroll" inherits="LootReserveScrollTemplate">
+						<Anchors>
+							<Anchor point="TOPLEFT" x="5" y="-5" />
+							<Anchor point="BOTTOMRIGHT" x="-21" y="5" />
+						</Anchors>
+					</ScrollFrame>
+				</Frames>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				LootReserve.Server.LootEdit:OnWindowLoad(self);
+			</OnLoad>
+			<OnShow>
+				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
+				LootReserve.Server.LootEdit:UpdateCategories();
+				LootReserve.Server.LootEdit:UpdateLootList();
+			</OnShow>
+			<OnHide>
+				CloseMenus();
+				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
+			</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>

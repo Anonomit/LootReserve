@@ -1,0 +1,492 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Button name="LootReserveCommonFrameMovingHeaderTemplate" virtual="true">
+		<Size y="22" />
+		<Anchors>
+			<Anchor point="TOPLEFT" />
+			<Anchor point="TOPRIGHT" />
+		</Anchors>
+		<Scripts>
+			<OnMouseDown>
+				self:GetParent():StartMoving();
+			</OnMouseDown>
+			<OnMouseUp>
+				self:GetParent():StopMovingOrSizing();
+
+				local function round(num, numDecimalPlaces)
+					local mult = 10 ^ (numDecimalPlaces or 0)
+					return math.floor(num * mult + 0.5) / mult
+				end
+
+				if self:GetParent():IsProtected() and InCombatLockdown() then return; end
+
+				local point, relativeFrame, relativePoint, x, y = self:GetParent():GetPoint(1);
+				x = round(x);
+				y = round(y);
+				if (point == "CENTER" or point == "TOP" or point == "BOTTOM") and (round(self:GetParent():GetWidth() ) % 2 == 1) then x = x + 0.5; end
+				if (point == "CENTER" or point == "LEFT" or point == "RIGHT") and (round(self:GetParent():GetHeight()) % 2 == 1) then y = y + 0.5; end
+				self:GetParent():ClearAllPoints();
+				self:GetParent():SetPoint(point, relativeFrame, relativePoint, x, y);
+			</OnMouseUp>
+		</Scripts>
+	</Button>
+	<Button name="LootReserveCommonFrameSizeGrabberTemplate" virtual="true">
+		<Size x="16" y="16"/>
+		<Anchors>
+			<Anchor point="BOTTOMRIGHT" />
+		</Anchors>
+		<Scripts>
+			<OnMouseDown>
+				self:SetButtonState("PUSHED", true);
+				self:GetHighlightTexture():Hide();
+				self:GetParent():StartSizing("BOTTOMRIGHT");
+			</OnMouseDown>
+			<OnMouseUp>
+				self:SetButtonState("NORMAL", false);
+				self:GetHighlightTexture():Show();
+				self:GetParent():StopMovingOrSizing();
+
+				local function round(num, numDecimalPlaces)
+					local mult = 10 ^ (numDecimalPlaces or 0)
+					return math.floor(num * mult + 0.5) / mult
+				end
+
+				if self:GetParent():IsProtected() and InCombatLockdown() then return; end
+
+				local w, h = self:GetParent():GetSize();
+				self:GetParent():SetSize(round(w), round(h));
+			</OnMouseUp>
+		</Scripts>
+		<NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
+		<HighlightTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Highlight"/>
+		<PushedTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Down"/>
+	</Button>
+	<Frame name="LootReserveTextWithButtonsTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="font" value="GameFontNormal" type="global" />
+			<KeyValue key="textMargin" value="0" type="number" />
+			<KeyValue key="buttonMargin" value="0" type="number" />
+		</KeyValues>
+		<Layers>
+			<Layer>
+				<FontString parentKey="Text" justifyH="LEFT" wordwrap="false">
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.Text:SetFontObject(self.font);
+				function self:SetText(text)
+					self.Text:SetText(text);
+					self:Update();
+				end
+				function self:GetText()
+					return self.Text:GetText();
+				end
+
+				self.Buttons = self.Buttons or { };
+				self.ButtonsHooked = self.ButtonsHooked or { };
+				function self:Update()
+					local buttonsWidth = 0;
+					for i, button in ipairs(self.Buttons) do
+						if not self.ButtonsHooked[button] then
+							self.ButtonsHooked[button] = true;
+							button:HookScript("OnShow", function() self:Update(); end);
+							button:HookScript("OnHide", function() self:Update(); end);
+						end
+						if button:IsShown() then
+							buttonsWidth = buttonsWidth + (i == 0 and self.textMargin or self.buttonMargin) + button:GetWidth();
+						end
+					end
+
+					self.Text:SetPoint("BOTTOMRIGHT", self, "BOTTOMRIGHT", -buttonsWidth, 0);
+
+					local x = math.min(self.Text:GetStringWidth(), self.Text:GetWidth()) + self.textMargin;
+					for i, button in ipairs(self.Buttons) do
+						if button:IsShown() then
+							button:SetPoint("LEFT", self.Text, "LEFT", x, 0);
+							x = x + self.buttonMargin + button:GetWidth();
+						end
+					end
+				end
+				self:Update();
+			</OnLoad>
+			<OnSizeChanged>
+				self:Update();
+			</OnSizeChanged>
+		</Scripts>
+	</Frame>
+	<Button name="LootReserveItemButtomTemplate" virtual="true">
+		<KeyValues>
+			<!--
+			<KeyValue key="tooltipRight" value="false" type="boolean" />
+			-->
+		</KeyValues>
+		<Size y="32" />
+		<Frames>
+			<Button parentKey="Icon" enableMouse="true">
+				<Size x="32" y="32" />
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture parentKey="Texture" setAllPoints="true" nonBlocking="true" />
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						if button == "LeftButton" then
+							HandleModifiedItemClick(self:GetParent():GetParent().Link);
+						end
+					</OnClick>
+					<OnEnter>
+						if self:GetParent().tooltipRight then
+							GameTooltip:SetOwner(self, "ANCHOR_NONE");
+							GameTooltip:ClearAllPoints();
+							GameTooltip:SetPoint("TOPLEFT", self, "TOPRIGHT");
+						else
+							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						end
+						GameTooltip:SetHyperlink("item:" .. self:GetParent():GetParent().Item);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+			</Button>
+			<Frame parentKey="IconGlow">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.Icon" x="-5" y="5" />
+					<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Icon" x="5" y="-5" />
+				</Anchors>
+			</Frame>
+		</Frames>
+		<Layers>
+			<Layer>
+				<FontString parentKey="Name" inherits="GameFontNormalLarge" justifyH="LEFT" wordwrap="false">
+					<Size y="20" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" x="5" />
+						<Anchor point="TOPRIGHT" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Misc" inherits="GameFontNormalGraySmall" justifyH="LEFT" wordwrap="false">
+					<Size y="12" />
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" />
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.Icon.SetTexture = function(self, texture)
+					self.Texture:SetTexture(texture);
+				end
+			</OnLoad>
+			<OnClick>
+				if button == "LeftButton" then
+					HandleModifiedItemClick(self:GetParent().Link);
+				end
+			</OnClick>
+		</Scripts>
+	</Button>
+	<ScrollFrame name="LootReserveScrollTemplate" inherits="UIPanelScrollFrameTemplate" virtual="true">
+		<ScrollChild>
+			<Frame parentKey="Container">
+				<Size y="1" />
+			</Frame>
+		</ScrollChild>
+		<Scripts>
+			<OnLoad inherit="prepend">
+				self.ScrollBar:SetPoint("TOPLEFT", self, "TOPRIGHT", 0, -16);
+				self.ScrollBar:SetPoint("BOTTOMLEFT", self, "BOTTOMRIGHT", 0, 16);
+			</OnLoad>
+			<OnShow>
+				if self:IsProtected() and InCombatLockdown() then return; end
+				self.Container:SetWidth(self:GetWidth());
+			</OnShow>
+			<OnSizeChanged>
+				if self:IsProtected() and InCombatLockdown() then return; end
+				self.Container:SetWidth(self:GetWidth());
+			</OnSizeChanged>
+		</Scripts>
+	</ScrollFrame>
+	<Font name="LootReserveDurationStatusBarFont" font="Fonts\FRIZQT__.TTF" outline="NORMAL" virtual="true">
+		<FontHeight>
+			<AbsValue val="11" />
+		</FontHeight>
+		<Color r="1" g="1" b="1" />
+	</Font>
+	<StatusBar name="LootReserveDurationStatusBar" virtual="true">
+		<KeyValues>
+			<!--
+			<KeyValue key="server" value="false" type="boolean" />
+			<KeyValue key="roll" value="false" type="boolean" />
+			-->
+		</KeyValues>
+		<Size y="8" />
+		<BarTexture parentKey="Texture" file="Interface\TargetingFrame\UI-TargetingFrame-BarFill">
+			<TexCoords left="0" right="1" top="0.15" bottom="0.85" />
+		</BarTexture>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture file="Interface\DialogFrame\UI-DialogBox-Background-Dark" setAllPoints="true" />
+			</Layer>
+			<Layer level="OVERLAY">
+				<Texture parentKey="Left" file="Interface\Tooltips\UI-StatusBar-Border">
+					<Size x="16" y="16" />
+					<Anchors>
+						<Anchor point="LEFT" x="-3" />
+					</Anchors>
+					<TexCoords left="0" right="0.125" top="0" bottom="1" />
+				</Texture>
+				<Texture parentKey="Right" file="Interface\Tooltips\UI-StatusBar-Border">
+					<Size x="16" y="16" />
+					<Anchors>
+						<Anchor point="RIGHT" x="3" />
+					</Anchors>
+					<TexCoords left="0.875" right="1" top="0" bottom="1" />
+				</Texture>
+				<Texture parentKey="Middle" file="Interface\Tooltips\UI-StatusBar-Border">
+					<Size y="16" />
+					<Anchors>
+						<Anchor point="LEFT" relativeKey="$parent.Left" relativePoint="RIGHT" />
+						<Anchor point="RIGHT" relativeKey="$parent.Right" relativePoint="LEFT" />
+					</Anchors>
+					<TexCoords left="0.125" right="0.875" top="0" bottom="1" />
+				</Texture>
+				<Texture parentKey="Spark" file="Interface\GLUES\LoadingBar\UI-LoadingBar-Spark" alphaMode="ADD">
+					<Size x="16" y="24" />
+				</Texture>
+				<Texture parentKey="Glow" file="Interface\GLUES\LoadingBar\UI-LoadingBar-Spark" alphaMode="ADD">
+					<Size x="64" y="16" />
+					<TexCoords left="0" right="0.5" top="0" bottom="1" />
+					<Color r="0.5" g="1" b="0" />
+				</Texture>
+				<FontString parentKey="Text" inherits="LootReserveDurationStatusBarFont" text="2:34">
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnUpdate>
+				local hasDuration = false;
+				local active = false;
+				local min, value, max, pct = 0, 1, 1, 1;
+
+				if self.roll and self.server then
+					local roll = LootReserve.Server.RequestedRoll;
+					if roll and roll.MaxDuration ~= 0 then
+						hasDuration = true;
+						active = true;
+						value = roll.Duration;
+						max = roll.MaxDuration;
+					end
+				elseif self.roll then
+					local roll = LootReserve.Client.RollRequest;
+					if roll.Sender and roll.MaxDuration and roll.MaxDuration ~= 0 then
+						hasDuration = true;
+						active = true;
+						value = roll.Duration;
+						max = roll.MaxDuration;
+					end
+				elseif self.server then
+					local session = LootReserve.Server.CurrentSession;
+					if session and session.Settings.Duration ~= 0 then
+						hasDuration = true;
+						active = session.AcceptingReserves;
+						value = session.Duration;
+						max = session.Settings.Duration;
+					end
+				else
+					local session = LootReserve.Client;
+					if session.SessionServer and session.MaxDuration and session.MaxDuration ~= 0 then
+						hasDuration = true;
+						active = session.AcceptingReserves;
+						value = session.Duration;
+						max = session.MaxDuration;
+					end
+				end
+				pct = (value - min) / (max - min);
+
+				if hasDuration and active then
+					local RED_THRESHOLD, GREEN_THRESHOLD = 0.2, 0.5;
+					local r = pct > GREEN_THRESHOLD and 0    or pct > RED_THRESHOLD and (1 - (pct - RED_THRESHOLD) / (GREEN_THRESHOLD - RED_THRESHOLD)) * 1    or 1;
+					local g = pct > GREEN_THRESHOLD and 0.85 or pct > RED_THRESHOLD and (    (pct - RED_THRESHOLD) / (GREEN_THRESHOLD - RED_THRESHOLD)) * 0.85 or 0;
+					self:SetStatusBarColor(r, g, 0);
+					self.Text:SetText(format("%d:%02d", math.floor(value / 60), value % 60));
+					self.Text:Show();
+					self.Glow:SetWidth(math.min(64, self.Texture:GetWidth()));
+					self.Glow:SetAlpha(1 - math.max(0, math.abs(pct * 2 - 1) - 0.99) / 0.01);
+					self.Glow:SetVertexColor(0.5 + r * 0.5, g, 0);
+					self.Glow:Show();
+					self.Spark:SetAlpha(self.Glow:GetAlpha());
+					self.Spark:Show();
+				elseif hasDuration then
+					self:SetStatusBarColor(0.5, 0.5, 0.5);
+					self.Text:SetText(format("%d:%02d", math.floor(value / 60), value % 60));
+					self.Text:Show();
+					self.Glow:Hide();
+					self.Spark:Hide();
+				else
+					self:SetStatusBarColor(0.5, 0.5, 0.5);
+					self.Text:Hide();
+					self.Glow:Hide();
+					self.Spark:Hide();
+				end
+				self:SetMinMaxValues(0, max);
+				self:SetValue(value);
+				self.Glow:ClearAllPoints();
+				self.Glow:SetPoint("RIGHT", self, "LEFT", self:GetWidth() * pct, 0);
+				self.Spark:ClearAllPoints();
+				self.Spark:SetPoint("CENTER", self, "LEFT", self:GetWidth() * pct, 0);
+			</OnUpdate>
+		</Scripts>
+	</StatusBar>
+	<CheckButton name="LootReserveCheckBoxTemplate" virtual="true">
+		<KeyValues>
+			<!--
+			<KeyValue key="text" value="" type="string" />
+			<KeyValue key="tooltipText" value="" type="string" />
+			<KeyValue key="tooltipSubtext" value="" type="string" />
+			<KeyValue key="tooltipOwnerPoint" value="" type="string" />
+			-->
+		</KeyValues>
+		<Size>
+			<AbsDimension x="26" y="26"/>
+		</Size>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString parentKey="Text" inherits="GameFontNormal">
+					<Anchors>
+						<Anchor point="LEFT" relativePoint="RIGHT" x="0" y="1" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.Text:SetText(self.text or "");
+				self:SetHitRectInsets(0, -self.Text:GetStringWidth(), 0, 0);
+			</OnLoad>
+			<OnClick>
+				if (self:GetChecked()) then
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+				else
+					PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+				end
+			</OnClick>
+			<OnEnter>
+				if (self.tooltipText) then
+					GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
+					GameTooltip:SetText(self.tooltipText, nil, nil, nil, nil, 1);
+				end
+				if (self.tooltipSubtext) then
+					GameTooltip:AddLine(self.tooltipSubtext, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+					GameTooltip:Show();
+				end
+			</OnEnter>
+			<OnLeave function="GameTooltip_Hide" />
+		</Scripts>
+		<NormalTexture file="Interface\Buttons\UI-CheckBox-Up"/>
+		<PushedTexture file="Interface\Buttons\UI-CheckBox-Down"/>
+	 	<HighlightTexture file="Interface\Buttons\UI-CheckBox-Highlight" alphaMode="ADD"/>
+		<CheckedTexture file="Interface\Buttons\UI-CheckBox-Check"/>
+		<DisabledCheckedTexture file="Interface\Buttons\UI-CheckBox-Check-Disabled"/>		
+	</CheckButton>
+	<Button name="LootReserveSettingsButtonTemplate" parentKey="ButtonSettings" inherits="UIMenuButtonStretchTemplate" frameLevel="100" virtual="true">
+		<Size x="20" y="20" />
+		<Anchors>
+			<Anchor point="TOPLEFT" y="-1" />
+		</Anchors>
+		<Layers>
+			<Layer>
+				<Texture parentKey="Icon" file="Interface\Buttons\UI-OptionsButton">
+					<Size x="14" y="14" />
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</Texture>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
+		</Frames>
+		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+		<Scripts>
+			<OnLoad>
+				self:SetPushedTextOffset(1, -1);
+			</OnLoad>
+			<OnMouseDown>
+				self.Icon:SetPoint("CENTER", self, "CENTER", self:GetPushedTextOffset());
+			</OnMouseDown>
+			<OnMouseUp>
+				self.Icon:SetPoint("CENTER", self, "CENTER");
+			</OnMouseUp>
+			<OnEnter>
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText("Settings");
+			</OnEnter>
+			<OnLeave function="GameTooltip_Hide" />
+		</Scripts>
+	</Button>
+	<Button name="LootReserveGlowingButtonTemplate" inherits="UIMenuButtonStretchTemplate" virtual="true">
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture parentKey="GlowLeft" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD" alpha="0.5" hidden="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" x="4" y="-4" />
+						<Anchor point="BOTTOMLEFT" relativePoint="BOTTOMLEFT" x="4" y="4" />
+						<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOM" y="4" />
+					</Anchors>
+					<TexCoords left="0.1" right="0.25" top="0.4" bottom="1" />
+					<Color r="1" g="0.82" b="0" />
+				</Texture>
+				<Texture parentKey="GlowRight" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD" alpha="0.5" hidden="true">
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="-4" y="-4" />
+						<Anchor point="BOTTOMLEFT" relativePoint="BOTTOM" y="4" />
+						<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT" x="-4" y="4" />
+					</Anchors>
+					<TexCoords left="0.75" right="0.9" top="0.4" bottom="1" />
+					<Color r="1" g="0.82" b="0" />
+				</Texture>
+				<Texture parentKey="GlowLeft2" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD" alpha="0.5" hidden="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.GlowLeft" y="-12" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.GlowLeft" />
+					</Anchors>
+					<TexCoords left="0.05" right="0.25" top="0" bottom="1" />
+				</Texture>
+				<Texture parentKey="GlowRight2" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD" alpha="0.5" hidden="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativeKey="$parent.GlowRight" y="-12" />
+						<Anchor point="BOTTOMRIGHT" relativeKey="$parent.GlowRight" />
+					</Anchors>
+					<TexCoords left="0.75" right="0.95" top="0" bottom="1" />
+				</Texture>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnLoad>
+				self.GlowLeft:SetDesaturated(true);
+				self.GlowRight:SetDesaturated(true);
+				self.GlowLeft2:SetDesaturated(true);
+				self.GlowRight2:SetDesaturated(true);
+				self.SetGlow = function(self, glow)
+					self.GlowLeft:SetShown(glow);
+					self.GlowRight:SetShown(glow);
+					self.GlowLeft2:SetShown(glow);
+					self.GlowRight2:SetShown(glow);
+				end
+			</OnLoad>
+		</Scripts>
+	</Button>
+</Ui>

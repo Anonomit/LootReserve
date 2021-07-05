@@ -1,0 +1,62 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Script file="ServerExportWindow.lua" />
+	<Frame name="LootReserveServerExportWindow" parent="UIParent" inherits="BasicFrameTemplateWithInset" toplevel="true" movable="true" resizable="true" enableMouse="true" clampedToScreen="true" hidden="true">
+		<Size x="300" y="150" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<Frames>
+			<Button inherits="LootReserveCommonFrameMovingHeaderTemplate" />
+			<Button inherits="LootReserveCommonFrameSizeGrabberTemplate" />
+			<Button parentKey="OutputButton" inherits="UIPanelButtonTemplate" text="Export">
+				<Size x="80" y="23" />
+				<Anchors>
+					<Anchor point="TOP" y="-30" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootReserve.Server.Export:UpdateExportText();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Frame parentKey="Output">
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent.OutputButton" relativePoint="BOTTOM" y="-4" />
+					<Anchor point="LEFT" x="8" />
+					<Anchor point="RIGHT" x="-10" />
+					<Anchor point="BOTTOM" y="7" />
+				</Anchors>
+				<Frames>
+					<ScrollFrame parentKey="Scroll" inherits="InputScrollFrameTemplate">
+						<KeyValues>
+							<KeyValue key="hideCharCount" value="true" type="boolean" />
+						</KeyValues>
+						<Anchors>
+							<Anchor point="TOPLEFT" x="5" y="-4" />
+							<Anchor point="BOTTOMRIGHT" x="-5" y="4" />
+						</Anchors>
+					</ScrollFrame>
+				</Frames>
+				<Scripts>
+					<OnSizeChanged>
+						if self.Scroll:GetWidth() > 0 then
+							self.Scroll.EditBox:SetWidth(self.Scroll:GetWidth() - self.Scroll.ScrollBar:GetWidth() - 1);
+						end
+					</OnSizeChanged>
+				</Scripts>
+			</Frame>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				LootReserve.Server.Export:OnWindowLoad(self);
+			</OnLoad>
+			<OnShow>
+				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
+			</OnShow>
+			<OnHide>
+				CloseMenus();
+				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
+			</OnHide>
+		</Scripts>
+	</Frame>
+</Ui>
