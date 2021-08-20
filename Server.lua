@@ -326,27 +326,29 @@ function LootReserve.Server:Load()
     end
 
     -- 2021-06-17: Upgrade roll history to support multiple rolls from the same player
-    for _, roll in ipairs(self.RollHistory) do
-        local needsUpgrade = false;
-        for player, rolls in pairs(roll.Players) do
-            if type(rolls) == "number" then
-                needsUpgrade = true;
-                break;
-            end
-        end
-        if needsUpgrade then
-            local players = { };
-            for player, rolls in LootReserve:Ordered(roll.Players) do
-                players[player] = players[player] or { };
+    for _, rollTable in ipairs{self.RollHistory, self.RequestedRoll} do
+        for _, roll in ipairs(rollTable) do
+            local needsUpgrade = false;
+            for player, rolls in pairs(roll.Players) do
                 if type(rolls) == "number" then
-                    table.insert(players[player], rolls);
-                elseif type(rolls) == "table" then
-                    for _, roll in ipairs(rolls) do
-                        table.insert(players[player], roll);
-                    end
+                    needsUpgrade = true;
+                    break;
                 end
             end
-            roll.Players = players;
+            if needsUpgrade then
+                local players = { };
+                for player, rolls in LootReserve:Ordered(roll.Players) do
+                    players[player] = players[player] or { };
+                    if type(rolls) == "number" then
+                        table.insert(players[player], rolls);
+                    elseif type(rolls) == "table" then
+                        for _, roll in ipairs(rolls) do
+                            table.insert(players[player], roll);
+                        end
+                    end
+                end
+                roll.Players = players;
+            end
         end
     end
 
