@@ -2277,7 +2277,7 @@ function LootReserve.Server:DeleteRoll(player, rollNumber, item)
                 return;
             end
 
-            LootReserve:SendChatMessage(format("Your %sroll of %d on %s was deleted.", phase and format("%s ", phase) or "", link, oldRoll), "WHISPER", player);
+            LootReserve:SendChatMessage(format("Your %sroll of %d on %s was deleted.", phase and format("%s ", phase) or "", oldRoll, link), "WHISPER", player);
         end
         if not self:IsAddonUser(player) then
             WhisperPlayer();
