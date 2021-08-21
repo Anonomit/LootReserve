@@ -119,7 +119,7 @@
 			</OnSizeChanged>
 		</Scripts>
 	</Frame>
-	<Button name="LootReserveItemButtomTemplate" virtual="true">
+	<Button name="LootReserveItemButtonTemplate" virtual="true">
 		<KeyValues>
 			<!--
 			<KeyValue key="tooltipRight" value="false" type="boolean" />

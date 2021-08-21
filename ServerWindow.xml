@@ -471,7 +471,7 @@
 				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down" />
 			</Button>
 			<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
-			<Button parentKey="ItemFrame" inherits="LootReserveItemButtomTemplate">
+			<Button parentKey="ItemFrame" inherits="LootReserveItemButtonTemplate">
 				<KeyValues>
 					<KeyValue key="tooltipRight" value="true" type="boolean" />
 				</KeyValues>

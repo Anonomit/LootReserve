@@ -210,7 +210,7 @@
 					</Button>
 				</Frames>
 			</Frame>
-			<Button parentKey="ItemFrame" inherits="LootReserveItemButtomTemplate">
+			<Button parentKey="ItemFrame" inherits="LootReserveItemButtonTemplate">
 				<KeyValues>
 					<KeyValue key="tooltipRight" value="true" type="boolean" />
 				</KeyValues>
