@@ -13,7 +13,8 @@ function LootReserve.Server:UpdateReserveListRolls(lockdown)
             frame.Roll = self:IsRolling(frame.Item) and not self.RequestedRoll.Custom and self.RequestedRoll or nil;
 
             frame.ReservesFrame.HeaderRoll:SetShown(frame.Roll);
-            frame.ReservesFrame.ReportRolls:SetShown(frame.Roll);
+            frame.ReservesFrame.ReportRolls:SetShown(false);
+            frame.ReservesFrame.ReportReserves:SetShown(true);
             frame.RequestRollButton.CancelIcon:SetShown(frame.Roll and not frame.Historical and self:IsRolling(frame.Item));
 
             local highest = LootReserve.Constants.RollType.NotRolled;
@@ -345,7 +346,8 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
     for i, frame in ipairs(list.Frames) do
         if frame:IsShown() and frame.ReservesFrame then
             frame.ReservesFrame.HeaderRoll:SetShown(frame.Roll);
-            frame.ReservesFrame.ReportRolls:SetShown(frame.Roll);
+            frame.ReservesFrame.ReportRolls:SetShown(true);
+            frame.ReservesFrame.ReportReserves:SetShown(false);
             frame.RequestRollButton.CancelIcon:SetShown(frame.Roll and not frame.Historical and self:IsRolling(frame.Item));
 
             local highest = LootReserve.Constants.RollType.NotRolled;

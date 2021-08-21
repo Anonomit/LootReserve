@@ -594,12 +594,16 @@
 											local i = 1;
 											for player, roll, rollNumber in LootReserve.Server:GetOrderedPlayerRolls(frame.Roll.Players) do
 												if roll > LootReserve.Constants.RollType.NotRolled and (not self.Lines or self.Lines == 0 or self.Lines >= i) then
-													LootReserve:SendChatMessage(format("- %d by %s", roll, player), info.arg1);
+													LootReserve:SendChatMessage(format("  %d by %s", roll, player), info.arg1);
 													i = i + 1;
 												end
 											end
 											if i == 1 then
-												LootReserve:SendChatMessage("- No Rolls -", info.arg1);
+												if frame.Roll.Winners then
+													LootReserve:SendChatMessage(format("  Reserved by %s", frame.Roll.Winners[1]), info.arg1);
+												else
+													LootReserve:SendChatMessage("  No Rolls", info.arg1);
+												end
 											end
 										end,
 									};
@@ -642,6 +646,53 @@
 										});
 									end
 								end
+
+								LootReserve:OpenMenu(menu, self:GetParent().Menu, self);
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button parentKey="ReportReserves">
+						<Size x="12" y="12" />
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.ReportRolls" x="1" />
+							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.ReportRolls" x="-1" />
+						</Anchors>
+						<NormalTexture file="Interface\Buttons\UI-GuildButton-MOTD-Up" alpha="0.25" />
+						<PushedTexture file="Interface\Buttons\UI-GuildButton-MOTD-Up" alpha="0" />
+						<HighlightTexture file="Interface\Buttons\UI-GuildButton-MOTD-Up" alphaMode="ADD" alpha="0.75" />
+						<Scripts>
+							<OnClick>
+								local function MakeChatColoredText(text, chatType)
+									local info = ChatTypeInfo[chatType or "RAID_WARNING"];
+									return format("|cff%02x%02x%02x%s|r", info.r * 255, info.g * 255, info.b * 255, text);
+								end
+								local function MakeReportButton(text, chatType, condition)
+									return
+									{
+										text = condition and MakeChatColoredText(text, chatType) or text,
+										arg1 = chatType,
+										disabled = not condition,
+										func = function(info)
+											local frame = self:GetParent():GetParent();
+
+											local reservesText = LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[frame.Item].Players);
+											LootReserve:SendChatMessage(format("Reserves for %s: %s", frame.Link, reservesText), info.arg1);
+										end,
+									};
+								end
+
+								local menu =
+								{
+									{ text = "Report", isTitle = true },
+									LootReserve:MakeMenuSeparator(),
+									{ text = "To Chat", isTitle = true },
+									MakeReportButton("/rw", "RAID_WARNING", IsInRaid() and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player"))),
+									MakeReportButton("/raid", "RAID", IsInRaid()),
+									MakeReportButton("/party", "PARTY", IsInGroup()),
+									MakeReportButton("/guild", "GUILD", IsInGuild()),
+									LootReserve:MakeMenuSeparator(),
+									{ text = "Cancel" },
+								};
 
 								LootReserve:OpenMenu(menu, self:GetParent().Menu, self);
 							</OnClick>
