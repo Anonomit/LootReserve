@@ -1572,8 +1572,11 @@ LootReserve.Data =
         [21882] = { Hidden = true },
 
         -- Magtheridon's gem bag
-        [34846] = { Hidden = true },
+        -- [34846] = { Hidden = true },
 
+        -- Ashes of A'lar
+        [32458] = { Hidden = true },
+        
         -- Trade items
         [32897] = { Hidden = true },
         [32428] = { Hidden = true },
