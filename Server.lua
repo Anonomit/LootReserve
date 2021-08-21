@@ -2332,6 +2332,30 @@ function LootReserve.Server:GetOrderedPlayerRolls(roll)
     end
 end
 
+
+
+
+-- Applying temporary fix for Blizzard issue involving MasterLoot frame.
+-- This can be removed once Blizzard fixes the issue on their end.
+
+-- Issue can be reproduced as follows:
+-- Open the loot frame
+-- Click on an item to be masterlooted
+-- Without the below fix, many addon-created dropdowns will no longer work.
+
+--[[
+    MasterLootWindowFix - version 1.0 (06/26/21)
+    Kirsia - Dalaran (US-retail)
+    Roxi - Atiesh (US-TBCC)
+]]--
+
+-- Just clearing all points when the ML frame is hidden
+-- so it is no longer bound to the drop down menu
+hooksecurefunc(MasterLooterFrame, 'Hide', function(self) self:ClearAllPoints() end)
+
+
+
+
 function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
     if not item or not player then return; end
 
