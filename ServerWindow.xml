@@ -1416,8 +1416,8 @@
 							{ text = "Storage", isTitle = true },
 							MakeMenuToggle("Use Global Profile", "UseGlobalProfile", "By default all the data about the active reserves session is stored per-character. Enable this to share the same session between all characters on your account.|n|nThe session from your current character will be the one propagated to others.", ToggleGlobalProfile),
 							LootReserve:MakeMenuSeparator(),
-							{ text = "Experimental", isTitle = true },
-							MakeMenuToggle("Enable Master Looting", "MasterLooting", "Enable options of automatic loot distribution through master looting.|n|nYou can enable or disable master looting on a per-roll basis from under the \"Start Roll\" or \"End Roll\" menus.|n|n|cFFFF0000This is an experimental feature, use at your own risk!|r"),
+							{ text = "Automation", isTitle = true },
+							MakeMenuToggle("Enable Master Looting", "MasterLooting", "Enable options of automatic loot distribution through master looting.|n|nYou can enable or disable master looting on a per-roll basis from under the \"Start Roll\" or \"End Roll\" menus.|r"),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
 						};
