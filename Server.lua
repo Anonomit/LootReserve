@@ -458,7 +458,7 @@ function LootReserve.Server:PrepareLootTracking()
     if self.LootTrackingRegistered then return; end
     self.LootTrackingRegistered = true;
 
-    function AddLootToList(looter, item, count)
+    local function AddLootToList(looter, item, count)
         local quality;
         looter = LootReserve:Player(looter);
         if item then
