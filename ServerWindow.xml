@@ -1108,9 +1108,33 @@
 										end
 									end
 								end
+								self.TooltipHandler = function(self, show)
+									if show then
+										local frame = self:GetParent():GetParent();
+										if frame.Item and not CursorHasItem() then
+											self.CancelIcon:Show();
+										else
+											self.CancelIcon:Hide();
+										end
+										self.Arrow:SetShown(not frame.Item);
+										GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+										if frame.Item then
+											GameTooltip:SetHyperlink("item:" .. self:GetParent():GetParent().Item);
+										else
+											GameTooltip:SetText("Drop an item here");
+											GameTooltip:AddLine("Or click to select among relevant items", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+										end
+										GameTooltip:Show();
+									else
+										GameTooltip_Hide(self);
+										self.CancelIcon:Hide();
+										self.Arrow:Hide();
+									end
+								end
 							</OnLoad>
 							<OnClick>
 								self:DropHandler();
+								self:TooltipHandler(true);
 							</OnClick>
 							<!--OnDragStart>
 								self:DropHandler();
@@ -1119,22 +1143,10 @@
 								self:DropHandler();
 							</OnReceiveDrag>
 							<OnEnter>
-								local frame = self:GetParent():GetParent();
-								if frame.Item and not CursorHasItem() then
-									self.CancelIcon:Show();
-								else
-									self.CancelIcon:Hide();
-								end
-								self.Arrow:SetShown(not frame.Item);
-								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-								GameTooltip:SetText("Drop an item here");
-								GameTooltip:AddLine("Or click to select among relevant items", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
-								GameTooltip:Show();
+								self:TooltipHandler(true);
 							</OnEnter>
 							<OnLeave>
-								GameTooltip_Hide(self);
-								self.CancelIcon:Hide();
-								self.Arrow:Hide();
+								self:TooltipHandler(false);
 							</OnLeave>
 						</Scripts>
 					</Button>
