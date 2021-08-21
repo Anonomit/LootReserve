@@ -1402,7 +1402,6 @@
 							} },
 							MakeMenuToggle("Enable !reserves command", "ChatReservesList",  "Allow players to request all currently made reserves to be whispered back to them when they invoke |cFFFFFFFF!reserves|r command."),
 							MakeMenuToggle("Send Reserve Updates",     "ChatUpdates",       "Send whispers to players without addons if someone else reserves or cancels the reserve of the items that they have reserved as well."),
-							MakeMenuToggle("Slow Chat Messages",       "ChatThrottle",      "Slow down broadcasting of Raid and Whisper messages. Will lead to some messages being delivered late. Enable only if WoW servers are blocking your messages under suspicion of spam."),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Display", isTitle = true },
 							{ text = format("Sort Reserves: |cFF00FF00%s|r", LootReserve.Constants.ReservesSortingText[LootReserve.Server.Settings.ReservesSorting] or "???"), arg1 = "#sort", menuList = {

@@ -20,7 +20,6 @@ LootReserve.Server =
         ChatAnnounceWinToGuildThreshold = 3,
         ChatReservesList                = true,
         ChatUpdates                     = true,
-        ChatThrottle                    = true,
         ReservesSorting                 = LootReserve.Constants.ReservesSorting.ByTime,
         UseGlobalProfile                = false,
         Phases                          = LootReserve:Deepcopy(LootReserve.Constants.DefaultPhases),
