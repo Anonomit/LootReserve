@@ -336,7 +336,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
 
     LootReserve.Client:UpdateCategories();
     LootReserve.Client:UpdateLootList();
-    if acceptingReserves then
+    if acceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 then
         LootReserve.Client.Window:Show();
     end
 end
