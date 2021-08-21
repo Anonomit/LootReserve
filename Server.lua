@@ -182,7 +182,7 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_ANNOUNCE_BLIND_RESERVES"] =
     whileDead    = 1,
     hideOnEscape = 1,
     OnAccept = function(self)
-        LootReserve.Server:SendReservesList(nil, false, true);
+        LootReserve.Server:SendReservesList(nil, false, nil, true);
     end,
 };
 
@@ -695,6 +695,11 @@ function LootReserve.Server:PrepareSession()
             if text == "!reserves" then
                 if self.Settings.ChatReservesList then
                     self:SendReservesList(sender, true);
+                end
+                return;
+            elseif text == "!myreserve" or text == "!myreserves" or text == "!myres" then
+                if self.Settings.ChatReservesList then
+                    self:SendReservesList(sender, true, true);
                 end
                 return;
             elseif stringStartsWith(text, prefix1A) then
@@ -1441,7 +1446,7 @@ function LootReserve.Server:CancelReserve(player, item, count, chat, forced)
     return true;
 end
 
-function LootReserve.Server:SendReservesList(player, chat, force)
+function LootReserve.Server:SendReservesList(player, chat, onlyRelevant, force)
     if player then
         if not LootReserve:IsPlayerOnline(player) then
             LootReserve:SendChatMessage("You are not in the raid", "WHISPER", player);
@@ -1494,12 +1499,15 @@ function LootReserve.Server:SendReservesList(player, chat, force)
                         return;
                     end
                     local reservesText = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[item].Players);
-                    table.insert(list, format("%s: %s", link, reservesText));
+                    local _, myReserves = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[item].Players, player);
+                    if not onlyRelevant or myReserves > 0 then
+                        table.insert(list, format("%s: %s", link, reservesText));
+                    end
                 end
             end
 
             if #list > 0 then
-                LootReserve:SendChatMessage("Reserved items:", player and "WHISPER" or "RAID", player);
+                LootReserve:SendChatMessage("%seserved items:", onlyRelevant and "Your r" or "R", player and "WHISPER" or "RAID", player);
                 for _, line in ipairs(list) do
                     LootReserve:SendChatMessage(line, player and "WHISPER" or "RAID", player);
                 end
