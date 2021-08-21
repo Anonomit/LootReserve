@@ -39,9 +39,10 @@ LootReserve.Server =
         ItemConditions                  = { },
         CollapsedExpansions             = { },
         HighlightSameItemWinners        = false,
-        MaxRecentLoot                   = 15,
+        MaxRecentLoot                   = 25,
+        MinimumLootQuality              = 2,
         RemoveRecentLootAfterRolling    = true,
-        KeepUnlootedRecentLoot          = false,
+        KeepUnlootedRecentLoot          = true,
         UseUnitFrames                   = true,
     },
     RequestedRoll       = nil,
@@ -462,7 +463,7 @@ function LootReserve.Server:PrepareLootTracking()
     local lootSelf = LootReserve:FormatToRegexp(LOOT_ITEM_SELF);
     local lootSelfMultiple = LootReserve:FormatToRegexp(LOOT_ITEM_SELF_MULTIPLE);
     LootReserve:RegisterEvent("CHAT_MSG_LOOT", function(text)
-        local looter, item, count;
+        local looter, item, quality, count;
         item, count = text:match(lootSelfMultiple);
         if item and count then
             looter = LootReserve:Me();
@@ -488,8 +489,14 @@ function LootReserve.Server:PrepareLootTracking()
 
         looter = LootReserve:Player(looter);
         item = tonumber(item:match("item:(%d+)"));
+        if item then
+            local _, _, q = GetItemInfo(item);
+            if q >= self.Settings.MinimumLootQuality then
+                quality = q;
+            end
+        end
         count = tonumber(count);
-        if looter and item and count then
+        if looter and item and quality and count then
             LootReserve:TableRemove(self.RecentLoot, item);
             table.insert(self.RecentLoot, item);
             while #self.RecentLoot > self.Settings.MaxRecentLoot do
@@ -530,10 +537,13 @@ function LootReserve.Server:PrepareLootTracking()
         end
 
         for _, item in ipairs(self.CurrentLoot) do
-            LootReserve:TableRemove(self.RecentLoot, item);
-            table.insert(self.RecentLoot, item);
-            while #self.RecentLoot > self.Settings.MaxRecentLoot do
-                table.remove(self.RecentLoot, 1);
+            local _, _, quality = GetItemInfo(item);
+            if quality >= self.Settings.MinimumLootQuality then
+                LootReserve:TableRemove(self.RecentLoot, item);
+                table.insert(self.RecentLoot, item);
+                while #self.RecentLoot > self.Settings.MaxRecentLoot do
+                    table.remove(self.RecentLoot, 1);
+                end
             end
         end
     end);

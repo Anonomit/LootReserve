@@ -76,6 +76,19 @@ LootReserve.Constants =
         Deleted   = -2,
     },
     ClassFilenameToClassID = { },
+    ItemQuality =
+    {
+        [-1] = "All",
+        [0]  = "Junk",
+        [1]  = "Common",
+        [2]  = "Uncommon",
+        [3]  = "Rare",
+        [4]  = "Epic",
+        [5]  = "Legendary",
+        [6]  = "Artifact",
+        [7]  = "Heirloom",
+        [99] = "None",
+    },
 };
 
 local result = LootReserve.Constants.ReserveResult;
