@@ -1513,7 +1513,7 @@
 									{
 										text = LootReserve:ColoredPlayer(player),
 										arg1 = player,
-										func = function(info) ChatFrame_SendTell(info.arg1); end,
+										func = function(info) LootReserve.Server:WhisperPlayerWithoutReserves(info.arg1); LootReserve:ReopenMenu(self, "#whisper"); end,
 									});
 								end
 							end
@@ -1522,7 +1522,7 @@
 						{
 							{ text = "Players Missing Reserves", isTitle = true },
 							{ text = "Whisper All", disabled = #menuWhisperPlayers == 0, func = function() LootReserve.Server:WhisperAllWithoutReserves(); end },
-							{ text = "Whisper...", menuList = menuWhisperPlayers, disabled = #menuWhisperPlayers == 0 },
+							{ text = "Whisper...", arg1 = "#whisper", menuList = menuWhisperPlayers, disabled = #menuWhisperPlayers == 0 },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Misc", isTitle = true },
 							{ text = "Announce Instructions", disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.AcceptingReserves, func = function() LootReserve.Server:BroadcastInstructions(); end },

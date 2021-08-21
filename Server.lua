@@ -2411,6 +2411,21 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
     LootButton_OnClick(fake, "LeftButton"); -- Now wait for OPEN_MASTER_LOOT_LIST/UPDATE_MASTER_LOOT_LIST
 end
 
+function LootReserve.Server:WhisperPlayerWithoutReserves(target)
+    if not self.CurrentSession then return; end
+    if not self.CurrentSession.AcceptingReserves then return; end
+    
+    local member = self.CurrentSession.Members[target]
+    if not member then return; end
+
+    if member.ReservesLeft > 0 and LootReserve:IsPlayerOnline(target) then
+        LootReserve:SendChatMessage(format("Don't forget to reserve your items. You have %d %s left. Whisper  !reserve ItemLinkOrName",
+            member.ReservesLeft,
+            member.ReservesLeft == 1 and "reserve" or "reserves"
+        ), "WHISPER", target);
+    end
+end
+
 function LootReserve.Server:WhisperAllWithoutReserves()
     if not self.CurrentSession then return; end
     if not self.CurrentSession.AcceptingReserves then return; end
