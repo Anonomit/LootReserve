@@ -673,11 +673,14 @@ function LootReserve.Server:PrepareSession()
     if self.CurrentSession.Settings.ChatFallback and not self.ChatFallbackRegistered then
         self.ChatFallbackRegistered = true;
 
-        local prefixA = "!reserve";
-        local prefixB = "!res";
-        local prefixC = "!cancelreserve";
-        local prefixD = "!cancelres";
-        local prefixE = "!unreserve";
+        local prefix1A = "!reserve";
+        local prefix1B = "!res";
+        local prefix1C = "!";
+        
+        local prefix2A = "!cancelreserve";
+        local prefix2B = "!cancelres";
+        local prefix2C = "!cancel";
+        local prefix2D = "!unreserve";
         -- local prefixZ = "!cancelreserves";
 
         local function ProcessChat(text, sender)
@@ -694,16 +697,20 @@ function LootReserve.Server:PrepareSession()
                     self:SendReservesList(sender, true);
                 end
                 return;
-            elseif stringStartsWith(text, prefixA) then
-                text = text:sub(1 + #prefixA);
-            elseif stringStartsWith(text, prefixB) then
-                text = text:sub(1 + #prefixB);
-            elseif stringStartsWith(text, prefixC) then
-                text = "cancel" .. text:sub(1 + #prefixC);
-            elseif stringStartsWith(text, prefixD) then
-                text = "cancel" .. text:sub(1 + #prefixD);
-            elseif stringStartsWith(text, prefixE) then
-                text = "cancel" .. text:sub(1 + #prefixE);
+            elseif stringStartsWith(text, prefix1A) then
+                text = text:sub(1 + #prefix1A);
+            elseif stringStartsWith(text, prefix1B) then
+                text = text:sub(1 + #prefix1B);
+            elseif stringStartsWith(text, prefix2A) then
+                text = "cancel" .. text:sub(1 + #prefix2A);
+            elseif stringStartsWith(text, prefix2B) then
+                text = "cancel" .. text:sub(1 + #prefix2B);
+            elseif stringStartsWith(text, prefix2C) then
+                text = "cancel" .. text:sub(1 + #prefix2C);
+            elseif stringStartsWith(text, prefix2D) then
+                text = "cancel" .. text:sub(1 + #prefix2D);
+            elseif stringStartsWith(text, prefix1C) then
+                text = text:sub(1 + #prefix1C);
             else
                 return;
             end
