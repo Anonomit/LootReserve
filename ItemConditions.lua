@@ -145,6 +145,82 @@ function LootReserve.ItemConditions:HasCustom(server)
     return false;
 end
 
+
+
+local UNUSABLE_EQUIPMENT = {};
+
+local armorClasses = {"Miscellaneous", "Cloth", "Leather", "Mail", "Shields", "Plate", "Librams", "Idols", "Totems"};
+
+local usableArmor = {
+    WARRIOR = {Leather = true, Mail = true, Plate = true, Shields = true},
+    ROGUE   = {Leather = true},
+    MAGE    = {},
+    PRIEST  = {},
+    WARLOCK = {},
+    HUNTER  = {Leather = true, Mail = true},
+    DRUID   = {Leather = true, Idols = true},
+    SHAMAN  = {Leather = true, Mail = true, Shields = true, Totems = true},
+    PALADIN = {Leather = true, Mail = true, Plate = true, Shields = true, Librams = true},
+};
+for _, armorTypes in pairs(usableArmor) do
+    armorTypes.Miscellaneous = true;
+    armorTypes.Cloth = true;
+end
+for class in pairs(usableArmor) do
+    UNUSABLE_EQUIPMENT[class] = {
+        [ARMOR]  = {},
+        [WEAPON] = {},
+    };
+    for _, armorType in ipairs(armorClasses) do
+        UNUSABLE_EQUIPMENT[class][ARMOR][armorType] = not usableArmor[class][armorType];
+    end
+end
+
+local function setClassWeapons(class, ...)
+    for _, weapon in ipairs{...} do
+        UNUSABLE_EQUIPMENT[class][WEAPON][weapon] = nil;
+    end
+end
+
+for class in pairs(usableArmor) do
+    for _, weapon in ipairs{"Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
+                            "Two-Handed Maces", "One-Handed Maces", "Polearms", "Staves", "Daggers",
+                            "Fist Weapons", "Bows", "Crossbows", "Guns", "Thrown", "Wands", "Relic"} do
+        UNUSABLE_EQUIPMENT[class][WEAPON][weapon] = true;
+    end
+end
+
+setClassWeapons("DRUID",   "Two-Handed Maces", "One-Handed Maces", "Staves", "Daggers", "Fist Weapons", "Relic");
+setClassWeapons("HUNTER",  "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
+                           "Polearms", "Staves", "Daggers", "Fist Weapons", "Bows", 
+                           "Crossbows", "Guns", "Thrown");
+setClassWeapons("MAGE",    "One-Handed Swords", "Staves", "Daggers", "Wands");
+setClassWeapons("PALADIN", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
+                           "Two-Handed Maces", "One-Handed Maces", "Polearms", "Relic");
+setClassWeapons("PRIEST",  "One-Handed Maces", "Staves", "Daggers", "Wands");
+setClassWeapons("ROGUE",   "One-Handed Swords", "One-Handed Maces", "Daggers", "Fist Weapons",
+                           "Bows", "Crossbows", "Guns", "Thrown");
+setClassWeapons("SHAMAN",  "Two-Handed Axes", "One-Handed Axes", "Two-Handed Maces", "One-Handed Maces",
+                           "Staves", "Daggers", "Fist Weapons", "Relic");
+setClassWeapons("WARLOCK", "One-Handed Swords", "Staves", "Daggers", "Wands");
+setClassWeapons("WARRIOR", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
+                           "Two-Handed Maces", "One-Handed Maces", "Polearms", "Staves", "Daggers", "Fist Weapons", 
+                           "Bows", "Crossbows", "Guns", "Thrown");
+
+
+local function isUnusable(item, class)
+    local _, _, _, _, _, itemType, itemSubType = GetItemInfo(item);
+    if UNUSABLE_EQUIPMENT[class][itemType] then
+        return UNUSABLE_EQUIPMENT[class][itemType][itemSubType] or false;
+    end
+    return false;
+end
+
+
+function LootReserve.ItemConditions:TestClassEquip(item, playerClass)
+    return not isUnusable(item, playerClass);
+end
+
 function LootReserve.ItemConditions:TestClassMask(classMask, playerClass)
     return classMask and playerClass and bit.band(classMask, bit.lshift(1, playerClass - 1)) ~= 0;
 end
@@ -179,17 +255,26 @@ function LootReserve.ItemConditions:TestPlayer(player, item, server)
     end
 
     local conditions = self:Get(item, server);
-    if conditions then
-        if conditions.Hidden then
+    local equip
+    if server then
+        equip = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings.Equip
+    else
+        equip = LootReserve.Client.Equip;
+    end
+    if conditions or equip then
+        if conditions and conditions.Hidden then
             return false, LootReserve.Constants.ReserveResult.ItemNotReservable;
         end
-        if conditions.ClassMask and not self:TestClassMask(conditions.ClassMask, select(3, LootReserve:UnitClass(player))) then
+        if equip and not self:TestClassEquip(item, select(2, LootReserve:UnitClass(player))) then
             return false, LootReserve.Constants.ReserveResult.FailedClass;
         end
-        if conditions.Faction and not self:TestFaction(conditions.Faction) then
+        if conditions and equip and conditions.ClassMask and not self:TestClassMask(conditions.ClassMask, select(3, LootReserve:UnitClass(player))) then
+            return false, LootReserve.Constants.ReserveResult.FailedClass;
+        end
+        if conditions and conditions.Faction and not self:TestFaction(conditions.Faction) then
             return false, LootReserve.Constants.ReserveResult.FailedFaction;
         end
-        if conditions.Limit and not self:TestLimit(conditions.Limit, item, player, server) then
+        if conditions and conditions.Limit and not self:TestLimit(conditions.Limit, item, player, server) then
             return false, LootReserve.Constants.ReserveResult.FailedLimit;
         end
     end
@@ -211,7 +296,8 @@ end
 
 function LootReserve.ItemConditions:IsItemVisibleOnClient(item)
     local canReserve, conditionResult = self:TestPlayer(LootReserve:Me(), item, false);
-    return canReserve or conditionResult == LootReserve.Constants.ReserveResult.FailedLimit;
+    return canReserve or conditionResult == LootReserve.Constants.ReserveResult.FailedLimit
+           or (conditionResult == LootReserve.Constants.ReserveResult.FailedClass and (LootReserve.Client.Locked or not LootReserve.Client.AcceptingReserves));
 end
 
 function LootReserve.ItemConditions:IsItemReservableOnClient(item)

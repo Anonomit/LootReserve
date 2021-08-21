@@ -15,6 +15,7 @@ LootReserve.Client =
     ItemReserves      = { }, -- { [ItemID] = { "Playername", "Playername", ... }, ... }
     ItemConditions    = { },
     RollRequest       = nil,
+    Equip             = true,
     Blind             = false,
     Multireserve      = nil,
 
@@ -111,7 +112,7 @@ function LootReserve.Client:SearchForServer(startup)
     LootReserve.Comm:BroadcastHello();
 end
 
-function LootReserve.Client:StartSession(server, starting, startTime, acceptingReserves, lootCategory, duration, maxDuration, blind, multireserve)
+function LootReserve.Client:StartSession(server, starting, startTime, acceptingReserves, lootCategory, duration, maxDuration, equip, blind, multireserve)
     self:ResetSession(true);
     self.SessionServer = server;
     self.StartTime = startTime;
@@ -119,6 +120,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
     self.LootCategory = lootCategory;
     self.Duration = duration;
     self.MaxDuration = maxDuration;
+    self.Equip = equip;
     self.Blind = blind;
     self.Multireserve = multireserve;
 
@@ -175,6 +177,7 @@ function LootReserve.Client:ResetSession(refresh)
     self.LootCategory = nil;
     self.ItemReserves = { };
     self.ItemConditions = { };
+    self.Equip = true;
     self.Blind = false;
     self.Multireserve = nil;
     self.PendingItems = { };

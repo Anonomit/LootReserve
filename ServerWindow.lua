@@ -772,6 +772,7 @@ local activeSessionChanges =
     LabelDuration       = "Hide",
     DropDownDuration    = "Hide",
     ButtonLootEdit      = "Disable",
+    CheckButtonEquip    = "Checkbox",
 
     Apply = function(self, panel, active)
         for k, action in pairs(self) do
@@ -788,6 +789,9 @@ local activeSessionChanges =
                 end
             elseif action == "Disable" then
                 region:SetEnabled(not active);
+            elseif action == "Checkbox" then
+                region:SetEnabled(not active);
+                region:SetAlpha(active and 0.5 or 1);
             elseif action == "Label" then
                 local color = active and GRAY_FONT_COLOR or NORMAL_FONT_COLOR;
                 region:SetTextColor(color.r, color.g, color.b);
@@ -799,6 +803,7 @@ local activeSessionChanges =
 function LootReserve.Server:SessionStarted()
     activeSessionChanges:Apply(self.Window.PanelSession, true);
     self:LoadNewSessionSettings();
+    self.Window.PanelSession.CheckButtonEquip:SetChecked(self.CurrentSession.Settings.Equip);
     self.Window.PanelSession.CheckButtonBlind:SetChecked(self.CurrentSession.Settings.Blind);
     self.Window.PanelSession.CheckButtonLock:SetChecked(self.CurrentSession.Settings.Lock);
     self.Window.PanelSession.Duration:SetShown(self.CurrentSession.Settings.Duration ~= 0);
@@ -816,6 +821,7 @@ end
 function LootReserve.Server:SessionStopped()
     activeSessionChanges:Apply(self.Window.PanelSession, true);
     self:LoadNewSessionSettings();
+    self.Window.PanelSession.CheckButtonEquip:SetChecked(self.CurrentSession.Settings.Equip);
     self.Window.PanelSession.CheckButtonBlind:SetChecked(self.CurrentSession.Settings.Blind);
     self.Window.PanelSession.CheckButtonLock:SetChecked(self.CurrentSession.Settings.Lock);
     self.Window.PanelSession.Duration:SetShown(self.CurrentSession.Settings.Duration ~= 0);
@@ -830,6 +836,7 @@ end
 function LootReserve.Server:SessionReset()
     activeSessionChanges:Apply(self.Window.PanelSession, false);
     self:LoadNewSessionSettings();
+    self.Window.PanelSession.CheckButtonEquip:SetChecked(self.NewSessionSettings.Equip);
     self.Window.PanelSession.CheckButtonBlind:SetChecked(self.NewSessionSettings.Blind);
     self.Window.PanelSession.CheckButtonLock:SetChecked(self.NewSessionSettings.Lock);
     self.Window.PanelSession.Duration:Hide();
@@ -895,9 +902,11 @@ function LootReserve.Server:LoadNewSessionSettings()
     self.Window.PanelSession.EditBoxMultireserve:SetMinMaxValues(1, self.NewSessionSettings.MaxReservesPerPlayer);
     setDropDownValue(self.Window.PanelSession.DropDownDuration, self.NewSessionSettings.Duration);
     if self.CurrentSession then
+        self.Window.PanelSession.CheckButtonEquip:SetChecked(self.CurrentSession.Settings.Equip);
         self.Window.PanelSession.CheckButtonBlind:SetChecked(self.CurrentSession.Settings.Blind);
         self.Window.PanelSession.CheckButtonLock:SetChecked(self.CurrentSession.Settings.Lock);
     else
+        self.Window.PanelSession.CheckButtonEquip:SetChecked(self.NewSessionSettings.Equip);
         self.Window.PanelSession.CheckButtonBlind:SetChecked(self.NewSessionSettings.Blind);
         self.Window.PanelSession.CheckButtonLock:SetChecked(self.NewSessionSettings.Lock);
     end

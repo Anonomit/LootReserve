@@ -269,16 +269,18 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
         session.Settings.Duration,
         itemReserves,
         itemConditions,
+        session.Settings.Equip,
         session.Settings.Blind,
         session.Settings.Multireserve or 1);
 end
-LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, startTime, acceptingReserves, membersInfo, lootCategory, duration, maxDuration, itemReserves, itemConditions, blind, multireserve)
+LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, startTime, acceptingReserves, membersInfo, lootCategory, duration, maxDuration, itemReserves, itemConditions, equip, blind, multireserve)
     starting = tonumber(starting) == 1;
     startTime = tonumber(startTime);
     acceptingReserves = tonumber(acceptingReserves) == 1;
     lootCategory = tonumber(lootCategory);
     duration = tonumber(duration);
     maxDuration = tonumber(maxDuration);
+    equip = tonumber(equip) == 1;
     blind = tonumber(blind) == 1;
     multireserve = tonumber(multireserve);
     if multireserve <= 1 then
@@ -290,7 +292,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
         return;
     end
 
-    LootReserve.Client:StartSession(sender, starting, startTime, acceptingReserves, lootCategory, duration, maxDuration, blind, multireserve);
+    LootReserve.Client:StartSession(sender, starting, startTime, acceptingReserves, lootCategory, duration, maxDuration, equip, blind, multireserve);
 
     LootReserve.Client.RemainingReserves = 0;
     local refPlayers = { };

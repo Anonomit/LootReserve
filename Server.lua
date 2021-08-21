@@ -9,6 +9,7 @@ LootReserve.Server =
         Multireserve         = nil,
         Duration             = 300,
         ChatFallback         = true,
+        Equip                = true,
         Blind                = false,
         Lock                 = false,
         ImportedMembers      = { },
