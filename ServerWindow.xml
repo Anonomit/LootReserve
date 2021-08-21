@@ -1942,7 +1942,7 @@
 			<Frame parentKey="NoAuthority" hidden="true" enableMouse="true" frameLevel="1000">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.PanelSession" />
-					<Anchor point="BOTTOMRIGHT" relativeKey="$parent.PanelSession" />
+					<Anchor point="BOTTOMRIGHT" relativeKey="$parent.PanelSession" y="33" />
 				</Anchors>
 				<!--Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background-Dark" /-->
 				<Layers>
@@ -1954,7 +1954,7 @@
 			<Frame parentKey="AwaitingAuthority" hidden="true" enableMouse="true" frameLevel="1000">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.PanelSession" />
-					<Anchor point="BOTTOMRIGHT" relativeKey="$parent.PanelSession" />
+					<Anchor point="BOTTOMRIGHT" relativeKey="$parent.PanelSession" y="61" />
 				</Anchors>
 				<!--Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background-Dark" /-->
 				<Layers>
