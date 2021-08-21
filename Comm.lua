@@ -7,7 +7,6 @@ LootReserve.Comm =
     Handlers  = { },
     Listening = false,
     Debug     = false,
-    SoloDebug = false,
 };
 
 local Opcodes =
@@ -107,28 +106,18 @@ function LootReserve.Comm:StartListening()
     end
 end
 
-function LootReserve.Comm:CanBroadcast(opcode)
-    return LootReserve.Enabled and (self.SoloDebug
-        or IsInRaid()
-        or IsInGroup() and opcode == Opcodes.RequestRoll
-    );
-end
 function LootReserve.Comm:CanWhisper(target, opcode)
-    return LootReserve.Enabled and LootReserve:IsPlayerOnline(target) and (self.SoloDebug
-        or IsInRaid() and LootReserve:UnitInRaid(target)
-        or IsInGroup() and LootReserve:UnitInParty(target) and (opcode == Opcodes.PassRoll and LootReserve.Client.RollRequest and target == LootReserve.Client.RollRequest.Sender
-                                                             or opcode == Opcodes.DeletedRoll)
-    );
+    return LootReserve.Enabled and LootReserve:IsPlayerOnline(target);
 end
 
 function LootReserve.Comm:Broadcast(opcode, ...)
-    if not self:CanBroadcast(opcode) then return; end
+    if not LootReserve.Enabled then return; end
 
     local message;
-    if self.SoloDebug then
-        message = self:SendCommMessage("WHISPER", LootReserve:Me(), opcode, ...);
-    else
+    if IsInGroup() then
         message = self:SendCommMessage(IsInRaid() and "RAID" or "PARTY", nil, opcode, ...);
+    else
+        message = self:SendCommMessage("WHISPER", LootReserve:Me(), opcode, ...);
     end
 
     if self.Debug then

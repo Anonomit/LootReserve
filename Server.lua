@@ -204,7 +204,7 @@ local function stringStartsWith(str, start)
 end
 
 function LootReserve.Server:CanBeServer()
-    return IsInRaid() and (UnitIsGroupLeader("player") or IsMasterLooter()) or LootReserve.Comm.SoloDebug;
+    return not IsInGroup() or UnitIsGroupLeader("player") or IsMasterLooter();
 end
 
 function LootReserve.Server:GetChatChannel(announcement)
@@ -212,10 +212,8 @@ function LootReserve.Server:GetChatChannel(announcement)
         return self.Settings.ChatAsRaidWarning[announcement] and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) and "RAID_WARNING" or "RAID";
     elseif IsInGroup() then
         return "PARTY";
-    elseif LootReserve.Comm.SoloDebug then
-        return "WHISPER", UnitName("player");
     else
-        return "PARTY";
+        return "WHISPER", UnitName("player");
     end
 end
 
