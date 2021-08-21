@@ -257,7 +257,7 @@ function LootReserve:SendChatMessage(text, channel, target)
     if target and not LootReserve:IsPlayerOnline(target) then return; end
     local function Send(text)
         if #text > 0 then
-            if ChatThrottleLib and LootReserve.Server.Settings.ChatThrottle then
+            if ChatThrottleLib then
                 ChatThrottleLib:SendChatMessage("NORMAL", self.Comm.Prefix, text:gsub("\1", " "), channel, nil, target);
             else
                 SendChatMessage(text:gsub("\1", " "), channel, nil, target);
