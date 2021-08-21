@@ -458,39 +458,15 @@ function LootReserve.Server:PrepareLootTracking()
     if self.LootTrackingRegistered then return; end
     self.LootTrackingRegistered = true;
 
-    local loot = LootReserve:FormatToRegexp(LOOT_ITEM);
-    local lootMultiple = LootReserve:FormatToRegexp(LOOT_ITEM_MULTIPLE);
-    local lootSelf = LootReserve:FormatToRegexp(LOOT_ITEM_SELF);
-    local lootSelfMultiple = LootReserve:FormatToRegexp(LOOT_ITEM_SELF_MULTIPLE);
-    LootReserve:RegisterEvent("CHAT_MSG_LOOT", function(text)
-        local looter, item, quality, count;
-        item, count = text:match(lootSelfMultiple);
-        if item and count then
-            looter = LootReserve:Me();
-        else
-            item = text:match(lootSelf);
-            if item then
-                looter = LootReserve:Me();
-                count = 1;
-            else
-                looter, item, count = text:match(lootMultiple);
-                if looter and item and count then
-                    -- ok
-                else
-                    looter, item = text:match(loot);
-                    if looter and item then
-                        count = 1;
-                    else
-                        return;
-                    end
-                end
-            end
-        end
-
+    function AddLootToList(looter, item, count)
+        local quality;
         looter = LootReserve:Player(looter);
-        item = tonumber(item:match("item:(%d+)"));
         if item then
-            local _, _, q = GetItemInfo(item);
+            local name, link, q = GetItemInfo(item);
+            if not name or not link then
+                C_Timer.After(0.25, function() AddLootToList(looter, item, count) end);
+                return;
+            end
             if q >= self.Settings.MinimumLootQuality then
                 quality = q;
             end
@@ -516,6 +492,38 @@ function LootReserve.Server:PrepareLootTracking()
                 self:UpdateReserveList();
             end
         end
+    end
+
+    local loot = LootReserve:FormatToRegexp(LOOT_ITEM);
+    local lootMultiple = LootReserve:FormatToRegexp(LOOT_ITEM_MULTIPLE);
+    local lootSelf = LootReserve:FormatToRegexp(LOOT_ITEM_SELF);
+    local lootSelfMultiple = LootReserve:FormatToRegexp(LOOT_ITEM_SELF_MULTIPLE);
+    LootReserve:RegisterEvent("CHAT_MSG_LOOT", function(text)
+        local looter, item, count;
+        item, count = text:match(lootSelfMultiple);
+        if item and count then
+            looter = LootReserve:Me();
+        else
+            item = text:match(lootSelf);
+            if item then
+                looter = LootReserve:Me();
+                count = 1;
+            else
+                looter, item, count = text:match(lootMultiple);
+                if looter and item and count then
+                    -- ok
+                else
+                    looter, item = text:match(loot);
+                    if looter and item then
+                        count = 1;
+                    else
+                        return;
+                    end
+                end
+            end
+        end
+        item = tonumber(item:match("item:(%d+)"));
+        AddLootToList(looter, item, count);
     end);
     LootReserve:RegisterEvent("LOOT_OPENED", function(text)
         table.wipe(self.CurrentLoot);
