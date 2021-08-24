@@ -493,6 +493,27 @@ function LootReserve.Server:UpdateRollList(lockdown)
             frame.RequestRollButton:SetWidth(frame.RequestRollButton:IsShown() and 32 or 0.00001);
             frame.ItemFrame.Icon:SetTexture(texture);
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
+            
+            if frame.Roll.Winners and #frame.Roll.Winners == 1 then
+                local winner = frame.Roll.Winners[1];
+                if LootReserve:IsLootingItem(item) then
+                    if LibCustomGlow then
+                        C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow) end);
+                    end
+                elseif LootReserve:GetTradeableItemCount(item) > 0 and TradeFrame:IsShown() and LootReserve:Player(UnitName("npc")) == winner and not LootReserve:IsItemBeingTraded(item) then
+                    if LibCustomGlow then
+                        C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow) end);
+                    end
+                elseif LootReserve:GetTradeableItemCount(item) > 0 and not TradeFrame:IsShown() and winner ~= LootReserve:Me() then
+                    if LibCustomGlow then
+                        C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow) end);
+                    end
+                else
+                    if LibCustomGlow then
+                        C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Stop(frame.ItemFrame.IconGlow) end);
+                    end
+                end
+            end
 
             if historical then
                 frame.ItemFrame.Misc:SetText(roll.StartTime and date(format("%%B%s%%e  %%H:%%M", date("*t", roll.StartTime).day < 10 and "" or " "), roll.StartTime) or "");
@@ -544,6 +565,65 @@ function LootReserve.Server:UpdateRollList(lockdown)
                     button:SetAttribute("unit", nil);
                 end
             end
+            
+            frame.ItemFrame.Icon:SetScript("OnMouseUp", function(e, btn)
+                if lockdown then return; end
+                if not LootReserve:IsLootingItem(item) and LootReserve:GetTradeableItemCount(item) < 1 then
+                    return;
+                end
+                local unit, player;
+                if btn == "LeftButton" then
+                    if not frame.Roll.Winners or #frame.Roll.Winners > 1 then return; end
+                    for i = 1, GetNumGroupMembers() do
+                        local name = GetRaidRosterInfo(i);
+                        if name == frame.Roll.Winners[1] then
+                            if IsInRaid() then
+                                unit = "raid" .. i;
+                            else
+                                unit = "party" .. (i-1);
+                            end
+                            player = name;
+                            break;
+                        end
+                    end
+                    if not unit then return; end
+                else
+                    unit = UnitExists("target") and UnitIsPlayer("target") and "target" or UnitExists("npc") and "npc" or "player";
+                    if not unit then return; end
+                end
+                
+                if LootReserve:IsLootingItem(item) then
+                    LootReserve.Server:MasterLootItem(item, player or LootReserve:Me(), multipleWinners)
+                else
+                    local bag, slot;
+                    for b = 0, NUM_BAG_SLOTS do
+                        for s = 1, GetContainerNumSlots(b) do
+                            local itemLink = select(7, GetContainerItemInfo(b, s));
+                            if itemLink and itemLink == link and LootReserve:IsTradeableItem(b, s) then
+                                bag, slot = b, s;
+                                break;
+                            end
+                        end
+                        if bag or slot then break; end
+                    end
+                    if bag and slot then
+                        if TradeFrame:IsShown() and UnitIsUnit(unit, "npc") then
+                            if LootReserve:IsItemBeingTraded(item) then
+                                AcceptTrade();
+                            else
+                                LootReserve:PutItemInTrade(bag, slot);
+                            end
+                        elseif not UnitIsUnit(unit, "player") and CheckInteractDistance(unit, 2) then
+                            if TradeFrame:IsShown() then
+                                TradeFrame:Hide();
+                            end
+                            PickupContainerItem(bag, slot);
+                            DropItemOnUnit(unit);
+                            C_Timer.After(1, ClearCursor);
+                        end
+                    end
+                end
+            end)
 
             frame.ReservesFrame.HeaderPlayer:SetText(roll.RaidRoll and "Raid-rolled to" or roll.Custom and format("Rolled%s by", roll.Phases and format(" for |cFF00FF00%s|r", roll.Phases[1] or "") or "") or "Reserved by");
             frame.ReservesFrame.NoRollsPlaceholder:SetShown(last == 0);
@@ -755,6 +835,10 @@ function LootReserve.Server:OnWindowLoad(window)
     LootReserve:RegisterEvent("PLAYER_REGEN_ENABLED", self.OnExitCombat);
     LootReserve:RegisterEvent("LOOT_READY", "LOOT_CLOSED", "LOOT_SLOT_CHANGED", "LOOT_SLOT_CLEARED", function()
         self:UpdateReserveList();
+        self:UpdateRollList();
+    end);
+    LootReserve:RegisterEvent("TRADE_SHOW", "TRADE_CLOSED", "TRADE_PLAYER_ITEM_CHANGED", "BAG_UPDATE", function()
+        C_Timer.After(0, function() LootReserve.Server:UpdateRollList() end);
     end);
 end
 

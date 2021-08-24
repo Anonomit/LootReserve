@@ -446,6 +446,10 @@ function LootReserve:ForEachRaider(func)
     end
 end
 
+function LootReserve:IsTradeableItem(bag, slot)
+    return not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot);
+end
+
 function LootReserve:GetTradeableItemCount(item)
     local count = 0;
     for bag = 0, 4 do
@@ -453,7 +457,7 @@ function LootReserve:GetTradeableItemCount(item)
         if slots > 0 then
             for slot = 1, slots do
                 local _, quantity, _, _, _, _, _, _, _, bagItem = GetContainerItemInfo(bag, slot);
-                if bagItem and bagItem == item and (not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot)) then
+                if bagItem and bagItem == item and self:IsTradeableItem(bag, slot) then
                     count = count + quantity;
                 end
             end
@@ -482,6 +486,27 @@ function LootReserve:IsItemSoulboundTradeable(bag, slot)
         end
     end
     self.TooltipScanner:Hide();
+    return false;
+end
+
+function LootReserve:IsItemBeingTraded(item)
+    for i = 1, 6 do
+        local link = GetTradePlayerItemLink(i);
+        if link and link:match("item:(%d*)") == tostring(item) then
+            return true;
+        end
+    end
+    return false;
+end
+
+function LootReserve:PutItemInTrade(bag, slot)
+    for i = 1, 6 do
+        if not GetTradePlayerItemInfo(i) then
+            PickupContainerItem(bag, slot);
+            ClickTradeButton(i);
+            return true;
+        end
+    end
     return false;
 end
 

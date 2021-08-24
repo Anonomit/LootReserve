@@ -2413,21 +2413,27 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
             local pending = self.PendingMasterLoot;
             self.PendingMasterLoot = nil;
             if pending and pending.ItemIndex == LootReserve:IsLootingItem(pending.Item) and pending.Timeout >= time() then
-                for playerIndex = 1, MAX_RAID_MEMBERS do
+                for playerIndex = 1, 40 do
+                    if not GetMasterLootCandidate(pending.ItemIndex, playerIndex) then
+                        break;
+                    end
                     if LootReserve:IsSamePlayer(GetMasterLootCandidate(pending.ItemIndex, playerIndex), pending.Player) then
                         GiveMasterLoot(pending.ItemIndex, playerIndex);
                         MasterLooterFrame:Hide();
                         return;
                     end
                 end
-                LootReserve:ShowError("Failed to masterloot %s to %s: player was not found in the list of masterloot candidates", link, LootReserve:ColoredPlayer(pending.Player));
+                if MasterLooterFrame and MasterLooterFrame:IsShown() then
+                   MasterLooterFrame:Hide(); 
+                end
+                LootReserve:ShowError("Failed to masterloot %s to %s: Player is not a masterloot candidate for this item", link, LootReserve:ColoredPlayer(pending.Player));
             end
         end);
     end
 
     -- Prevent duplicate request. Hopefully...
     if self.PendingMasterLoot and self.PendingMasterLoot.Item == item and self.PendingMasterLoot.Timeout >= time() then
-        LootReserve:ShowError("Failed to masterloot %s to %s: there's another master loot attempt in progress. Try again in 5 seconds", link, LootReserve:ColoredPlayer(player));
+        LootReserve:ShowError("Failed to masterloot %s to %s: There's another master loot attempt in progress. Try again in 5 seconds", link, LootReserve:ColoredPlayer(player));
         return;
     end
 
