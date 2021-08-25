@@ -144,7 +144,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
         self.SessionEventsRegistered = true;
 
         LootReserve:RegisterEvent("GROUP_LEFT", function()
-            if self.SessionServer then
+            if self.SessionServer and not LootReserve:IsMe(self.SessionServer) then
                 self:StopSession();
                 self:ResetSession();
                 self:UpdateCategories();
