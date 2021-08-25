@@ -1262,11 +1262,11 @@ function LootReserve.Server:Reserve(player, item, count, chat, skipChecks)
         end
 
         if member.ReservesLeft <= 0 then
-            return Failure(LootReserve.Constants.ReserveResult.NoReservesLeft, member.ReservesLeft, ". You can cancel a reserve with  !reserve cancel [ItemLinkOrName]");
+            return Failure(LootReserve.Constants.ReserveResult.NoReservesLeft, member.ReservesLeft, ". To cancel a reserve, whisper me:  !cancel ItemLinkOrName");
         end
 
         if member.ReservesLeft < count then
-            return Failure(LootReserve.Constants.ReserveResult.NotEnoughReservesLeft, member.ReservesLeft, ". You have %d/%d %s left. You can cancel a reserve with  !reserve cancel [ItemLinkOrName]",
+            return Failure(LootReserve.Constants.ReserveResult.NotEnoughReservesLeft, member.ReservesLeft, ". You have %d/%d %s left. To cancel a reserve, whisper me:  !cancel ItemLinkOrName",
                 member.ReservesLeft,
                 self.CurrentSession.Settings.MaxReservesPerPlayer,
                 self.CurrentSession.Settings.MaxReservesPerPlayer == 1 and "reserve" or "reserves"
@@ -1336,7 +1336,7 @@ function LootReserve.Server:Reserve(player, item, count, chat, skipChecks)
             end
 
             local _, myReserves = LootReserve:GetReservesData(reserve.Players, player);
-            LootReserve:SendChatMessage(format("You reserved %s%s. %s more %s available. You can cancel with  !reserve cancel [ItemLinkOrName]",
+            LootReserve:SendChatMessage(format("You reserved %s%s. %s more %s available. To reserve an item, whisper me:  !reserve ItemLinkOrName",
                 link,
                 myReserves > 1 and format(" x%d", myReserves) or "",
                 member.ReservesLeft == 0 and "No" or tostring(member.ReservesLeft),
@@ -1481,10 +1481,11 @@ function LootReserve.Server:CancelReserve(player, item, count, chat, forced)
                 return;
             end
 
-            LootReserve:SendChatMessage(format(forced and "Your reserve for %s has been forcibly removed. %d more %s available." or "You cancelled your reserve for %s. %d more %s available.",
+            LootReserve:SendChatMessage(format(forced and "Your reserve for %s has been forcibly removed. %d more %s available.%s" or "You cancelled your reserve for %s. %d more %s available.%s",
                 link,
                 member.ReservesLeft,
-                member.ReservesLeft == 1 and "reserve" or "reserves"
+                member.ReservesLeft == 1 and "reserve" or "reserves",
+                "You can check your reserves with  !myreserves"
             ), "WHISPER", player);
         end
         if chat or not self:IsAddonUser(player) then
@@ -1594,7 +1595,7 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
                     LootReserve:SendChatMessage(line, player and "WHISPER" or self:GetChatChannel(), player);
                 end
             else
-                LootReserve:SendChatMessage(onlyRelevant and "You currently have no reserves" or "No reserves were made yet", player and "WHISPER" or self:GetChatChannel(), player);
+                LootReserve:SendChatMessage(onlyRelevant and "You currently have no reserves. To reserve an item, whisper me:  !reserve ItemLinkOrName" or "There are currently no reserves", player and "WHISPER" or self:GetChatChannel(), player);
             end
         end
         Announce();
@@ -2593,6 +2594,6 @@ function LootReserve.Server:BroadcastInstructions()
     end
     LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
     if self.CurrentSession.Settings.Multireserve then
-        LootReserve:SendChatMessage("To reserve an item multiple times, whisper me:  !reserve ItemLinkOrName x" .. self.CurrentSession.Settings.Multireserve, self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
+        LootReserve:SendChatMessage("To reserve an item multiple times, whisper me:  !reserve ItemLinkOrName x" .. self.CurrentSession.Settings.Multireserve, self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
     end
 end
