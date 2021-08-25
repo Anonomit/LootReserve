@@ -73,20 +73,37 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
         local count = member.ReservesLeft and (maxCount - member.ReservesLeft) or #member.ReservedItems;
         frame.Count:SetText(format("|c%s%d|r", count >= maxCount and "FF00FF00" or count > 0 and "FFFFD200" or "FFFF0000", count));
 
-        local last = 0;
         frame.ReservesFrame.Items = frame.ReservesFrame.Items or { };
+        local reservedItems = { };
+        local itemOrder = { };
+        local uniqueCount = 0;
         for _, item in ipairs(member.ReservedItems) do
+            if not reservedItems[item] then
+                reservedItems[item] = 0;
+                uniqueCount = uniqueCount + 1;
+            end
+            reservedItems[item] = reservedItems[item] + 1;
+        end
+        for item, count in pairs(reservedItems) do
+            table.insert(itemOrder, item);
+        end
+        table.sort(itemOrder, function(a, b) return GetItemInfo(a) < GetItemInfo(b) end);
+        
+        local last = 0;
+        local lastCount = 0;
+        for _, item in ipairs(itemOrder) do
+            local count = reservedItems[item];
             last = last + 1;
             local button = frame.ReservesFrame.Items[last];
             while not button do
                 button = CreateFrame("Button", nil, frame.ReservesFrame, "LootReserveServerMembersEditItemTemplate");
-                if last == 1 then
-                    button:SetPoint("LEFT", frame.ReservesFrame, "LEFT");
-                else
-                    button:SetPoint("LEFT", frame.ReservesFrame.Items[last - 1], "RIGHT", 4, 0);
-                end
                 table.insert(frame.ReservesFrame.Items, button);
                 button = frame.ReservesFrame.Items[last];
+            end
+            if last == 1 then
+                button:SetPoint("LEFT", frame.ReservesFrame, "LEFT");
+            else
+                button:SetPoint("LEFT", frame.ReservesFrame.Items[last - 1], "RIGHT", 4 + (lastCount > 0 and 10 or 0) + lastCount*8, 0);
             end
             button:Show();
             button.Item = item;
@@ -94,11 +111,25 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
             local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
             button.Link = link;
             button.Icon.Texture:SetTexture(texture);
-            if #member.ReservedItems == 1 and item ~= 0 then
-                button.Icon.Name:SetText((link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", ""));
+            if uniqueCount == 1 and item ~= 0 then
+                if link then
+                    button.Icon.Name:SetText((link):gsub("[%[%]]", "") .. (count > 1 and ("|r x" .. count) or ""));
+                else
+                    button.Icon.Name:SetText("|cFFFF0000Loading...|r");
+                end
                 button.Icon.Name:Show();
             else
-                button.Icon.Name:Hide();
+                if count > 1 then
+                    button.Icon.Name:SetText("|rx" .. count);
+                    button.Icon.Name:Show();
+                else
+                    button.Icon.Name:Hide();
+                end
+            end
+            if count > 1 then
+               lastCount = #tostring(count);
+            else
+               lastCount = 0; 
             end
         end
         for i = last + 1, #frame.ReservesFrame.Items do

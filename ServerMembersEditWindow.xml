@@ -9,7 +9,7 @@
 						<Texture parentKey="Texture" setAllPoints="true" nonBlocking="true" />
 						<FontString parentKey="Name" inherits="GameFontNormal" hidden="true" wordwrap="false" justifyH="LEFT">
 							<Anchors>
-								<Anchor point="LEFT" relativePoint="RIGHT" x="5" />
+								<Anchor point="LEFT" relativePoint="RIGHT" x="1" />
 								<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent" relativePoint="RIGHT" />
 							</Anchors>
 						</FontString>
