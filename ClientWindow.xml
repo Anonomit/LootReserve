@@ -366,6 +366,29 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+			<Button parentKey="OptOut" inherits="UIPanelButtonTemplate" text="Opt Out" frameLevel="100" hidden="true">
+				<Size x="80" y="19" />
+		  	<Anchors>
+		  		<Anchor point="TOPRIGHT" x="-25" y="-1" />
+		  	</Anchors>
+		  	<Scripts>
+		  		<OnClick>
+    				LootReserve.Client.Window:Hide();
+		  			LootReserve.Client:OptOut();
+		  		</OnClick>
+		  	</Scripts>
+			</Button>
+			<Button parentKey="OptIn" inherits="UIPanelButtonTemplate" text="Opt In " frameLevel="100" hidden="true">
+				<Size x="80" y="19" />
+		  	<Anchors>
+		  		<Anchor point="TOPRIGHT" x="-25" y="-1" />
+		  	</Anchors>
+		  	<Scripts>
+		  		<OnClick>
+		  			LootReserve.Client:OptIn();
+		  		</OnClick>
+		  	</Scripts>
+			</Button>
 			<StatusBar parentKey="Duration" inherits="LootReserveDurationStatusBar">
 				<KeyValues>
 					<KeyValue key="server" value="false" type="boolean" />

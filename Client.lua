@@ -9,6 +9,7 @@ LootReserve.Client =
     AcceptingReserves = false,
     RemainingReserves = 0,
     Locked            = false,
+    OptedOut          = false,
     LootCategory      = nil,
     Duration          = nil,
     MaxDuration       = nil,
@@ -33,6 +34,7 @@ LootReserve.Client =
     GlobalFavorites    = { },
 
     PendingItems             = { },
+    PendingOpt               = nil,
     ServerSearchTimeoutTime  = nil,
     DurationUpdateRegistered = false,
     SessionEventsRegistered  = false,
@@ -172,15 +174,16 @@ function LootReserve.Client:StopSession()
 end
 
 function LootReserve.Client:ResetSession(refresh)
-    self.SessionServer = nil;
+    self.SessionServer     = nil;
     self.RemainingReserves = 0;
-    self.LootCategory = nil;
-    self.ItemReserves = { };
-    self.ItemConditions = { };
-    self.Equip = true;
-    self.Blind = false;
-    self.Multireserve = nil;
-    self.PendingItems = { };
+    self.LootCategory      = nil;
+    self.ItemReserves      = { };
+    self.ItemConditions    = { };
+    self.Equip             = true;
+    self.Blind             = false;
+    self.Multireserve      = nil;
+    self.PendingItems      = { };
+    self.PendingOps        = nil;
 
     if not refresh then
         self:StopCategoryFlashing();
@@ -231,4 +234,27 @@ function LootReserve.Client:CancelReserve(item)
     LootReserve.Client:SetItemPending(item, true);
     LootReserve.Client:UpdateReserveStatus();
     LootReserve.Comm:SendCancelReserve(item);
+end
+
+function LootReserve.Client:IsOptPending()
+    return self.PendingOpt;
+end
+function LootReserve.Client:SetOptPending(pending)
+    self.PendingOpt = pending or nil;
+end
+
+function LootReserve.Client:OptOut()
+    if not self.SessionServer then return; end
+    if not self.AcceptingReserves then return; end
+    self:SetOptPending(true);
+    LootReserve.Client:UpdateReserveStatus();
+    LootReserve.Comm:SendOptOut();
+end
+
+function LootReserve.Client:OptIn()
+    if not self.SessionServer then return; end
+    if not self.AcceptingReserves then return; end
+    self:SetOptPending(true);
+    LootReserve.Client:UpdateReserveStatus();
+    LootReserve.Comm:SendOptIn();
 end

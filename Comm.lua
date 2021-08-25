@@ -25,6 +25,10 @@ local Opcodes =
     RequestRoll               = 12,
     PassRoll                  = 13,
     DeletedRoll               = 14,
+    OptOut                    = 15,
+    OptIn                     = 16,
+    OptResult                 = 17,
+    OptInfo                   = 18,
 };
 
 local LAST_UNCOMPRESSED_OPCODE = Opcodes.Hello;
@@ -232,6 +236,14 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
         end
     end
 
+    local optInfo = "";
+    local refPlayers = { };
+    for player, member in pairs(session.Members) do
+        if not target or LootReserve:IsSamePlayer(player, target) then
+            optInfo = optInfo .. (#optInfo > 0 and ";" or "") .. format("%s=%s", player, strjoin(",", member.OptedOut and "1" or "0"));
+        end
+    end
+
     local refPlayerToIndex = { };
     for index, player in ipairs(refPlayers) do
         refPlayerToIndex[player] = index;
@@ -271,9 +283,10 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
         itemConditions,
         session.Settings.Equip,
         session.Settings.Blind,
-        session.Settings.Multireserve or 1);
+        session.Settings.Multireserve or 1,
+        optInfo);
 end
-LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, startTime, acceptingReserves, membersInfo, lootCategory, duration, maxDuration, itemReserves, itemConditions, equip, blind, multireserve)
+LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, startTime, acceptingReserves, membersInfo, lootCategory, duration, maxDuration, itemReserves, itemConditions, equip, blind, multireserve, optInfo)
     starting = tonumber(starting) == 1;
     startTime = tonumber(startTime);
     acceptingReserves = tonumber(acceptingReserves) == 1;
@@ -308,6 +321,18 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
             end
         end
     end
+    
+    if #optInfo > 0 then
+        optInfo = { strsplit(";", optInfo) };
+        for _, infoStr in ipairs(optInfo) do
+            local player, info = strsplit("=", infoStr, 2);
+            table.insert(refPlayers, player);
+            if LootReserve:IsMe(player) then
+                local optOut = strsplit(",", info);
+                LootReserve.Client.OptedOut = optOut == "1" or nil;
+            end
+        end
+    end
 
     LootReserve.Client.ItemReserves = { };
     if #itemReserves > 0 then
@@ -336,7 +361,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
 
     LootReserve.Client:UpdateCategories();
     LootReserve.Client:UpdateLootList();
-    if acceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 then
+    if acceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
         LootReserve.Client.Window:Show();
     end
 end
@@ -361,6 +386,72 @@ LootReserve.Comm.Handlers[Opcodes.SessionReset] = function(sender)
         LootReserve.Client:ResetSession();
         LootReserve.Client:UpdateCategories();
         LootReserve.Client:UpdateLootList();
+    end
+end
+function LootReserve.Comm:SendOptInfo(target, out)
+    local session = LootReserve.Server.CurrentSession;
+    if not session then return; end
+
+    target = target and LootReserve:Player(target);
+    if target and not session.Members[target] then return; end
+
+    LootReserve.Comm:Send(target, Opcodes.OptInfo, out == true);
+end
+LootReserve.Comm.Handlers[Opcodes.OptInfo] = function(sender, out)
+    out = tonumber(out) == 1;
+
+    if LootReserve.Client.SessionServer and LootReserve.Client.SessionServer ~= sender and LootReserve.Client.StartTime > startTime then
+        LootReserve:ShowError("%s is attempting to broadcast their older loot reserve session, but you're already connected to %s.|n|nPlease tell %s that they need to reset their session.", LootReserve:ColoredPlayer(sender), LootReserve:ColoredPlayer(LootReserve.Client.SessionServer), LootReserve:ColoredPlayer(sender));
+        return;
+    end
+
+    LootReserve.Client.OptedOut = out;
+
+    LootReserve.Client:UpdateReserveStatus();
+    if acceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
+        LootReserve.Client.Window:Show();
+    elseif LootReserve.Client.OptedOut then
+        LootReserve.Client.Window:Hide();
+    end
+end
+
+-- Opt Out
+function LootReserve.Comm:SendOptOut()
+    LootReserve.Comm:WhisperServer(Opcodes.OptOut);
+end
+LootReserve.Comm.Handlers[Opcodes.OptOut] = function(sender)
+    if LootReserve.Server.CurrentSession then
+        LootReserve.Server:Opt(sender, true);
+    end
+end
+
+-- Opt In
+function LootReserve.Comm:SendOptIn()
+    LootReserve.Comm:WhisperServer(Opcodes.OptIn);
+end
+LootReserve.Comm.Handlers[Opcodes.OptIn] = function(sender)
+    if LootReserve.Server.CurrentSession then
+        LootReserve.Server:Opt(sender, nil);
+    end
+end
+
+-- OptResult
+function LootReserve.Comm:SendOptResult(target, result)
+    LootReserve.Comm:Whisper(target, Opcodes.OptResult,
+        result);
+end
+LootReserve.Comm.Handlers[Opcodes.OptResult] = function(sender, result)
+    result = tonumber(result);
+
+    if LootReserve.Client.SessionServer == sender then
+
+        local text = LootReserve.Constants.OptResultText[result];
+        if not text or #text > 0 then
+            LootReserve:ShowError("Failed to opt out/in:|n%s", text or "Unknown error");
+        end
+
+        LootReserve.Client:SetOptPending(false);
+        LootReserve.Client:UpdateReserveStatus();
     end
 end
 

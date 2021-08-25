@@ -2,14 +2,20 @@ function LootReserve.Client:UpdateReserveStatus()
     if not self.SessionServer then
         self.Window.RemainingText:SetText("|cFF808080Loot reserves are not started in your raid|r");
         self.Window.RemainingTextGlow:SetVertexColor(1, 1, 1, 0.15);
+        self.Window.OptOut:SetShown(false);
+        self.Window.OptIn:SetShown(false);
     elseif not self.AcceptingReserves then
         self.Window.RemainingText:SetText("|cFF808080Loot reserves are no longer being accepted|r");
         --self.Window.RemainingTextGlow:SetVertexColor(1, 0, 0, 0.15);
         -- animated in LootReserve.Client:OnWindowLoad instead
+        self.Window.OptOut:SetShown(false);
+        self.Window.OptIn:SetShown(false);
     elseif self.Locked then
         self.Window.RemainingText:SetText("|cFF808080You are locked-in and cannot change your reserves|r");
         --self.Window.RemainingTextGlow:SetVertexColor(1, 0, 0, 0.15);
         -- animated in LootReserve.Client:OnWindowLoad instead
+        self.Window.OptOut:SetShown(false);
+        self.Window.OptIn:SetShown(false);
     else
         local reserves = LootReserve.Client:GetRemainingReserves();
         self.Window.RemainingText:SetText(format("You can reserve|cFF%s %d |rmore |4item:items;", reserves > 0 and "00FF00" or "FF0000", reserves));
@@ -17,7 +23,12 @@ function LootReserve.Client:UpdateReserveStatus()
         --local r, g, b = self.Window.Duration:GetStatusBarColor();
         --self.Window.RemainingTextGlow:SetVertexColor(r, g, b, 0.15);
         -- animated in LootReserve.Client:OnWindowLoad instead
+        self.Window.OptOut:SetShown(not self.OptedOut);
+        self.Window.OptIn:SetShown(self.OptedOut);
     end
+
+    self.Window.OptOut:SetEnabled(not self:IsOptPending());
+    self.Window.OptIn:SetEnabled(not self:IsOptPending());
 
     local list = self.Window.Loot.Scroll.Container;
     list.Frames = list.Frames or { };

@@ -108,15 +108,15 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         frame:Hide();
     end
 
-    local totalPlayers = 0;
+    local doneReserving = 0;
     if self.CurrentSession then
         for _, member in pairs(self.CurrentSession.Members) do
-            if member.ReservesLeft == 0 then
-                totalPlayers = totalPlayers + 1;
+            if member.ReservesLeft == 0 or member.OptedOut then
+                doneReserving = doneReserving + 1;
             end
         end
     end
-    self.Window.ButtonMenu:SetText(format("|cFF00FF00%d|r/%d", totalPlayers, GetNumGroupMembers()));
+    self.Window.ButtonMenu:SetText(format("|cFF00FF00%d|r/%d", doneReserving, GetNumGroupMembers()));
     if GameTooltip:IsOwned(self.Window.ButtonMenu) then
         self.Window.ButtonMenu:UpdateTooltip();
     end

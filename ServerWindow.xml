@@ -1567,7 +1567,7 @@
 							local missingPlayers = { };
 							if LootReserve.Server.CurrentSession then
 								for player, member in pairs(LootReserve.Server.CurrentSession.Members) do
-									if member.ReservesLeft > 0 then
+									if member.ReservesLeft > 0 and not member.OptedOut then
 										table.insert(missingPlayers, player);
 									end
 								end
@@ -1585,10 +1585,10 @@
 						local menuWhisperPlayers = { };
 						if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.AcceptingReserves then
 							for player, member in pairs(LootReserve.Server.CurrentSession.Members) do
-								if member.ReservesLeft > 0 then
+								if member.ReservesLeft > 0 and not member.OptedOut then
 									table.insert(menuWhisperPlayers,
 									{
-										text = LootReserve:ColoredPlayer(player),
+										text = LootReserve:ColoredPlayer(player) .. (LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""),
 										arg1 = player,
 										func = function(info) LootReserve.Server:WhisperPlayerWithoutReserves(info.arg1); LootReserve:ReopenMenu(self, "#whisper"); end,
 									});

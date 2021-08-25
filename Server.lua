@@ -580,7 +580,7 @@ function LootReserve.Server:UpdateGroupMembers()
         -- Remove member info for players who left with no reserves
         local leavers = { };
         for player, member in pairs(self.CurrentSession.Members) do
-            if not LootReserve:UnitInRaid(player) and #member.ReservedItems == 0 then
+            if not LootReserve:UnitInRaid(player) and not LootReserve:UnitInParty(player) and #member.ReservedItems == 0 then
                 table.insert(leavers, player);
 
                 -- for i = #member.ReservedItems, 1, -1 do
@@ -602,6 +602,7 @@ function LootReserve.Server:UpdateGroupMembers()
                     ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
                     ReservedItems = { },
                     Locked        = nil,
+                    OptedOut      = nil,
                 };
                 self.MembersEdit:UpdateMembersList();
             end
@@ -700,6 +701,8 @@ function LootReserve.Server:PrepareSession()
         local prefix2C = "!cancel";
         local prefix2D = "!unreserve";
         -- local prefixZ = "!cancelreserves";
+        
+        local prefix3A = "!opt"
 
         local function ProcessChat(text, sender)
             sender = LootReserve:Player(sender);
@@ -718,6 +721,14 @@ function LootReserve.Server:PrepareSession()
             elseif text == "!myreserve" or text == "!myreserves" or text == "!myres" then
                 if self.Settings.ChatReservesList then
                     self:SendReservesList(sender, true, true);
+                end
+                return;
+            elseif stringStartsWith(text, "!opt") then
+                local direction = text:match("^!opt%s*(.*)");
+                if stringStartsWith(direction, "out") then
+                    self:Opt(sender, true, true);
+                elseif stringStartsWith(direction, "in") then
+                    self:Opt(sender, nil, true);
                 end
                 return;
             elseif stringStartsWith(text, prefix1A) then
@@ -955,9 +966,10 @@ function LootReserve.Server:StartSession()
         {
             [PlayerName] =
             {
-                ReservesLeft = self.CurrentSession.Settings.MaxReservesPerPlayer,
+                ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
                 ReservedItems = { ItemID, ItemID, ... },
-                Locked = nil,
+                Locked        = nil,
+                OptedOut      = nil,
             },
             ...
         },
@@ -968,7 +980,7 @@ function LootReserve.Server:StartSession()
             [ItemID] =
             {
                 TotalCount = 0,
-                Players = { PlayerName, PlayerName, ... },
+                Players    = { PlayerName, PlayerName, ... },
             },
             ...
         },
@@ -978,9 +990,9 @@ function LootReserve.Server:StartSession()
         {
             [ItemID] =
             {
-                Item = ItemID,
+                Item      = ItemID,
                 StartTime = time(),
-                Players = { PlayerName, PlayerName, ... },
+                Players   = { PlayerName, PlayerName, ... },
             },
             ...
         },
@@ -991,7 +1003,7 @@ function LootReserve.Server:StartSession()
             [ItemID] =
             {
                 TotalCount = 0,
-                Players = { [PlayerName] = Count, ... },
+                Players    = { [PlayerName] = Count, ... },
             },
             ...
         },
@@ -1155,6 +1167,54 @@ function LootReserve.Server:ResetSession()
     return true;
 end
 
+function LootReserve.Server:Opt(player, out, chat)
+    local function Failure(result, reservesLeft, postText, ...)
+        LootReserve.Comm:SendOptResult(player, result);
+        if chat then
+            local text = LootReserve.Constants.OptResultText[result] or "";
+            if postText then
+                text = text .. postText;
+            end
+            LootReserve:SendChatMessage(format(text, ...), "WHISPER", player);
+        end
+        return false;
+    end
+
+    if not LootReserve:IsPlayerOnline(player) then
+        return Failure(LootReserve.Constants.ReserveResult.NotInRaid, 0);
+    end
+
+    if not self.CurrentSession or not self.CurrentSession.AcceptingReserves then
+        return Failure(LootReserve.Constants.ReserveResult.NoSession, 0);
+    end
+
+    local member = self.CurrentSession.Members[player];
+    if not member then
+        return Failure(LootReserve.Constants.ReserveResult.NotMember, 0);
+    end
+    
+    member.OptedOut = out;
+
+    -- Send packets
+    LootReserve.Comm:SendOptResult(player, LootReserve.Constants.OptResult.OK);
+    LootReserve.Comm:SendOptInfo(player, out);
+
+    -- Send chat messages
+    if self.CurrentSession.Settings.ChatFallback then
+        if chat or not self:IsAddonUser(player) then
+            LootReserve:SendChatMessage(format("You have opted %s using your %d remaining reserves. You can opt back %s with  !opt %s",
+                member.OptedOut and "out of" or "into",
+                member.ReservesLeft,
+                member.OptedOut and "in" or "out",
+                member.OptedOut and "in" or "out"
+            ), "WHISPER", player);
+        end
+    end
+
+    self:UpdateReserveList()
+    return true;
+end
+
 function LootReserve.Server:Reserve(player, item, count, chat, skipChecks)
     count = math.max(1, count or 1);
 
@@ -1246,6 +1306,7 @@ function LootReserve.Server:Reserve(player, item, count, chat, skipChecks)
             break;
         end
 
+        member.OptedOut = nil;
         member.ReservesLeft = member.ReservesLeft - 1;
         table.insert(member.ReservedItems, item);
         table.insert(reserve.Players, player);
@@ -1254,6 +1315,7 @@ function LootReserve.Server:Reserve(player, item, count, chat, skipChecks)
 
     -- Send packets
     LootReserve.Comm:SendReserveResult(player, item, result, member.ReservesLeft);
+    LootReserve.Comm:SendOptInfo(player, member.OptedOut);
     if self.CurrentSession.Settings.Blind then
         local _, myReserves = LootReserve:GetReservesData(reserve.Players, player);
         LootReserve.Comm:SendReserveInfo(player, item, LootReserve:RepeatedTable(player, myReserves));
@@ -1388,12 +1450,14 @@ function LootReserve.Server:CancelReserve(player, item, count, chat, forced)
             end
         end
 
+        member.OptedOut = nil;
         member.ReservesLeft = math.min(member.ReservesLeft + 1, self.CurrentSession.Settings.MaxReservesPerPlayer);
         LootReserve:TableRemove(member.ReservedItems, item);
         LootReserve:TableRemove(reserve.Players, player);
     end
 
     -- Send packets
+    LootReserve.Comm:SendOptInfo(player, member.OptedOut);
     LootReserve.Comm:SendCancelReserveResult(player, item, forced and LootReserve.Constants.CancelReserveResult.Forced or LootReserve.Constants.CancelReserveResult.OK, member.ReservesLeft);
     if self.CurrentSession.Settings.Blind then
         local _, myReserves = LootReserve:GetReservesData(reserve.Players, player);
@@ -2481,12 +2545,16 @@ function LootReserve.Server:WhisperPlayerWithoutReserves(target)
     local member = self.CurrentSession.Members[target]
     if not member then return; end
 
-    if member.ReservesLeft > 0 and LootReserve:IsPlayerOnline(target) then
+    if member.ReservesLeft > 0 and not member.OptedOut and LootReserve:IsPlayerOnline(target) then
         if member.Locked then
             member.Locked = false;
-            LootReserve.Comm:SendSessionInfo(target);
         end
+        LootReserve.Comm:SendSessionInfo(target);
         LootReserve:SendChatMessage(format("Don't forget to reserve your items. You have %d %s left. Whisper  !reserve ItemLinkOrName",
+            member.ReservesLeft,
+            member.ReservesLeft == 1 and "reserve" or "reserves"
+        ), "WHISPER", target);
+        LootReserve:SendChatMessage(format("You can opt out of using your remaining %d %s by whispering  !opt out",
             member.ReservesLeft,
             member.ReservesLeft == 1 and "reserve" or "reserves"
         ), "WHISPER", target);
@@ -2498,12 +2566,16 @@ function LootReserve.Server:WhisperAllWithoutReserves()
     if not self.CurrentSession.AcceptingReserves then return; end
 
     for player, member in pairs(self.CurrentSession.Members) do
-        if member.ReservesLeft > 0 and LootReserve:IsPlayerOnline(player) then
+        if member.ReservesLeft > 0 and not member.OptedOut and LootReserve:IsPlayerOnline(player) then
             if member.Locked then
                 member.Locked = false;
-                LootReserve.Comm:SendSessionInfo(target);
             end
+            LootReserve.Comm:SendSessionInfo(target);
             LootReserve:SendChatMessage(format("Don't forget to reserve your items. You have %d %s left. Whisper  !reserve ItemLinkOrName",
+                member.ReservesLeft,
+                member.ReservesLeft == 1 and "reserve" or "reserves"
+            ), "WHISPER", player);
+            LootReserve:SendChatMessage(format("You can opt out of using your remaining %d %s by whispering  !opt out",
                 member.ReservesLeft,
                 member.ReservesLeft == 1 and "reserve" or "reserves"
             ), "WHISPER", player);

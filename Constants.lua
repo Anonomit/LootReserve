@@ -1,6 +1,13 @@
 LootReserve = LootReserve or { };
 LootReserve.Constants =
 {
+    OptResult =
+    {
+        OK                       = 0,
+        NotInRaid                = 1,
+        NoSession                = 2,
+        NotMember                = 3,
+    },
     ReserveResult =
     {
         OK                       = 0,
@@ -89,6 +96,15 @@ LootReserve.Constants =
         [7]  = "Heirloom",
         [99] = "None",
     },
+};
+
+local result = LootReserve.Constants.OptResult;
+LootReserve.Constants.OptResultText =
+{
+    [result.OK]                       = "",
+    [result.NotInRaid]                = "You are not in the raid",
+    [result.NoSession]                = "Loot reserves aren't active in your raid",
+    [result.NotMember]                = "You are not participating in loot reserves",
 };
 
 local result = LootReserve.Constants.ReserveResult;
