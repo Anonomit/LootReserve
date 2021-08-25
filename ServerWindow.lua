@@ -494,7 +494,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
             frame.ItemFrame.Icon:SetTexture(texture);
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
             
-            if frame.Roll.Winners and #frame.Roll.Winners == 1 then
+            if frame.Roll.Winners and #frame.Roll.Winners == 1 and not UnitAffectingCombat("player") then
                 local winner = frame.Roll.Winners[1];
                 if LootReserve:IsLootingItem(item) then
                     if LibCustomGlow then
@@ -512,6 +512,10 @@ function LootReserve.Server:UpdateRollList(lockdown)
                     if LibCustomGlow then
                         C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Stop(frame.ItemFrame.IconGlow) end);
                     end
+                end
+            else
+                if LibCustomGlow then
+                    C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Stop(frame.ItemFrame.IconGlow) end);
                 end
             end
 
