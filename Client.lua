@@ -24,7 +24,7 @@ LootReserve.Client =
     {
         RollRequestShow             = true,
         RollRequestShowUnusable     = false,
-        RollRequestGlowOnlyReserved = false,
+        RollRequestGlowOnlyReserved = true,
         CollapsedExpansions         = { },
         CollapsedCategories         = { },
         SwapLDBButtons              = false,
