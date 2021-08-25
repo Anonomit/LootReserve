@@ -408,7 +408,7 @@ LootReserve.Comm.Handlers[Opcodes.OptInfo] = function(sender, out)
     LootReserve.Client.OptedOut = out;
 
     LootReserve.Client:UpdateReserveStatus();
-    if acceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
+    if LootReserve.Client.SessionServer and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
         LootReserve.Client.Window:Show();
     elseif LootReserve.Client.OptedOut then
         LootReserve.Client.Window:Hide();

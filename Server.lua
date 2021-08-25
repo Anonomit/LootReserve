@@ -183,7 +183,7 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_ANNOUNCE_BLIND_RESERVES"] =
     whileDead    = 1,
     hideOnEscape = 1,
     OnAccept = function(self)
-        LootReserve.Server:SendReservesList(nil, false, nil, true);
+        LootReserve.Server:SendReservesList(nil, nil, true);
     end,
 };
 
@@ -210,7 +210,7 @@ end
 
 function LootReserve.Server:GetChatChannel(announcement)
     if IsInRaid() then
-        return self.Settings.ChatAsRaidWarning[announcement] and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) and "RAID_WARNING" or "RAID";
+        return announcement and self.Settings.ChatAsRaidWarning[announcement] and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) and "RAID_WARNING" or "RAID";
     elseif IsInGroup() then
         return "PARTY";
     else
@@ -701,8 +701,6 @@ function LootReserve.Server:PrepareSession()
         local prefix2C = "!cancel";
         local prefix2D = "!unreserve";
         -- local prefixZ = "!cancelreserves";
-        
-        local prefix3A = "!opt"
 
         local function ProcessChat(text, sender)
             sender = LootReserve:Player(sender);
@@ -715,12 +713,12 @@ function LootReserve.Server:PrepareSession()
             text = LootReserve:StringTrim(text);
             if text == "!reserves" then
                 if self.Settings.ChatReservesList then
-                    self:SendReservesList(sender, true);
+                    self:SendReservesList(sender);
                 end
                 return;
             elseif text == "!myreserve" or text == "!myreserves" or text == "!myres" then
                 if self.Settings.ChatReservesList then
-                    self:SendReservesList(sender, true, true);
+                    self:SendReservesList(sender, true);
                 end
                 return;
             elseif stringStartsWith(text, "!opt") then
@@ -1208,8 +1206,10 @@ function LootReserve.Server:Opt(player, out, chat)
                 member.OptedOut and "in" or "out",
                 member.OptedOut and "in" or "out"
             ), "WHISPER", player);
+            self:SendReservesList(player, true);
         end
     end
+    
 
     self:UpdateReserveList()
     return true;
@@ -1528,7 +1528,7 @@ function LootReserve.Server:CancelReserve(player, item, count, chat, forced)
     return true;
 end
 
-function LootReserve.Server:SendReservesList(player, chat, onlyRelevant, force)
+function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
     if player then
         if not LootReserve:IsPlayerOnline(player) then
             LootReserve:SendChatMessage("You are not in the raid", "WHISPER", player);
@@ -1589,12 +1589,12 @@ function LootReserve.Server:SendReservesList(player, chat, onlyRelevant, force)
             end
 
             if #list > 0 then
-                LootReserve:SendChatMessage("%seserved items:", onlyRelevant and "Your r" or "R", player and "WHISPER" or "RAID", player);
+                LootReserve:SendChatMessage(format("%seserved items:", onlyRelevant and "Your r" or "R"), player and "WHISPER" or self:GetChatChannel(), player);
                 for _, line in ipairs(list) do
-                    LootReserve:SendChatMessage(line, player and "WHISPER" or "RAID", player);
+                    LootReserve:SendChatMessage(line, player and "WHISPER" or self:GetChatChannel(), player);
                 end
             else
-                LootReserve:SendChatMessage("No reserves were made yet", player and "WHISPER" or "RAID", player);
+                LootReserve:SendChatMessage(onlyRelevant and "You currently have no reserves" or "No reserves were made yet", player and "WHISPER" or self:GetChatChannel(), player);
             end
         end
         Announce();
