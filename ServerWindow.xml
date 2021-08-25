@@ -1575,7 +1575,7 @@
 							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 							GameTooltip:SetText(#missingPlayers == 0 and "|cFF00FF00All players reserved items|r" or format("%d |4player:players; missing reserves:", #missingPlayers));
 							for _, player in ipairs(missingPlayers) do
-								GameTooltip:AddLine(LootReserve:ColoredPlayer(player));
+								GameTooltip:AddLine(format("%s%s", LootReserve:ColoredPlayer(player), LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""));
 							end
 							GameTooltip:AddLine("Click for more options", GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
 							GameTooltip:Show();
@@ -1588,7 +1588,7 @@
 								if member.ReservesLeft > 0 and not member.OptedOut then
 									table.insert(menuWhisperPlayers,
 									{
-										text = LootReserve:ColoredPlayer(player) .. (LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""),
+										text = format("%s%s", LootReserve:ColoredPlayer(player), LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""),
 										arg1 = player,
 										func = function(info) LootReserve.Server:WhisperPlayerWithoutReserves(info.arg1); LootReserve:ReopenMenu(self, "#whisper"); end,
 									});

@@ -109,14 +109,16 @@ function LootReserve.Server:UpdateReserveList(lockdown)
     end
 
     local doneReserving = 0;
+    local memberCount   = 0;
     if self.CurrentSession then
         for _, member in pairs(self.CurrentSession.Members) do
+            memberCount = memberCount + 1;
             if member.ReservesLeft == 0 or member.OptedOut then
                 doneReserving = doneReserving + 1;
             end
         end
     end
-    self.Window.ButtonMenu:SetText(format("|cFF00FF00%d|r/%d", doneReserving, GetNumGroupMembers()));
+    self.Window.ButtonMenu:SetText(format("|cFF00FF00%d|r/%d", doneReserving, memberCount));
     if GameTooltip:IsOwned(self.Window.ButtonMenu) then
         self.Window.ButtonMenu:UpdateTooltip();
     end
@@ -185,7 +187,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
                 local button = CreateFrame("Button", nil, frame.ReservesFrame, lockdown and "LootReserveReserveListPlayerTemplate" or "LootReserveReserveListPlayerSecureTemplate");
                 table.insert(frame.ReservesFrame.Players, button);
             end
-            local unit = LootReserve:GetRaidUnitID(player) or LootReserve:GetPartyUnitID(player);
+            local unit = LootReserve:GetGroupUnitID(player);
             local button = frame.ReservesFrame.Players[i];
             if button.init then button:init(); end
             button:Show();
@@ -544,7 +546,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                     local button = CreateFrame("Button", nil, frame.ReservesFrame, lockdown and "LootReserveReserveListPlayerTemplate" or "LootReserveReserveListPlayerSecureTemplate");
                     table.insert(frame.ReservesFrame.Players, button);
                 end
-                local unit = LootReserve:GetRaidUnitID(player) or LootReserve:GetPartyUnitID(player);
+                local unit = LootReserve:GetGroupUnitID(player);
                 local button = frame.ReservesFrame.Players[last];
                 if button.init then button:init(); end
                 button:Show();
@@ -578,23 +580,12 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 local unit, player;
                 if btn == "LeftButton" then
                     if not frame.Roll.Winners or #frame.Roll.Winners > 1 then return; end
-                    for i = 1, GetNumGroupMembers() do
-                        local name = GetRaidRosterInfo(i);
-                        if name == frame.Roll.Winners[1] then
-                            if IsInRaid() then
-                                unit = "raid" .. i;
-                            else
-                                unit = "party" .. (i-1);
-                            end
-                            player = name;
-                            break;
-                        end
-                    end
-                    if not unit then return; end
+                    player = frame.Roll.Winners[1];
+                    unit = LootReserve:GetGroupUnitID(player);
                 else
                     unit = UnitExists("target") and UnitIsPlayer("target") and "target" or UnitExists("npc") and "npc" or "player";
-                    if not unit then return; end
                 end
+                if not unit then return; end
                 
                 if LootReserve:IsLootingItem(item) then
                     LootReserve.Server:MasterLootItem(item, player or LootReserve:Me(), multipleWinners)

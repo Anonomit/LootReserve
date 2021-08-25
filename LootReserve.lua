@@ -345,7 +345,7 @@ function LootReserve:IsPlayerOnline(player)
     end);
 end
 
-function LootReserve:UnitInRaid(player)
+local function LootReserve_UnitInRaid(player)
     if not self:IsCrossRealm() then
         return UnitInRaid(player);
     end
@@ -357,12 +357,30 @@ function LootReserve:UnitInRaid(player)
     end);
 end
 
-function LootReserve:UnitInParty(player)
+local function LootReserve_UnitInParty(player)
     if not self:IsCrossRealm() then
         return UnitInParty(player);
     end
 
     return IsInGroup() and not IsInRaid() and self:ForEachRaider(function(name, _, _, _, className, classFilename, _, online)
+        if self:IsSamePlayer(name, player) then
+            return true;
+        end
+    end);
+end
+
+function LootReserve:UnitInGroup(player)
+    if not self:IsCrossRealm() then
+        if IsInRaid() then
+            return LootReserve_UnitInRaid(player) and true;
+        elseif IsInGroup() then
+            return LootReserve_UnitInParty(player);
+        else
+            return LootReserve:IsMe(player);
+        end
+    end
+
+    return self:ForEachRaider(function(name, _, _, _, className, classFilename, _, online)
         if self:IsSamePlayer(name, player) then
             return true;
         end
@@ -381,8 +399,8 @@ function LootReserve:UnitClass(player)
     end);
 end
 
-function LootReserve:GetPlayerClassColor(player, dim)
-    local className, classFilename, classId = self:UnitClass(player);
+local function GetPlayerClassColor(player, dim)
+    local className, classFilename, classId = LootReserve:UnitClass(player);
     if classFilename then
         local colors = RAID_CLASS_COLORS[classFilename];
         if colors then
@@ -397,7 +415,7 @@ function LootReserve:GetPlayerClassColor(player, dim)
     return dim and "FF404040" or "FF808080";
 end
 
-function LootReserve:GetRaidUnitID(player)
+local function GetRaidUnitID(player)
     for i = 1, MAX_RAID_MEMBERS do
         local unit = UnitName("raid" .. i);
         if unit and LootReserve:IsSamePlayer(LootReserve:Player(unit), player) then
@@ -410,7 +428,7 @@ function LootReserve:GetRaidUnitID(player)
     end
 end
 
-function LootReserve:GetPartyUnitID(player)
+local function GetPartyUnitID(player)
     for i = 1, MAX_PARTY_MEMBERS do
         local unit = UnitName("party" .. i);
         if unit and LootReserve:IsSamePlayer(LootReserve:Player(unit), player) then
@@ -423,10 +441,20 @@ function LootReserve:GetPartyUnitID(player)
     end
 end
 
+function LootReserve:GetGroupUnitID(player)
+    if IsInRaid() then
+        return GetRaidUnitID(player);
+    elseif IsInGroup() then
+        return GetPartyUnitID(player);
+    elseif self:IsMe(player) then
+        return "player"
+    end
+end
+
 function LootReserve:ColoredPlayer(player)
     local name, realm = strsplit("-", player);
-    return realm and format("|c%s%s|r|c%s-%s|r", self:GetPlayerClassColor(player), name, self:GetPlayerClassColor(player, true), realm)
-                  or format("|c%s%s|r",          self:GetPlayerClassColor(player), player);
+    return realm and format("|c%s%s|r|c%s-%s|r", GetPlayerClassColor(player), name, GetPlayerClassColor(player, true), realm)
+                  or format("|c%s%s|r",          GetPlayerClassColor(player), player);
 end
 
 function LootReserve:ForEachRaider(func)
@@ -442,6 +470,8 @@ function LootReserve:ForEachRaider(func)
             if result ~= nil then
                 return result, a, b;
             end
+        else
+            break;
         end
     end
 end

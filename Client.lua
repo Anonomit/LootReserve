@@ -154,7 +154,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
         end);
 
         LootReserve:RegisterEvent("GROUP_ROSTER_UPDATE", function()
-            if self.SessionServer and not LootReserve:UnitInRaid(self.SessionServer) then
+            if self.SessionServer and not LootReserve:UnitInGroup(self.SessionServer) then
                 self:StopSession();
                 self:ResetSession();
                 self:UpdateCategories();
