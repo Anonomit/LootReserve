@@ -127,7 +127,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             end
         end
         for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
-            if category.Children and (not LootReserve.Server.NewSessionSettings.LootCategory or id == LootReserve.Server.NewSessionSettings.LootCategory) and LootReserve.Data:IsCategoryVisible(category) then
+            if category.Children and (not LootReserve.Server.NewSessionSettings.LootCategories or LootReserve:Contains(LootReserve.Server.NewSessionSettings.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for _, child in ipairs(category.Children) do
                     if child.Loot then
                         for _, item in ipairs(child.Loot) do
@@ -251,7 +251,7 @@ function LootReserve.Server.LootEdit:UpdateCategories()
     end
 
     for i, frame in ipairs(list.Frames) do
-        if i <= list.LastIndex and (frame.CategoryID < 0 or not LootReserve.Server.NewSessionSettings.LootCategory or frame.CategoryID == LootReserve.Server.NewSessionSettings.LootCategory) then
+        if i <= list.LastIndex and (frame.CategoryID < 0 or not LootReserve.Server.NewSessionSettings.LootCategories or LootReserve:Contains(LootReserve.Server.NewSessionSettings.LootCategories, frame.CategoryID)) then
             frame:SetHeight(frame.DefaultHeight);
             frame:Show();
         else

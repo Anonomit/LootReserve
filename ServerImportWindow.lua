@@ -448,7 +448,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                                 local class = select(3, UnitClass(player));
                                 if item == 0 then
                                     member.InvalidReasons[#member.ReservedItems] = "Item with the name \"" .. row[itemColumn] .. "\" was not be found|nor it can't be reserved due to session settings.";
-                                elseif not (LootReserve.Data:IsItemInCategory(item, LootReserve.Server.NewSessionSettings.LootCategory) or conditions and conditions.Custom) or not LootReserve.ItemConditions:TestServer(item) then
+                                elseif not (LootReserve.Data:IsItemInCategories(item, LootReserve.Server.NewSessionSettings.LootCategories) or conditions and conditions.Custom) or not LootReserve.ItemConditions:TestServer(item) then
                                     member.InvalidReasons[#member.ReservedItems] = "Item can't be reserved due to session settings.|nChange to the appropriate raid map or add this item as a custom item.";
                                 elseif conditions and conditions.ClassMask and class and not LootReserve.ItemConditions:TestClassMask(conditions.ClassMask, class) then
                                     member.InvalidReasons[#member.ReservedItems] = player .. "'s class cannot reserve this item.|nEdit the raid loot to change the class restrictions on this item, or it will not be imported.";

@@ -51,6 +51,10 @@
 								self:Update();
 							</OnLoad>
 							<OnClick>
+								if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
+									LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+									return;
+								end
 								local item = self:GetParent():GetParent().Item;
 								local conditions = LootReserve.ItemConditions:Get(item, true);
 								local menu =
@@ -122,6 +126,10 @@
 								self:Update();
 							</OnLoad>
 							<OnClick>
+								if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
+									LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+									return;
+								end
 								local item = self:GetParent():GetParent().Item;
 								local conditions = LootReserve.ItemConditions:Make(item, true);
 								if conditions.Custom then
@@ -156,6 +164,10 @@
 								</Anchors>
 								<Scripts>
 									<OnClick>
+										if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
+											LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+											return;
+										end
 										self:GetParent().EditBox:ClearFocus();
 										local item = self:GetParent():GetParent():GetParent().Item;
 										local conditions = LootReserve.ItemConditions:Make(item, true);
@@ -175,10 +187,14 @@
 								</Anchors>
 								<Scripts>
 									<OnClick>
+										if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
+											LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+											return;
+										end
 										self:GetParent().EditBox:ClearFocus();
 										local item = self:GetParent():GetParent():GetParent().Item;
 										local conditions = LootReserve.ItemConditions:Make(item, true);
-										conditions.Limit = math.min(40, (conditions.Limit or 0) + 1);
+										conditions.Limit = math.min(999, (conditions.Limit or 0) + 1);
 										LootReserve.ItemConditions:Save(item, true);
 									</OnClick>
 								</Scripts>
@@ -191,9 +207,13 @@
 								</Anchors>
 								<Scripts>
 									<OnTextChanged>
+										if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
+        							LootReserve.Server.LootEdit:UpdateLootList();
+											return;
+										end
 										local item = self:GetParent():GetParent():GetParent().Item;
 										local conditions = LootReserve.ItemConditions:Make(item, true);
-										conditions.Limit = tonumber(self:GetText()) and math.min(40, tonumber(self:GetText()));
+										conditions.Limit = tonumber(self:GetText()) and math.min(999, tonumber(self:GetText()));
 										LootReserve.ItemConditions:Save(item, true);
 									</OnTextChanged>
 									<OnEnterPressed function="EditBox_ClearFocus" />
@@ -218,8 +238,8 @@
 									local conditions = LootReserve.ItemConditions:Get(item, true);
 
 									self.Decrement:SetEnabled(conditions and conditions.Limit and conditions.Limit > 0);
-									self.Increment:SetEnabled(not conditions or not conditions.Limit or conditions.Limit &lt; 40);
-									local text = conditions and conditions.Limit and conditions.Limit > 0 and tostring(conditions.Limit) or "∞";
+									self.Increment:SetEnabled(not conditions or not conditions.Limit or conditions.Limit &lt; 999);
+									local text = conditions and conditions.Limit and conditions.Limit > 0 and tostring(conditions.Limit) or "";
 									if self.EditBox:GetText() ~= text then
 										self.EditBox:SetText(text);
 									end
@@ -334,7 +354,11 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						LootReserve.ItemConditions:Clear(LootReserve.Server.NewSessionSettings.LootCategory, true);
+						if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
+							LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+							return;
+						end
+						LootReserve.ItemConditions:Clear(true);
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -428,6 +452,10 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
+								if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
+									LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+									return;
+								end
 								local frame = self:GetParent():GetParent();
 								if frame.Item then
 									local conditions = LootReserve.ItemConditions:Make(frame.Item, true);

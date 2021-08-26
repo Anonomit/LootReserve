@@ -4,7 +4,7 @@ LootReserve.Server =
     CurrentSession = nil,
     NewSessionSettings =
     {
-        LootCategory         = 100,
+        LootCategories       = { },
         MaxReservesPerPlayer = 1,
         Multireserve         = nil,
         Duration             = 300,
@@ -236,18 +236,43 @@ function LootReserve.Server:SetAddonUser(player, isUser)
     end
 end
 
-function LootReserve.Server:GetSavedItemConditions(category)
+local function GetSavedItemConditionsSingle(category)
     if not category then return { }; end
-    local container = self.Settings.ItemConditions[category];
+    local container = LootReserve.Server.Settings.ItemConditions[category];
     if not container then
         container = { };
-        self.Settings.ItemConditions[category] = container;
+        LootReserve.Server.Settings.ItemConditions[category] = container;
+    end
+    return container;
+end
+
+local function GetSavedItemConditions(categories)
+    if not categories then return { }; end
+    local container = { };
+    for _, category in ipairs(categories) do
+        for item, conditions in pairs(GetSavedItemConditionsSingle(category)) do
+            container[item] = container[item] or { };
+            container[item].ClassMask = bit.bor(container[item].ClassMask or 0, conditions.ClassMask or 0);
+            container[item].Hidden = container[item].Hidden and conditions.Hidden or nil;
+            container[item].Limit = (container[item].Limit or 0) + (conditions.Limit or 0);
+            if container[item].ClassMask == 0 then
+                container[item].ClassMask = nil;
+            end
+            if container[item].Limit == 0 then
+                container[item].Limit = nil;
+            end
+            -- container[item] = conditions;
+        end
     end
     return container;
 end
 
 function LootReserve.Server:GetNewSessionItemConditions()
-    return self:GetSavedItemConditions(self.NewSessionSettings.LootCategory);
+    if #self.NewSessionSettings.LootCategories == 1 then
+    return GetSavedItemConditionsSingle(self.NewSessionSettings.LootCategories[1]);
+    else
+        return GetSavedItemConditions(self.NewSessionSettings.LootCategories);
+    end
 end
 
 function LootReserve.Server:Load()
@@ -316,7 +341,7 @@ function LootReserve.Server:Load()
                 local category = conditions.Custom;
                 conditions.Custom = conditions.Custom and true or nil;
 
-                if category == self.CurrentSession.Settings.LootCategory or LootReserve.Data:IsItemInCategory(item, self.CurrentSession.Settings.LootCategory) then
+                if LootReserve:Contains(self.CurrentSession.Settings.LootCategories, category) or LootReserve.Data:IsItemInCategories(item, self.CurrentSession.Settings.LootCategories) then
                     self.CurrentSession.ItemConditions[item] = LootReserve:Deepcopy(conditions);
                 end
             end
@@ -874,7 +899,7 @@ function LootReserve.Server:PrepareSession()
         end
     end
     for id, category in pairs(LootReserve.Data.Categories) do
-        if category.Children and (not self.CurrentSession.Settings.LootCategory or id == self.CurrentSession.Settings.LootCategory) and LootReserve.Data:IsCategoryVisible(category) then
+        if category.Children and (not self.CurrentSession.Settings.LootCategories or LootReserve:Contains(self.CurrentSession.Settings.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
             for _, child in ipairs(category.Children) do
                 if child.Loot then
                     for _, item in ipairs(child.Loot) do
@@ -1056,11 +1081,14 @@ function LootReserve.Server:StartSession()
     LootReserve.Comm:BroadcastVersion();
     LootReserve.Comm:BroadcastSessionInfo(true);
     if self.CurrentSession.Settings.ChatFallback then
-        local category = LootReserve.Data.Categories[self.CurrentSession.Settings.LootCategory];
+        local categories = ""
+        for i, category in ipairs(self.CurrentSession and self.CurrentSession.Settings.LootCategories or { }) do
+            categories = format("%s%s%s", categories, i == 1 and "" or ", ", LootReserve.Data.Categories[category].Name);
+        end
         local duration = self.CurrentSession.Settings.Duration
         local count = self.CurrentSession.Settings.MaxReservesPerPlayer;
         LootReserve:SendChatMessage(format("Loot reserves are now started%s%s%s. %d reserved %s per character%s.",
-            category and format(" for %s", category.Name) or "",
+            categories ~= "" and format(" for %s", categories) or "",
             self.CurrentSession.Settings.Blind and " (blind)" or "",
             duration ~= 0 and format(" and will last for %d:%02d minutes", math.floor(duration / 60), duration % 60) or "",
             count,
@@ -1756,7 +1784,10 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
         if roll and players then
             local raidroll = self.RequestedRoll.RaidRoll;
             local phases = LootReserve:Deepcopy(self.RequestedRoll.Phases);
-            local category = self.CurrentSession and LootReserve.Data.Categories[self.CurrentSession.Settings.LootCategory] or nil;
+            local categories = ""
+            for i, category in ipairs(self.CurrentSession and self.CurrentSession.Settings.LootCategories or { }) do
+                categories = format("%s%s%s", categories, i == 1 and "" or ", ", LootReserve.Data.Categories[category].Name);
+            end
 
             local recordPhase;
             if self.RequestedRoll.RaidRoll then
@@ -1782,7 +1813,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
                 if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and quality >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
                     for _, player in ipairs(players) do
                         if LootReserve:Contains(self.GuildMembers, player) then
-                            LootReserve:SendChatMessage(format("%s won %s%s%s", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or "", category and format(" from %s", category.Name) or ""), "GUILD");
+                            LootReserve:SendChatMessage(format("%s won %s%s%s", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or "", categories or ""), "GUILD");
                             break;
                         end
                     end
@@ -1798,7 +1829,10 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             players = { player };
             RecordRollWinner(player, item, LootReserve.Constants.WonRollPhase.Reserve);
 
-            local category = self.CurrentSession and LootReserve.Data.Categories[self.CurrentSession.Settings.LootCategory] or nil;
+            local categories = ""
+            for i, category in ipairs(self.CurrentSession and self.CurrentSession.Settings.LootCategories or { }) do
+                categories = format("%s%s%s", categories, i == 1 and "" or ", ", LootReserve.Data.Categories[category].Name);
+            end
             local function Announce()
                 local name, link, quality = GetItemInfo(item);
                 if not name or not link then
@@ -1809,7 +1843,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
                 LootReserve:SendChatMessage(format("%s won %s as the only reserver", player, LootReserve:FixLink(link)), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
                 if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and quality >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
                     if LootReserve:Contains(self.GuildMembers, player) then
-                        LootReserve:SendChatMessage(format("%s won %s%s", player, LootReserve:FixLink(link), category and format(" from %s", category.Name) or ""), "GUILD");
+                        LootReserve:SendChatMessage(format("%s won %s%s", player, LootReserve:FixLink(link), categories or ""), "GUILD");
                     end
                 end
             end

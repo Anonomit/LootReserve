@@ -112,7 +112,7 @@ function LootReserve.ItemConditions:Delete(item, server)
     end
 end
 
-function LootReserve.ItemConditions:Clear(category, server)
+function LootReserve.ItemConditions:Clear(server)
     if server and LootReserve.Server.CurrentSession then
         LootReserve:ShowError("Cannot edit loot during an active session");
     elseif server then

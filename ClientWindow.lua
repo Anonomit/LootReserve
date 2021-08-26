@@ -199,7 +199,7 @@ function LootReserve.Client:UpdateLootList()
             local first = true;
             for item in LootReserve:Ordered(favorites, sortByItemName) do
                 local conditions = self.ItemConditions[item];
-                if item ~= 0 and (not self.LootCategory or LootReserve.Data:IsItemInCategory(item, self.LootCategory) or conditions and conditions.Custom) and LootReserve.ItemConditions:IsItemVisibleOnClient(item) then
+                if item ~= 0 and (not self.LootCategories or LootReserve.Data:IsItemInCategories(item, self.LootCategories) or conditions and conditions.Custom) and LootReserve.ItemConditions:IsItemVisibleOnClient(item) then
                     if first then
                         first = false;
                         if favorites == self.CharacterFavorites then
@@ -241,7 +241,7 @@ function LootReserve.Client:UpdateLootList()
             end
         end
         for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
-            if category.Children and (not self.LootCategory or id == self.LootCategory) and LootReserve.Data:IsCategoryVisible(category) then
+            if category.Children and (not self.LootCategories or LootReserve:Contains(self.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for _, child in ipairs(category.Children) do
                     if child.Loot then
                         for _, item in ipairs(child.Loot) do
@@ -338,7 +338,7 @@ function LootReserve.Client:UpdateCategories()
             frame:EnableMouse(false);
         elseif category.Children then
             local categoryCollapsed = self.Settings.CollapsedCategories[frame.CategoryID];
-            if frame.CategoryID < 0 or self.LootCategory and frame.CategoryID == self.LootCategory then
+            if frame.CategoryID < 0 or self.LootCategories and LootReserve:Contains(self.LootCategories, frame.CategoryID) then
                 categoryCollapsed = false;
                 frame:EnableMouse(false);
             else
@@ -385,17 +385,17 @@ function LootReserve.Client:UpdateCategories()
     for i, frame in ipairs(list.Frames) do
         local expansionCollapsed = self.Settings.CollapsedExpansions[frame.Expansion];
         local categoryCollapsed = self.Settings.CollapsedCategories[frame.CategoryID];
-        if self.LootCategory and frame.CategoryID == self.LootCategory then
+        if self.LootCategories and LootReserve:Contains(self.LootCategories, frame.CategoryID) then
             expansionCollapsed = false;
             categoryCollapsed = false;
         end
 
         if i <= list.LastIndex
-            and (not self.LootCategory or not frame.CategoryID or frame.CategoryID < 0 or frame.CategoryID == self.LootCategory)
+            and (not self.LootCategories or not frame.CategoryID or frame.CategoryID < 0 or LootReserve:Contains(self.LootCategories, frame.CategoryID))
             and (not frame.Category or not frame.Category.Custom or LootReserve.ItemConditions:HasCustom(false))
             and (not categoryCollapsed or not frame.Category or frame.Category.Children)
             and (not expansionCollapsed or not frame.Category)
-            and (not frame.Expansion or frame.Category or not self.LootCategory)
+            and (not frame.Expansion or frame.Category or not self.LootCategories)
             then
             if categoryCollapsed and frame.Category and frame.Category.Children then
                 frame:SetHeight(frame.DefaultHeight - 7);
@@ -417,7 +417,7 @@ function LootReserve.Client:UpdateCategories()
         for i, frame in ipairs(list.Frames) do
             if i <= list.LastIndex then
                 if selected == nil then
-                    if frame.CategoryID and frame.CategoryID > 0 and self.LootCategory and frame.CategoryID == self.LootCategory then
+                    if frame.CategoryID and frame.CategoryID > 0 and self.LootCategories and LootReserve:Contains(self.LootCategories, frame.CategoryID) then
                         selected = false;
                     end
                 elseif selected == false then

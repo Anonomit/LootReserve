@@ -42,6 +42,7 @@ LootReserve.Data =
         -- Classic
         [100] = {
             Name = "Molten Core",
+            NameShort = "MC",
             Expansion = 0,
             Children =
             {
@@ -160,6 +161,7 @@ LootReserve.Data =
         },
         [200] = {
             Name = "Onyxia",
+            NameShort = "Ony",
             Expansion = 0,
             Children =
             {
@@ -178,6 +180,7 @@ LootReserve.Data =
         },
         [300] = {
             Name = "Blackwing Lair",
+            NameShort = "BWL",
             Expansion = 0,
             Children =
             {
@@ -276,6 +279,7 @@ LootReserve.Data =
         },
         [400] = {
             Name = "Zul'Gurub",
+            NameShort = "ZG",
             Expansion = 0,
             Children =
             {
@@ -422,6 +426,7 @@ LootReserve.Data =
         },
         [500] = {
             Name = "Ruins of Ahn'Qiraj",
+            NameShort = "AQ20",
             Expansion = 0,
             Children =
             {
@@ -513,6 +518,7 @@ LootReserve.Data =
         },
         [600] = {
             Name = "Temple of Ahn'Qiraj",
+            NameShort = "AQ40",
             Expansion = 0,
             Children =
             {
@@ -649,6 +655,7 @@ LootReserve.Data =
         },
         [700] = {
             Name = "Naxxramas",
+            NameShort = "Naxx",
             Expansion = 0,
             Children =
             {
@@ -805,6 +812,7 @@ LootReserve.Data =
         -- The Burning Crusade
         [1000] = {
             Name = "Karazhan",
+            NameShort = "Kara",
             Expansion = 1,
             Children =
             {
@@ -962,6 +970,7 @@ LootReserve.Data =
         },
         [1010] = {
             Name = "Gruul's Lair",
+            NameShort = "Gruul",
             Expansion = 1,
             Children =
             {
@@ -986,6 +995,7 @@ LootReserve.Data =
         },
         [1020] = {
             Name = "Magtheridon's Lair",
+            NameShort = "Mag",
             Expansion = 1,
             Children =
             {
@@ -1005,6 +1015,7 @@ LootReserve.Data =
         },
         [1030] = {
             Name = "Serpentshrine Cavern",
+            NameShort = "SSC",
             Expansion = 1,
             Children =
             {
@@ -1071,6 +1082,7 @@ LootReserve.Data =
         },
         [1040] = {
             Name = "The Eye",
+            NameShort = "TK",
             Expansion = 1,
             Children =
             {
@@ -1123,6 +1135,7 @@ LootReserve.Data =
         },
         [1050] = {
             Name = "Battle for Mount Hyjal",
+            NameShort = "Hyjal",
             Expansion = 1,
             Children =
             {
@@ -1185,6 +1198,7 @@ LootReserve.Data =
         },
         [1060] = {
             Name = "Black Temple",
+            NameShort = "BT",
             Expansion = 1,
             Children =
             {
@@ -1284,6 +1298,7 @@ LootReserve.Data =
         },
         [1070] = {
             Name = "Zul'Aman",
+            NameShort = "ZA",
             Expansion = 1,
             Children =
             {
@@ -1381,6 +1396,7 @@ LootReserve.Data =
         },
         [1080] = {
             Name = "Sunwell Plateau",
+            NameShort = "Sunwell",
             Expansion = 1,
             Children =
             {
@@ -1938,16 +1954,18 @@ LootReserve.Data =
     },
 };
 
-function LootReserve.Data:IsItemInCategory(item, category)
-    if item == 0 or category <= 0 then return false; end
+function LootReserve.Data:IsItemInCategories(item, categories)
+    for _, category in ipairs(categories) do
+        if item == 0 or category <= 0 then return false; end
 
-    category = self.Categories[category];
-    if category and category.Children and self:IsCategoryVisible(category) then
-        for _, child in ipairs(category.Children) do
-            if child.Loot then
-                for _, lootItem in ipairs(child.Loot) do
-                    if lootItem == item then
-                        return true;
+        category = self.Categories[category];
+        if category and category.Children and self:IsCategoryVisible(category) then
+            for _, child in ipairs(category.Children) do
+                if child.Loot then
+                    for _, lootItem in ipairs(child.Loot) do
+                        if lootItem == item then
+                            return true;
+                        end
                     end
                 end
             end
@@ -1960,7 +1978,7 @@ end
 function LootReserve.Data:GetItemCategories(item)
     local categories = { };
     for category in pairs(self.Categories) do
-        if self:IsItemInCategory(item, category) then
+        if self:IsItemInCategories(item, category) then
             table.insert(categories, category);
         end
     end

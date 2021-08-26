@@ -267,7 +267,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
             end
         end
         for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
-            if category.Children and (not self.CurrentSession or id == self.CurrentSession.Settings.LootCategory) and LootReserve.Data:IsCategoryVisible(category) then
+            if category.Children and (not self.CurrentSession or LootReserve:Contains(self.CurrentSession.Settings.LootCategory, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for childIndex, child in ipairs(category.Children) do
                     if child.Loot then
                         for lootIndex, loot in ipairs(child.Loot) do
@@ -974,7 +974,8 @@ function LootReserve.Server:LoadNewSessionSettings()
         CloseMenus();
     end
 
-    setDropDownValue(self.Window.PanelSession.DropDownRaid, self.NewSessionSettings.LootCategory);
+    setDropDownValue(self.Window.PanelSession.DropDownRaid, 1);
+    self.Window.PanelSession.DropDownRaid:UpdateText();
     self.Window.PanelSession.EditBoxCount:SetText(tostring(self.NewSessionSettings.MaxReservesPerPlayer));
     self.Window.PanelSession.EditBoxMultireserve:SetEnabled(not self.CurrentSession and self.NewSessionSettings.MaxReservesPerPlayer > 1);
     self.Window.PanelSession.EditBoxMultireserve:SetText(self.NewSessionSettings.Multireserve and tostring(self.NewSessionSettings.Multireserve) or "Off");

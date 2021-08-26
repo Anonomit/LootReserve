@@ -271,12 +271,17 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
         itemConditions = itemConditions .. (#itemConditions > 0 and ";" or "") .. format("%d=%s", item, packed);
     end
 
+    local lootCategories = "";
+    for i, category in ipairs(session.Settings.LootCategories) do
+        lootCategories = format("%s%s%s", lootCategories, i == 1 and "" or ";", category);
+    end
+
     LootReserve.Comm:Send(target, Opcodes.SessionInfo,
         starting == true,
         session.StartTime or 0,
         session.AcceptingReserves,
         membersInfo,
-        session.Settings.LootCategory,
+        lootCategories,
         format("%.2f", session.Duration),
         session.Settings.Duration,
         itemReserves,
@@ -286,11 +291,10 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
         session.Settings.Multireserve or 1,
         optInfo);
 end
-LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, startTime, acceptingReserves, membersInfo, lootCategory, duration, maxDuration, itemReserves, itemConditions, equip, blind, multireserve, optInfo)
+LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, startTime, acceptingReserves, membersInfo, lootCategories, duration, maxDuration, itemReserves, itemConditions, equip, blind, multireserve, optInfo)
     starting = tonumber(starting) == 1;
     startTime = tonumber(startTime);
     acceptingReserves = tonumber(acceptingReserves) == 1;
-    lootCategory = tonumber(lootCategory);
     duration = tonumber(duration);
     maxDuration = tonumber(maxDuration);
     equip = tonumber(equip) == 1;
@@ -304,8 +308,17 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
         LootReserve:ShowError("%s is attempting to broadcast their older loot reserve session, but you're already connected to %s.|n|nPlease tell %s that they need to reset their session.", LootReserve:ColoredPlayer(sender), LootReserve:ColoredPlayer(LootReserve.Client.SessionServer), LootReserve:ColoredPlayer(sender));
         return;
     end
+    
+    if #lootCategories > 0 then
+        lootCategories = { strsplit(";", lootCategories) };
+    else
+        lootCategories = { };
+    end
+    for i, category in ipairs(lootCategories) do
+        lootCategories[i] = tonumber(category);
+    end
 
-    LootReserve.Client:StartSession(sender, starting, startTime, acceptingReserves, lootCategory, duration, maxDuration, equip, blind, multireserve);
+    LootReserve.Client:StartSession(sender, starting, startTime, acceptingReserves, lootCategories, duration, maxDuration, equip, blind, multireserve);
 
     LootReserve.Client.RemainingReserves = 0;
     local refPlayers = { };

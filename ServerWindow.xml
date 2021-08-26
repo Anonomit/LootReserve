@@ -1661,7 +1661,7 @@
 								<Anchor point="TOP" relativeKey="$parent.LabelTitle" relativePoint="BOTTOM" />
 							</Anchors>
 						</FontString>
-						<FontString parentKey="LabelRaid" inherits="GameFontNormal" text="Select Raid">
+						<FontString parentKey="LabelRaid" inherits="GameFontNormal" text="Select Raids">
 							<Size y="20" />
 							<Anchors>
 								<Anchor point="TOP" relativeKey="$parent.LabelRaidSetup" relativePoint="BOTTOM" y="-20" />
@@ -1695,6 +1695,13 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
+								self.UpdateText = function(self)
+									local text = ""
+									for i, id in ipairs(LootReserve.Server.NewSessionSettings.LootCategories) do
+										text = format("%s%s%s", text, i ~= 1 and ", " or "", LootReserve.Data.Categories[id].NameShort);
+									end
+									UIDropDownMenu_SetText(self, text);
+								end
 								self.init = function(self)
 									self.init = nil;
 									UIDropDownMenu_SetWidth(self, self:GetWidth());
@@ -1702,12 +1709,22 @@
 									UIDropDownMenu_Initialize(self, function(frame, level, menuList)
 										local info = UIDropDownMenu_CreateInfo();
 										info.minWidth = self:GetWidth() - 40;
+										info.isNotRadio = true;
+										info.keepShownOnClick = true;
 										info.func = function(info)
-											LootReserve.Server.NewSessionSettings.LootCategory = info.value;
+											if LootReserve:Contains(LootReserve.Server.NewSessionSettings.LootCategories, info.value) then
+												for i = #LootReserve.Server.NewSessionSettings.LootCategories, 1, -1 do
+													if LootReserve.Server.NewSessionSettings.LootCategories[i] == info.value then
+														table.remove(LootReserve.Server.NewSessionSettings.LootCategories, i);
+													end
+												end
+											else
+												table.insert(LootReserve.Server.NewSessionSettings.LootCategories, info.value);
+											end
 											LootReserve.Server.LootEdit:UpdateCategories();
 											LootReserve.Server.LootEdit:UpdateLootList();
 											LootReserve.Server.Import:SessionSettingsUpdated();
-											UIDropDownMenu_SetSelectedValue(self, info.value);
+											self:UpdateText();
 										end
 										local lastExpansion = nil;
 										local collapsed = LootReserve.Server.Settings.CollapsedExpansions[expansion];
@@ -1719,10 +1736,10 @@
 													local expansion = lastExpansion; -- Capture for closure
 													UIDropDownMenu_AddButton(
 													{
-														text = format("|TInterface\\Common\\spacer:4:4|t|TInterface\\Buttons\\UI-PlusMinus-Buttons:9:9:0:0:16:16:%d:%d:0:7|t|TInterface\\Common\\spacer:6:6|t|cFFFFD200%s|r", collapsed and 0 or 9, collapsed and 7 or 16, _G["EXPANSION_NAME"..lastExpansion]),
+														text         = format("|TInterface\\Common\\spacer:4:4|t|TInterface\\Buttons\\UI-PlusMinus-Buttons:9:9:0:0:16:16:%d:%d:0:7|t|TInterface\\Common\\spacer:6:6|t|cFFFFD200%s|r", collapsed and 0 or 9, collapsed and 7 or 16, _G["EXPANSION_NAME"..lastExpansion]),
 														notCheckable = true,
-														checked = not collapsed,
-														func = function(_, _, _, checked)
+														checked      = not collapsed,
+														func         = function(_, _, _, checked)
 															LootReserve.Server.Settings.CollapsedExpansions[expansion] = checked or nil;
 															CloseMenus();
 															ToggleDropDownMenu(nil, nil, self);
@@ -1730,9 +1747,11 @@
 													});
 												end
 												if not collapsed then
-													info.text = category.Name;
-													info.value = id;
-													info.checked = LootReserve.Server.NewSessionSettings.LootCategory == id;
+													info.text             = category.Name;
+													info.isNotRadio       = true;
+													info.keepShownOnClick = true;
+													info.value            = id;
+													info.checked          = LootReserve:Contains(LootReserve.Server.NewSessionSettings.LootCategories, id);
 													UIDropDownMenu_AddButton(info);
 												end
 											end
