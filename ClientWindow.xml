@@ -376,6 +376,13 @@
     				LootReserve.Client.Window:Hide();
 		  			LootReserve.Client:OptOut();
 		  		</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText("Settings");
+						GameTooltip:SetText("Opt Out");
+						GameTooltip:AddLine("Pressing this button will indicate that you do not intend to use any additional reserves.|n|nYou will not be notified to complete your reserves.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
 		  	</Scripts>
 			</Button>
 			<Button parentKey="OptIn" inherits="UIPanelButtonTemplate" text="Opt In " frameLevel="100" hidden="true">
@@ -387,6 +394,13 @@
 		  		<OnClick>
 		  			LootReserve.Client:OptIn();
 		  		</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText("Settings");
+						GameTooltip:SetText("Opt In");
+						GameTooltip:AddLine("Pressing this button will indicate that you intend to use all of your reserves.|n|nYou may be notified to complete your reserves.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
 		  	</Scripts>
 			</Button>
 			<StatusBar parentKey="Duration" inherits="LootReserveDurationStatusBar">

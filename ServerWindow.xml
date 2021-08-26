@@ -1916,7 +1916,7 @@
 						<KeyValues>
 							<KeyValue key="text" value="Equip" type="string" />
 							<KeyValue key="tooltipText" value="Equip mode" type="string" />
-							<KeyValue key="tooltipSubtext" value="Players will only be able to reserve equipment that their class is able to use. This setting will not affect unequippable items such as cloth.|n|nDisabling this option will allow players to reserve items that their class is unable to use." type="string" />
+							<KeyValue key="tooltipSubtext" value="Players will only be able to reserve equipment that their class is able to use. This setting will not affect unequippable items such as potions.|n|nDisabling this option will allow players to reserve equipment that they are unable to use." type="string" />
 						</KeyValues>
 						<Anchors>
 							<Anchor point="BOTTOM" relativeKey="$parent.CheckButtonBlind" relativePoint="TOP" y="-2" />
