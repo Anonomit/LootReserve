@@ -183,7 +183,7 @@ function LootReserve.Client:ResetSession(refresh)
     self.Blind             = false;
     self.Multireserve      = nil;
     self.PendingItems      = { };
-    self.PendingOps        = nil;
+    self.PendingOpts       = nil;
 
     if not refresh then
         self:StopCategoryFlashing();
