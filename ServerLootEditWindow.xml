@@ -520,7 +520,7 @@
 							CloseMenus();
 							return;
 						end
-						local text = editbox:GetText();
+						local text = LootReserve:TransformSearchText(editbox:GetText(), true);
 						local item = tonumber(text);
 						local menu = { };
 						local missing = false;
@@ -536,7 +536,7 @@
 								arg1 = item,
 								func = SelectItem,
 							});
-						elseif not item and #LootReserve:TransformSearchText(text) >= 3 then
+						elseif not item and #text >= 3 then
 							local results, progress = LootReserve.ItemSearch:Search(text);
 							if results then
 								for i, item in ipairs(results) do

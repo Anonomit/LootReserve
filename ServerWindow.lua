@@ -93,7 +93,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
-    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
+    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText(), true);
     if #filter == 0 then
         filter = nil;
     end
@@ -224,7 +224,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
     end
 
     local function matchesFilter(item, reserve, filter)
-        filter = LootReserve:TransformSearchText(filter or "");
+        filter = filter or "";
         if #filter == 0 then
             return true;
         end
@@ -426,7 +426,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
-    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
+    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText(), true);
     if #filter == 0 then
         filter = nil;
     end
@@ -646,7 +646,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
     end
 
     local function matchesFilter(item, roll, filter)
-        filter = LootReserve:TransformSearchText(filter or "");
+        filter = filter or "";
         if #filter == 0 then
             return true;
         end

@@ -585,10 +585,14 @@ function LootReserve:IsLootingItem(item)
     end
 end
 
-function LootReserve:TransformSearchText(text)
+local magicCharactersPattern = format("([%s])", ("().%+-*?[]^$"):gsub(".", "%%%1"));
+function LootReserve:TransformSearchText(text, isPattern)
     text = self:StringTrim(text, "[%s%[%]]");
     text = text:upper();
     text = text:gsub("`", "'"):gsub("´", "'"); -- For whatever reason [`´] doesn't work
+    if isPattern then
+        text = text:gsub(magicCharactersPattern, "%%%1");
+    end
     return text;
 end
 

@@ -845,7 +845,7 @@ function LootReserve.Server:PrepareSession()
                 else
                     count = 1;
                 end
-                text = LootReserve:TransformSearchText(text);
+                text = LootReserve:TransformSearchText(text, true);
                 local function handleItemCommandByName()
                     if self:UpdateItemNameCache() then
                         local match = nil;
@@ -854,7 +854,7 @@ function LootReserve.Server:PrepareSession()
                             if item == 28802 then
                                 print(name)
                             end
-                            if self.ReservableItems[item] and string.find(name, text:gsub("([%-])", "%%%1")) and not LootReserve:Contains(matches, item) then
+                            if self.ReservableItems[item] and string.find(name, text) and not LootReserve:Contains(matches, item) then
                                 match = match and 0 or item;
                                 table.insert(matches, item);
                             end

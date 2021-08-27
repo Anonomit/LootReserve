@@ -65,7 +65,7 @@ function LootReserve.ItemSearch:Search(query)
     local progress = self:Load();
     if not self.LoadingState then return nil, progress; end
 
-    query = LootReserve:TransformSearchText(query);
+    query = LootReserve:TransformSearchText(query, true);
 
     local results = { };
     for item, name in pairs(self.Names) do

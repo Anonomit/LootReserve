@@ -93,7 +93,7 @@ function LootReserve.Client:UpdateReserveStatus()
 end
 
 function LootReserve.Client:UpdateLootList()
-    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
+    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText(), true);
     if #filter < 3 then
         filter = nil;
     end
