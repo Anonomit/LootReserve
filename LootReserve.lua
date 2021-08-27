@@ -346,24 +346,24 @@ function LootReserve:IsPlayerOnline(player)
 end
 
 local function LootReserve_UnitInRaid(player)
-    if not self:IsCrossRealm() then
+    if not LootReserve:IsCrossRealm() then
         return UnitInRaid(player);
     end
 
-    return IsInRaid() and self:ForEachRaider(function(name, _, _, _, className, classFilename, _, online)
-        if self:IsSamePlayer(name, player) then
+    return IsInRaid() and LootReserve:ForEachRaider(function(name, _, _, _, className, classFilename, _, online)
+        if LootReserve:IsSamePlayer(name, player) then
             return true;
         end
     end);
 end
 
 local function LootReserve_UnitInParty(player)
-    if not self:IsCrossRealm() then
+    if not LootReserve:IsCrossRealm() then
         return UnitInParty(player);
     end
 
-    return IsInGroup() and not IsInRaid() and self:ForEachRaider(function(name, _, _, _, className, classFilename, _, online)
-        if self:IsSamePlayer(name, player) then
+    return IsInGroup() and not IsInRaid() and LootReserve:ForEachRaider(function(name, _, _, _, className, classFilename, _, online)
+        if LootReserve:IsSamePlayer(name, player) then
             return true;
         end
     end);

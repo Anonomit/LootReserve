@@ -851,7 +851,10 @@ function LootReserve.Server:PrepareSession()
                         local match = nil;
                         local matches = { };
                         for item, name in pairs(self.ItemNames) do
-                            if self.ReservableItems[item] and string.find(name, text) and not LootReserve:Contains(matches, item) then
+                            if item == 28802 then
+                                print(name)
+                            end
+                            if self.ReservableItems[item] and string.find(name, text:gsub("([%-])", "%%%1")) and not LootReserve:Contains(matches, item) then
                                 match = match and 0 or item;
                                 table.insert(matches, item);
                             end
