@@ -35,6 +35,7 @@ LootReserve.Client =
 
     PendingItems             = { },
     PendingOpt               = nil,
+    PendingOpen              = false,
     ServerSearchTimeoutTime  = nil,
     DurationUpdateRegistered = false,
     SessionEventsRegistered  = false,
@@ -161,6 +162,13 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
                 self:UpdateLootList();
                 self:UpdateReserveStatus();
             end
+        end);
+
+        LootReserve:RegisterEvent("PLAYER_REGEN_ENABLED", function()
+            if self.SessionServer and self.PendingOpen then
+                self.Window:Show();
+            end
+            self.PendingOpen = false;
         end);
     end
 

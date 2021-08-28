@@ -486,6 +486,7 @@
 					self.openedOnce = true;
 					LootReserve.Client:UpdateCategories(); -- Needed to update collapsed state after settings are loaded
 				end
+				LootReserve.Client.PendingOpen = false;
 			</OnShow>
 			<OnHide>
 				CloseMenus();
