@@ -1722,7 +1722,9 @@
 												table.insert(LootReserve.Server.NewSessionSettings.LootCategories, info.value);
 											end
 											LootReserve.Server.LootEdit:UpdateCategories();
-        							ToggleDropDownMenu(nil, nil, self);
+											if LootReserve.Server.LootEdit.Window:IsShown() then
+        								ToggleDropDownMenu(nil, nil, self);
+        							end
 											LootReserve.Server.LootEdit:UpdateLootList();
 											LootReserve.Server.Import:SessionSettingsUpdated();
 											self:UpdateText();

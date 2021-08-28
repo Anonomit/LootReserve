@@ -423,7 +423,7 @@ local function GetRaidUnitID(player)
         end
     end
 
-    if self:IsMe(player) then
+    if LootReserve:IsMe(player) then
         return "player";
     end
 end
@@ -436,7 +436,7 @@ local function GetPartyUnitID(player)
         end
     end
 
-    if self:IsMe(player) then
+    if LootReserve:IsMe(player) then
         return "player";
     end
 end
