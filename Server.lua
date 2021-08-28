@@ -1258,9 +1258,10 @@ function LootReserve.Server:Opt(player, out, chat)
     -- Send chat messages
     if self.CurrentSession.Settings.ChatFallback then
         if chat or not self:IsAddonUser(player) then
-            LootReserve:SendChatMessage(format("You have opted %s using your %d remaining reserves. You can opt back %s with  !opt %s",
+            LootReserve:SendChatMessage(format("You have opted %s using your %d remaining reserve%s. You can opt back %s with  !opt %s",
                 member.OptedOut and "out of" or "into",
                 member.ReservesLeft,
+                member.ReservesLeft == 1 and "" or "s",
                 member.OptedOut and "in" or "out",
                 member.OptedOut and "in" or "out"
             ), "WHISPER", player);
