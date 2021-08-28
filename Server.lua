@@ -53,13 +53,12 @@ LootReserve.Server =
         MaxRecentLoot                   = 25,
         MinimumLootQuality              = 2,
         RemoveRecentLootAfterRolling    = true,
-        KeepUnlootedRecentLoot          = true,
         UseUnitFrames                   = true,
     },
     RequestedRoll       = nil,
     RollHistory         = { },
     RecentLoot          = { },
-    CurrentLoot         = { },
+    LootedCorpses       = { },
     AddonUsers          = { },
     GuildMembers        = { },
     LootEdit            = { },
@@ -525,10 +524,12 @@ function LootReserve.Server:PrepareLootTracking()
         end
         count = tonumber(count);
         if looter and item and quality and count then
-            LootReserve:TableRemove(self.RecentLoot, item);
-            table.insert(self.RecentLoot, item);
-            while #self.RecentLoot > self.Settings.MaxRecentLoot do
-                table.remove(self.RecentLoot, 1);
+            if LootReserve:IsMe(looter) then
+                LootReserve:TableRemove(self.RecentLoot, item);
+                table.insert(self.RecentLoot, item);
+                while #self.RecentLoot > self.Settings.MaxRecentLoot do
+                    table.remove(self.RecentLoot, 1);
+                end
             end
 
             if self.CurrentSession and self.ReservableItems[item] then
@@ -551,6 +552,9 @@ function LootReserve.Server:PrepareLootTracking()
     local lootSelf = LootReserve:FormatToRegexp(LOOT_ITEM_SELF);
     local lootSelfMultiple = LootReserve:FormatToRegexp(LOOT_ITEM_SELF_MULTIPLE);
     LootReserve:RegisterEvent("CHAT_MSG_LOOT", function(text)
+        if IsMasterLooter()  then
+            return;
+        end
         local looter, item, count;
         item, count = text:match(lootSelfMultiple);
         if item and count then
@@ -577,32 +581,32 @@ function LootReserve.Server:PrepareLootTracking()
         item = tonumber(item:match("item:(%d+)"));
         AddLootToList(looter, item, count);
     end);
-    LootReserve:RegisterEvent("LOOT_OPENED", function(text)
-        table.wipe(self.CurrentLoot);
+    LootReserve:RegisterEvent("LOOT_READY", function(text)
+        if not IsMasterLooter() then
+           return; 
+        end
+        -- best guess at what object the player is looting. won't work for chests
+        local guid = UnitExists("target") and UnitIsDead("target") and not UnitIsFriend("target") and UnitGUID("target");
+        if guid then
+            if self.LootedCorpses[guid] then
+                return;
+            else
+                self.LootedCorpses[guid] = true;
+            end
+        end
         for lootSlot = 1, GetNumLootItems() do
             if GetLootSlotType(lootSlot) == 1 then -- loot slot contains item, not currency/empty
                 local link = GetLootSlotLink(lootSlot);
                 if link then
                     local item = tonumber(link:match("item:(%d+)"));
-                    if item then
-                        table.insert(self.CurrentLoot, item);
+                    local _, _, quality = GetItemInfo(item);
+                    if quality >= self.Settings.MinimumLootQuality then
+                        LootReserve:TableRemove(self.RecentLoot, item);
+                        table.insert(self.RecentLoot, item);
+                        while #self.RecentLoot > self.Settings.MaxRecentLoot do
+                            table.remove(self.RecentLoot, 1);
+                        end
                     end
-                end
-            end
-        end
-    end);
-    LootReserve:RegisterEvent("LOOT_CLOSED", function(text)
-        if not self.Settings.KeepUnlootedRecentLoot then
-            return;
-        end
-
-        for _, item in ipairs(self.CurrentLoot) do
-            local _, _, quality = GetItemInfo(item);
-            if quality >= self.Settings.MinimumLootQuality then
-                LootReserve:TableRemove(self.RecentLoot, item);
-                table.insert(self.RecentLoot, item);
-                while #self.RecentLoot > self.Settings.MaxRecentLoot do
-                    table.remove(self.RecentLoot, 1);
                 end
             end
         end
@@ -1929,7 +1933,6 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                 if self.Settings.RemoveRecentLootAfterRolling then
                     LootReserve:TableRemove(self.RecentLoot, item);
                 end
-                LootReserve:TableRemove(self.CurrentLoot, item);
             end
         end
 

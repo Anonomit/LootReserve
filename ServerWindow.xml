@@ -1070,12 +1070,6 @@
 													checked = function() return LootReserve.Server.Settings.RemoveRecentLootAfterRolling end,
 													func = function(_, _, _, checked) LootReserve.Server.Settings.RemoveRecentLootAfterRolling = checked; end,
 												},
-												{
-													text = "Keep Unlooted Items",
-													tooltipText = "Add the items to Recent Loot even if you abandoned them in the corpse, in case you intend to return to the corpse later.",
-													checked = function() return LootReserve.Server.Settings.KeepUnlootedRecentLoot end,
-													func = function(_, _, _, checked) LootReserve.Server.Settings.KeepUnlootedRecentLoot = checked; end,
-												},
 											} },
 											LootReserve:MakeMenuSeparator(),
 											{ text = "Bags", isTitle = true },
