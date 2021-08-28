@@ -433,6 +433,7 @@
 			<OnEnter>
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 				GameTooltip:SetText("Settings");
+				GameTooltip:Show();
 			</OnEnter>
 			<OnLeave function="GameTooltip_Hide" />
 		</Scripts>
