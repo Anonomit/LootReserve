@@ -68,15 +68,53 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             frame:SetHeight(44);
             frame:Show();
 
-            local name, link, _, _, _, type, subtype, _, _, texture = GetItemInfo(item);
-            if subtype and type ~= subtype then
-                type = type .. ", " .. subtype;
+            local name, link, _, _, _, itemType, itemSubType, _, equipLoc, texture, _, _, _, bindType = GetItemInfo(item);
+            local itemText = "";
+            if itemType then
+                if LootReserve.Constants.RedundantSubTypes[itemSubType] then
+                    itemText = LootReserve.Constants.RedundantSubTypes[itemSubType];
+                elseif itemType == ARMOR then
+                    if itemSubType == MISCELLANEOUS or equipLoc == "INVTYPE_CLOAK" then
+                        itemText = itemText .. (_G[equipLoc] or "");
+                    else
+                        itemText = itemText .. itemSubType .. " " .. (_G[equipLoc] or "");
+                    end
+                elseif itemType == WEAPON then
+                    itemText = itemText .. (_G[equipLoc] and (_G[equipLoc] .. " ") or "") .. (LootReserve.Constants.WeaponTypeNames[itemSubType] or "");
+                elseif itemType == MISCELLANEOUS then
+                    if itemSubType == "Junk" or itemSubType == "Other" then
+                        itemText = itemType;
+                    else
+                       itemText = itemSubType; 
+                    end
+                elseif itemType == "Recipe" then
+                    if itemSubType == "Book" then
+                        itemText = itemText .. "Skill Book";
+                    else
+                        itemText = itemText .. itemSubType .. " " .. itemType;
+                    end
+                elseif itemType == "Container" then
+                    itemText = itemText .. (_G[equipLoc] or "");
+                elseif itemType == "Trade Goods" then
+                    itemText = itemText .. "Trade Good";
+                else
+                    itemText = itemText .. itemType;
+                end
             end
+            if bindType == LE_ITEM_BIND_ON_ACQUIRE then
+                -- itemText = itemText .. "  (BoP)";
+            elseif bindType == LE_ITEM_BIND_ON_EQUIP then
+                itemText = itemText .. "  (BoE)";
+            elseif itemText == LE_ITEM_BIND_ON_USE then
+                itemText = itemText .. "  (BoU)";
+            end
+            
+            
             frame.Link = link;
 
             frame.ItemFrame.Icon:SetTexture(texture);
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
-            frame.ItemFrame.Misc:SetText(source or type);
+            frame.ItemFrame.Misc:SetText(source or itemText);
 
             local conditions = LootReserve.ItemConditions:Get(item, true);
             frame.ItemFrame:SetAlpha(conditions and (conditions.Hidden or conditions.Faction and not LootReserve.ItemConditions:TestFaction(conditions.Faction)) and 0.25 or 1);
