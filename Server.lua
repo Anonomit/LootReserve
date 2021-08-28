@@ -698,15 +698,6 @@ function LootReserve.Server:PrepareSession()
             end
         end);
 
-        LootReserve:RegisterEvent("GROUP_LEFT", function()
-            if self.CurrentSession then
-                self:StopSession();
-                self:ResetSession();
-            end
-            table.wipe(self.AddonUsers);
-            self:UpdateAddonUsers();
-        end);
-
         LootReserve:RegisterEvent("GROUP_ROSTER_UPDATE", function()
             self:UpdateGroupMembers();
         end);
