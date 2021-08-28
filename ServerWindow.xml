@@ -828,12 +828,20 @@
 								checked = LootReserve.Server.Settings.RollCountdown == time,
 							});
 						end
+						local frame = self:GetParent();
+						local item = self:GetParent().Item;
 
 						local menu =
 						{
 							{ text = "Start Roll", isTitle = true },
 							{ text = "Among Reserving Players", func = StartRoll, arg1 = true, disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item] },
-							{ text = "Among All Players", func = StartRoll },
+							{ text = "Among All Players", func = function(...)
+									if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item] then
+										StartRoll(...)
+									else
+										StaticPopup_Show("LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM", self:GetParent().Link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item].Players), {Item = self:GetParent().Item, Frame = self:GetParent()});
+									end
+								end },
 							{ text = "Auto Raid-Roll", func = RaidRoll },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Settings for \"Reserving Players\"", isTitle = true },
