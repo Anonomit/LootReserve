@@ -454,7 +454,19 @@
 
 							LootReserve:OpenMenu(menu, self:GetParent().Menu, self);
 						else
-							LootReserve.Server:RequestRoll(self:GetParent().Item);
+							local winners = { };
+							if LootReserve.Server.CurrentSession.WonItems and LootReserve.Server.CurrentSession.WonItems[self:GetParent().Item] then
+								for _, player in ipairs(LootReserve.Server.CurrentSession.WonItems[self:GetParent().Item].Players) do
+									if LootReserve:Contains(LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item].Players, player) then
+										table.insert(winners, player);
+									end
+								end
+							end
+							if #winners > 0 then
+								StaticPopup_Show("LOOTRESERVE_CONFIRM_ROLL_RESERVED_ITEM_AGAIN", self:GetParent().Link, format("%s:|n%s", #winners == 1 and "a reserver" or format("%d reservers", #winners), LootReserve:FormatReservesTextColored(winners)), {Item = self:GetParent().Item});
+							else
+								LootReserve.Server:RequestRoll(self:GetParent().Item);
+							end
 						end
 
 						if GameTooltip:IsOwned(self) then
@@ -834,7 +846,17 @@
 						local menu =
 						{
 							{ text = "Start Roll", isTitle = true },
-							{ text = "Among Reserving Players", func = StartRoll, arg1 = true, disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item] },
+							{ text = "Among Reserving Players", arg1 = true, disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item], func = function(...)
+								if LootReserve.Server.CurrentSession.WonItems and LootReserve.Server.CurrentSession.WonItems[self:GetParent().Item] then
+									for _, player in ipairs(LootReserve.Server.CurrentSession.WonItems[self:GetParent().Item].Players) do
+										if LootReserve:Contains(LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item].Players, player) then
+											StaticPopup_Show("LOOTRESERVE_CONFIRM_ROLL_RESERVED_ITEM_AGAIN", self:GetParent().Link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item].Players), {Item = self:GetParent().Item, Frame = self:GetParent()});
+											return;
+										end
+									end
+								end
+								StartRoll(...);
+							end, },
 							{ text = "Among All Players", func = function(...)
 									if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item] then
 										StartRoll(...)

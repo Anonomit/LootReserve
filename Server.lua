@@ -128,9 +128,27 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM"] =
     end,
 };
 
+StaticPopupDialogs["LOOTRESERVE_CONFIRM_ROLL_RESERVED_ITEM_AGAIN"] =
+{
+    text         = "Are you sure you want to roll %s among reserving players?|n|nIt has already been won by %s.",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self)
+        if self.data.Frame then
+            self.data.Frame:SetItem(nil);
+        end
+        if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[self.data.Item] then
+            LootReserve.Server:RequestRoll(self.data.Item);
+        end
+    end,
+};
+
 StaticPopupDialogs["LOOTRESERVE_CONFIRM_GLOBAL_PROFILE_ENABLE"] =
 {
-    text         = "By enabling global profile you acknowledge that all the mess you can create by e.g. swapping between characters who are in different raid groups will be on your conscience.|n|nDo you want to enable global profile?",
+    text         = "By enabling global profile you acknowledge that all the mess you can create (by e.g. swapping between characters who are in different raid groups) will be on your conscience.|n|nDo you want to enable global profile?",
     button1      = YES,
     button2      = NO,
     timeout      = 0,
