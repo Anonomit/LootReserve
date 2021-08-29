@@ -413,17 +413,10 @@ function LootReserve.Client:UpdateCategories()
     end
 
     if needsSelect then
-        local selected = nil;
         for i, frame in ipairs(list.Frames) do
-            if i <= list.LastIndex then
-                if selected == nil then
-                    if frame.CategoryID and frame.CategoryID > 0 and self.LootCategories and LootReserve:Contains(self.LootCategories, frame.CategoryID) then
-                        selected = false;
-                    end
-                elseif selected == false then
-                    selected = true;
-                    frame:Click();
-                end
+            if frame.Category.Favorites then
+                frame:Click();
+                break;
             end
         end
     end
