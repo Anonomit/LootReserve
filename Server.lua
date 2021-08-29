@@ -1265,7 +1265,8 @@ function LootReserve.Server:Opt(player, out, chat)
     end
     
 
-    self:UpdateReserveList()
+    self:UpdateReserveList();
+    self.MembersEdit:UpdateMembersList();
     return true;
 end
 

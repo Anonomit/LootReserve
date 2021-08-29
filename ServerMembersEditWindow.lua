@@ -71,7 +71,7 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
 
         local maxCount = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings.MaxReservesPerPlayer or LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer;
         local count = member.ReservesLeft and (maxCount - member.ReservesLeft) or #member.ReservedItems;
-        frame.Count:SetText(format("|c%s%d|r", count >= maxCount and "FF00FF00" or count > 0 and "FFFFD200" or "FFFF0000", count));
+        frame.Count:SetText(format("|c%s%d|r", (count >= maxCount or member.OptedOut) and "FF00FF00" or count > 0 and "FFFFD200" or "FFFF0000", count));
 
         frame.ReservesFrame.Items = frame.ReservesFrame.Items or { };
         local reservedItems = { };
