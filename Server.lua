@@ -586,7 +586,7 @@ function LootReserve.Server:PrepareLootTracking()
            return; 
         end
         -- best guess at what object the player is looting. won't work for chests
-        local guid = UnitExists("target") and UnitIsDead("target") and not UnitIsFriend("target") and UnitGUID("target");
+        local guid = UnitExists("target") and UnitIsDead("player", "target") and not UnitIsFriend("target") and UnitGUID("target");
         if guid then
             if self.LootedCorpses[guid] then
                 return;
