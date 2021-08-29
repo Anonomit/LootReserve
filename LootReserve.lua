@@ -573,6 +573,52 @@ function LootReserve:IsItemUsable(item)
     return true;
 end
 
+function LootReserve:GetItemDescription(item)
+    local name, link, _, _, _, itemType, itemSubType, _, equipLoc, texture, _, _, _, bindType = GetItemInfo(item);
+    local itemText = "";
+    if not itemType then return; end
+    
+    if LootReserve.Constants.RedundantSubTypes[itemSubType] then
+        itemText = LootReserve.Constants.RedundantSubTypes[itemSubType];
+    elseif itemType == ARMOR then
+        if itemSubType == MISCELLANEOUS or equipLoc == "INVTYPE_CLOAK" then
+            itemText = itemText .. (_G[equipLoc] or "");
+        else
+            itemText = itemText .. itemSubType .. " " .. (_G[equipLoc] or "");
+        end
+    elseif itemType == WEAPON then
+        itemText = itemText .. (_G[equipLoc] and (_G[equipLoc] .. " ") or "") .. (LootReserve.Constants.WeaponTypeNames[itemSubType] or "");
+    elseif itemType == MISCELLANEOUS then
+        if itemSubType == "Junk" or itemSubType == "Other" then
+            itemText = itemType;
+        else
+           itemText = itemSubType; 
+        end
+    elseif itemType == "Recipe" then
+        if itemSubType == "Book" then
+            itemText = itemText .. "Skill Book";
+        else
+            itemText = itemText .. itemSubType .. " " .. itemType;
+        end
+    elseif itemType == "Container" then
+        itemText = itemText .. (_G[equipLoc] or "");
+    elseif itemType == "Trade Goods" then
+        itemText = itemText .. "Trade Good";
+    else
+        itemText = itemText .. itemType;
+    end
+    
+    if bindType == LE_ITEM_BIND_ON_ACQUIRE then
+        -- itemText = itemText .. "  (BoP)";
+    elseif bindType == LE_ITEM_BIND_ON_EQUIP then
+        itemText = itemText .. "  (BoE)";
+    elseif itemText == LE_ITEM_BIND_ON_USE then
+        itemText = itemText .. "  (BoU)";
+    end
+    
+    return itemText;
+end
+
 function LootReserve:IsLootingItem(item)
     for i = 1, GetNumLootItems() do
         local link = GetLootSlotLink(i);

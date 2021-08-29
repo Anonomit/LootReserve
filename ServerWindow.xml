@@ -1219,7 +1219,7 @@
 					if item then
 						self.Item = item;
 
-						local name, link, _, _, _, type, subtype, _, _, texture = GetItemInfo(item);
+						local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
 						self.Link = link;
 
 						if not name or not link then

@@ -134,20 +134,18 @@ function LootReserve.Client:UpdateLootList()
             frame:SetHeight(44);
             frame:Show();
 
-            local name, link, _, _, _, type, subtype, _, _, texture = GetItemInfo(item);
-            if subtype and type ~= subtype then
-                type = type .. ", " .. subtype;
-            end
+            local description = LootReserve:GetItemDescription(item);
+            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
             frame.Link = link;
 
             local conditions = self.ItemConditions[item];
             if conditions and conditions.Limit and conditions.Limit ~= 0 then
-                source = format("|cFFFF0000(Max %d |4reserve:reserves;) |r%s", conditions.Limit, source or type or "");
+                source = format("|cFFFF0000(Max %d |4reserve:reserves;) |r%s", conditions.Limit, source or description or "");
             end
 
             frame.ItemFrame.Icon:SetTexture(texture);
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
-            frame.ItemFrame.Misc:SetText(source or type);
+            frame.ItemFrame.Misc:SetText(source or description);
             frame.Favorite:SetPoint("LEFT", frame.ItemFrame.Name, "LEFT", math.min(frame.ItemFrame:GetWidth() - 57, frame.ItemFrame.Name:GetStringWidth()), 0);
             frame.Favorite.Set:SetShown(not self:IsFavorite(item));
             frame.Favorite.Unset:SetShown(not frame.Favorite.Set:IsShown());

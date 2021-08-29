@@ -482,10 +482,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
         if item and roll then
             frame.Item = item;
 
-            local name, link, _, _, _, type, subtype, _, _, texture = GetItemInfo(item);
-            if subtype and type ~= subtype then
-                type = type .. ", " .. subtype;
-            end
+            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
             frame.Link = link;
             frame.Historical = historical;
             frame.Roll = roll;

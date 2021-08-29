@@ -31,11 +31,8 @@ function LootReserve.Client:RollRequested(sender, item, players, custom, duratio
     };
     local roll = self.RollRequest;
 
-    local name, link, _, _, _, type, subtype, _, _, texture = GetItemInfo(item);
-    if subtype and type ~= subtype then
-        type = type .. ", " .. subtype;
-    end
-    frame.Link = link;
+    local description = LootReserve:GetItemDescription(item);
+    local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
 
     frame.Sender = sender;
     frame.Item = item;
@@ -43,7 +40,7 @@ function LootReserve.Client:RollRequested(sender, item, players, custom, duratio
     frame.LabelSender:SetText(format(custom and "%s offers you to roll%s on this item:" or "%s asks you to roll%s on the item you reserved:", LootReserve:ColoredPlayer(sender), phase and format(" for |cFF00FF00%s|r", phase) or ""));
     frame.ItemFrame.Icon:SetTexture(texture);
     frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
-    frame.ItemFrame.Misc:SetText(type);
+    frame.ItemFrame.Misc:SetText(description);
     frame.ButtonRoll:Disable();
     frame.ButtonRoll:SetAlpha(0.25);
     frame.ButtonRoll.Multi:SetText(format("x%d", myCount));
