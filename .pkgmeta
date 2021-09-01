@@ -1,0 +1,6 @@
+package-as: LootReserve
+
+ignore: # Files and directories beginning with a dot (such as .git) are automatically ignored, as is the pgkmeta file itself.
+    - LootReserve.wowproj
+
+manual-changelog: CHANGELOG.txt
