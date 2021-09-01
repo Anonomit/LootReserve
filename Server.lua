@@ -45,6 +45,7 @@ LootReserve.Server =
         RollFinishOnRaidRoll            = false,
         RollSkipNotContested            = true,
         RollHistoryDisplayLimit         = 10,
+        RollHistoryKeepLimit            = 1000,
         RollMasterLoot                  = true,
         MasterLooting                   = true,
         ItemConditions                  = { },
@@ -84,6 +85,7 @@ LootReserve.Server =
     StartupAwaitingAuthorityRegistered = false,
     MasterLootListUpdateRegistered     = false,
     RollHistoryDisplayLimit            = 0,
+    RollHistoryKeepLimit               = 0,
 };
 
 StaticPopupDialogs["LOOTRESERVE_CONFIRM_FORCED_CANCEL_RESERVE"] =
@@ -215,6 +217,20 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_RESET_PHASES"] =
     hideOnEscape = 1,
     OnAccept = function(self)
         LootReserve.Server.Settings.Phases = LootReserve:Deepcopy(LootReserve.Constants.DefaultPhases);
+    end,
+};
+
+StaticPopupDialogs["LOOTRESERVE_CONFIRM_CLEAR_HISTORY"] =
+{
+    text         = "Are you sure you want to clear all %d roll%s?",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self)
+        table.wipe(LootReserve.Server.RollHistory);
+        LootReserve.Server:UpdateRollList();
     end,
 };
 
@@ -1944,6 +1960,9 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
 
         if not noHistory then
             table.insert(self.RollHistory, self.RequestedRoll);
+            while #self.RollHistory > self.RollHistoryKeepLimit do
+               table.remove(self.RollHistory, 1); 
+            end
 
             if LootReserve:GetTradeableItemCount(item) <= 1 then
                 if self.Settings.RemoveRecentLootAfterRolling then

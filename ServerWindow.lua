@@ -730,6 +730,7 @@ function LootReserve.Server:SetWindowTab(tab, lockdown)
         self.Window.Search:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", -7, -25);
         (lockdown and self.Window.PanelRollsLockdown or self.Window.PanelRolls):SetPoint("TOPLEFT", self.Window, "TOPLEFT", 7, -48);
         self.RollHistoryDisplayLimit = self.Settings.RollHistoryDisplayLimit;
+        self.RollHistoryKeepLimit    = self.Settings.RollHistoryKeepLimit;
     end
 
     for i, panel in ipairs(self.Window.Panels) do

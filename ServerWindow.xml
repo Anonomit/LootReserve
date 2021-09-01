@@ -1295,7 +1295,7 @@
 		</Layers>
 		<Frames>
 			<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
-			<Button parentKey="MenuButton" hidden="true">
+			<Button parentKey="MenuButton">
 				<Size x="12" y="12" />
 				<Anchors>
 					<Anchor point="RIGHT" x="-2" />
@@ -1309,13 +1309,31 @@
 						{
 							{ text = "Display Limit", isTitle = true },
 							LootReserve:MakeMenuSeparator(),
+							{ text = "History Limit", isTitle = true },
+							LootReserve:MakeMenuSeparator(),
 							{ text = "Clear History", func = function()
-								table.wipe(LootReserve.Server.RollHistory);
-								LootReserve.Server:UpdateRollList();
+								StaticPopup_Show("LOOTRESERVE_CONFIRM_CLEAR_HISTORY", #LootReserve.Server.RollHistory, #LootReserve.Server.RollHistory == 1 and "" or "s");
 							end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
 						};
+						for i, limit in ipairs({ 100, 250, 500, 1000, 10000 }) do
+							table.insert(menu, 3 + i,
+							{
+								text = format("%d |4roll:rolls;", limit),
+								arg1 = limit,
+								func = function(info, limit)
+									LootReserve.Server.Settings.RollHistoryKeepLimit = limit;
+									LootReserve.Server.RollHistoryKeepLimit = limit;
+									while #LootReserve.Server.RollHistory > limit do
+										table.remove(LootReserve.Server.RollHistory, 1);
+									end
+									LootReserve.Server:UpdateRollList();
+									LootReserve:ReopenMenu(self);
+								end,
+								checked = LootReserve.Server.Settings.RollHistoryKeepLimit == limit,
+							});
+						end
 						for i, limit in ipairs({ 5, 10, 25, 50, 100 }) do
 							table.insert(menu, 1 + i,
 							{
@@ -1338,7 +1356,7 @@
 		<Scripts>
 			<OnUpdate>
 				if self:IsProtected() and InCombatLockdown() then return; end
-				self.MenuButton:SetShown(self:IsMouseOver() or UIDROPDOWNMENU_OPEN_MENU == self.Menu);
+				<!-- self.MenuButton:SetShown(self:IsMouseOver() or UIDROPDOWNMENU_OPEN_MENU == self.Menu); -->
 			</OnUpdate>
 		</Scripts>
 	</Frame>
