@@ -124,9 +124,7 @@ function LootReserve:OnEnable()
     -- This should be the only case when a player is already detected to be in a group at the time of addon loading
     Startup();
 
-    if LootReserve.Comm.Debug then
-        SlashCmdList.LOOTRESERVE("server");
-    end
+    SlashCmdList.LOOTRESERVE("server");
 end
 
 function LootReserve:OnDisable()
@@ -142,6 +140,22 @@ end
 
 function LootReserve:PrintMessage(fmt, ...)
     DEFAULT_CHAT_FRAME:AddMessage("|cFFFFD200LootReserve: |r" .. format(fmt, ...), 1, 1, 1);
+end
+
+function LootReserve:debug(...)
+    -- Curseforge automatic packaging will comment this out
+    -- https://support.curseforge.com/en/support/solutions/articles/9000197281-automatic-packaging
+    --@debug@
+    print("[DEBUG] ", ...);
+    --@end-debug@
+end
+
+function LootReserve:debugFunc(func)
+    -- Curseforge automatic packaging will comment this out
+    -- https://support.curseforge.com/en/support/solutions/articles/9000197281-automatic-packaging
+    --@debug@
+    func();
+    --@end-debug@
 end
 
 function LootReserve:RegisterUpdate(handler)
