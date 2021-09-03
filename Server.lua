@@ -435,6 +435,19 @@ function LootReserve.Server:Load()
             end
         end
     end
+    
+    -- 2021-09-01: Prune unneeded historical data
+    if #self.RollHistory > 0 then
+        if self.RollHistory[#self.RollHistory].Duration then
+            for _, roll in ipairs(self.RollHistory) do
+                roll.Duration    = nil;
+                roll.MaxDuration = nil;
+                if roll.Phases then
+                    roll.Phases = {roll.Phases[1]};
+                end
+            end
+        end
+    end
 
     -- Expire session if more than 1 hour has passed since the player was last online
     if self.CurrentSession and self.CurrentSession.LogoutTime and time() > self.CurrentSession.LogoutTime + 3600 then
@@ -1959,7 +1972,13 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
         end
 
         if not noHistory then
-            table.insert(self.RollHistory, self.RequestedRoll);
+            local historicalEntry = LootReserve:Deepcopy(self.RequestedRoll);
+            historicalEntry.Duration    = nil;
+            historicalEntry.MaxDuration = nil;
+            if historicalEntry.Phases then
+                historicalEntry.Phases = {historicalEntry.Phases[1]};
+            end
+            table.insert(self.RollHistory, historicalEntry);
             while #self.RollHistory > self.RollHistoryKeepLimit do
                table.remove(self.RollHistory, 1); 
             end
