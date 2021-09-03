@@ -38,6 +38,9 @@
 					</ScrollFrame>
 				</Frames>
 				<Scripts>
+					<OnShow>
+						self.Scroll.EditBox:SetText("");
+					</OnShow>
 					<OnSizeChanged>
 						if self.Scroll:GetWidth() > 0 then
 							self.Scroll.EditBox:SetWidth(self.Scroll:GetWidth() - self.Scroll.ScrollBar:GetWidth() - 1);
