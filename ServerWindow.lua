@@ -93,7 +93,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
-    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText(), true);
+    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
     if #filter == 0 then
         filter = nil;
     end
@@ -231,13 +231,13 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
         local name, link = GetItemInfo(item);
         if name then
-            if string.find(name:upper(), filter) then
+            if string.find(name:upper(), filter, 1, true) then
                 return true;
             end
         end
-
-        for _, player in ipairs(reserve.Players) do
-            if string.find(player:upper(), filter) then
+        
+        for _, player in pairs(reserve.Players) do
+            if string.find(LootReserve:SimplifyName(player):upper(), filter, 1, true) then
                 return true;
             end
         end
@@ -426,7 +426,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
-    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText(), true);
+    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
     if #filter == 0 then
         filter = nil;
     end
@@ -650,13 +650,13 @@ function LootReserve.Server:UpdateRollList(lockdown)
 
         local name, link = GetItemInfo(item);
         if name then
-            if string.find(name:upper(), filter) then
+            if string.find(name:upper(), filter, 1, true) then
                 return true;
             end
         end
-
-        for player, _ in pairs(roll.Players) do
-            if string.find(player:upper(), filter) then
+        
+        for player in pairs(roll.Players) do
+            if string.find(LootReserve:SimplifyName(player):upper(), filter, 1, true) then
                 return true;
             end
         end

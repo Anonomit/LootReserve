@@ -488,6 +488,73 @@ function LootReserve:ForEachRaider(func)
     end
 end
 
+local charSimplifications =
+{
+    ["a"  ] = "[ÀÁÂÃÄÅàáâãäåĀāĂăĄąǍǎǞǟǠǡǺǻȀȁȂȃɐɑɒ]",
+    ["ae" ] = "[ÆæǢǣǼǽ]",
+    ["b"  ] = "[ƀƁƂƃɓʙ]",
+    ["c"  ] = "[ÇçĆćĈĉĊċČčƇƈɔɕʗ]",
+    ["d"  ] = "[ĎďĐđƉƊƋƌɖɗ]",
+    ["dz" ] = "[ǄǅǆǱǲǳʣʥ]",
+    ["e"  ] = "[ÈÉÊËèéêëĒēĔĕĖėĘęĚěƎƐǝȄȅȆȇɘəɚɛɜɝɞʚ]",
+    ["eth"] = "[ð]",
+    ["f"  ] = "[Ƒƒɟ]",
+    ["g"  ] = "[ĜĝĞğĠġĢģƓǤǥǦǧǴǵɠɡɢʛ]",
+    ["h"  ] = "[ĤĥĦħɥɦɧʜ]",
+    ["i"  ] = "[ÌÍÎÏìíîïĨĩĪīĬĭĮįİıƗǏǐȈȉȊȋɨɩɪ]",
+    ["ij" ] = "[Ĳĳ]",
+    ["j"  ] = "[Ĵĵǰʄʝ]",
+    ["k"  ] = "[ĶķĸƘƙǨǩʞ]",
+    ["l"  ] = "[ĹĺĻļĽľĿŀŁłƚɫɬɭʟ]",
+    ["lj" ] = "[Ǉǈǉ]",
+    ["m"  ] = "[Ɯɯɰɱ]",
+    ["n"  ] = "[ÑñŃńŅņŇňŉŊŋƝƞɲɳɴ]",
+    ["nj" ] = "[Ǌǋǌ]",
+    ["o"  ] = "[ÒÓÔÕÖØòóôõöøŌōŎŏŐőƆƟƠơǑǒǪǫǬǭǾǿȌȍȎȏɵ]",
+    ["oe" ] = "[Œœɶ]",
+    ["oi" ] = "[Ƣƣ]",
+    ["p"  ] = "[ÞþƤƥ]",
+    ["q"  ] = "[ʠ]",
+    ["r"  ] = "[ŔŕŖŗŘřƦȐȑȒȓɹɺɻɼɽɾɿʀʁ]",
+    ["s"  ] = "[ŚśŜŝŞşŠšſʂ]",
+    ["ss" ] = "[ß]",
+    ["t"  ] = "[ŢţŤťŦŧƫƬƭƮʇʈ]",
+    ["u"  ] = "[ÙÚÛÜùúûüŨũŪūŬŭŮůŰűŲųƯưǓǔǕǖǗǘǙǚǛǜȔȕȖȗʉʊ]",
+    ["v"  ] = "[Ʋʋʌ]",
+    ["w"  ] = "[Ŵŵʍ]",
+    ["y"  ] = "[ÝýÿŶŷŸƳƴʎʏ]",
+    ["z"  ] = "[ŹźŻżŽžƵƶʐʑ]",
+};
+
+local simplificationMapping = { }
+for replacement, pattern in pairs(charSimplifications) do
+    local len = pattern:utf8len();
+    for i = 1, len do
+        local char = pattern:utf8sub(i, i);
+        if char ~= "[" and char ~= "]" then
+            simplificationMapping[char] = replacement;
+        end
+    end
+end
+
+function LootReserve:NormalizeName(name)
+    for i = 1, name:utf8len() do
+        if name:utf8sub(i, i) == "-" then
+            return name:utf8sub(1, 1):utf8upper() .. name:utf8sub(2, i - 1):utf8lower() .. name:utf8sub(i);
+        end
+    end
+    return name:utf8sub(1, 1):utf8upper() .. name:utf8sub(2):utf8lower();
+end
+
+function LootReserve:SimplifyName(name)
+    for i = 1, name:utf8len() do
+        if name:utf8sub(i, i) == "-" then
+            return self:NormalizeName(name:utf8sub(1, i - 1):utf8replace(simplificationMapping));
+        end
+    end
+    return self:NormalizeName(name:utf8replace(simplificationMapping));
+end
+
 function LootReserve:IsTradeableItem(bag, slot)
     return not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot);
 end
@@ -643,14 +710,10 @@ function LootReserve:IsLootingItem(item)
     end
 end
 
-local magicCharactersPattern = format("([%s])", ("().%+-*?[]^$"):gsub(".", "%%%1"));
-function LootReserve:TransformSearchText(text, isPattern)
+function LootReserve:TransformSearchText(text)
     text = self:StringTrim(text, "[%s%[%]]");
     text = text:upper();
     text = text:gsub("`", "'"):gsub("´", "'"); -- For whatever reason [`´] doesn't work
-    if isPattern then
-        text = text:gsub(magicCharactersPattern, "%%%1");
-    end
     return text;
 end
 

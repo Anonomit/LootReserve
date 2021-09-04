@@ -65,11 +65,11 @@ function LootReserve.ItemSearch:Search(query)
     local progress = self:Load();
     if not self.LoadingState then return nil, progress; end
 
-    query = LootReserve:TransformSearchText(query, true);
+    query = LootReserve:TransformSearchText(query);
 
     local results = { };
     for item, name in pairs(self.Names) do
-        if string.find(name, query) then
+        if string.find(name, query, 1, true) then
             table.insert(results, item);
         end
     end

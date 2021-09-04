@@ -903,13 +903,13 @@ function LootReserve.Server:PrepareSession()
                 else
                     count = 1;
                 end
-                text = LootReserve:TransformSearchText(text, true);
+                text = LootReserve:TransformSearchText(text);
                 local function handleItemCommandByName()
                     if self:UpdateItemNameCache() then
                         local match = nil;
                         local matches = { };
                         for item, name in pairs(self.ItemNames) do
-                            if self.ReservableItems[item] and string.find(name, text) and not LootReserve:Contains(matches, item) then
+                            if self.ReservableItems[item] and string.find(name, text, 1, true) and not LootReserve:Contains(matches, item) then
                                 match = match and 0 or item;
                                 table.insert(matches, item);
                             end

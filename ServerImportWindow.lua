@@ -23,7 +23,7 @@ local function ParseCSVLine(line, sep)
             table.insert(res, txt);
             pos = pos + 1;
         else
-            local startp, endp = string.find(line, sep, pos);
+            local startp, endp = string.find(line, sep, pos, true);
             if startp then
                 table.insert(res, string.sub(line, pos, startp - 1));
                 pos = endp + 1;
@@ -34,73 +34,6 @@ local function ParseCSVLine(line, sep)
         end
     end
     return res;
-end
-
-local charSimplifications =
-{
-    ["a"  ] = "[ÀÁÂÃÄÅàáâãäåĀāĂăĄąǍǎǞǟǠǡǺǻȀȁȂȃɐɑɒ]",
-    ["ae" ] = "[ÆæǢǣǼǽ]",
-    ["b"  ] = "[ƀƁƂƃɓʙ]",
-    ["c"  ] = "[ÇçĆćĈĉĊċČčƇƈɔɕʗ]",
-    ["d"  ] = "[ĎďĐđƉƊƋƌɖɗ]",
-    ["dz" ] = "[ǄǅǆǱǲǳʣʥ]",
-    ["e"  ] = "[ÈÉÊËèéêëĒēĔĕĖėĘęĚěƎƐǝȄȅȆȇɘəɚɛɜɝɞʚ]",
-    ["eth"] = "[ð]",
-    ["f"  ] = "[Ƒƒɟ]",
-    ["g"  ] = "[ĜĝĞğĠġĢģƓǤǥǦǧǴǵɠɡɢʛ]",
-    ["h"  ] = "[ĤĥĦħɥɦɧʜ]",
-    ["i"  ] = "[ÌÍÎÏìíîïĨĩĪīĬĭĮįİıƗǏǐȈȉȊȋɨɩɪ]",
-    ["ij" ] = "[Ĳĳ]",
-    ["j"  ] = "[Ĵĵǰʄʝ]",
-    ["k"  ] = "[ĶķĸƘƙǨǩʞ]",
-    ["l"  ] = "[ĹĺĻļĽľĿŀŁłƚɫɬɭʟ]",
-    ["lj" ] = "[Ǉǈǉ]",
-    ["m"  ] = "[Ɯɯɰɱ]",
-    ["n"  ] = "[ÑñŃńŅņŇňŉŊŋƝƞɲɳɴ]",
-    ["nj" ] = "[Ǌǋǌ]",
-    ["o"  ] = "[ÒÓÔÕÖØòóôõöøŌōŎŏŐőƆƟƠơǑǒǪǫǬǭǾǿȌȍȎȏɵ]",
-    ["oe" ] = "[Œœɶ]",
-    ["oi" ] = "[Ƣƣ]",
-    ["p"  ] = "[ÞþƤƥ]",
-    ["q"  ] = "[ʠ]",
-    ["r"  ] = "[ŔŕŖŗŘřƦȐȑȒȓɹɺɻɼɽɾɿʀʁ]",
-    ["s"  ] = "[ŚśŜŝŞşŠšſʂ]",
-    ["ss" ] = "[ß]",
-    ["t"  ] = "[ŢţŤťŦŧƫƬƭƮʇʈ]",
-    ["u"  ] = "[ÙÚÛÜùúûüŨũŪūŬŭŮůŰűŲųƯưǓǔǕǖǗǘǙǚǛǜȔȕȖȗʉʊ]",
-    ["v"  ] = "[Ʋʋʌ]",
-    ["w"  ] = "[Ŵŵʍ]",
-    ["y"  ] = "[ÝýÿŶŷŸƳƴʎʏ]",
-    ["z"  ] = "[ŹźŻżŽžƵƶʐʑ]",
-};
-
-local simplificationMapping = { }
-for replacement, pattern in pairs(charSimplifications) do
-    local len = pattern:utf8len();
-    for i = 1, len do
-        local char = pattern:utf8sub(i, i);
-        if char ~= "[" and char ~= "]" then
-            simplificationMapping[char] = replacement;
-        end
-    end
-end
-
-local function NormalizeName(name)
-    for i = 1, name:utf8len() do
-        if name:utf8sub(i, i) == "-" then
-            return name:utf8sub(1, 1):utf8upper() .. name:utf8sub(2, i - 1):utf8lower() .. name:utf8sub(i);
-        end
-    end
-    return name:utf8sub(1, 1):utf8upper() .. name:utf8sub(2):utf8lower();
-end
-
-local function SimplifyName(name)
-    for i = 1, name:utf8len() do
-        if name:utf8sub(i, i) == "-" then
-            return NormalizeName(name:utf8sub(1, i - 1):utf8replace(simplificationMapping));
-        end
-    end
-    return NormalizeName(name:utf8replace(simplificationMapping));
 end
 
 local function ParseMultireserveCount(value)
@@ -363,7 +296,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
         if self.MatchNames then
             simplifiedRaidNames = { };
             LootReserve:ForEachRaider(function(name)
-                local simplified = SimplifyName(name);
+                local simplified = LootReserve:SimplifyName(name);
                 local existing = simplifiedRaidNames[simplified];
                 if not existing then
                     simplifiedRaidNames[simplified] = name;
@@ -391,9 +324,9 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
 
                     local nameMatchResult = nil;
                     if player and #player > 0 then
-                        player = LootReserve:Player(NormalizeName(player));
+                        player = LootReserve:Player(LootReserve:NormalizeName(player));
                         if self.MatchNames and LootReserve:IsPlayerOnline(player) == nil then
-                            local simplified = simplifiedRaidNames[SimplifyName(player)];
+                            local simplified = simplifiedRaidNames[LootReserve:SimplifyName(player)];
                             if not simplified then
                                 nameMatchResult = "not in raid";
                             elseif type(simplified) == "string" then

@@ -93,7 +93,7 @@ function LootReserve.Client:UpdateReserveStatus()
 end
 
 function LootReserve.Client:UpdateLootList()
-    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText(), true);
+    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
     if #filter < 3 then
         filter = nil;
     end
@@ -159,14 +159,14 @@ function LootReserve.Client:UpdateLootList()
     end
 
     local function matchesFilter(item, filter)
-        filter = (filter or ""):gsub("^%s*(.-)%s*$", "%1"):upper();
+        filter = (filter or "");
         if #filter == 0 then
             return true;
         end
 
         local name, link = GetItemInfo(item);
         if name then
-            if string.find(name:upper(), filter) then
+            if string.find(name:upper(), filter, 1, true) then
                 return true;
             end
         else
