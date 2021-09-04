@@ -4,8 +4,8 @@ function LootReserve.Server.Export:UpdateExportText()
     if members and next(members) then
         text = text .. "Player,Item";
         for player, member in LootReserve:Ordered(members, function(aMember, bMember, aPlayer, bPlayer) return aPlayer < bPlayer; end) do
-            for _, item in ipairs(member.ReservedItems) do
-                text = text .. format("\n%s,%d", player, item);
+            for _, itemID in ipairs(member.ReservedItems) do
+                text = text .. format("\n%s,%d", player, itemID);
             end
         end
     end

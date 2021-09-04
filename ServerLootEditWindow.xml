@@ -26,8 +26,8 @@
 						<Scripts>
 							<OnLoad inherit="prepend">
 								self.Update = function(self)
-									local item = self:GetParent():GetParent().Item;
-									local conditions = LootReserve.ItemConditions:Get(item, true);
+									local itemID = self:GetParent():GetParent().Item;
+									local conditions = LootReserve.ItemConditions:Get(itemID, true);
 									if conditions and conditions.ClassMask then
 										local text = "";
 										for i = 1, LootReserve:GetNumClasses() do
@@ -55,8 +55,8 @@
 									LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
 									return;
 								end
-								local item = self:GetParent():GetParent().Item;
-								local conditions = LootReserve.ItemConditions:Get(item, true);
+								local itemID = self:GetParent():GetParent().Item;
+								local conditions = LootReserve.ItemConditions:Get(itemID, true);
 								local menu =
 								{
 									LootReserve:MakeMenuSeparator(),
@@ -73,9 +73,9 @@
 											checked = conditions and LootReserve.ItemConditions:TestClassMask(conditions.ClassMask, id) or false,
 											arg1 = id,
 											func = function(_, id, _, checked)
-												local conditions = LootReserve.ItemConditions:Make(item, true);
+												local conditions = LootReserve.ItemConditions:Make(itemID, true);
 												conditions.ClassMask = checked and bit.bor(conditions.ClassMask or 0, bit.lshift(1, id - 1)) or bit.band(conditions.ClassMask or 0, bit.bnot(bit.lshift(1, id - 1)));
-												LootReserve.ItemConditions:Save(item, true);
+												LootReserve.ItemConditions:Save(itemID, true);
 											end
 										});
 									end
@@ -98,8 +98,8 @@
 						<Scripts>
 							<OnLoad>
 								self.Update = function(self)
-									local item = self:GetParent():GetParent().Item;
-									local conditions = LootReserve.ItemConditions:Get(item, true);
+									local itemID = self:GetParent():GetParent().Item;
+									local conditions = LootReserve.ItemConditions:Get(itemID, true);
 									self.shown = false;
 									self.disabled = false;
 									if not conditions then
@@ -130,13 +130,13 @@
 									LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
 									return;
 								end
-								local item = self:GetParent():GetParent().Item;
-								local conditions = LootReserve.ItemConditions:Make(item, true);
+								local itemID = self:GetParent():GetParent().Item;
+								local conditions = LootReserve.ItemConditions:Make(itemID, true);
 								if conditions.Custom then
-									LootReserve.ItemConditions:Delete(item, true);
+									LootReserve.ItemConditions:Delete(itemID, true);
 								else
 									conditions.Hidden = not conditions.Hidden;
-									LootReserve.ItemConditions:Save(item, true);
+									LootReserve.ItemConditions:Save(itemID, true);
 								end
 							</OnClick>
 						</Scripts>
@@ -169,14 +169,14 @@
 											return;
 										end
 										self:GetParent().EditBox:ClearFocus();
-										local item = self:GetParent():GetParent():GetParent().Item;
-										local conditions = LootReserve.ItemConditions:Make(item, true);
+										local itemID = self:GetParent():GetParent():GetParent().Item;
+										local conditions = LootReserve.ItemConditions:Make(itemID, true);
 										if conditions.Limit and conditions.Limit > 1 then
 											conditions.Limit = conditions.Limit - 1;
 										else
 											conditions.Limit = nil;
 										end
-										LootReserve.ItemConditions:Save(item, true);
+										LootReserve.ItemConditions:Save(itemID, true);
 									</OnClick>
 								</Scripts>
 							</Button>
@@ -192,10 +192,10 @@
 											return;
 										end
 										self:GetParent().EditBox:ClearFocus();
-										local item = self:GetParent():GetParent():GetParent().Item;
-										local conditions = LootReserve.ItemConditions:Make(item, true);
+										local itemID = self:GetParent():GetParent():GetParent().Item;
+										local conditions = LootReserve.ItemConditions:Make(itemID, true);
 										conditions.Limit = math.min(999, (conditions.Limit or 0) + 1);
-										LootReserve.ItemConditions:Save(item, true);
+										LootReserve.ItemConditions:Save(itemID, true);
 									</OnClick>
 								</Scripts>
 							</Button>
@@ -211,10 +211,10 @@
         							LootReserve.Server.LootEdit:UpdateLootList();
 											return;
 										end
-										local item = self:GetParent():GetParent():GetParent().Item;
-										local conditions = LootReserve.ItemConditions:Make(item, true);
+										local itemID = self:GetParent():GetParent():GetParent().Item;
+										local conditions = LootReserve.ItemConditions:Make(itemID, true);
 										conditions.Limit = tonumber(self:GetText()) and math.min(999, tonumber(self:GetText()));
-										LootReserve.ItemConditions:Save(item, true);
+										LootReserve.ItemConditions:Save(itemID, true);
 									</OnTextChanged>
 									<OnEnterPressed function="EditBox_ClearFocus" />
 									<OnEditFocusGained inherit="prepend">
@@ -234,8 +234,8 @@
 								self.EditBox:SetJustifyH("CENTER");
 								self.EditBox.Left:SetPoint("LEFT", self.EditBox, "LEFT", 0, 0);
 								self.Update = function(self)
-									local item = self:GetParent():GetParent().Item;
-									local conditions = LootReserve.ItemConditions:Get(item, true);
+									local itemID = self:GetParent():GetParent().Item;
+									local conditions = LootReserve.ItemConditions:Get(itemID, true);
 
 									self.Decrement:SetEnabled(conditions and conditions.Limit and conditions.Limit > 0);
 									self.Increment:SetEnabled(not conditions or not conditions.Limit or conditions.Limit &lt; 999);
@@ -271,8 +271,8 @@
 						<Scripts>
 							<OnLoad>
 								self.Update = function(self)
-									local item = self:GetParent():GetParent().Item;
-									local conditions = LootReserve.ItemConditions:Get(item, true);
+									local itemID = self:GetParent():GetParent().Item;
+									local conditions = LootReserve.ItemConditions:Get(itemID, true);
 									if conditions and conditions.Limit and conditions.Limit > 0 and not conditions.Hidden then
 										self.Label:SetText(format("Max %d", conditions.Limit));
 										self:SetWidth(self.Label:GetStringWidth());
@@ -408,10 +408,10 @@
 								self:RegisterForDrag("LeftButton");
 								self.DropHandler = function(self)
 									local frame = self:GetParent():GetParent();
-									local type, item, link = GetCursorInfo();
+									local infoType, itemID, link = GetCursorInfo();
 									ClearCursor();
-									if type == "item" and item then
-										frame:SetItem(item);
+									if infoType == "item" and itemID then
+										frame:SetItem(itemID);
 										CloseMenus();
 									elseif frame.Item then
 										frame:SetItem(nil);
@@ -521,11 +521,11 @@
 							return;
 						end
 						local text = LootReserve:TransformSearchText(editbox:GetText());
-						local item = tonumber(text);
+						local itemID = tonumber(text);
 						local menu = { };
 						local missing = false;
-						if item and C_Item.DoesItemExistByID(item) then
-							local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+						if itemID and C_Item.DoesItemExistByID(itemID) then
+							local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemID);
 							if not name or not link then
 								C_Timer.After(0.25, UpdateText);
 								return;
@@ -533,13 +533,13 @@
 							table.insert(menu,
 							{
 								text = format("|T%d:0|t %s", texture, (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", "")),
-								arg1 = item,
+								arg1 = itemID,
 								func = SelectItem,
 							});
-						elseif not item and #text >= 3 then
+						elseif not itemID and #text >= 3 then
 							local results, progress = LootReserve.ItemSearch:Search(text);
 							if results then
-								for i, item in ipairs(results) do
+								for i, itemID in ipairs(results) do
 									if i > 10 then
 										table.insert(menu,
 										{
@@ -548,14 +548,14 @@
 										});
 										break;
 									else
-										local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+										local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemID);
 										if not link then
 											missing = true;
 										end
 										table.insert(menu,
 										{
 											text = format("|T%d:0|t %s", texture, (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", "")),
-											arg1 = item,
+											arg1 = itemID,
 											func = SelectItem,
 										});
 									end
@@ -585,17 +585,17 @@
 					end
 					UpdateText();
 				end);
-				self.SetItem = function(self, item)
-					if item then
-						self.Item = item;
+				self.SetItem = function(self, itemID)
+					if itemID then
+						self.Item = itemID;
 
-						local name, link, quality, _, _, _, _, _, _, texture = GetItemInfo(item);
+						local name, link, quality, _, _, _, _, _, _, texture = GetItemInfo(itemID);
 						self.Link = link;
 
 						if not name or not link then
 							C_Timer.After(0.25, function()
-								if self.Item == item then
-									self:SetItem(item);
+								if self.Item == itemID then
+									self:SetItem(itemID);
 								end
 							end);
 							return;
@@ -603,7 +603,7 @@
 
 						local reservers = 0;
 						if LootReserve.Server.CurrentSession then
-							local reserve = LootReserve.Server.CurrentSession.ItemReserves[item];
+							local reserve = LootReserve.Server.CurrentSession.ItemReserves[itemID];
 							reservers = reserve and #reserve.Players or 0;
 						end
 

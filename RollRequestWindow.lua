@@ -13,7 +13,7 @@ function LootReserve.Client:RollRequested(sender, item, players, custom, duratio
     if not example then
         if not self.Settings.RollRequestShow then return; end
         if not LootReserve:Contains(players, LootReserve:Me()) then return; end
-        if custom and not self.Settings.RollRequestShowUnusable and LootReserve:IsItemUsable(item) == false then return; end -- Need to check for false, returns nil if item not loaded
+        if custom and not self.Settings.RollRequestShowUnusable and not LootReserve.ItemConditions:TestClassEquip(item:GetID(), select(2, LootReserve:UnitClass(LootReserve:Me()))) then return; end
     end
 
     local _, myCount = LootReserve:GetReservesData(players, LootReserve:Me());
@@ -31,8 +31,8 @@ function LootReserve.Client:RollRequested(sender, item, players, custom, duratio
     };
     local roll = self.RollRequest;
 
-    local description = LootReserve:GetItemDescription(item);
-    local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+    local description = LootReserve:GetItemDescription(item:GetID());
+    local name, link, texture = item:GetNameLinkTexture();
 
     frame.Sender = sender;
     frame.Item = item;

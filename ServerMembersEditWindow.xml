@@ -127,7 +127,7 @@
 								GameTooltip:SetText("Won in the Current Session");
 								local width = 0;
 								for i, roll in ipairs(won) do
-									local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(roll.Item);
+									local name, link, texture = roll.Item:GetNameLinkTexture();
 									if not link then
 										missing = true;
 									end

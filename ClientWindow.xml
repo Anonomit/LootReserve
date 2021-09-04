@@ -119,7 +119,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								LootReserve.Client:Reserve(self:GetParent():GetParent().Item);
+								LootReserve.Client:Reserve(self:GetParent():GetParent().Item:GetID());
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -130,7 +130,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								LootReserve.Client:CancelReserve(self:GetParent():GetParent().Item);
+								LootReserve.Client:CancelReserve(self:GetParent():GetParent().Item:GetID());
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -141,7 +141,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								LootReserve.Client:Reserve(self:GetParent():GetParent().Item);
+								LootReserve.Client:Reserve(self:GetParent():GetParent().Item:GetID());
 							</OnClick>
 						</Scripts>
 					</Button>
@@ -181,9 +181,9 @@
 						<Scripts>
 							<OnEnter>
 								local item = self:GetParent():GetParent().Item;
-								local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(LootReserve.Client:GetItemReservers(item), LootReserve:Me());
+								local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(LootReserve.Client:GetItemReservers(item:GetID()), LootReserve:Me());
 
-								if LootReserve.Client:IsItemReservedByMe(item) and LootReserve.Client.Blind then
+								if LootReserve.Client:IsItemReservedByMe(item:GetID()) and LootReserve.Client.Blind then
 									GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 									GameTooltip:SetText("You reserved this item");
 									GameTooltip:AddLine("It will be rolled among all contenders if it drops.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
@@ -198,7 +198,7 @@
 									else
 										GameTooltip:SetText(format("Reserved by %d |4player:players;", totalReserves));
 									end
-									GameTooltip:AddLine(format("It will be rolled among all contenders if it drops:|n%s", LootReserve:GetReservesDataColored(LootReserve.Client:GetItemReservers(item)):gsub(", ", "|n")), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+									GameTooltip:AddLine(format("It will be rolled among all contenders if it drops:|n%s", LootReserve:GetReservesDataColored(LootReserve.Client:GetItemReservers(item:GetID())):gsub(", ", "|n")), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
 								else
 									return;
 								end
@@ -232,7 +232,7 @@
 						<HighlightTexture file="Interface\AddOns\LootReserve\Textures\FavoriteSet" alphaMode="ADD" alpha="0.25" />
 						<Scripts>
 							<OnClick>
-								LootReserve.Client:SetFavorite(self:GetParent():GetParent().Item, true);
+								LootReserve.Client:SetFavorite(self:GetParent():GetParent().Item:GetID(), true);
 								self:Hide();
 								self:GetParent().Unset:Show();
 								PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
@@ -256,7 +256,7 @@
 						<HighlightTexture file="Interface\AddOns\LootReserve\Textures\FavoriteUnset" alphaMode="ADD" alpha="0.5" />
 						<Scripts>
 							<OnClick>
-								LootReserve.Client:SetFavorite(self:GetParent():GetParent().Item, false);
+								LootReserve.Client:SetFavorite(self:GetParent():GetParent().Item:GetID(), false);
 								self:Hide();
 								self:GetParent().Set:Show();
 								PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
@@ -354,7 +354,7 @@
 							{ text = "Show Popup", checked = LootReserve.Client.Settings.RollRequestShow, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShow = checked; end },
 							{ text = "Show For Unusable Items", checked = LootReserve.Client.Settings.RollRequestShowUnusable, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShowUnusable = checked; end },
 							{ text = "Glow Only For Reserved Items", checked = LootReserve.Client.Settings.RollRequestGlowOnlyReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestGlowOnlyReserved = checked; end },
-							{ text = "Open Example Popup", func = function() LootReserve.Client:RollRequested(LootReserve:Me(), 19019, { LootReserve:Me() }, true, 30, 30, "Swag-Spec", true); end },
+							{ text = "Open Example Popup", func = function() LootReserve.Client:RollRequested(LootReserve:Me(), LootReserve.Item(18582), { LootReserve:Me() }, true, 30, 30, "Swag-Spec", true); end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Data Broker", isTitle = true },
 							{ text = "Show Minimap Icon", checked = not LootReserve.Client.Settings.LibDBIcon.hide, func = function(_, _, _, checked) LootReserve.Client.Settings.LibDBIcon.hide = not checked; if LootReserve.Client.Settings.LibDBIcon.hide then LibStub("LibDBIcon-1.0"):Hide("LootReserve"); else LibStub("LibDBIcon-1.0"):Show("LootReserve") end end },

@@ -50,7 +50,7 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
         local wonMaxQuality = 0;
         if won then
             for _, roll in ipairs(won) do
-                local quality = C_Item.GetItemQualityByID(roll.Item);
+                local quality = C_Item.GetItemQualityByID(roll.Item:GetID());
                 if quality then
                     wonMaxQuality = math.max(wonMaxQuality, quality);
                 else
@@ -77,22 +77,22 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
         local reservedItems = { };
         local itemOrder = { };
         local uniqueCount = 0;
-        for _, item in ipairs(member.ReservedItems) do
-            if not reservedItems[item] then
-                reservedItems[item] = 0;
+        for _, itemID in ipairs(member.ReservedItems) do
+            if not reservedItems[itemID] then
+                reservedItems[itemID] = 0;
                 uniqueCount = uniqueCount + 1;
             end
-            reservedItems[item] = reservedItems[item] + 1;
+            reservedItems[itemID] = reservedItems[itemID] + 1;
         end
-        for item, count in pairs(reservedItems) do
-            table.insert(itemOrder, item);
+        for itemID, count in pairs(reservedItems) do
+            table.insert(itemOrder, itemID);
         end
         table.sort(itemOrder, function(a, b) return GetItemInfo(a) < GetItemInfo(b) end);
         
         local last = 0;
         local lastCount = 0;
-        for _, item in ipairs(itemOrder) do
-            local count = reservedItems[item];
+        for _, itemID in ipairs(itemOrder) do
+            local count = reservedItems[itemID];
             last = last + 1;
             local button = frame.ReservesFrame.Items[last];
             while not button do
@@ -106,12 +106,12 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
                 button:SetPoint("LEFT", frame.ReservesFrame.Items[last - 1], "RIGHT", 4 + (lastCount > 0 and 10 or 0) + lastCount*8, 0);
             end
             button:Show();
-            button.Item = item;
+            button.Item = itemID;
 
-            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemID);
             button.Link = link;
             button.Icon.Texture:SetTexture(texture);
-            if uniqueCount == 1 and item ~= 0 then
+            if uniqueCount == 1 and itemID ~= 0 then
                 if link then
                     button.Icon.Name:SetText((link):gsub("[%[%]]", "") .. (count > 1 and ("|r x" .. count) or ""));
                 else
@@ -167,10 +167,10 @@ function LootReserve.Server.MembersEdit:OnWindowLoad(window)
     self.Window.TitleText:SetText("Loot Reserve Server - Players");
     self.Window:SetMinResize(482, 150);
     self:UpdateMembersList();
-    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(item, success)
+    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
         if success then
             for player, member in pairs(LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members or LootReserve.Server.NewSessionSettings.ImportedMembers) do
-                if LootReserve:Contains(member.ReservedItems, item) then
+                if LootReserve:Contains(member.ReservedItems, itemID) then
                     self:UpdateMembersList();
                     return;
                 end

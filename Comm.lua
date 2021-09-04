@@ -243,25 +243,25 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
     end
 
     local itemReserves = "";
-    for item, reserve in pairs(session.ItemReserves) do
+    for itemID, reserve in pairs(session.ItemReserves) do
         if session.Settings.Blind and target then
             if LootReserve:Contains(reserve.Players, target) then
                 local _, myReserves = LootReserve:GetReservesData(reserve.Players, target);
-                itemReserves = itemReserves .. (#itemReserves > 0 and ";" or "") .. format("%d=%s", item, strjoin(",", unpack(LootReserve:RepeatedTable(refPlayerToIndex[target] or target, myReserves))));
+                itemReserves = itemReserves .. (#itemReserves > 0 and ";" or "") .. format("%d=%s", itemID, strjoin(",", unpack(LootReserve:RepeatedTable(refPlayerToIndex[target] or target, myReserves))));
             end
         else
             local players = { };
             for _, player in ipairs(reserve.Players) do
                 table.insert(players, refPlayerToIndex[player] or player);
             end
-            itemReserves = itemReserves .. (#itemReserves > 0 and ";" or "") .. format("%d=%s", item, strjoin(",", unpack(players)));
+            itemReserves = itemReserves .. (#itemReserves > 0 and ";" or "") .. format("%d=%s", itemID, strjoin(",", unpack(players)));
         end
     end
 
     local itemConditions = "";
-    for item, conditions in pairs(session.ItemConditions) do
+    for itemID, conditions in pairs(session.ItemConditions) do
         local packed = LootReserve.ItemConditions:Pack(conditions);
-        itemConditions = itemConditions .. (#itemConditions > 0 and ";" or "") .. format("%d=%s", item, packed);
+        itemConditions = itemConditions .. (#itemConditions > 0 and ";" or "") .. format("%d=%s", itemID, packed);
     end
 
     local lootCategories = "";
@@ -344,7 +344,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
     if #itemReserves > 0 then
         itemReserves = { strsplit(";", itemReserves) };
         for _, reserves in ipairs(itemReserves) do
-            local item, playerRefs = strsplit("=", reserves, 2);
+            local itemID, playerRefs = strsplit("=", reserves, 2);
             local players;
             if #playerRefs > 0 then
                 players = { };
@@ -352,7 +352,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
                     table.insert(players, tonumber(ref) and refPlayers[tonumber(ref)] or ref);
                 end
             end
-            LootReserve.Client.ItemReserves[tonumber(item)] = players;
+            LootReserve.Client.ItemReserves[tonumber(itemID)] = players;
         end
     end
 
@@ -360,8 +360,8 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
     if #itemConditions > 0 then
         itemConditions = { strsplit(";", itemConditions) };
         for _, conditions in ipairs(itemConditions) do
-            local item, packed = strsplit("=", conditions, 2);
-            LootReserve.Client.ItemConditions[tonumber(item)] = LootReserve.ItemConditions:Unpack(packed);
+            local itemID, packed = strsplit("=", conditions, 2);
+            LootReserve.Client.ItemConditions[tonumber(itemID)] = LootReserve.ItemConditions:Unpack(packed);
         end
     end
 
@@ -470,27 +470,26 @@ LootReserve.Comm.Handlers[Opcodes.OptResult] = function(sender, result)
 end
 
 -- ReserveItem
-function LootReserve.Comm:SendReserveItem(item)
-    LootReserve.Comm:WhisperServer(Opcodes.ReserveItem,
-        item);
+function LootReserve.Comm:SendReserveItem(itemID)
+    LootReserve.Comm:WhisperServer(Opcodes.ReserveItem, itemID);
 end
-LootReserve.Comm.Handlers[Opcodes.ReserveItem] = function(sender, item)
-    item = tonumber(item);
+LootReserve.Comm.Handlers[Opcodes.ReserveItem] = function(sender, itemID)
+    itemID = tonumber(itemID);
 
     if LootReserve.Server.CurrentSession then
-        LootReserve.Server:Reserve(sender, item);
+        LootReserve.Server:Reserve(sender, itemID);
     end
 end
 
 -- ReserveResult
-function LootReserve.Comm:SendReserveResult(target, item, result, remainingReserves)
+function LootReserve.Comm:SendReserveResult(target, itemID, result, remainingReserves)
     LootReserve.Comm:Whisper(target, Opcodes.ReserveResult,
-        item,
+        itemID,
         result,
         remainingReserves);
 end
-LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, item, result, remainingReserves)
-    item = tonumber(item);
+LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, result, remainingReserves)
+    itemID = tonumber(itemID);
     result = tonumber(result);
     local locked = remainingReserves == "#";
     remainingReserves = tonumber(remainingReserves) or 0;
@@ -507,25 +506,25 @@ LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, item, result
             LootReserve:ShowError("Failed to reserve the item:|n%s", text or "Unknown error");
         end
 
-        LootReserve.Client:SetItemPending(item, false);
+        LootReserve.Client:SetItemPending(itemID, false);
         LootReserve.Client:UpdateReserveStatus();
     end
 end
 
 -- ReserveInfo
-function LootReserve.Comm:BroadcastReserveInfo(item, players)
-    LootReserve.Comm:SendReserveInfo(nil, item, players);
+function LootReserve.Comm:BroadcastReserveInfo(itemID, players)
+    LootReserve.Comm:SendReserveInfo(nil, itemID, players);
 end
-function LootReserve.Comm:SendReserveInfo(target, item, players)
+function LootReserve.Comm:SendReserveInfo(target, itemID, players)
     LootReserve.Comm:Send(target, Opcodes.ReserveInfo,
-        item,
+        itemID,
         strjoin(",", unpack(players)));
 end
-LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, item, players)
-    item = tonumber(item);
+LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, players)
+    itemID = tonumber(itemID);
 
     if LootReserve.Client.SessionServer == sender then
-        local wasReserver = LootReserve.Client:IsItemReservedByMe(item);
+        local wasReserver = LootReserve.Client:IsItemReservedByMe(itemID);
 
         if #players > 0 then
             players = { strsplit(",", players) };
@@ -533,12 +532,12 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, item, players)
             players = { };
         end
 
-        local previousReserves = LootReserve.Client.ItemReserves[item];
+        local previousReserves = LootReserve.Client.ItemReserves[itemID];
         local _, myOldReserves, oldReservers, oldRolls = LootReserve:GetReservesData(previousReserves or { }, LootReserve:Me());
         local _, myNewReserves, newReservers, newRolls = LootReserve:GetReservesData(players, LootReserve:Me());
         local isUpdate = oldRolls ~= newRolls;
 
-        LootReserve.Client.ItemReserves[item] = players;
+        LootReserve.Client.ItemReserves[itemID] = players;
 
         if LootReserve.Client.SelectedCategory and LootReserve.Client.SelectedCategory.Reserves then
             LootReserve.Client:UpdateLootList();
@@ -548,14 +547,14 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, item, players)
         if not LootReserve.Client.Blind then
             LootReserve.Client:FlashCategory("Reserves", "all");
         end
-        local isReserver = LootReserve.Client:IsItemReservedByMe(item);
+        local isReserver = LootReserve.Client:IsItemReservedByMe(itemID);
         if wasReserver or isReserver then
             local isViewingMyReserves = LootReserve.Client.SelectedCategory and LootReserve.Client.SelectedCategory.Reserves == "my";
             LootReserve.Client:FlashCategory("Reserves", "my", wasReserver == isReserver and not isViewingMyReserves);
         end
         if wasReserver and isReserver and myOldReserves == myNewReserves then
             local function Print()
-                local name, link = GetItemInfo(item);
+                local name, link = GetItemInfo(itemID);
                 if name and link then
                     LootReserve:PrintMessage(LootReserve:GetReservesStringColored(false, players, LootReserve:Me(), isUpdate, link));
                 else
@@ -568,27 +567,26 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, item, players)
 end
 
 -- CancelReserve
-function LootReserve.Comm:SendCancelReserve(item)
-    LootReserve.Comm:WhisperServer(Opcodes.CancelReserve,
-        item);
+function LootReserve.Comm:SendCancelReserve(itemID)
+    LootReserve.Comm:WhisperServer(Opcodes.CancelReserve, itemID);
 end
-LootReserve.Comm.Handlers[Opcodes.CancelReserve] = function(sender, item)
-    item = tonumber(item);
+LootReserve.Comm.Handlers[Opcodes.CancelReserve] = function(sender, itemID)
+    itemID = tonumber(itemID);
 
     if LootReserve.Server.CurrentSession then
-        LootReserve.Server:CancelReserve(sender, item);
+        LootReserve.Server:CancelReserve(sender, itemID);
     end
 end
 
 -- CancelReserveResult
-function LootReserve.Comm:SendCancelReserveResult(target, item, result, remainingReserves)
+function LootReserve.Comm:SendCancelReserveResult(target, itemID, result, remainingReserves)
     LootReserve.Comm:Whisper(target, Opcodes.CancelReserveResult,
-        item,
+        itemID,
         result,
         remainingReserves);
 end
-LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, item, result, remainingReserves)
-    item = tonumber(item);
+LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID, result, remainingReserves)
+    itemID = tonumber(itemID);
     result = tonumber(result);
     local locked = remainingReserves == "#";
     remainingReserves = tonumber(remainingReserves) or 0;
@@ -598,7 +596,7 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, item, 
         LootReserve.Client.Locked = locked;
         if result == LootReserve.Constants.CancelReserveResult.Forced then
             local function ShowForced()
-                local name, link = GetItemInfo(item);
+                local name, link = GetItemInfo(itemID);
                 if name and link then
                     LootReserve:ShowError("%s removed your reserve for %s", LootReserve:ColoredPlayer(sender), link);
                     LootReserve:PrintError("%s removed your reserve for %s", LootReserve:ColoredPlayer(sender), link);
@@ -616,7 +614,7 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, item, 
             LootReserve:ShowError("Failed to cancel reserve of the item:|n%s", text or "Unknown error");
         end
 
-        LootReserve.Client:SetItemPending(item, false);
+        LootReserve.Client:SetItemPending(itemID, false);
         if LootReserve.Client.SelectedCategory and LootReserve.Client.SelectedCategory.Reserves then
             LootReserve.Client:UpdateLootList();
         else
@@ -631,7 +629,7 @@ function LootReserve.Comm:BroadcastRequestRoll(item, players, custom, duration, 
 end
 function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duration, maxDuration, phase)
     LootReserve.Comm:Send(target, Opcodes.RequestRoll,
-        item,
+        strjoin(",", item:unpack()),
         strjoin(",", unpack(players)),
         custom == true,
         format("%.2f", duration or 0),
@@ -639,7 +637,7 @@ function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duratio
         phase or "");
 end
 LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phase)
-    item = tonumber(item);
+    item = LootReserve.Item(strsplit(",", item));
     custom = tonumber(custom) == 1;
     duration = tonumber(duration);
     maxDuration = tonumber(maxDuration);
@@ -657,11 +655,10 @@ end
 
 -- PassRoll
 function LootReserve.Comm:SendPassRoll(item)
-    LootReserve.Comm:Whisper(LootReserve.Client.RollRequest.Sender, Opcodes.PassRoll,
-        item);
+    LootReserve.Comm:Whisper(LootReserve.Client.RollRequest.Sender, Opcodes.PassRoll, strjoin(",", item:unpack()));
 end
 LootReserve.Comm.Handlers[Opcodes.PassRoll] = function(sender, item)
-    item = tonumber(item);
+    item = LootReserve.Item(strsplit(",", item));
 
     if true--[[LootReserve.Server.CurrentSession]] then
         LootReserve.Server:PassRoll(sender, item);
@@ -671,15 +668,15 @@ end
 -- DeletedRoll
 function LootReserve.Comm:SendDeletedRoll(player, item, roll, phase)
     LootReserve.Comm:Whisper(player, Opcodes.DeletedRoll,
-        item, roll, phase);
+        strjoin(",", item:unpack()), roll, phase);
 end
 LootReserve.Comm.Handlers[Opcodes.DeletedRoll] = function(sender, item, roll, phase)
-    item = tonumber(item);
+    item = LootReserve.Item(strsplit(",", item));
     roll = tonumber(roll);
 
     if true--[[LootReserve.Client.SessionServer == sender]] then
         local function ShowDeleted()
-            local name, link = GetItemInfo(item);
+            local name, link = item:GetInfo();
             if name and link then
                 LootReserve:ShowError ("Your %sroll%s on %s was deleted", phase and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
                 LootReserve:PrintError("Your %sroll%s on %s was deleted", phase and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);

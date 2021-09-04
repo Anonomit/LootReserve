@@ -35,13 +35,13 @@ function LootReserve.Client:UpdateReserveStatus()
 
     for i, frame in ipairs(list.Frames) do
         local item = frame.Item;
-        if item ~= 0 then
-            local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(self:GetItemReservers(item), LootReserve:Me());
-            local canReserve = self.SessionServer and self:HasRemainingReserves() and LootReserve.ItemConditions:IsItemReservableOnClient(item) and (not self.Multireserve or myReserves < self.Multireserve);
+        if item:GetID() ~= 0 then
+            local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(self:GetItemReservers(item:GetID()), LootReserve:Me());
+            local canReserve = self.SessionServer and self:HasRemainingReserves() and LootReserve.ItemConditions:IsItemReservableOnClient(item:GetID()) and (not self.Multireserve or myReserves < self.Multireserve);
             frame.ReserveFrame.ReserveButton:SetShown(canReserve and myReserves == 0);
             frame.ReserveFrame.MultiReserveButton:SetShown(canReserve and myReserves > 0 and self.Multireserve);
             frame.ReserveFrame.MultiReserveButton:SetText(format("x%d", myReserves + 1));
-            frame.ReserveFrame.CancelReserveButton:SetShown(self.SessionServer and self:IsItemReservedByMe(item) and self.AcceptingReserves);
+            frame.ReserveFrame.CancelReserveButton:SetShown(self.SessionServer and self:IsItemReservedByMe(item:GetID()) and self.AcceptingReserves);
             frame.ReserveFrame.CancelReserveButton:SetWidth(frame.ReserveFrame.ReserveButton:GetWidth() - (frame.ReserveFrame.MultiReserveButton:IsShown() and frame.ReserveFrame.MultiReserveButton:GetWidth() - select(4, frame.ReserveFrame.MultiReserveButton:GetPoint(1)) or 0));
             frame.ReserveFrame.ReserveIcon.One:Hide();
             frame.ReserveFrame.ReserveIcon.Many:Hide();
@@ -50,13 +50,13 @@ function LootReserve.Client:UpdateReserveStatus()
             frame.ReserveFrame.ReserveIcon.NumberMany:Hide();
             frame.ReserveFrame.ReserveIcon.NumberMulti:Hide();
 
-            local pending = self:IsItemPending(item);
+            local pending = self:IsItemPending(item:GetID());
             frame.ReserveFrame.ReserveButton:SetEnabled(not pending and not self.Locked);
             frame.ReserveFrame.MultiReserveButton:SetEnabled(not pending and not self.Locked);
             frame.ReserveFrame.CancelReserveButton:SetEnabled(not pending and not self.Locked);
 
             if self.SessionServer then
-                local conditions = self.ItemConditions[item];
+                local conditions = self.ItemConditions[item:GetID()];
                 local numberString;
                 if conditions and conditions.Limit and conditions.Limit ~= 0 then
                     numberString = format(totalReserves >= conditions.Limit and "|cFFFF0000%d/%d|r" or "%d/%d", totalReserves, conditions.Limit);
@@ -119,9 +119,10 @@ function LootReserve.Client:UpdateLootList()
             frame = list.Frames[list.LastIndex];
         end
 
-        frame.Item = item;
+        item = LootReserve.Item(item);
+        frame.Item = LootReserve.Item(item);
 
-        if item == 0 then
+        if item:GetID() == 0 then
             if list.LastIndex <= 1 or not list.Frames[list.LastIndex - 1]:IsShown() then
                 frame:SetHeight(0.00001);
                 frame:Hide();
@@ -134,11 +135,11 @@ function LootReserve.Client:UpdateLootList()
             frame:SetHeight(44);
             frame:Show();
 
-            local description = LootReserve:GetItemDescription(item);
-            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+            local description = LootReserve:GetItemDescription(item:GetID());
+            local name, link, texture = item:GetNameLinkTexture();
             frame.Link = link;
 
-            local conditions = self.ItemConditions[item];
+            local conditions = self.ItemConditions[item:GetID()];
             if conditions and conditions.Limit and conditions.Limit ~= 0 then
                 source = format("|cFFFF0000(Max %d |4reserve:reserves;) |r%s", conditions.Limit, source or description or "");
             end
@@ -147,7 +148,7 @@ function LootReserve.Client:UpdateLootList()
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
             frame.ItemFrame.Misc:SetText(source or description);
             frame.Favorite:SetPoint("LEFT", frame.ItemFrame.Name, "LEFT", math.min(frame.ItemFrame:GetWidth() - 57, frame.ItemFrame.Name:GetStringWidth()), 0);
-            frame.Favorite.Set:SetShown(not self:IsFavorite(item));
+            frame.Favorite.Set:SetShown(not self:IsFavorite(item:GetID()));
             frame.Favorite.Unset:SetShown(not frame.Favorite.Set:IsShown());
             frame.Favorite:SetShown(frame.hovered or frame.Favorite.Unset:IsShown());
             frame.ItemFrame.Name:SetPoint("TOPRIGHT", frame.ItemFrame, "TOPRIGHT", frame.Favorite:IsShown() and -20 or 0, 0);
@@ -158,13 +159,13 @@ function LootReserve.Client:UpdateLootList()
         list.ContentHeight = list.ContentHeight + frame:GetHeight();
     end
 
-    local function matchesFilter(item, filter)
+    local function matchesFilter(itemID, filter)
         filter = (filter or "");
         if #filter == 0 then
             return true;
         end
 
-        local name, link = GetItemInfo(item);
+        local name, link = GetItemInfo(itemID);
         if name then
             if string.find(name:upper(), filter, 1, true) then
                 return true;
@@ -185,19 +186,19 @@ function LootReserve.Client:UpdateLootList()
     end
 
     if self.SelectedCategory and self.SelectedCategory.Reserves and self.SessionServer then
-        for item in LootReserve:Ordered(self.ItemReserves, sortByItemName) do
-            if self.SelectedCategory.Reserves == "my" and self:IsItemReservedByMe(item) then
-                createFrame(item);
-            elseif self.SelectedCategory.Reserves == "all" and self:IsItemReserved(item) and not self.Blind then
-                createFrame(item);
+        for itemID in LootReserve:Ordered(self.ItemReserves, sortByItemName) do
+            if self.SelectedCategory.Reserves == "my" and self:IsItemReservedByMe(itemID) then
+                createFrame(itemID);
+            elseif self.SelectedCategory.Reserves == "all" and self:IsItemReserved(itemID) and not self.Blind then
+                createFrame(itemID);
             end
         end
     elseif self.SelectedCategory and self.SelectedCategory.Favorites then
         for _, favorites in ipairs({ self.CharacterFavorites, self.GlobalFavorites }) do
             local first = true;
-            for item in LootReserve:Ordered(favorites, sortByItemName) do
-                local conditions = self.ItemConditions[item];
-                if item ~= 0 and (not self.LootCategories or LootReserve.Data:IsItemInCategories(item, self.LootCategories) or conditions and conditions.Custom) and LootReserve.ItemConditions:IsItemVisibleOnClient(item) then
+            for itemID in LootReserve:Ordered(favorites, sortByItemName) do
+                local conditions = self.ItemConditions[itemID];
+                if itemID ~= 0 and (not self.LootCategories or LootReserve.Data:IsItemInCategories(itemID, self.LootCategories) or conditions and conditions.Custom) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                     if first then
                         first = false;
                         if favorites == self.CharacterFavorites then
@@ -220,19 +221,19 @@ function LootReserve.Client:UpdateLootList()
                             list.ContentHeight = list.ContentHeight + list.GlobalFavoritesHeader:GetHeight();
                         end
                     end
-                    createFrame(item);
+                    createFrame(itemID);
                 end
             end
         end
     elseif self.SelectedCategory and self.SelectedCategory.Search and filter then
         local missing = false;
         local uniqueItems = { };
-        for item, conditions in pairs(self.ItemConditions) do
-            if item ~= 0 and conditions.Custom and not uniqueItems[item] and LootReserve.ItemConditions:IsItemVisibleOnClient(item) then
-                uniqueItems[item] = true;
-                local match = matchesFilter(item, filter);
+        for itemID, conditions in pairs(self.ItemConditions) do
+            if itemID ~= 0 and conditions.Custom and not uniqueItems[itemID] and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                uniqueItems[itemID] = true;
+                local match = matchesFilter(itemID, filter);
                 if match then
-                    createFrame(item, "Custom Item");
+                    createFrame(itemID, "Custom Item");
                 elseif match == nil then
                     missing = true;
                 end
@@ -242,12 +243,12 @@ function LootReserve.Client:UpdateLootList()
             if category.Children and (not self.LootCategories or LootReserve:Contains(self.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for _, child in ipairs(category.Children) do
                     if child.Loot then
-                        for _, item in ipairs(child.Loot) do
-                            if item ~= 0 and not uniqueItems[item] and LootReserve.ItemConditions:IsItemVisibleOnClient(item) then
-                                uniqueItems[item] = true;
-                                local match = matchesFilter(item, filter);
+                        for _, itemID in ipairs(child.Loot) do
+                            if itemID ~= 0 and not uniqueItems[itemID] and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                                uniqueItems[itemID] = true;
+                                local match = matchesFilter(itemID, filter);
                                 if match then
-                                    createFrame(item, format("%s > %s", category.Name, child.Name));
+                                    createFrame(itemID, format("%s > %s", category.Name, child.Name));
                                 elseif match == nil then
                                     missing = true;
                                 end
@@ -263,15 +264,15 @@ function LootReserve.Client:UpdateLootList()
             end);
         end
     elseif self.SelectedCategory and self.SelectedCategory.Custom then
-        for item, conditions in pairs(self.ItemConditions) do
-            if item ~= 0 and conditions.Custom and LootReserve.ItemConditions:IsItemVisibleOnClient(item) then
-                createFrame(item);
+        for itemID, conditions in pairs(self.ItemConditions) do
+            if itemID ~= 0 and conditions.Custom and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                createFrame(itemID);
             end
         end
     elseif self.SelectedCategory and self.SelectedCategory.Loot then
-        for _, item in ipairs(self.SelectedCategory.Loot) do
-            if LootReserve.ItemConditions:IsItemVisibleOnClient(item) then
-                createFrame(item);
+        for _, itemID in ipairs(self.SelectedCategory.Loot) do
+            if LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                createFrame(itemID);
             end
         end
     end
@@ -527,21 +528,21 @@ function LootReserve.Client:OnWindowLoad(window)
             self.Window.RemainingTextGlow:SetVertexColor(r, g, b, 0.15 + r * 0.25);
         end
     end);
-    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(item, success)
-        if not item or not self.SelectedCategory then return; end
+    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
+        if not itemID or not self.SelectedCategory then return; end
 
         if self.SelectedCategory.Custom then
-            local conditions = LootReserve.ItemConditions:Get(item, false);
+            local conditions = LootReserve.ItemConditions:Get(itemID, false);
             if conditions and conditions.Custom then
                 self:UpdateLootList();
             end
         elseif self.SelectedCategory.Loot then
             for _, loot in ipairs(self.SelectedCategory.Loot) do
-                if item == loot then
+                if itemID == loot then
                     self:UpdateLootList();
                 end
             end
-        elseif self.SelectedCategory.Favorites and self:IsFavorite(item) then
+        elseif self.SelectedCategory.Favorites and self:IsFavorite(itemID) then
             self:UpdateLootList();
         elseif self.SelectedCategory.Search or self.SelectedCategory.Reserves then
             self:UpdateLootList();

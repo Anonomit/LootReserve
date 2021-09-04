@@ -16,11 +16,11 @@ function LootReserve.ItemSearch:Load()
     self.LoadingState = false;
     self.TotalNames = self.MaxID;
 
-    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(item, success)
-        if item and self.PendingNames[item] then
-            self.PendingNames[item] = nil;
+    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
+        if itemID and self.PendingNames[itemID] then
+            self.PendingNames[itemID] = nil;
             if success then
-                self.Names[item] = LootReserve:TransformSearchText(GetItemInfo(item) or "");
+                self.Names[itemID] = LootReserve:TransformSearchText(GetItemInfo(itemID) or "");
                 self.LoadedNames = self.LoadedNames + 1;
             else
                 self.TotalNames = self.TotalNames - 1;
@@ -29,19 +29,19 @@ function LootReserve.ItemSearch:Load()
     end);
 
     self.LoadingThread = coroutine.create(function()
-        for item = 1, self.MaxID do
-            if C_Item.DoesItemExistByID(item) then
-                local name = GetItemInfo(item);
+        for itemID = 1, self.MaxID do
+            if C_Item.DoesItemExistByID(itemID) then
+                local name = GetItemInfo(itemID);
                 if name then
-                    self.Names[item] = LootReserve:TransformSearchText(name);
+                    self.Names[itemID] = LootReserve:TransformSearchText(name);
                     self.LoadedNames = self.LoadedNames + 1;
                 else
-                    self.PendingNames[item] = true;
+                    self.PendingNames[itemID] = true;
                 end
             else
                 self.TotalNames = self.TotalNames - 1;
             end
-            if item % 250 == 0 then
+            if itemID % 250 == 0 then
                 coroutine.yield();
             end
         end
@@ -68,9 +68,9 @@ function LootReserve.ItemSearch:Search(query)
     query = LootReserve:TransformSearchText(query);
 
     local results = { };
-    for item, name in pairs(self.Names) do
+    for itemID, name in pairs(self.Names) do
         if string.find(name, query, 1, true) then
-            table.insert(results, item);
+            table.insert(results, itemID);
         end
     end
     return results;

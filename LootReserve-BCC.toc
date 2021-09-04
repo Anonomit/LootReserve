@@ -11,6 +11,7 @@ embeds.xml
 
 LootReserve.lua
 Constants.lua
+Item.lua
 Client.lua
 Server.lua
 Comm.lua

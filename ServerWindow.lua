@@ -138,16 +138,17 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
         frame:Show();
 
+        item = LootReserve.Item(item);
         frame.Item = item;
 
-        local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+        local name, link, texture = item:GetNameLinkTexture();
         frame.Link = link;
         frame.Historical = false;
         frame.Roll = self:IsRolling(frame.Item) and not self.RequestedRoll.Custom and self.RequestedRoll or nil;
 
         frame.ItemFrame.Icon:SetTexture(texture);
         frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
-        local tracking = self.CurrentSession.LootTracking[item];
+        local tracking = self.CurrentSession.LootTracking[item:GetID()];
         local fade = false;
         if LootReserve:IsLootingItem(item) then
             frame.ItemFrame.Misc:SetText("In loot");
@@ -223,13 +224,12 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         list.ContentHeight = list.ContentHeight + frame:GetHeight();
     end
 
-    local function matchesFilter(item, reserve, filter)
-        filter = filter or "";
+    local function matchesFilter(itemID, reserve, filter)
         if #filter == 0 then
             return true;
         end
 
-        local name, link = GetItemInfo(item);
+        local name, link = GetItemInfo(itemID);
         if name then
             if string.find(name:upper(), filter, 1, true) then
                 return true;
@@ -258,10 +258,10 @@ function LootReserve.Server:UpdateReserveList(lockdown)
     end
     local function getSortingSource(reserve)
         local customIndex = 0;
-        for item, conditions in pairs(self.CurrentSession.ItemConditions) do
+        for itemID, conditions in pairs(self.CurrentSession.ItemConditions) do
             if conditions.Custom then
                 customIndex = customIndex + 1;
-                if item == reserve.Item then
+                if itemID == reserve.Item then
                     return customIndex;
                 end
             end
@@ -313,9 +313,9 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         return a.Item < b.Item;
     end
 
-    for item, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sorter) do
-        if not filter or matchesFilter(item, reserve, filter) then
-            createFrame(item, reserve);
+    for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sorter) do
+        if not filter or matchesFilter(itemID, reserve, filter) then
+            createFrame(itemID, reserve);
         end
     end
     for i = list.LastIndex + 1, #list.Frames do
@@ -482,7 +482,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
         if item and roll then
             frame.Item = item;
 
-            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+            local name, link, texture = item:GetNameLinkTexture();
             frame.Link = link;
             frame.Historical = historical;
             frame.Roll = roll;
@@ -523,7 +523,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
             else
                 local reservers = 0;
                 if LootReserve.Server.CurrentSession then
-                    local reserve = LootReserve.Server.CurrentSession.ItemReserves[item];
+                    local reserve = LootReserve.Server.CurrentSession.ItemReserves[item:GetID()];
                     reservers = reserve and #reserve.Players or 0;
                 end
                 frame.ItemFrame.Misc:SetText(reservers > 0 and format("Reserved by %d |4player:players;", reservers) or "Not reserved");
@@ -643,12 +643,11 @@ function LootReserve.Server:UpdateRollList(lockdown)
     end
 
     local function matchesFilter(item, roll, filter)
-        filter = filter or "";
         if #filter == 0 then
             return true;
         end
 
-        local name, link = GetItemInfo(item);
+        local name, link = item:GetInfo();
         if name then
             if string.find(name:upper(), filter, 1, true) then
                 return true;
@@ -775,17 +774,17 @@ function LootReserve.Server:OnWindowLoad(window)
     LootReserve:RegisterEvent("GROUP_JOINED", "GROUP_LEFT", "PARTY_LEADER_CHANGED", "PARTY_LOOT_METHOD_CHANGED", "GROUP_ROSTER_UPDATE", function()
         self:UpdateServerAuthority();
     end);
-    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(item, success)
-        if item and self.CurrentSession and self.CurrentSession.ItemReserves[item] then
+    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
+        if itemID and self.CurrentSession and self.CurrentSession.ItemReserves[itemID] then
             self:UpdateReserveList();
         end
-        if item and self.RequestedRoll and self.RequestedRoll.Item == item then
+        if itemID and self.RequestedRoll and self.RequestedRoll.Item:GetID() == itemID then
             self:UpdateRollList();
             return;
         end
-        if item and self.RollHistory then
+        if itemID and self.RollHistory then
             for _, roll in ipairs(self.RollHistory) do
-                if roll.Item == item then
+                if roll.Item:GetID() == itemID then
                     self:UpdateRollList();
                     return;
                 end
@@ -954,12 +953,12 @@ function LootReserve.Server:UpdateAddonUsers()
     end
     local count = 0;
     for player, compatible in pairs(self.AddonUsers) do
-        if compatible then
+        if compatible and LootReserve:UnitInGroup(player) then
             count = count + 1;
         end
     end
-    self.Window.PanelSession.AddonUsers.Text:SetText(format("%d/%d", count, GetNumGroupMembers()));
-    self.Window.PanelSession.AddonUsers:SetShown(#self.AddonUsers > 0 or GetNumGroupMembers() > 0);
+    self.Window.PanelSession.AddonUsers.Text:SetText(format("%d/%d", count, LootReserve:GetNumGroupMembers()));
+    self.Window.PanelSession.AddonUsers:SetShown(LootReserve:GetNumGroupMembers() > 1);
 end
 
 function LootReserve.Server:LoadNewSessionSettings()

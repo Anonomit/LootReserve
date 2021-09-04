@@ -2134,16 +2134,16 @@ LootReserve.Data =
     },
 };
 
-function LootReserve.Data:IsItemInCategories(item, categories)
+function LootReserve.Data:IsItemInCategories(itemID, categories)
     for _, category in ipairs(categories) do
-        if item == 0 or category <= 0 then return false; end
+        if itemID == 0 or category <= 0 then return false; end
 
         category = self.Categories[category];
         if category and category.Children and self:IsCategoryVisible(category) then
             for _, child in ipairs(category.Children) do
                 if child.Loot then
                     for _, lootItem in ipairs(child.Loot) do
-                        if lootItem == item then
+                        if lootItem == itemID then
                             return true;
                         end
                     end
@@ -2155,10 +2155,10 @@ function LootReserve.Data:IsItemInCategories(item, categories)
     return false;
 end
 
-function LootReserve.Data:GetItemCategories(item)
+function LootReserve.Data:GetItemCategories(itemID)
     local categories = { };
     for category in pairs(self.Categories) do
-        if self:IsItemInCategories(item, category) then
+        if self:IsItemInCategories(itemID, category) then
             table.insert(categories, category);
         end
     end

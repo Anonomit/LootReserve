@@ -93,18 +93,18 @@ function LootReserve.Client:Load()
     }), self.Settings.LibDBIcon);
 end
 
-function LootReserve.Client:IsFavorite(item)
-    return self.CharacterFavorites[item] or self.GlobalFavorites[item];
+function LootReserve.Client:IsFavorite(itemID)
+    return self.CharacterFavorites[itemID] or self.GlobalFavorites[itemID];
 end
 
-function LootReserve.Client:SetFavorite(item, enabled)
-    if self:IsFavorite(item) == (enabled and true or false) then return; end
+function LootReserve.Client:SetFavorite(itemID, enabled)
+    if self:IsFavorite(itemID) == (enabled and true or false) then return; end
 
-    local name, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(item);
+    local name, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID);
     if not name or not bindType then return; end
 
     local favorites = bindType == 1 and self.CharacterFavorites or self.GlobalFavorites;
-    favorites[item] = enabled and true or nil;
+    favorites[itemID] = enabled and true or nil;
     self:FlashCategory("Favorites");
 end
 
@@ -205,43 +205,43 @@ function LootReserve.Client:HasRemainingReserves()
     return self:GetRemainingReserves() > 0;
 end
 
-function LootReserve.Client:IsItemReserved(item)
-    return #self:GetItemReservers(item) > 0;
+function LootReserve.Client:IsItemReserved(itemID)
+    return #self:GetItemReservers(itemID) > 0;
 end
-function LootReserve.Client:IsItemReservedByMe(item)
-    for _, player in ipairs(self:GetItemReservers(item)) do
+function LootReserve.Client:IsItemReservedByMe(itemID)
+    for _, player in ipairs(self:GetItemReservers(itemID)) do
         if LootReserve:IsMe(player) then
             return true;
         end
     end
     return false;
 end
-function LootReserve.Client:GetItemReservers(item)
+function LootReserve.Client:GetItemReservers(itemID)
     if not self.SessionServer then return { }; end
-    return self.ItemReserves[item] or { };
+    return self.ItemReserves[itemID] or { };
 end
 
-function LootReserve.Client:IsItemPending(item)
-    return self.PendingItems[item];
+function LootReserve.Client:IsItemPending(itemID)
+    return self.PendingItems[itemID];
 end
-function LootReserve.Client:SetItemPending(item, pending)
-    self.PendingItems[item] = pending or nil;
+function LootReserve.Client:SetItemPending(itemID, pending)
+    self.PendingItems[itemID] = pending or nil;
 end
 
-function LootReserve.Client:Reserve(item)
+function LootReserve.Client:Reserve(itemID)
     if not self.SessionServer then return; end
     if not self.AcceptingReserves then return; end
-    LootReserve.Client:SetItemPending(item, true);
+    LootReserve.Client:SetItemPending(itemID, true);
     LootReserve.Client:UpdateReserveStatus();
-    LootReserve.Comm:SendReserveItem(item);
+    LootReserve.Comm:SendReserveItem(itemID);
 end
 
-function LootReserve.Client:CancelReserve(item)
+function LootReserve.Client:CancelReserve(itemID)
     if not self.SessionServer then return; end
     if not self.AcceptingReserves then return; end
-    LootReserve.Client:SetItemPending(item, true);
+    LootReserve.Client:SetItemPending(itemID, true);
     LootReserve.Client:UpdateReserveStatus();
-    LootReserve.Comm:SendCancelReserve(item);
+    LootReserve.Comm:SendCancelReserve(itemID);
 end
 
 function LootReserve.Client:IsOptPending()

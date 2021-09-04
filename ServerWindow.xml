@@ -182,7 +182,7 @@
 										GameTooltip:SetText("Won in the Current Session");
 										local width = 0;
 										for i, roll in ipairs(won) do
-											local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(roll.Item);
+											local name, link, texture = roll.Item:GetNameLinkTexture();
 											if not link then
 												missing = true;
 											end
@@ -736,7 +736,7 @@
 							local frame = self:GetParent();
 							local item = frame.Item;
 							frame:SetItem(nil);
-							if info and info.arg1 and LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[item] then
+							if info and info.arg1 and LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[item:GetID()] then
 								LootReserve.Server:RequestRoll(item);
 							else
 								LootReserve.Server:RequestCustomRoll(item,
@@ -1019,10 +1019,10 @@
 								self:RegisterForDrag("LeftButton");
 								self.DropHandler = function(self)
 									local frame = self:GetParent():GetParent();
-									local type, item, link = GetCursorInfo();
+									local infoType, itemID, link = GetCursorInfo();
 									ClearCursor();
-									if type == "item" and item then
-										frame:SetItem(item);
+									if infoType == "item" and link then
+										frame:SetItem(link);
 										CloseMenus();
 									elseif frame.Item then
 										frame:SetItem(nil);
@@ -1033,13 +1033,13 @@
 											CloseMenus();
 										end
 										local missing = false;
-										local function MakeItem(count, item, link, texture)
+										local function MakeItem(count, item, texture)
 											if count == 1 then
 												count = nil;
 											end
+											local link = item:GetLink();
 											if not link or not texture then
-												local _, l, _, _, _, _, _, _, _, t = GetItemInfo(item);
-												link, texture = l, t;
+												texture = item:GetTexture();
 												if not link then
 													missing = true;
 												end
@@ -1058,9 +1058,9 @@
 												local bagMenu = { };
 												table.insert(bagMenus, bagMenu);
 												for slot = 1, slots do
-													local texture, count, _, _, _, _, link, _, _, item = GetContainerItemInfo(bag, slot);
-													if item and (not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot)) then
-														table.insert(bagMenu, MakeItem(count, item, link, texture));
+													local texture, count, _, _, _, _, link = GetContainerItemInfo(bag, slot);
+													if link and (not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot)) then
+														table.insert(bagMenu, MakeItem(count, LootReserve.Item(link), texture));
 													end
 												end
 											end
@@ -1112,7 +1112,7 @@
 										if LootReserve.Server.RecentLoot and #LootReserve.Server.RecentLoot > 0 then
 											for _, item in ipairs(LootReserve.Server.RecentLoot) do
 												local button = MakeItem(1, item);
-												local count = LootReserve:GetTradeableItemCount(item);
+												local count = LootReserve:GetTradeableItemCount(item:GetID());
 												if count > 0 then
 													button.text = button.text .. format("|cFFC0C0C0 (%d in bags)|r", count);
 												end
@@ -1126,14 +1126,14 @@
 											for i = 1, GetNumLootItems() do
 												local link = GetLootSlotLink(i);
 												if link then
-													local item = tonumber(link:match("item:(%d+)"));
+													local item = LootReserve.Item(link);
 													if item then
 														if index == 0 then
 															table.insert(menu, 1, { text = "Current Loot", isTitle = true });
 															table.insert(menu, 2, LootReserve:MakeMenuSeparator());
 														end
 														local texture, name, count = GetLootSlotInfo(i);
-														table.insert(menu, 2 + index, MakeItem(count, item, link, texture));
+														table.insert(menu, 2 + index, MakeItem(count, item, texture));
 														index = index + 1;
 													end
 												end
@@ -1162,7 +1162,7 @@
 										self.Arrow:SetShown(not frame.Item);
 										GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 										if frame.Item then
-											GameTooltip:SetHyperlink("item:" .. self:GetParent():GetParent().Item);
+											GameTooltip:SetHyperlink(self:GetParent():GetParent().Item:GetString());
 										else
 											GameTooltip:SetText("Drop an item here");
 											GameTooltip:AddLine("Or click to select among relevant items", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
@@ -1243,9 +1243,10 @@
 			<OnLoad inherit="prepend">
 				self.SetItem = function(self, item)
 					if item then
+						item = LootReserve.Item(item);
 						self.Item = item;
 
-						local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+						local name, link, texture = item:GetNameLinkTexture();
 						self.Link = link;
 
 						if not name or not link then
@@ -1259,7 +1260,7 @@
 
 						local reservers = 0;
 						if LootReserve.Server.CurrentSession then
-							local reserve = LootReserve.Server.CurrentSession.ItemReserves[item];
+							local reserve = LootReserve.Server.CurrentSession.ItemReserves[item:GetID()];
 							reservers = reserve and #reserve.Players or 0;
 						end
 
@@ -2087,7 +2088,7 @@
 									GameTooltip:SetText("AddOn Users");
 									for _, compatibility in ipairs({ true, false }) do
 										for player, compatible in LootReserve:Ordered(LootReserve.Server.AddonUsers) do
-											if compatible == compatibility then
+											if compatible == compatibility and LootReserve:UnitInGroup(player) then
 												GameTooltip:AddLine(format("%s%s", LootReserve:ColoredPlayer(player), compatible and "" or "|cFFFF0000 (outdated)|r"));
 											end
 										end

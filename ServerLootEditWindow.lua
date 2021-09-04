@@ -1,6 +1,6 @@
 function LootReserve.Server.LootEdit:UpdateLootList()
     LootReserveServerButtonLootEdit:SetGlow(false);
-    for item, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
+    for _ in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
         LootReserveServerButtonLootEdit:SetGlow(true);
         break;
     end
@@ -33,7 +33,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
         frame.ConditionsFrame.Limit.EditBox:ClearFocus();
     end
 
-    local function createFrame(item, source)
+    local function createFrame(itemID, source)
         list.LastIndex = list.LastIndex + 1;
         local frame = list.Frames[list.LastIndex];
         while not frame do
@@ -50,13 +50,13 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             frame = list.Frames[list.LastIndex];
         end
 
-        if frame.Item ~= item then
+        if frame.Item ~= itemID then
             cleanupFrame(frame);
         end
 
-        frame.Item = item;
+        frame.Item = itemID;
 
-        if item == 0 then
+        if itemID == 0 then
             if list.LastIndex <= 1 or not list.Frames[list.LastIndex - 1]:IsShown() then
                 frame:SetHeight(0.00001);
                 frame:Hide();
@@ -68,8 +68,8 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             frame:SetHeight(44);
             frame:Show();
 
-            local description = LootReserve:GetItemDescription(item);
-            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(item);
+            local description = LootReserve:GetItemDescription(itemID);
+            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemID);
 
             frame.Link = link;
 
@@ -77,7 +77,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
             frame.ItemFrame.Misc:SetText(source or description);
 
-            local conditions = LootReserve.ItemConditions:Get(item, true);
+            local conditions = LootReserve.ItemConditions:Get(itemID, true);
             frame.ItemFrame:SetAlpha(conditions and (conditions.Hidden or conditions.Faction and not LootReserve.ItemConditions:TestFaction(conditions.Faction)) and 0.25 or 1);
             frame.ConditionsFrame.ClassMask:Update();
             frame.ConditionsFrame.State:Update();
@@ -89,13 +89,13 @@ function LootReserve.Server.LootEdit:UpdateLootList()
         list.ContentHeight = list.ContentHeight + frame:GetHeight();
     end
 
-    local function matchesFilter(item, filter)
+    local function matchesFilter(itemID, filter)
         filter = (filter or "");
         if #filter == 0 then
             return true;
         end
 
-        local name, link = GetItemInfo(item);
+        local name, link = GetItemInfo(itemID);
         if name then
             if string.find(name:upper(), filter, 1, true) then
                 return true;
@@ -108,18 +108,18 @@ function LootReserve.Server.LootEdit:UpdateLootList()
     end
 
     if self.SelectedCategory and self.SelectedCategory.Edited then
-        for item, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
-            createFrame(item);
+        for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
+            createFrame(itemID);
         end
     elseif self.SelectedCategory and self.SelectedCategory.Search and filter then
         local missing = false;
         local uniqueItems = { };
-        for item, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
-            if item ~= 0 and conditions.Custom and not uniqueItems[item] then
-                uniqueItems[item] = true;
-                local match = matchesFilter(item, filter);
+        for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
+            if itemID ~= 0 and conditions.Custom and not uniqueItems[itemID] then
+                uniqueItems[itemID] = true;
+                local match = matchesFilter(itemID, filter);
                 if match then
-                    createFrame(item, "Custom Item");
+                    createFrame(itemID, "Custom Item");
                 elseif match == nil then
                     missing = true;
                 end
@@ -129,12 +129,12 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             if category.Children and (not LootReserve.Server.NewSessionSettings.LootCategories or LootReserve:Contains(LootReserve.Server.NewSessionSettings.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for _, child in ipairs(category.Children) do
                     if child.Loot then
-                        for _, item in ipairs(child.Loot) do
-                            if item ~= 0 and not uniqueItems[item] then
-                                uniqueItems[item] = true;
-                                local match = matchesFilter(item, filter);
+                        for _, itemID in ipairs(child.Loot) do
+                            if itemID ~= 0 and not uniqueItems[itemID] then
+                                uniqueItems[itemID] = true;
+                                local match = matchesFilter(itemID, filter);
                                 if match then
-                                    createFrame(item, format("%s > %s", category.Name, child.Name));
+                                    createFrame(itemID, format("%s > %s", category.Name, child.Name));
                                 elseif match == nil then
                                     missing = true;
                                 end
@@ -150,14 +150,14 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             end);
         end
     elseif self.SelectedCategory and self.SelectedCategory.Custom then
-        for item, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
-            if item ~= 0 and conditions.Custom then
-                createFrame(item);
+        for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
+            if itemID ~= 0 and conditions.Custom then
+                createFrame(itemID);
             end
         end
     elseif self.SelectedCategory and self.SelectedCategory.Loot then
-        for _, item in ipairs(self.SelectedCategory.Loot) do
-            createFrame(item);
+        for _, itemID in ipairs(self.SelectedCategory.Loot) do
+            createFrame(itemID);
         end
     end
 
@@ -181,7 +181,7 @@ end
 
 function LootReserve.Server.LootEdit:UpdateCategories()
     LootReserveServerButtonLootEdit:SetGlow(false);
-    for item, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
+    for _ in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
         LootReserveServerButtonLootEdit:SetGlow(true);
         break;
     end
@@ -304,17 +304,17 @@ function LootReserve.Server.LootEdit:OnWindowLoad(window)
     self.Window.TitleText:SetText("Loot Reserve Server - Loot List Edit");
     self.Window:SetMinResize(550, 250);
     self:UpdateCategories();
-    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(item, success)
-        if not item or not self.SelectedCategory then return; end
+    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
+        if not itemID or not self.SelectedCategory then return; end
 
         if self.SelectedCategory.Edited or self.SelectedCategory.Custom then
-            local conditions = LootReserve.Server:GetNewSessionItemConditions()[item];
+            local conditions = LootReserve.Server:GetNewSessionItemConditions()[itemID];
             if conditions and (not self.SelectedCategory.Custom or conditions.Custom) then
                 self:UpdateLootList();
             end
         elseif self.SelectedCategory.Loot then
             for _, loot in ipairs(self.SelectedCategory.Loot) do
-                if item == loot then
+                if itemID == loot then
                     self:UpdateLootList();
                 end
             end

@@ -555,6 +555,12 @@ function LootReserve:SimplifyName(name)
     return self:NormalizeName(name:utf8replace(simplificationMapping));
 end
 
+function LootReserve:GetNumGroupMembers(func)
+    local count = 0;
+    self:ForEachRaider(function() count = count + 1; end);
+    return count;
+end
+
 function LootReserve:IsTradeableItem(bag, slot)
     return not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot);
 end
@@ -566,6 +572,7 @@ function LootReserve:GetTradeableItemCount(item)
         if slots > 0 then
             for slot = 1, slots do
                 local _, quantity, _, _, _, _, _, _, _, bagItem = GetContainerItemInfo(bag, slot);
+                bagItem = bagItem and LootReserve.Item(bagItem);
                 if bagItem and bagItem == item and self:IsTradeableItem(bag, slot) then
                     count = count + quantity;
                 end
@@ -601,7 +608,8 @@ end
 function LootReserve:IsItemBeingTraded(item)
     for i = 1, 6 do
         local link = GetTradePlayerItemLink(i);
-        if link and link:match("item:(%d*)") == tostring(item) then
+        local tradeItem = LootReserve.Item(link);
+        if tradeItem:GetID() and tradeItem == item then
             return true;
         end
     end
@@ -619,8 +627,8 @@ function LootReserve:PutItemInTrade(bag, slot)
     return false;
 end
 
-function LootReserve:IsItemUsable(item)
-    local name, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(item);
+function LootReserve:IsItemUsable(itemID)
+    local name, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID);
     if not name or not bindType then return; end
 
     -- Non BoP items are considered usable by everyone
@@ -634,7 +642,7 @@ function LootReserve:IsItemUsable(item)
     end
 
     self.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
-    self.TooltipScanner:SetHyperlink("item:" .. item);
+    self.TooltipScanner:SetHyperlink("item:" .. itemID);
     local columns = { "Left", "Right" };
     for i = 1, 50 do
         for _, column in ipairs(columns) do
@@ -652,8 +660,8 @@ function LootReserve:IsItemUsable(item)
     return true;
 end
 
-function LootReserve:GetItemDescription(item)
-    local name, link, _, _, _, itemType, itemSubType, _, equipLoc, texture, _, _, _, bindType = GetItemInfo(item);
+function LootReserve:GetItemDescription(itemID)
+    local name, link, _, _, _, itemType, itemSubType, _, equipLoc, texture, _, _, _, bindType = GetItemInfo(itemID);
     local itemText = "";
     if not itemType then return; end
     
@@ -702,8 +710,8 @@ function LootReserve:IsLootingItem(item)
     for i = 1, GetNumLootItems() do
         local link = GetLootSlotLink(i);
         if link then
-            local id = tonumber(link:match("item:(%d+)"));
-            if id and id == item then
+            local lootItem = LootReserve.Item(link);
+            if lootItem and lootItem == item then
                 return i;
             end
         end

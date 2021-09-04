@@ -10,29 +10,29 @@ local DefaultConditions =
     Limit     = nil,
 };
 
-function LootReserve.ItemConditions:Get(item, server)
+function LootReserve.ItemConditions:Get(itemID, server)
     if server and LootReserve.Server.CurrentSession then
-        return LootReserve.Server.CurrentSession.ItemConditions[item] or LootReserve.Data.ItemConditions[item];
+        return LootReserve.Server.CurrentSession.ItemConditions[itemID] or LootReserve.Data.ItemConditions[itemID];
     elseif server then
-        return LootReserve.Server:GetNewSessionItemConditions()[item] or LootReserve.Data.ItemConditions[item];
+        return LootReserve.Server:GetNewSessionItemConditions()[itemID] or LootReserve.Data.ItemConditions[itemID];
     else
-        return LootReserve.Client.ItemConditions[item] or LootReserve.Data.ItemConditions[item];
+        return LootReserve.Client.ItemConditions[itemID] or LootReserve.Data.ItemConditions[itemID];
     end
 end
 
-function LootReserve.ItemConditions:Make(item, server)
+function LootReserve.ItemConditions:Make(itemID, server)
     if server and LootReserve.Server.CurrentSession then
         LootReserve:ShowError("Cannot edit loot during an active session");
         return nil;
     elseif server then
         local container = LootReserve.Server:GetNewSessionItemConditions();
-        local conditions = container[item];
+        local conditions = container[itemID];
         if not conditions then
-            conditions = LootReserve:Deepcopy(LootReserve.Data.ItemConditions[item]);
+            conditions = LootReserve:Deepcopy(LootReserve.Data.ItemConditions[itemID]);
             if not conditions then
                 conditions = LootReserve:Deepcopy(DefaultConditions);
             end
-            container[item] = conditions;
+            container[itemID] = conditions;
         end
         return conditions;
     else
@@ -41,12 +41,12 @@ function LootReserve.ItemConditions:Make(item, server)
     end
 end
 
-function LootReserve.ItemConditions:Save(item, server)
+function LootReserve.ItemConditions:Save(itemID, server)
     if server and LootReserve.Server.CurrentSession then
         LootReserve:ShowError("Cannot edit loot during an active session");
     elseif server then
         local container = LootReserve.Server:GetNewSessionItemConditions();
-        local conditions = container[item];
+        local conditions = container[itemID];
         if conditions then
             -- Coerce conditions
             if conditions.ClassMask == 0 then
@@ -66,7 +66,7 @@ function LootReserve.ItemConditions:Save(item, server)
         -- If conditions are no different from the default - delete the table
         if conditions then
             local different = false;
-            local default = LootReserve.Data.ItemConditions[item];
+            local default = LootReserve.Data.ItemConditions[itemID];
             if default then
                 for k, v in pairs(conditions) do
                     if v ~= default[k] then
@@ -88,7 +88,7 @@ function LootReserve.ItemConditions:Save(item, server)
 
             if not different then
                 conditions = nil;
-                container[item] = nil;
+                container[itemID] = nil;
             end
         end
 
@@ -99,11 +99,11 @@ function LootReserve.ItemConditions:Save(item, server)
     end
 end
 
-function LootReserve.ItemConditions:Delete(item, server)
+function LootReserve.ItemConditions:Delete(itemID, server)
     if server and LootReserve.Server.CurrentSession then
         LootReserve:ShowError("Cannot edit loot during an active session");
     elseif server then
-        LootReserve.Server:GetNewSessionItemConditions()[item] = nil;
+        LootReserve.Server:GetNewSessionItemConditions()[itemID] = nil;
 
         LootReserve.Server.LootEdit:UpdateLootList();
         LootReserve.Server.Import:SessionSettingsUpdated();
@@ -136,7 +136,7 @@ function LootReserve.ItemConditions:HasCustom(server)
     end
 
     if container then
-        for item, conditions in pairs(container) do
+        for _, conditions in pairs(container) do
             if conditions.Custom then
                 return true;
             end
@@ -208,8 +208,8 @@ setClassWeapons("WARRIOR", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swo
                            "Bows", "Crossbows", "Guns", "Thrown");
 
 
-local function isUnusable(item, class)
-    local _, _, _, _, _, itemType, itemSubType = GetItemInfo(item);
+local function isUnusable(itemID, class)
+    local _, _, _, _, _, itemType, itemSubType = GetItemInfo(itemID);
     if UNUSABLE_EQUIPMENT[class][itemType] then
         return UNUSABLE_EQUIPMENT[class][itemType][itemSubType] or false;
     end
@@ -217,8 +217,8 @@ local function isUnusable(item, class)
 end
 
 
-function LootReserve.ItemConditions:TestClassEquip(item, playerClass)
-    return not isUnusable(item, playerClass);
+function LootReserve.ItemConditions:TestClassEquip(itemID, playerClass)
+    return not isUnusable(itemID, playerClass);
 end
 
 function LootReserve.ItemConditions:TestClassMask(classMask, playerClass)
@@ -229,14 +229,14 @@ function LootReserve.ItemConditions:TestFaction(faction)
     return faction and UnitFactionGroup("player") == faction;
 end
 
-function LootReserve.ItemConditions:TestLimit(limit, item, player, server)
+function LootReserve.ItemConditions:TestLimit(limit, itemID, player, server)
     if limit <= 0 then
         -- Has no limiton the number of reserves
         return true;
     end
 
     if server then
-        local reserves = LootReserve.Server.CurrentSession.ItemReserves[item];
+        local reserves = LootReserve.Server.CurrentSession.ItemReserves[itemID];
         if not reserves then
             -- Not reserved by anyone yet
             return true;
@@ -244,17 +244,17 @@ function LootReserve.ItemConditions:TestLimit(limit, item, player, server)
 
         return #reserves.Players < limit;
     else
-        return #LootReserve.Client:GetItemReservers(item) < limit;
+        return #LootReserve.Client:GetItemReservers(itemID) < limit;
     end
 end
 
-function LootReserve.ItemConditions:TestPlayer(player, item, server)
+function LootReserve.ItemConditions:TestPlayer(player, itemID, server)
     if not server and not LootReserve.Client.SessionServer then
         -- Show all items until connected to a server
         return true;
     end
 
-    local conditions = self:Get(item, server);
+    local conditions = self:Get(itemID, server);
     local equip
     if server then
         equip = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings.Equip
@@ -265,7 +265,7 @@ function LootReserve.ItemConditions:TestPlayer(player, item, server)
         if conditions and conditions.Hidden then
             return false, LootReserve.Constants.ReserveResult.ItemNotReservable;
         end
-        if equip and not self:TestClassEquip(item, select(2, LootReserve:UnitClass(player))) then
+        if equip and not self:TestClassEquip(itemID, select(2, LootReserve:UnitClass(player))) then
             return false, LootReserve.Constants.ReserveResult.FailedClass;
         end
         if conditions and equip and conditions.ClassMask and not self:TestClassMask(conditions.ClassMask, select(3, LootReserve:UnitClass(player))) then
@@ -274,15 +274,15 @@ function LootReserve.ItemConditions:TestPlayer(player, item, server)
         if conditions and conditions.Faction and not self:TestFaction(conditions.Faction) then
             return false, LootReserve.Constants.ReserveResult.FailedFaction;
         end
-        if conditions and conditions.Limit and not self:TestLimit(conditions.Limit, item, player, server) then
+        if conditions and conditions.Limit and not self:TestLimit(conditions.Limit, itemID, player, server) then
             return false, LootReserve.Constants.ReserveResult.FailedLimit;
         end
     end
     return true;
 end
 
-function LootReserve.ItemConditions:TestServer(item)
-    local conditions = self:Get(item, true);
+function LootReserve.ItemConditions:TestServer(itemID)
+    local conditions = self:Get(itemID, true);
     if conditions then
         if conditions.Hidden then
             return false;
@@ -294,14 +294,14 @@ function LootReserve.ItemConditions:TestServer(item)
     return true;
 end
 
-function LootReserve.ItemConditions:IsItemVisibleOnClient(item)
-    local canReserve, conditionResult = self:TestPlayer(LootReserve:Me(), item, false);
+function LootReserve.ItemConditions:IsItemVisibleOnClient(itemID)
+    local canReserve, conditionResult = self:TestPlayer(LootReserve:Me(), itemID, false);
     return canReserve or conditionResult == LootReserve.Constants.ReserveResult.FailedLimit
            or (conditionResult == LootReserve.Constants.ReserveResult.FailedClass and (LootReserve.Client.Locked or not LootReserve.Client.AcceptingReserves));
 end
 
-function LootReserve.ItemConditions:IsItemReservableOnClient(item)
-    local canReserve, conditionResult = self:TestPlayer(LootReserve:Me(), item, false);
+function LootReserve.ItemConditions:IsItemReservableOnClient(itemID)
+    local canReserve, conditionResult = self:TestPlayer(LootReserve:Me(), itemID, false);
     return canReserve;
 end
 

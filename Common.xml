@@ -151,7 +151,7 @@
 						else
 							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 						end
-						GameTooltip:SetHyperlink("item:" .. self:GetParent():GetParent().Item);
+						GameTooltip:SetHyperlink(self:GetParent():GetParent().Item:GetString());
 						GameTooltip:Show();
 					</OnEnter>
 					<OnLeave function="GameTooltip_Hide" />
