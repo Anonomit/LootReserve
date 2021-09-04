@@ -520,6 +520,8 @@ function LootReserve.Server:UpdateRollList(lockdown)
 
             if historical then
                 frame.ItemFrame.Misc:SetText(roll.StartTime and date(format("%%B%s%%e  %%H:%%M", date("*t", roll.StartTime).day < 10 and "" or " "), roll.StartTime) or "");
+            elseif LootReserve:GetTradeableItemCount(item) < 1 and not LootReserve:IsLootingItem(item) then
+                frame.ItemFrame.Misc:SetText("Not tradeable");
             else
                 local reservers = 0;
                 if LootReserve.Server.CurrentSession then
