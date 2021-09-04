@@ -2480,7 +2480,7 @@ function LootReserve.Server:PassRoll(player, item, chat)
     end
 
     if chat then
-        LootReserve.Comm:SendRequestRoll(player, 0, { }, self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll);
+        LootReserve.Comm:SendRequestRoll(player, LootReserve.Item(0), { }, self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll);
 
         local item = self.RequestedRoll.Item;
         local function WhisperPlayer()
@@ -2492,7 +2492,8 @@ function LootReserve.Server:PassRoll(player, item, chat)
                 return;
             end
 
-            LootReserve:SendChatMessage(format("You passed on %s", link), "WHISPER", player);
+            local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
+            LootReserve:SendChatMessage(format("You have passed on %s%s.", link, phase and format(" for %s", phase)), "WHISPER", player);
         end
         WhisperPlayer();
     end
