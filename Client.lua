@@ -170,6 +170,19 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
             end
             self.PendingOpen = false;
         end);
+
+        GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
+            if self.SessionServer and not LootReserve:IsMe(self.SessionServer) then
+                local name, link = tooltip:GetItem();
+                if not link then return; end
+
+                local item = LootReserve.Item(link);
+                if #self:GetItemReservers(item:GetID()) > 0 then
+                    local reservesText = LootReserve:FormatReservesTextColored(self:GetItemReservers(item:GetID()));
+                    tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Dice-Up:32:32:0:-4|t Reserved by " .. reservesText, 1, 1, 1);
+                end
+            end
+        end);
     end
 
     if starting then

@@ -801,13 +801,13 @@ function LootReserve.Server:PrepareSession()
                 local name, link = tooltip:GetItem();
                 if not link then return; end
 
-                local itemID = tonumber(link:match("item:(%d+)"));
-                if itemID and self.CurrentSession.WonItems[itemID] then
-                    local reservesText = LootReserve:FormatReservesTextColored(self.CurrentSession.WonItems[itemID].Players);
+                local item = LootReserve.Item(link);
+                if self.CurrentSession.WonItems[item:GetID()] then
+                    local reservesText = LootReserve:FormatReservesTextColored(self.CurrentSession.WonItems[item:GetID()].Players);
                     tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Coin-Up:32:32:0:-4|t Won by " .. reservesText, 1, 1, 1);
                 end
-                if itemID and self.CurrentSession.ItemReserves[itemID] then
-                    local reservesText = LootReserve:FormatReservesTextColored(self.CurrentSession.ItemReserves[itemID].Players);
+                if self.CurrentSession.ItemReserves[item:GetID()] then
+                    local reservesText = LootReserve:FormatReservesTextColored(self.CurrentSession.ItemReserves[item:GetID()].Players);
                     tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Dice-Up:32:32:0:-4|t Reserved by " .. reservesText, 1, 1, 1);
                 end
             end
