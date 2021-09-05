@@ -218,7 +218,7 @@
 										GameTooltip:Show();
 
 										if missing then
-											C_Timer.After(0.25, function()
+											C_Timer.After(0.1, function()
 												if GameTooltip:IsOwned(self) then
 													self:UpdateTooltip();
 												end
@@ -1141,7 +1141,7 @@
 										LootReserve:OpenMenu(menu, self:GetParent().Menu, self);
 
 										if missing then
-											C_Timer.After(0.25, function()
+											C_Timer.After(0.1, function()
 												if UIDROPDOWNMENU_OPEN_MENU == self:GetParent().Menu and not CursorHasItem() and not frame.Item then
 													CloseMenus();
 													self:DropHandler();
@@ -1249,7 +1249,7 @@
 						self.Link = link;
 
 						if not name or not link then
-							C_Timer.After(0.25, function()
+							C_Timer.After(0.1, function()
 								if self.Item == item then
 									self:SetItem(item);
 								end

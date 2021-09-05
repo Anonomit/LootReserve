@@ -145,7 +145,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             end
         end
         if missing then
-            C_Timer.After(0.25, function()
+            C_Timer.After(0.1, function()
                 self:UpdateLootList();
             end);
         end

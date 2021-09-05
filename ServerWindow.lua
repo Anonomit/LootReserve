@@ -333,7 +333,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
     self:UpdateReserveListRolls(lockdown);
 
     if missingName then
-        C_Timer.After(0.25, function() self:UpdateReserveList(); end);
+        C_Timer.After(0.1, function() self:UpdateReserveList(); end);
     end
 end
 
@@ -832,7 +832,7 @@ function LootReserve.Server:OnWindowLoad(window)
         self:UpdateRollList();
     end);
     LootReserve:RegisterEvent("TRADE_SHOW", "TRADE_CLOSED", "TRADE_PLAYER_ITEM_CHANGED", "BAG_UPDATE", function()
-        C_Timer.After(0, function() LootReserve.Server:UpdateRollList() end);
+        C_Timer.After(0.1, function() LootReserve.Server:UpdateRollList() end);
     end);
 end
 

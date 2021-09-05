@@ -11,6 +11,11 @@ LootReserve.EventFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
 LootReserve.EventFrame:SetSize(0, 0);
 LootReserve.EventFrame:Show();
 
+LootReserve.ItemCacheFrame = CreateFrame("Frame", nil, UIParent);
+LootReserve.ItemCacheFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
+LootReserve.ItemCacheFrame:SetSize(0, 0);
+LootReserve.ItemCacheFrame:Show();
+
 LootReserveCharacterSave =
 {
     Client =
@@ -192,6 +197,31 @@ function LootReserve:RegisterEvent(...)
         else
             error("LootReserve:RegisterEvent: All but the last passed parameters must be event names");
         end
+    end
+end
+
+function LootReserve:RunWhenItemCached(itemID, func, ...)
+    if func(...) then
+        local args = {...};
+        if not LootReserve.ItemCacheFrame.Items then
+            LootReserve.ItemCacheFrame.Items = { };
+            LootReserve.ItemCacheFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
+            LootReserve.ItemCacheFrame:SetScript("OnEvent", function(self, event, itemID, success)
+                if not success then return; end
+                local handlers = self.Items[itemID];
+                if handlers then
+                    for i = #handlers, 1 do
+                        if handlers[i](unpack(args)) then
+                            table.remove(handlers, i);
+                        end
+                    end
+                end
+            end);
+        end
+        if not LootReserve.ItemCacheFrame.Items[itemID] then
+            LootReserve.ItemCacheFrame.Items[itemID] = { };
+        end
+        table.insert(LootReserve.ItemCacheFrame.Items[itemID], function() return func(unpack(args)); end);
     end
 end
 

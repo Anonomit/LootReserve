@@ -341,7 +341,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         -- Transform Item Name -> Item ID
                         if type(itemID) == "string" then
                             if not LootReserve.Server:UpdateItemNameCache() then
-                                C_Timer.After(0.25, function() LootReserve.Server.Import:InputOptionsUpdated(); end);
+                                C_Timer.After(0.1, function() LootReserve.Server.Import:InputOptionsUpdated(); end);
                                 return "Loading item names, please wait...";
                             end
 

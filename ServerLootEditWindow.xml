@@ -527,8 +527,7 @@
 						if itemID and C_Item.DoesItemExistByID(itemID) then
 							local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemID);
 							if not name or not link then
-								C_Timer.After(0.25, UpdateText);
-								return;
+								return true;
 							end
 							table.insert(menu,
 							{
@@ -568,7 +567,7 @@
 								});
 								if not self.LoadingSearch then
 									self.LoadingSearch = true;
-									C_Timer.After(0.25, function()
+									C_Timer.After(0.1, function()
 										self.LoadingSearch = nil;
 										UpdateText();
 									end);
@@ -580,11 +579,11 @@
 							LootReserve:OpenMenu(menu, self.ItemFrame.Menu, self.ItemFrame.Scroll);
 						end
 						if missing then
-							C_Timer.After(0.25, UpdateText);
+							return true;
 						end
-					end
-					UpdateText();
-				end);
+					end);
+				end
+				LootReserve:RunWhenItemCached(ItemID, UpdateText);
 				self.SetItem = function(self, itemID)
 					if itemID then
 						self.Item = itemID;
@@ -593,7 +592,7 @@
 						self.Link = link;
 
 						if not name or not link then
-							C_Timer.After(0.25, function()
+							C_Timer.After(0.1, function()
 								if self.Item == itemID then
 									self:SetItem(itemID);
 								end

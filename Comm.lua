@@ -553,15 +553,14 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, player
             LootReserve.Client:FlashCategory("Reserves", "my", wasReserver == isReserver and not isViewingMyReserves);
         end
         if wasReserver and isReserver and myOldReserves == myNewReserves then
-            local function Print()
+            LootReserve:RunWhenItemCached(itemID, function()
                 local name, link = GetItemInfo(itemID);
                 if name and link then
                     LootReserve:PrintMessage(LootReserve:GetReservesStringColored(false, players, LootReserve:Me(), isUpdate, link));
                 else
-                    C_Timer.After(0.25, Print);
+                    return true;
                 end
-            end
-            Print();
+            end);
         end
     end
 end
@@ -595,16 +594,15 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
         LootReserve.Client.RemainingReserves = remainingReserves;
         LootReserve.Client.Locked = locked;
         if result == LootReserve.Constants.CancelReserveResult.Forced then
-            local function ShowForced()
+            LootReserve:RunWhenItemCached(itemID, function()
                 local name, link = GetItemInfo(itemID);
                 if name and link then
                     LootReserve:ShowError("%s removed your reserve for %s", LootReserve:ColoredPlayer(sender), link);
                     LootReserve:PrintError("%s removed your reserve for %s", LootReserve:ColoredPlayer(sender), link);
                 else
-                    C_Timer.After(0.25, ShowForced);
+                    return true;
                 end
-            end
-            ShowForced();
+            end);
         elseif result == LootReserve.Constants.CancelReserveResult.Locked then
             LootReserve.Client.Locked = true;
         end
@@ -674,16 +672,13 @@ LootReserve.Comm.Handlers[Opcodes.DeletedRoll] = function(sender, item, roll, ph
     item = LootReserve.Item(strsplit(",", item));
     roll = tonumber(roll);
 
-    if true--[[LootReserve.Client.SessionServer == sender]] then
-        local function ShowDeleted()
-            local name, link = item:GetInfo();
-            if name and link then
-                LootReserve:ShowError ("Your %sroll%s on %s was deleted", phase and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
-                LootReserve:PrintError("Your %sroll%s on %s was deleted", phase and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
-            else
-                C_Timer.After(0.25, ShowDeleted);
-            end
+    LootReserve:RunWhenItemCached(item:GetID(), function()
+        local name, link = item:GetInfo();
+        if name and link then
+            LootReserve:ShowError ("Your %sroll%s on %s was deleted", phase and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
+            LootReserve:PrintError("Your %sroll%s on %s was deleted", phase and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
+        else
+            return true;
         end
-        ShowDeleted();
-    end
+    end);
 end

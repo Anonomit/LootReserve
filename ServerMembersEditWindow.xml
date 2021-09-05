@@ -163,7 +163,7 @@
 								GameTooltip:Show();
 
 								if missing then
-									C_Timer.After(0.25, function()
+									C_Timer.After(0.1, function()
 										if GameTooltip:IsOwned(self) then
 											self:UpdateTooltip();
 										end

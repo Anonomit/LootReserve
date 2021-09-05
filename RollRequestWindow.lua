@@ -1,6 +1,6 @@
 local LibCustomGlow = LibStub("LibCustomGlow-1.0");
 
-function LootReserve.Client:RollRequested(sender, item, players, custom, duration, maxDuration, phase, example)
+local function RollRequested(self, sender, item, players, custom, duration, maxDuration, phase, example)
     local frame = LootReserveRollRequestWindow;
 
     if LibCustomGlow then
@@ -71,9 +71,7 @@ function LootReserve.Client:RollRequested(sender, item, players, custom, duratio
     end);
 
     if not name or not link then
-        C_Timer.After(0.25, function()
-            self:RollRequested(sender, item, players, custom, duration, maxDuration, phase, example);
-        end);
+        return true;
     end
 
     if not self.RollMatcherRegistered then
@@ -98,6 +96,11 @@ function LootReserve.Client:RollRequested(sender, item, players, custom, duratio
             end
         end);
     end
+end
+
+function LootReserve.Client:RollRequested(sender, item, ...)
+    local args = {...};
+    LootReserve:RunWhenItemCached(item:GetID(), function() return RollRequested(LootReserve.Client, sender, item, unpack(args)) end);
 end
 
 function LootReserve.Client:RespondToRollRequest(response)
