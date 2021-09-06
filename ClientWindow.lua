@@ -17,9 +17,15 @@ function LootReserve.Client:UpdateReserveStatus()
         self.Window.OptOut:SetShown(false);
         self.Window.OptIn:SetShown(false);
     else
-        local reserves = LootReserve.Client:GetRemainingReserves();
-        self.Window.RemainingText:SetText(format("You can reserve|cFF%s %d |rmore |4item:items;", reserves > 0 and "00FF00" or "FF0000", reserves));
-        --self.Window.RemainingTextGlow:SetVertexColor(reserves > 0 and 0 or 1, reserves > 0 and 1 or 0, 0);
+        local reservesLeft = LootReserve.Client:GetRemainingReserves();
+        local maxReserves = self:GetMaxReserves();
+        self.Window.RemainingText:SetText(format("You have|cFF%s %d%s|r item |4reserve:reserves; %s", 
+            reservesLeft > 0 and (reservesLeft < maxReserves and "FF7700" or "00FF00") or "FF0000",
+            reservesLeft,
+            reservesLeft < maxReserves and format("/%d", maxReserves) or "",
+            reservesLeft < maxReserves and "remaining" or "in total"
+        ));
+        --self.Window.RemainingTextGlow:SetVertexColor(reservesLeft > 0 and 0 or 1, reservesLeft > 0 and 1 or 0, 0);
         --local r, g, b = self.Window.Duration:GetStatusBarColor();
         --self.Window.RemainingTextGlow:SetVertexColor(r, g, b, 0.15);
         -- animated in LootReserve.Client:OnWindowLoad instead
@@ -374,6 +380,13 @@ function LootReserve.Client:UpdateCategories()
         end
     end
 
+    local categories = LootReserve:GetCategoriesText(self.LootCategories);
+    if categories ~= "" then
+        self.Window.TitleText:SetText(format("LootReserve:  %s", categories));
+    else
+        self.Window.TitleText:SetText("LootReserve");
+    end
+    
     for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
         if LootReserve.Data:IsCategoryVisible(category) then
             createCategoryButtonsRecursively(id, category);
@@ -492,7 +505,7 @@ function LootReserve.Client:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetPoint("TOP", self.Window, "TOP", 0, -4);
-    self.Window.TitleText:SetText("Loot Reserve");
+    self.Window.TitleText:SetText("LootReserve");
     self.Window:SetMinResize(550, 250);
     self:UpdateCategories();
     self:UpdateReserveStatus();

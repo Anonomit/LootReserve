@@ -1561,7 +1561,7 @@ LootReserve.Data =
         },
         [2090] = {
             Name = "Sunwell Plateau",
-            NameShort = "Sunwell",
+            NameShort = "SWP",
             Expansion = 1,
             Children =
             {

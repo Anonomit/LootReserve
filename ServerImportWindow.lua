@@ -433,7 +433,7 @@ end
 function LootReserve.Server.Import:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
-    self.Window.TitleText:SetText("Loot Reserve Server - Import");
+    self.Window.TitleText:SetText("LootReserve Server - Import");
     self.Window:SetMinResize(390, 440);
     self:InputUpdated();
     LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)

@@ -1267,7 +1267,7 @@
 						--self.ItemFrame.Icon.CancelIcon:SetShown(GameTooltip:IsOwned(self.ItemFrame.Icon)); -- Looks better without it
 						self.ItemFrame.Icon.Arrow:Hide();
 						self.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
-						self.ItemFrame.Misc:SetText(LootReserve:GetTradeableItemCount(item) &lt; 1 and not LootReserve:IsLootingItem(item) and "Not tradeable" or reservers > 0 and format("Reserved by %d |4player:players;", reservers) or "Not reserved");
+						self.ItemFrame.Misc:SetText(LootReserve:GetTradeableItemCount(item) &lt; 1 and not LootReserve:IsLootingItem(item) and "|cFFFF0000Not tradeable|r" or reservers > 0 and format("Reserved by %d |4player:players;", reservers) or "Not reserved");
 						self.RequestRollButton:Show();
 						self.RequestRollButton:SetWidth(32);
 					else
@@ -1694,7 +1694,7 @@
 				</Anchors>
 				<Layers>
 					<Layer>
-						<FontString parentKey="LabelTitle" inherits="GameFontNormalHuge3" text="Loot Reserve">
+						<FontString parentKey="LabelTitle" inherits="GameFontNormalHuge3" text="LootReserve">
 							<Size y="20" />
 							<Anchors>
 								<Anchor point="TOP" y="-20" />
@@ -1742,11 +1742,7 @@
 						<Scripts>
 							<OnLoad>
 								self.UpdateText = function(self)
-									local text = ""
-									for i, id in ipairs(LootReserve.Server.NewSessionSettings.LootCategories) do
-										text = format("%s%s%s", text, i ~= 1 and ", " or "", LootReserve.Data.Categories[id].NameShort);
-									end
-									UIDropDownMenu_SetText(self, text);
+									UIDropDownMenu_SetText(self, LootReserve:GetCategoriesText(LootReserve.Server.NewSessionSettings.LootCategories, true));
 								end
 								self.init = function(self)
 									self.init = nil;

@@ -8,6 +8,7 @@ LootReserve.Client =
     StartTime         = 0,
     AcceptingReserves = false,
     RemainingReserves = 0,
+    MaxReserves       = 0,
     Locked            = false,
     OptedOut          = false,
     LootCategories    = nil,
@@ -197,6 +198,7 @@ end
 function LootReserve.Client:ResetSession(refresh)
     self.SessionServer     = nil;
     self.RemainingReserves = 0;
+    self.MaxReserves       = 0;
     self.LootCategories    = nil;
     self.ItemReserves      = { };
     self.ItemConditions    = { };
@@ -216,6 +218,9 @@ function LootReserve.Client:GetRemainingReserves()
 end
 function LootReserve.Client:HasRemainingReserves()
     return self:GetRemainingReserves() > 0;
+end
+function LootReserve.Client:GetMaxReserves()
+    return self.SessionServer and self.MaxReserves or 0;
 end
 
 function LootReserve.Client:IsItemReserved(itemID)

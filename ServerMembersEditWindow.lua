@@ -164,7 +164,7 @@ end
 function LootReserve.Server.MembersEdit:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
-    self.Window.TitleText:SetText("Loot Reserve Server - Players");
+    self.Window.TitleText:SetText("LootReserve Server - Players");
     self.Window:SetMinResize(482, 150);
     self:UpdateMembersList();
     LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)

@@ -1182,10 +1182,7 @@ function LootReserve.Server:StartSession()
     LootReserve.Comm:BroadcastVersion();
     LootReserve.Comm:BroadcastSessionInfo(true);
     if self.CurrentSession.Settings.ChatFallback then
-        local categories = ""
-        for i, category in ipairs(self.CurrentSession and self.CurrentSession.Settings.LootCategories or { }) do
-            categories = format("%s%s%s", categories, i == 1 and "" or ", ", LootReserve.Data.Categories[category].Name);
-        end
+        local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories, true);
         local duration = self.CurrentSession.Settings.Duration
         local count = self.CurrentSession.Settings.MaxReservesPerPlayer;
         LootReserve:SendChatMessage(format("Loot reserves are now started%s%s%s. %d reserved %s per character%s.",
@@ -1224,7 +1221,11 @@ function LootReserve.Server:ResumeSession()
     LootReserve.Comm:BroadcastSessionInfo();
 
     if self.CurrentSession.Settings.ChatFallback then
-        LootReserve:SendChatMessage("Accepting loot reserves again.", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+        local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories, true);
+        
+        LootReserve:SendChatMessage(format("Accepting loot reserves again%s.",
+            categories ~= "" and format(" for %s", categories) or ""
+        ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
         if self.Settings.ChatReservesList and not self.CurrentSession.Settings.Blind then
             LootReserve:SendChatMessage("To see all reserves made, whisper me:  !reserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
         end
@@ -1257,7 +1258,11 @@ function LootReserve.Server:StopSession()
     LootReserve.Comm:SendSessionStop();
 
     if self.CurrentSession.Settings.ChatFallback then
-        LootReserve:SendChatMessage("No longer accepting loot reserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStop));
+        local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories, true);
+        
+        LootReserve:SendChatMessage(format("No longer accepting loot reserves%s.",
+            categories ~= "" and format(" for %s", categories) or ""
+        ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStop));
     end
 
     self:UpdateReserveList();
@@ -1329,10 +1334,12 @@ function LootReserve.Server:Opt(player, out, chat)
     -- Send chat messages
     if self.CurrentSession.Settings.ChatFallback then
         if chat or not self:IsAddonUser(player) then
-            LootReserve:SendChatMessage(format("You have opted %s using your %d remaining reserve%s. You can opt back %s with  !opt %s",
+            local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories, true);
+            
+            LootReserve:SendChatMessage(format("You have opted %s using your %d |4remaining reserve:remaining reserves;%s. You can opt back %s with  !opt %s",
                 member.OptedOut and "out of" or "into",
                 member.ReservesLeft,
-                member.ReservesLeft == 1 and "" or "s",
+                categories ~= "" and format(" for %s", categories) or "",
                 member.OptedOut and "in" or "out",
                 member.OptedOut and "in" or "out"
             ), "WHISPER", player);
@@ -1881,10 +1888,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
         if roll and players then
             local raidroll = self.RequestedRoll.RaidRoll;
             local phases = LootReserve:Deepcopy(self.RequestedRoll.Phases);
-            local categories = ""
-            for i, category in ipairs(self.CurrentSession and self.CurrentSession.Settings.LootCategories or { }) do
-                categories = format("%s%s%s", categories, i == 1 and "" or ", ", LootReserve.Data.Categories[category].Name);
-            end
+            local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
 
             local recordPhase;
             if self.RequestedRoll.RaidRoll then
@@ -1925,10 +1929,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             players = { player };
             RecordRollWinner(player, item, LootReserve.Constants.WonRollPhase.Reserve);
 
-            local categories = ""
-            for i, category in ipairs(self.CurrentSession and self.CurrentSession.Settings.LootCategories or { }) do
-                categories = format("%s%s%s", categories, i == 1 and "" or ", ", LootReserve.Data.Categories[category].Name);
-            end
+            local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
             -- Announce
             LootReserve:RunWhenItemCached(item:GetID(), function()
                 local name, link, quality = item:GetInfo();
@@ -2685,10 +2686,13 @@ function LootReserve.Server:WhisperPlayerWithoutReserves(target)
         if member.Locked then
             member.Locked = false;
         end
+        local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories, true);
+        
         LootReserve.Comm:SendSessionInfo(target);
-        LootReserve:SendChatMessage(format("Don't forget to reserve your items. You have %d %s left. Whisper  !reserve ItemLinkOrName",
-            member.ReservesLeft,
-            member.ReservesLeft == 1 and "reserve" or "reserves"
+        LootReserve:SendChatMessage(format("Don't forget to reserve your item%s%s. You have %d |4reserve:reserves; left. Whisper  !reserve ItemLinkOrName",
+            self.CurrentSession.MaxReservesPerPlayer == 1 and "" or "s",
+            categories ~= "" and format(" for %s", categories) or "",
+            member.ReservesLeft
         ), "WHISPER", target);
         LootReserve:SendChatMessage(format("You can opt out of using your remaining %d %s by whispering  !opt out",
             member.ReservesLeft,
@@ -2706,10 +2710,13 @@ function LootReserve.Server:WhisperAllWithoutReserves()
             if member.Locked then
                 member.Locked = false;
             end
+            local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories, true);
+            
             LootReserve.Comm:SendSessionInfo(target);
-            LootReserve:SendChatMessage(format("Don't forget to reserve your items. You have %d %s left. Whisper  !reserve ItemLinkOrName",
-                member.ReservesLeft,
-                member.ReservesLeft == 1 and "reserve" or "reserves"
+            LootReserve:SendChatMessage(format("Don't forget to reserve your item%s%s. You have %d |4reserve:reserves; left. Whisper  !reserve ItemLinkOrName",
+                self.CurrentSession.MaxReservesPerPlayer == 1 and "" or "s",
+                categories ~= "" and format(" for %s", categories) or "",
+                member.ReservesLeft
             ), "WHISPER", player);
             LootReserve:SendChatMessage(format("You can opt out of using your remaining %d %s by whispering  !opt out",
                 member.ReservesLeft,
@@ -2722,8 +2729,11 @@ end
 function LootReserve.Server:BroadcastInstructions()
     if not self.CurrentSession then return; end
     if not self.CurrentSession.AcceptingReserves then return; end
+    local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories, true);
 
-    LootReserve:SendChatMessage("Loot reserves are currently ongoing.", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
+    LootReserve:SendChatMessage(format("Loot reserves are currently ongoing%s.",
+        categories ~= "" and format(" for %s", categories) or ""
+    ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
     if self.Settings.ChatReservesList and not self.CurrentSession.Settings.Blind then
         LootReserve:SendChatMessage("To see all reserves made, whisper me:  !reserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
     end

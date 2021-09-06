@@ -521,7 +521,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
             if historical then
                 frame.ItemFrame.Misc:SetText(roll.StartTime and date(format("%%B%s%%e  %%H:%%M", date("*t", roll.StartTime).day < 10 and "" or " "), roll.StartTime) or "");
             elseif LootReserve:GetTradeableItemCount(item) < 1 and not LootReserve:IsLootingItem(item) then
-                frame.ItemFrame.Misc:SetText("Not tradeable");
+                frame.ItemFrame.Misc:SetText("|cFFFF00Not tradeable|r");
             else
                 local reservers = 0;
                 if LootReserve.Server.CurrentSession then
@@ -763,7 +763,7 @@ function LootReserve.Server:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetPoint("TOP", self.Window, "TOP", 0, -4);
-    self.Window.TitleText:SetText("Loot Reserve Server");
+    self.Window.TitleText:SetText("LootReserve Server");
     self.Window:SetMinResize(230, 365);
     self.Window.PanelSession.LabelDuration:SetPoint("RIGHT", self.Window.PanelSession.DropDownDuration.Text, "LEFT", -16, 0);
     self.Window.PanelSession.DropDownDuration:SetPoint("CENTER", self.Window.PanelSession.Duration, "CENTER", (6 + self.Window.PanelSession.LabelDuration:GetStringWidth()) / 2, 0);

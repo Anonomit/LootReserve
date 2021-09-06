@@ -927,6 +927,16 @@ function LootReserve:FormatReservesTextColored(players, excludePlayer)
     return FormatReservesText(players, excludePlayer, function(...) return self:ColoredPlayer(...); end);
 end
 
+function LootReserve:GetCategoriesText(categories, shortName, delimiter)
+    local name = shortName and "NameShort" or "Name";
+    delimiter = delimiter or " / ";
+    local text = ""
+    for i, category in ipairs(categories or { }) do
+        text = format("%s%s%s", text, i == 1 and "" or delimiter, LootReserve.Data.Categories[category][name]);
+    end
+    return text;
+end
+
 local function GetReservesData(players, me, colorFunc)
     local reservesCount = { };
     for _, player in ipairs(players) do

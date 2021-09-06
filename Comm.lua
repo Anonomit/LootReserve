@@ -224,10 +224,11 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
     local refPlayers = { };
     for player, member in pairs(session.Members) do
         if not target or LootReserve:IsSamePlayer(player, target) then
-            membersInfo = membersInfo .. (#membersInfo > 0 and ";" or "") .. format("%s=%s", player, strjoin(",", session.Settings.Lock and member.Locked and "#" or member.ReservesLeft));
+            membersInfo = membersInfo .. (#membersInfo > 0 and ";" or "") .. format("%s=%s,%d", player, session.Settings.Lock and member.Locked and "#" or member.ReservesLeft, session.Settings.MaxReservesPerPlayer);
             table.insert(refPlayers, player);
         end
     end
+    LootReserve:debug(membersInfo)
 
     local optInfo = "";
     local refPlayers = { };
@@ -314,6 +315,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
     LootReserve.Client:StartSession(sender, starting, startTime, acceptingReserves, lootCategories, duration, maxDuration, equip, blind, multireserve);
 
     LootReserve.Client.RemainingReserves = 0;
+    LootReserve.Client.MaxReserves       = 0;
     local refPlayers = { };
     if #membersInfo > 0 then
         membersInfo = { strsplit(";", membersInfo) };
@@ -321,8 +323,9 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
             local player, info = strsplit("=", infoStr, 2);
             table.insert(refPlayers, player);
             if LootReserve:IsMe(player) then
-                local remainingReserves = strsplit(",", info);
+                local remainingReserves, maxReserves = strsplit(",", info);
                 LootReserve.Client.RemainingReserves = tonumber(remainingReserves) or 0;
+                LootReserve.Client.MaxReserves = tonumber(maxReserves) or 0;
                 LootReserve.Client.Locked = remainingReserves == "#";
             end
         end
