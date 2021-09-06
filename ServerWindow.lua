@@ -775,6 +775,7 @@ function LootReserve.Server:OnWindowLoad(window)
 
     LootReserve:RegisterEvent("GROUP_JOINED", "GROUP_LEFT", "PARTY_LEADER_CHANGED", "PARTY_LOOT_METHOD_CHANGED", "GROUP_ROSTER_UPDATE", function()
         self:UpdateServerAuthority();
+        self:UpdateAddonUsers();
     end);
     LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
         if itemID and self.CurrentSession and self.CurrentSession.ItemReserves[itemID] then
