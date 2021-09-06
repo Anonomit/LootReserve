@@ -1773,10 +1773,12 @@ function LootReserve.Server:TryFinishRoll()
         -- Check if only one player exists in the roll request
         if not self.RequestedRoll.Custom and not self.RequestedRoll.RaidRoll and self.Settings.RollSkipNotContested then
             local count = 0;
+            local winner;
             for player, roll in pairs(self.RequestedRoll.Players) do
                 count = count + 1;
+                winner = player;
             end
-            if count == 1 then
+            if count == 1 and LootReserve:IsPlayerOnline(winner) then
                 self:FinishRollRequest(self.RequestedRoll.Item, true);
                 self:RollEnded();
                 return true;

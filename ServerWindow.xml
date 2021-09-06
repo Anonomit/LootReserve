@@ -428,7 +428,7 @@
 								table.insert(menu, #menu - 1,
 								{
 									text = "Skip Roll if Not Contested",
-									tooltipText = "Just announce the winner instead of rolling on the item if it's reserved by only one player.",
+									tooltipText = "Just announce the winner instead of rolling on the item if it's reserved by only one player.|n|nOnly applies if the winner is online in the group.",
 									checked = LootReserve.Server.Settings.RollSkipNotContested,
 									func = function(_, _, _, checked) LootReserve.Server.Settings.RollSkipNotContested = checked; LootReserve.Server:TryFinishRoll(); end,
 								});
@@ -874,7 +874,7 @@
 							{ text = "Settings for \"Reserving Players\"", isTitle = true },
 							{
 								text = "Skip Roll if Not Contested",
-								tooltipText = "Just announce the winner instead of rolling on the item if it's reserved by only one player.",
+								tooltipText = "Just announce the winner instead of rolling on the item if it's reserved by only one player.|n|nOnly applies if the winner is online in the group.",
 								checked = LootReserve.Server.Settings.RollSkipNotContested,
 								func = function(_, _, _, checked) LootReserve.Server.Settings.RollSkipNotContested = checked; end,
 							},
