@@ -1,4 +1,4 @@
-## Interface: 11307
+## Interface: 20502
 ## Title: LootReserve
 ## Notes: Soft reserves management addon
 ## Version: 2021-09-07
@@ -18,7 +18,7 @@ Comm.lua
 Data.lua
 ItemConditions.lua
 ItemSearch.lua
-Common-Classic.xml
+Common-BCC.xml
 Common.xml
 ClientWindow.xml
 ServerWindow.xml
