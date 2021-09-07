@@ -676,7 +676,7 @@ function LootReserve.Server:PrepareLootTracking()
                 local link = GetLootSlotLink(lootSlot);
                 if link then
                     local item = LootReserve.Item(link);
-                    local _, _, quality = GetItemInfo(item);
+                    local quality = item:GetQuality();
                     if quality >= self.Settings.MinimumLootQuality then
                         LootReserve:TableRemove(self.RecentLoot, item);
                         table.insert(self.RecentLoot, item);
@@ -2689,10 +2689,11 @@ function LootReserve.Server:WhisperPlayerWithoutReserves(target)
         local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories, true);
         
         LootReserve.Comm:SendSessionInfo(target);
-        LootReserve:SendChatMessage(format("Don't forget to reserve your item%s%s. You have %d |4reserve:reserves; left. Whisper  !reserve ItemLinkOrName",
+        LootReserve:SendChatMessage(format("Don't forget to reserve your item%s%s. You have %d reserve%s left. Whisper  !reserve ItemLinkOrName",
             self.CurrentSession.MaxReservesPerPlayer == 1 and "" or "s",
             categories ~= "" and format(" for %s", categories) or "",
-            member.ReservesLeft
+            member.ReservesLeft,
+            member.ReservesLeft == 1 and "" or "s"
         ), "WHISPER", target);
         LootReserve:SendChatMessage(format("You can opt out of using your remaining %d %s by whispering  !opt out",
             member.ReservesLeft,
@@ -2713,10 +2714,11 @@ function LootReserve.Server:WhisperAllWithoutReserves()
             local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories, true);
             
             LootReserve.Comm:SendSessionInfo(target);
-            LootReserve:SendChatMessage(format("Don't forget to reserve your item%s%s. You have %d |4reserve:reserves; left. Whisper  !reserve ItemLinkOrName",
+            LootReserve:SendChatMessage(format("Don't forget to reserve your item%s%s. You have %d reserve%s left. Whisper  !reserve ItemLinkOrName",
                 self.CurrentSession.MaxReservesPerPlayer == 1 and "" or "s",
                 categories ~= "" and format(" for %s", categories) or "",
-                member.ReservesLeft
+                member.ReservesLeft,
+                member.ReservesLeft == 1 and "" or "s"
             ), "WHISPER", player);
             LootReserve:SendChatMessage(format("You can opt out of using your remaining %d %s by whispering  !opt out",
                 member.ReservesLeft,

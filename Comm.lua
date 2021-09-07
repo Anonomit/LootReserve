@@ -96,8 +96,6 @@ function LootReserve.Comm:StartListening()
                         end
                     end
 
-                    -- LootReserve:debug("Received from " .. sender .. ": " .. opcode .. (length and ("||" .. length) or "") .. "||" .. message:gsub("|", "||"));
-
                     sender = LootReserve:Player(sender);
                     LootReserve.Server:SetAddonUser(sender, true);
                     handler(sender, strsplit("|", message));
@@ -120,15 +118,11 @@ function LootReserve.Comm:Broadcast(opcode, ...)
     else
         message = self:SendCommMessage("WHISPER", LootReserve:Me(), opcode, ...);
     end
-
-    -- LootReserve:debug("Raid Broadcast: " .. message:gsub("|", "||"));
 end
 function LootReserve.Comm:Whisper(target, opcode, ...)
     if not self:CanWhisper(target, opcode) then return; end
 
     local message = self:SendCommMessage("WHISPER", target, opcode, ...);
-
-    -- LootReserve:debug("Sent to " .. target .. ": " .. message:gsub("|", "||"));
 end
 function LootReserve.Comm:Send(target, opcode, ...)
     if target then
@@ -228,7 +222,6 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
             table.insert(refPlayers, player);
         end
     end
-    LootReserve:debug(membersInfo)
 
     local optInfo = "";
     local refPlayers = { };
