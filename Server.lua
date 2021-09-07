@@ -460,25 +460,23 @@ function LootReserve.Server:Load()
     end
     
     -- 2021-09-04: Create Item objects
-    if versionSave < "2021-09-04" then
-        for _, roll in ipairs(self.RollHistory) do
-            roll.Item = LootReserve.Item(roll.Item);
-        end
-        if self.RequestedRoll then
-           self.RequestedRoll.Item = LootReserve.Item(self.RequestedRoll.Item); 
-        end
-        if self.CurrentSession then
-            for _, member in pairs(self.CurrentSession.Members) do
-                if member.WonRolls then
-                    for i, won in ipairs(member.WonRolls) do
-                        won.Item = LootReserve.Item(won.Item);
-                    end 
-                end
+    for _, roll in ipairs(self.RollHistory) do
+        roll.Item = LootReserve.Item(roll.Item);
+    end
+    if self.RequestedRoll then
+       self.RequestedRoll.Item = LootReserve.Item(self.RequestedRoll.Item); 
+    end
+    if self.CurrentSession then
+        for _, member in pairs(self.CurrentSession.Members) do
+            if member.WonRolls then
+                for i, won in ipairs(member.WonRolls) do
+                    won.Item = LootReserve.Item(won.Item);
+                end 
             end
         end
-        for i, item in ipairs(self.RecentLoot) do
-            self.RecentLoot[i] = LootReserve.Item(item);
-        end
+    end
+    for i, item in ipairs(self.RecentLoot) do
+        self.RecentLoot[i] = LootReserve.Item(item);
     end
 
     -- Expire session if more than 1 hour has passed since the player was last online
