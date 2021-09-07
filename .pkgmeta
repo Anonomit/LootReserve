@@ -5,5 +5,5 @@ ignore: # Files and directories beginning with a dot (such as .git) are automati
     - LootReserve.wowproj
 
 manual-changelog:
-    filename: CHANGELOG.txt
-    markup-type: markdown
+    filename: CHANGELOG.html
+    markup-type: html
