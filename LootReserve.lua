@@ -741,7 +741,7 @@ function LootReserve:IsLootingItem(item)
         local itemID = GetLootSlotInfo(i);
         if itemID then
             local lootItem = LootReserve.Item(GetLootSlotLink(i));
-            if lootItem and lootItem == item then
+            if lootItem and (type(item) == "table" and lootItem or lootItem:GetID()) == item then
                 return i;
             end
         end

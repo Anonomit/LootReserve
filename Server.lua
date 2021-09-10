@@ -1696,6 +1696,7 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
     end
 
     if self.CurrentSession.Settings.ChatFallback then
+        -- Announce()
         LootReserve:RunWhenItemCached(itemID, function()
             local list = { };
 
