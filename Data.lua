@@ -1657,6 +1657,7 @@ LootReserve.Data =
         [17010] = { Hidden = true },
         [17011] = { Hidden = true },
         [17012] = { Hidden = true },
+        [20951] = { Hidden = true },
 
         -- Thunderfury items
         [18563] = { ClassMask = 15, Hidden = true },
