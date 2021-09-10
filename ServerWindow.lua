@@ -247,9 +247,15 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
     local missingName = false;
     local function getSortingTime(reserve)
+        if LootReserve:IsLootingItem(reserve.Item) then
+            return 0;
+        end
         return reserve.StartTime;
     end
     local function getSortingName(reserve)
+        if LootReserve:IsLootingItem(reserve.Item) then
+            return "";
+        end
         local name = GetItemInfo(reserve.Item);
         if not name then
             missingName = true;
@@ -257,6 +263,9 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         return (name or ""):upper();
     end
     local function getSortingSource(reserve)
+        if LootReserve:IsLootingItem(reserve.Item) then
+            return 0;
+        end
         local customIndex = 0;
         for itemID, conditions in pairs(self.CurrentSession.ItemConditions) do
             if conditions.Custom then
