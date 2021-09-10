@@ -673,9 +673,9 @@ function LootReserve.Server:PrepareLootTracking()
         end
         for lootSlot = 1, GetNumLootItems() do
             if GetLootSlotType(lootSlot) == 1 then -- loot slot contains item, not currency/empty
-                local link = GetLootSlotLink(lootSlot);
-                if link then
-                    local item = LootReserve.Item(link);
+                local itemID = GetLootSlotInfo(lootSlot);
+                if itemID then
+                    local item = LootReserve.Item(GetLootSlotLink(lootSlot));
                     local quality = item:GetQuality();
                     if quality >= self.Settings.MinimumLootQuality then
                         LootReserve:TableRemove(self.RecentLoot, item);

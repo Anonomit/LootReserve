@@ -738,9 +738,9 @@ end
 
 function LootReserve:IsLootingItem(item)
     for i = 1, GetNumLootItems() do
-        local link = GetLootSlotLink(i);
-        if link then
-            local lootItem = LootReserve.Item(link);
+        local itemID = GetLootSlotInfo(i);
+        if itemID then
+            local lootItem = LootReserve.Item(GetLootSlotLink(i));
             if lootItem and lootItem == item then
                 return i;
             end
