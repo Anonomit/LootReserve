@@ -97,7 +97,7 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_FORCED_CANCEL_RESERVE"] =
     whileDead    = 1,
     hideOnEscape = 1,
     OnAccept = function(self)
-        LootReserve.Server:CancelReserve(self.data.Player, self.data.Item, 1, false, true);
+        LootReserve.Server:CancelReserve(self.data.Player, self.data.Item:GetID(), 1, false, true);
     end,
 };
 
