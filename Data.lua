@@ -1862,7 +1862,11 @@ if LootReserve:GetCurrentExpansion() == 1 then
     LootReserve.Data.ItemConditions[21487] = { Faction = classicHorde };
     LootReserve.Data.ItemConditions[21803] = { Faction = classicAlliance };
     LootReserve.Data.ItemConditions[21804] = { Faction = classicHorde };
-        
+    
+    -- AQ40 boots
+    LootReserve.Data.ItemConditions[21704] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[21705] = { Faction = classicHorde };
+    
     -- AQ40 trash paladin gloves
     LootReserve.Data.ItemConditions[21889] = { Faction = classicAlliance };
         
