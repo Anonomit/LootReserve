@@ -793,10 +793,20 @@ function LootReserve.Server:PrepareSession()
             end
         end);
 
-        GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
+        local function OnTooltipSetHyperlink(tooltip)
             if self.CurrentSession then
                 local name, link = tooltip:GetItem();
                 if not link then return; end
+                
+                -- Check if it's already been added
+                local frame, text;
+                for i = 1, 50 do
+                frame = _G[tooltip:GetName() .. "TextLeft" .. i];
+                if frame then
+                    text = frame:GetText();
+                end
+                if text and string.find(text, " Reserved by ", 1, true) then return; end
+                end
 
                 local item = LootReserve.Item(link);
                 if self.CurrentSession.WonItems[item:GetID()] then
@@ -808,7 +818,13 @@ function LootReserve.Server:PrepareSession()
                     tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Dice-Up:32:32:0:-4|t Reserved by " .. reservesText, 1, 1, 1);
                 end
             end
-        end);
+        end
+        GameTooltip             : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
+        ItemRefTooltip          : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
+        ItemRefShoppingTooltip1 : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
+        ItemRefShoppingTooltip2 : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
+        ShoppingTooltip1        : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
+        ShoppingTooltip2        : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
     end
 
     self.AllItemNamesCached = false; -- If category is changed - other item names might need to be cached
