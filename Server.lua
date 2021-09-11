@@ -880,6 +880,7 @@ function LootReserve.Server:PrepareSession()
             local command = "reserve";
             if #text == 0 then
                 LootReserve:SendChatMessage("Seems like you forgot to enter the item you want to reserve. Whisper  !reserve ItemLinkOrName", "WHISPER", sender);
+                LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", sender);
                 return;
             elseif stringStartsWith(text, "cancel") then
                 text = text:sub(1 + #("cancel"));
@@ -903,7 +904,7 @@ function LootReserve.Server:PrepareSession()
                             self:CancelReserve(sender, itemID, count, true);
                         end
                     else
-                        LootReserve:SendChatMessage("You don't have any reserves to cancel", "WHISPER", sender);
+                        LootReserve:SendChatMessage("You don't have any reserves to cancel. For full support, install the addon:  LootReserve", "WHISPER", sender);
                     end
                     return;
                 end
@@ -918,7 +919,7 @@ function LootReserve.Server:PrepareSession()
                         self:CancelReserve(sender, itemID, count, true);
                     end
                 else
-                    LootReserve:SendChatMessage("That item is not reservable in this raid.", "WHISPER", sender);
+                    LootReserve:SendChatMessage("That item is not reservable in this raid. For full support, install the addon:  LootReserve", "WHISPER", sender);
                 end
             end
 
@@ -946,7 +947,7 @@ function LootReserve.Server:PrepareSession()
                         end
 
                         if not match then
-                            LootReserve:SendChatMessage("Cannot find an item with that name.", "WHISPER", sender);
+                            LootReserve:SendChatMessage("Cannot find an item with that name. For full support, install the addon:  LootReserve", "WHISPER", sender);
                         elseif match > 0 then
                             handleItemCommand(match, command, count);
                         elseif match == 0 then
@@ -959,6 +960,7 @@ function LootReserve.Server:PrepareSession()
                                 strjoin(", ", unpack(names)),
                                 #matches > #names and format(" and %d more...", #matches - #names) or ""
                             ), "WHISPER", sender);
+                            LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", sender);
                         end
                     else
                         C_Timer.After(0.1, handleItemCommandByName);
@@ -968,7 +970,7 @@ function LootReserve.Server:PrepareSession()
                 if #text >= 3 then
                     handleItemCommandByName();
                 else
-                    LootReserve:SendChatMessage("That name is too short, 3 or more letters required.", "WHISPER", sender);
+                    LootReserve:SendChatMessage("That name is too short, 3 or more letters required. For full support, install the addon:  LootReserve", "WHISPER", sender);
                 end
             end
         end
@@ -1342,6 +1344,7 @@ function LootReserve.Server:Opt(player, out, chat)
                 member.OptedOut and "in" or "out",
                 member.OptedOut and "in" or "out"
             ), "WHISPER", player);
+            LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", player);
             self:SendReservesList(player, true);
         end
     end
@@ -1474,7 +1477,7 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
                 end
 
                 local _, myReserves = LootReserve:GetReservesData(reserve.Players, player);
-                LootReserve:SendChatMessage(format("You reserved %s%s. %s more %s available. To reserve an item, whisper me:  !reserve ItemLinkOrName",
+                LootReserve:SendChatMessage(format("You reserved %s%s. %s more %s available. To cancel a reserve, whisper me:  !cancel ItemLinkOrName",
                     link,
                     myReserves > 1 and format(" x%d", myReserves) or "",
                     member.ReservesLeft == 0 and "No" or tostring(member.ReservesLeft),
@@ -1485,6 +1488,7 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
                 if #post > 0 then
                     LootReserve:SendChatMessage(post, "WHISPER", player);
                 end
+                LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", player);
             end);
         end
 
@@ -1623,6 +1627,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced)
                     member.ReservesLeft == 1 and "reserve" or "reserves",
                     "You can check your reserves with  !myreserves"
                 ), "WHISPER", player);
+                LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", player);
             end);
         end
 
@@ -1728,6 +1733,7 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
             else
                 LootReserve:SendChatMessage(onlyRelevant and "You currently have no reserves. To reserve an item, whisper me:  !reserve ItemLinkOrName" or "There are currently no reserves", player and "WHISPER" or self:GetChatChannel(), player);
             end
+            LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", player);
         end);
     end
 end
@@ -2163,9 +2169,8 @@ function LootReserve.Server:PrepareRequestRoll()
 
                             if not self:IsAddonUser(player) then
                                 -- whisper player
-                                LootReserve:RunWhenItemCached(closureItem:GetID(), function()
+                                local function WhisperPlayer()
                                     if not self.RequestedRoll or self.RequestedRoll ~= closureRoll or self.RequestedRoll.Item ~= closureItem then return; end
-
                                     local rollsCount = 0;
                                     local extraRolls = 0;
                                     for _, roll in ipairs(self.RequestedRoll.Players[player]) do
@@ -2174,16 +2179,14 @@ function LootReserve.Server:PrepareRequestRoll()
                                         end
                                         rollsCount = rollsCount + 1;
                                     end
-
                                     if extraRolls == 0 then
                                         return;
                                     end
-
                                     local name, link = closureItem:GetName(), closureItem:GetLink();
                                     if not name or not link then
-                                        return true;
+                                        C_Timer.After(0.25, WhisperPlayer);
+                                        return;
                                     end
-
                                     local durationStr = "";
                                     if self.RequestedRoll.Duration then
                                         local time = math.ceil(self.RequestedRoll.Duration);
@@ -2191,14 +2194,16 @@ function LootReserve.Server:PrepareRequestRoll()
                                                    or time % 60 == 0 and format(" (%d %s)", time / 60, time == 60 and "min" or "mins")
                                                    or                    format(" (%d:%02d mins)", math.floor(time / 60), time % 60);
                                     end
-                                    LootReserve:SendChatMessage(format("Please /roll again on %s you reserved%s.%s",
+                                    LootReserve:SendChatMessage(format("Please /roll%s on %s you reserved%s.%s",
+                                        (rollsCount - extraRolls) > 1 and " again" or "",
                                         link,
                                         rollsCount > 1 and format(" (%d/%d)", rollsCount - extraRolls + 1, rollsCount) or "",
                                         durationStr
                                     ), "WHISPER", player);
-                                end);
+                                end
+                                WhisperPlayer();
                             else
-                                self.ExtraRollRequestNag[player] = C_Timer.NewTimer(3, WhisperPlayer);
+                                self.ExtraRollRequestNag[player] = C_Timer.NewTimer(6, WhisperPlayer);
                             end
                         end
                     end
@@ -2699,6 +2704,9 @@ function LootReserve.Server:WhisperPlayerWithoutReserves(target)
             member.ReservesLeft,
             member.ReservesLeft == 1 and "reserve" or "reserves"
         ), "WHISPER", target);
+        if not self.AddonUsers[player] then
+            LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", player);
+        end
     end
 end
 
@@ -2724,6 +2732,9 @@ function LootReserve.Server:WhisperAllWithoutReserves()
                 member.ReservesLeft,
                 member.ReservesLeft == 1 and "reserve" or "reserves"
             ), "WHISPER", player);
+            if not self.AddonUsers[player] then
+                LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", player);
+            end
         end
     end
 end
