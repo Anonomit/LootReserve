@@ -601,7 +601,7 @@ function LootReserve:GetTradeableItemCount(item)
         local slots = GetContainerNumSlots(bag);
         if slots > 0 then
             for slot = 1, slots do
-                local _, quantity, _, _, _, _, _, _, _, bagItem = GetContainerItemInfo(bag, slot);
+                local _, quantity, _, _, _, _, bagItem = GetContainerItemInfo(bag, slot);
                 bagItem = bagItem and LootReserve.Item(bagItem);
                 if bagItem and bagItem == item and self:IsTradeableItem(bag, slot) then
                     count = count + quantity;
