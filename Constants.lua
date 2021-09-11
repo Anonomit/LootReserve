@@ -26,6 +26,7 @@ LootReserve.Constants =
         FailedFaction            = 13,
         FailedLimit              = 14,
         FailedLimitPartial       = 15,
+        FailedUsable             = 16,
     },
     CancelReserveResult =
     {

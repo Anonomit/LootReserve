@@ -13,7 +13,7 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     if not example then
         if not self.Settings.RollRequestShow then return; end
         if not LootReserve:Contains(players, LootReserve:Me()) then return; end
-        if custom and not self.Settings.RollRequestShowUnusable and not LootReserve.ItemConditions:TestClassEquip(item:GetID(), select(2, LootReserve:UnitClass(LootReserve:Me()))) then return; end
+        if custom and not self.Settings.RollRequestShowUnusable and (not LootReserve.ItemConditions:IsItemUsable(item:GetID()) and LootReserve:IsItemBoP(item:GetID())) then return; end
     end
 
     local _, myCount = LootReserve:GetReservesData(players, LootReserve:Me());
@@ -37,7 +37,7 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     frame.Sender = sender;
     frame.Item = item;
     frame.Roll = roll;
-    frame.LabelSender:SetText(format(custom and "%s offers you to roll%s on this item:" or "%s asks you to roll%s on the item you reserved:", LootReserve:ColoredPlayer(sender), phase and format(" for |cFF00FF00%s|r", phase) or ""));
+    frame.LabelSender:SetText(format(custom and "%s offers for you to roll%s:" or "%s asks you to roll%s on a reserved item:", LootReserve:ColoredPlayer(sender), phase and format(" for |cFF00FF00%s|r", phase) or ""));
     frame.ItemFrame.Icon:SetTexture(texture);
     frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
     frame.ItemFrame.Misc:SetText(description);

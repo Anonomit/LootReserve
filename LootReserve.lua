@@ -422,7 +422,7 @@ function LootReserve:UnitInGroup(player)
         end
     end
 
-    return self:ForEachRaider(function(name, _, _, _, className, classFilename, _, online)
+    return self:ForEachRaider(function(name)
         if self:IsSamePlayer(name, player) then
             return true;
         end
@@ -434,9 +434,24 @@ function LootReserve:UnitClass(player)
         return UnitClass(player);
     end
 
-    return self:ForEachRaider(function(name, _, _, _, className, classFilename, _, online)
+    return self:ForEachRaider(function(name, _, _, _, className, classFilename)
         if self:IsSamePlayer(name, player) then
             return className, classFilename, LootReserve.Constants.ClassFilenameToClassID[classFilename];
+        end
+    end);
+end
+
+function LootReserve:UnitRace(player)
+    if not self:IsCrossRealm() then
+        return UnitRace(player);
+    end
+
+    return self:ForEachRaider(function(name)
+        if self:IsSamePlayer(name, player) then
+            local unitID = self:GetGroupUnitID(player);
+            if unitID then
+                return UnitRace(unitID);
+            end
         end
     end);
 end
@@ -502,7 +517,8 @@ end
 function LootReserve:ForEachRaider(func)
     if not IsInGroup() then
         local className, classFilename = UnitClass("player");
-        return func(self:Me(), 0, 1, UnitLevel("player"), className, classFilename, nil, true, UnitIsDead("player"));
+        local raceName,  raceFilename  = UnitRace("player");
+        return func(self:Me(), 0, 1, UnitLevel("player"), className, classFilename, nil, true, UnitIsDead("player"), raceName, raceFilename);
     end
 
     for i = 1, MAX_RAID_MEMBERS do
@@ -591,6 +607,10 @@ function LootReserve:GetNumGroupMembers(func)
     return count;
 end
 
+function LootReserve:IsItemBoP(itemID)
+    return select(14, GetItemInfo(itemID)) == 1;
+end
+
 function LootReserve:IsTradeableItem(bag, slot)
     return not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot);
 end
@@ -655,39 +675,6 @@ function LootReserve:PutItemInTrade(bag, slot)
         end
     end
     return false;
-end
-
-function LootReserve:IsItemUsable(itemID)
-    local name, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID);
-    if not name or not bindType then return; end
-
-    -- Non BoP items are considered usable by everyone
-    if bindType ~= 1 then
-        return true;
-    end
-
-    if not self.TooltipScanner then
-        self.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
-        self.TooltipScanner:Hide();
-    end
-
-    self.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
-    self.TooltipScanner:SetHyperlink("item:" .. itemID);
-    local columns = { "Left", "Right" };
-    for i = 1, 50 do
-        for _, column in ipairs(columns) do
-            local line = _G[self.TooltipScanner:GetName() .. "Text" .. column .. i];
-            if line and line:GetText() and line:IsShown() then
-                local r, g, b, a = line:GetTextColor();
-                if r >= 0.95 and g <= 0.15 and b <= 0.15 and a >= 0.5 then
-                    self.TooltipScanner:Hide();
-                    return false;
-                end
-            end
-        end
-    end
-    self.TooltipScanner:Hide();
-    return true;
 end
 
 function LootReserve:GetItemDescription(itemID)

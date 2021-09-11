@@ -208,17 +208,53 @@ setClassWeapons("WARRIOR", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swo
                            "Bows", "Crossbows", "Guns", "Thrown");
 
 
-local function isUnusable(itemID, class)
+local function IsItemUsable(itemID, playerClass, playerRace)
+    -- If item is Armor or Weapon then fail if class cannot equip it
     local _, _, _, _, _, itemType, itemSubType = GetItemInfo(itemID);
-    if UNUSABLE_EQUIPMENT[class][itemType] then
-        return UNUSABLE_EQUIPMENT[class][itemType][itemSubType] or false;
+    if UNUSABLE_EQUIPMENT[playerClass][itemType] then
+        if UNUSABLE_EQUIPMENT[playerClass][itemType][itemSubType] then
+           return false; 
+        end
     end
-    return false;
+    
+    -- If item is class-locked or race-locked then make sure this class/race is listed
+    if not LootReserve.TooltipScanner then
+        LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
+        LootReserve.TooltipScanner:Hide();
+    end
+
+    if not LootReserve.TooltipScanner.ClassesAllowed then
+        LootReserve.TooltipScanner.ClassesAllowed = ITEM_CLASSES_ALLOWED:gsub("%.", "%%."):gsub("%%s", "(.+)");
+    end
+    if not LootReserve.TooltipScanner.RacesAllowed then
+        LootReserve.TooltipScanner.RacesAllowed = ITEM_RACES_ALLOWED:gsub("%.", "%%."):gsub("%%s", "(.+)");
+    end
+
+    LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
+    LootReserve.TooltipScanner:SetHyperlink("item:" .. itemID);
+    for i = 1, 50 do
+        local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
+        if line and line:GetText() then
+            if line:GetText():match(LootReserve.TooltipScanner.ClassesAllowed) then
+                local found = line:GetText():match(LOCALIZED_CLASS_NAMES_MALE[playerClass]) or line:GetText():match(LOCALIZED_CLASS_NAMES_FEMALE[playerClass]);
+                LootReserve.TooltipScanner:Hide();
+                return not not found;
+            elseif line:GetText():match(LootReserve.TooltipScanner.RacesAllowed) then
+                local found = line:GetText():match(playerRace);
+                LootReserve.TooltipScanner:Hide();
+                return not not found;
+            end
+        end
+    end
+    
+    
+    LootReserve.TooltipScanner:Hide();
+    return true;
 end
 
 
-function LootReserve.ItemConditions:TestClassEquip(itemID, playerClass)
-    return not isUnusable(itemID, playerClass);
+function LootReserve.ItemConditions:IsItemUsable(itemID, playerClass, playerRace)
+    return IsItemUsable(itemID, playerClass or select(2, LootReserve:UnitClass(LootReserve:Me())), playerRace or LootReserve:UnitRace(LootReserve:Me()));
 end
 
 function LootReserve.ItemConditions:TestClassMask(classMask, playerClass)
@@ -257,26 +293,24 @@ function LootReserve.ItemConditions:TestPlayer(player, itemID, server)
     local conditions = self:Get(itemID, server);
     local equip
     if server then
-        equip = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings.Equip
+        equip = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings.Equip or false;
     else
         equip = LootReserve.Client.Equip;
     end
-    if conditions or equip then
-        if conditions and conditions.Hidden then
-            return false, LootReserve.Constants.ReserveResult.ItemNotReservable;
-        end
-        if equip and not self:TestClassEquip(itemID, select(2, LootReserve:UnitClass(player))) then
-            return false, LootReserve.Constants.ReserveResult.FailedClass;
-        end
-        if conditions and equip and conditions.ClassMask and not self:TestClassMask(conditions.ClassMask, select(3, LootReserve:UnitClass(player))) then
-            return false, LootReserve.Constants.ReserveResult.FailedClass;
-        end
-        if conditions and conditions.Faction and not self:TestFaction(conditions.Faction) then
-            return false, LootReserve.Constants.ReserveResult.FailedFaction;
-        end
-        if conditions and conditions.Limit and not self:TestLimit(conditions.Limit, itemID, player, server) then
-            return false, LootReserve.Constants.ReserveResult.FailedLimit;
-        end
+    if conditions and conditions.Hidden then
+        return false, LootReserve.Constants.ReserveResult.ItemNotReservable;
+    end
+    if conditions and conditions.ClassMask and not self:TestClassMask(conditions.ClassMask, select(3, LootReserve:UnitClass(player))) then
+        return false, LootReserve.Constants.ReserveResult.FailedClass;
+    end
+    if equip and not self:IsItemUsable(itemID) then
+        return false, LootReserve.Constants.ReserveResult.FailedUsable;
+    end
+    if conditions and conditions.Faction and not self:TestFaction(conditions.Faction) then
+        return false, LootReserve.Constants.ReserveResult.FailedFaction;
+    end
+    if conditions and conditions.Limit and not self:TestLimit(conditions.Limit, itemID, player, server) then
+        return false, LootReserve.Constants.ReserveResult.FailedLimit;
     end
     return true;
 end
@@ -297,7 +331,7 @@ end
 function LootReserve.ItemConditions:IsItemVisibleOnClient(itemID)
     local canReserve, conditionResult = self:TestPlayer(LootReserve:Me(), itemID, false);
     return canReserve or conditionResult == LootReserve.Constants.ReserveResult.FailedLimit
-           or (conditionResult == LootReserve.Constants.ReserveResult.FailedClass and (LootReserve.Client.Locked or not LootReserve.Client.AcceptingReserves));
+           or ((conditionResult == LootReserve.Constants.ReserveResult.FailedClass or conditionResult == LootReserve.Constants.ReserveResult.FailedUsable) and (LootReserve.Client.Locked or not LootReserve.Client.AcceptingReserves));
 end
 
 function LootReserve.ItemConditions:IsItemReservableOnClient(itemID)

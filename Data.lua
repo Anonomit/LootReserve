@@ -149,7 +149,7 @@ LootReserve.Data =
                         18817, 19137, 0,
                         18814, 19138, 17102, 17107, 17063, 17082, 18815, 0,
                         17106, 18816, 17104, 17076, 0,
-                        19017, 21110, 0,
+                        21110, 0,
                     },
                 },
                 { Separator = true },
@@ -1423,8 +1423,8 @@ LootReserve.Data =
                     Name = "Illidan Stormrage",
                     Loot =
                     {
-                        31089, 31091, 31090, 0,
                         32837, 32838, 0,
+                        31089, 31091, 31090, 0,
                         32525, 32235, 32521, 0,
                         32483, 32496, 32524, 32497, 0,
                         32374, 32500, 32471, 32336, 32375, 0,
@@ -1660,14 +1660,13 @@ LootReserve.Data =
         [20951] = { Hidden = true },
 
         -- Thunderfury items
-        [18563] = { ClassMask = 15, Hidden = true },
-        [18564] = { ClassMask = 15, Hidden = true },
-        [17203] = { Hidden = true },
+        [18563] = { Hidden = true },
+        [18564] = { Hidden = true },
         [18562] = { Hidden = true },
 
         -- Hand of Rag items
         [17204] = { ClassMask = 1091, Hidden = true },
-        [19017] = { ClassMask = 1091, Hidden = true },
+        [17203] = { ClassMask = 1091, Hidden = true },
 
         -- Scale of Onyxia
         [15410] = { Hidden = true },
@@ -1709,24 +1708,24 @@ LootReserve.Data =
         [19715] = { Hidden = true },
 
         --AQ20 idols
-        [20866] = { ClassMask = 140, Hidden = true },
-        [20867] = { ClassMask = 265, Hidden = true },
-        [20868] = { ClassMask = 21, Hidden = true },
-        [20869] = { ClassMask = 326, Hidden = true },
-        [20870] = { ClassMask = 1296, Hidden = true },
-        [20871] = { ClassMask = 210, Hidden = true },
-        [20872] = { ClassMask = 1098, Hidden = true },
-        [20873] = { ClassMask = 1153, Hidden = true },
+        [20866] = { Hidden = true },
+        [20867] = { Hidden = true },
+        [20868] = { Hidden = true },
+        [20869] = { Hidden = true },
+        [20870] = { Hidden = true },
+        [20871] = { Hidden = true },
+        [20872] = { Hidden = true },
+        [20873] = { Hidden = true },
 
         -- AQ40 idols
-        [20874] = { ClassMask = 141, Hidden = true },
-        [20875] = { ClassMask = 393, Hidden = true },
-        [20876] = { ClassMask = 401, Hidden = true },
-        [20877] = { ClassMask = 466, Hidden = true },
-        [20878] = { ClassMask = 1362, Hidden = true },
-        [20879] = { ClassMask = 1110, Hidden = true },
-        [20881] = { ClassMask = 1102, Hidden = true },
-        [20882] = { ClassMask = 1037, Hidden = true },
+        [20874] = { Hidden = true },
+        [20875] = { Hidden = true },
+        [20876] = { Hidden = true },
+        [20877] = { Hidden = true },
+        [20878] = { Hidden = true },
+        [20879] = { Hidden = true },
+        [20881] = { Hidden = true },
+        [20882] = { Hidden = true },
 
         -- AQ scarabs
         [20858] = { Hidden = true },
@@ -1757,9 +1756,8 @@ LootReserve.Data =
         [23055] = { Hidden = true },
         [22682] = { Hidden = true },
 
-        -- Atiesh legendary items
+        -- Atiesh splinters should have a class mask since they cannot be traded
         [22726] = { ClassMask = 1424, Hidden = true },
-        [22727] = { ClassMask = 1424, Hidden = true },
 
         -- Karazhan trash
         [23857] = { Hidden = true },
@@ -1780,8 +1778,8 @@ LootReserve.Data =
         [34664] = { Hidden = true },
 
         -- Warglaives of Azzinoth
-        [32837] = { ClassMask = 9, Hidden = true },
-        [32838] = { ClassMask = 9, Hidden = true },
+        [32837] = { Hidden = true },
+        [32838] = { Hidden = true },
 
         -- Trash gems
         [32228] = { Hidden = true },
@@ -1799,341 +1797,86 @@ LootReserve.Data =
         [33933] = { Hidden = true },
 
         -- Thoridal
-        [34334] = { ClassMask = 13, Hidden = true },
-
-        -- Class restrictions on items
-        [16665] = { ClassMask = 4 },
-        [16795] = { ClassMask = 128 },
-        [16796] = { ClassMask = 128 },
-        [16797] = { ClassMask = 128 },
-        [16798] = { ClassMask = 128 },
-        [16799] = { ClassMask = 128 },
-        [16800] = { ClassMask = 128 },
-        [16801] = { ClassMask = 128 },
-        [16802] = { ClassMask = 128 },
-        [16803] = { ClassMask = 256 },
-        [16804] = { ClassMask = 256 },
-        [16805] = { ClassMask = 256 },
-        [16806] = { ClassMask = 256 },
-        [16807] = { ClassMask = 256 },
-        [16808] = { ClassMask = 256 },
-        [16809] = { ClassMask = 256 },
-        [16810] = { ClassMask = 256 },
-        [16811] = { ClassMask = 16 },
-        [16812] = { ClassMask = 16 },
-        [16813] = { ClassMask = 16 },
-        [16814] = { ClassMask = 16 },
-        [16815] = { ClassMask = 16 },
-        [16816] = { ClassMask = 16 },
-        [16817] = { ClassMask = 16 },
-        [16818] = { ClassMask = 128 },
-        [16819] = { ClassMask = 16 },
-        [16820] = { ClassMask = 8 },
-        [16821] = { ClassMask = 8 },
-        [16822] = { ClassMask = 8 },
-        [16823] = { ClassMask = 8 },
-        [16824] = { ClassMask = 8 },
-        [16825] = { ClassMask = 8 },
-        [16826] = { ClassMask = 8 },
-        [16827] = { ClassMask = 8 },
-        [16828] = { ClassMask = 1024 },
-        [16829] = { ClassMask = 1024 },
-        [16830] = { ClassMask = 1024 },
-        [16831] = { ClassMask = 1024 },
-        [16832] = { ClassMask = 8 },
-        [16833] = { ClassMask = 1024 },
-        [16834] = { ClassMask = 1024 },
-        [16835] = { ClassMask = 1024 },
-        [16836] = { ClassMask = 1024 },
-        [16837] = { ClassMask = 64, Faction = classicHorde },
-        [16838] = { ClassMask = 64, Faction = classicHorde },
-        [16839] = { ClassMask = 64, Faction = classicHorde },
-        [16840] = { ClassMask = 64, Faction = classicHorde },
-        [16841] = { ClassMask = 64, Faction = classicHorde },
-        [16842] = { ClassMask = 64, Faction = classicHorde },
-        [16843] = { ClassMask = 64, Faction = classicHorde },
-        [16844] = { ClassMask = 64, Faction = classicHorde },
-        [16845] = { ClassMask = 4 },
-        [16846] = { ClassMask = 4 },
-        [16847] = { ClassMask = 4 },
-        [16848] = { ClassMask = 4 },
-        [16849] = { ClassMask = 4 },
-        [16850] = { ClassMask = 4 },
-        [16851] = { ClassMask = 4 },
-        [16852] = { ClassMask = 4 },
-        [16853] = { ClassMask = 2, Faction = classicAlliance },
-        [16854] = { ClassMask = 2, Faction = classicAlliance },
-        [16855] = { ClassMask = 2, Faction = classicAlliance },
-        [16856] = { ClassMask = 2, Faction = classicAlliance },
-        [16857] = { ClassMask = 2, Faction = classicAlliance },
-        [16858] = { ClassMask = 2, Faction = classicAlliance },
-        [16859] = { ClassMask = 2, Faction = classicAlliance },
-        [16860] = { ClassMask = 2, Faction = classicAlliance },
-        [16861] = { ClassMask = 1 },
-        [16862] = { ClassMask = 1 },
-        [16863] = { ClassMask = 1 },
-        [16864] = { ClassMask = 1 },
-        [16865] = { ClassMask = 1 },
-        [16866] = { ClassMask = 1 },
-        [16867] = { ClassMask = 1 },
-        [16868] = { ClassMask = 1 },
-        [16897] = { ClassMask = 1024 },
-        [16898] = { ClassMask = 1024 },
-        [16899] = { ClassMask = 1024 },
-        [16900] = { ClassMask = 1024 },
-        [16901] = { ClassMask = 1024 },
-        [16902] = { ClassMask = 1024 },
-        [16903] = { ClassMask = 1024 },
-        [16904] = { ClassMask = 1024 },
-        [16905] = { ClassMask = 8 },
-        [16906] = { ClassMask = 8 },
-        [16907] = { ClassMask = 8 },
-        [16908] = { ClassMask = 8 },
-        [16909] = { ClassMask = 8 },
-        [16910] = { ClassMask = 8 },
-        [16911] = { ClassMask = 8 },
-        [16912] = { ClassMask = 128 },
-        [16913] = { ClassMask = 128 },
-        [16914] = { ClassMask = 128 },
-        [16915] = { ClassMask = 128 },
-        [16916] = { ClassMask = 128 },
-        [16917] = { ClassMask = 128 },
-        [16918] = { ClassMask = 128 },
-        [16919] = { ClassMask = 16 },
-        [16920] = { ClassMask = 16 },
-        [16921] = { ClassMask = 16 },
-        [16922] = { ClassMask = 16 },
-        [16923] = { ClassMask = 16 },
-        [16924] = { ClassMask = 16 },
-        [16925] = { ClassMask = 16 },
-        [16926] = { ClassMask = 16 },
-        [16927] = { ClassMask = 256 },
-        [16928] = { ClassMask = 256 },
-        [16929] = { ClassMask = 256 },
-        [16930] = { ClassMask = 256 },
-        [16931] = { ClassMask = 256 },
-        [16932] = { ClassMask = 256 },
-        [16933] = { ClassMask = 256 },
-        [16934] = { ClassMask = 256 },
-        [16935] = { ClassMask = 4 },
-        [16936] = { ClassMask = 4 },
-        [16937] = { ClassMask = 4 },
-        [16938] = { ClassMask = 4 },
-        [16939] = { ClassMask = 4 },
-        [16940] = { ClassMask = 4 },
-        [16941] = { ClassMask = 4 },
-        [16942] = { ClassMask = 4 },
-        [16943] = { ClassMask = 64, Faction = classicHorde },
-        [16944] = { ClassMask = 64, Faction = classicHorde },
-        [16945] = { ClassMask = 64, Faction = classicHorde },
-        [16946] = { ClassMask = 64, Faction = classicHorde },
-        [16947] = { ClassMask = 64, Faction = classicHorde },
-        [16948] = { ClassMask = 64, Faction = classicHorde },
-        [16949] = { ClassMask = 64, Faction = classicHorde },
-        [16950] = { ClassMask = 64, Faction = classicHorde },
-        [16951] = { ClassMask = 2, Faction = classicAlliance },
-        [16952] = { ClassMask = 2, Faction = classicAlliance },
-        [16953] = { ClassMask = 2, Faction = classicAlliance },
-        [16954] = { ClassMask = 2, Faction = classicAlliance },
-        [16955] = { ClassMask = 2, Faction = classicAlliance },
-        [16956] = { ClassMask = 2, Faction = classicAlliance },
-        [16957] = { ClassMask = 2, Faction = classicAlliance },
-        [16958] = { ClassMask = 2, Faction = classicAlliance },
-        [16959] = { ClassMask = 1 },
-        [16960] = { ClassMask = 1 },
-        [16961] = { ClassMask = 1 },
-        [16962] = { ClassMask = 1 },
-        [16963] = { ClassMask = 1 },
-        [16964] = { ClassMask = 1 },
-        [16965] = { ClassMask = 1 },
-        [16966] = { ClassMask = 1 },
-        [18646] = { ClassMask = 16 },
-        [18703] = { ClassMask = 4 },
-        [18705] = { ClassMask = 4 },
-        [19336] = { ClassMask = 4 },
-        [19337] = { ClassMask = 256 },
-        [19339] = { ClassMask = 128 },
-        [19340] = { ClassMask = 1024 },
-        [19341] = { ClassMask = 1 },
-        [19342] = { ClassMask = 8 },
-        [19343] = { ClassMask = 2, Faction = classicAlliance },
-        [19344] = { ClassMask = 64, Faction = classicHorde },
-        [19345] = { ClassMask = 16 },
-        [19716] = { ClassMask = 134 },
-        [19717] = { ClassMask = 73 },
-        [19718] = { ClassMask = 1296 },
-        [19719] = { ClassMask = 73 },
-        [19720] = { ClassMask = 1296 },
-        [19721] = { ClassMask = 134 },
-        [19722] = { ClassMask = 1090 },
-        [19723] = { ClassMask = 385 },
-        [19724] = { ClassMask = 28 },
-        [20264] = { Faction = classicAlliance },
-        [20257] = { Faction = classicHorde },
-        [20884] = { ClassMask = 1219 },
-        [20885] = { ClassMask = 153 },
-        [20886] = { ClassMask = 79 },
-        [20888] = { ClassMask = 284 },
-        [20889] = { ClassMask = 1350 },
-        [20890] = { ClassMask = 1424 },
-        [20926] = { ClassMask = 401 },
-        [20927] = { ClassMask = 153 },
-        [20928] = { ClassMask = 29 },
-        [20929] = { ClassMask = 79 },
-        [20930] = { ClassMask = 1102 },
-        [20931] = { ClassMask = 1350 },
-        [20932] = { ClassMask = 1474 },
-        [20933] = { ClassMask = 1424 },
-        [21214] = { ClassMask = 128 },
-        [21279] = { ClassMask = 128 },
-        [21280] = { ClassMask = 128 },
-        [21281] = { ClassMask = 256 },
-        [21282] = { ClassMask = 256 },
-        [21283] = { ClassMask = 256 },
-        [21284] = { ClassMask = 16 },
-        [21285] = { ClassMask = 16 },
-        [21287] = { ClassMask = 16 },
-        [21288] = { ClassMask = 2, Faction = classicAlliance },
-        [21289] = { ClassMask = 2, Faction = classicAlliance },
-        [21290] = { ClassMask = 2, Faction = classicAlliance },
-        [21291] = { ClassMask = 64, Faction = classicHorde },
-        [21292] = { ClassMask = 64, Faction = classicHorde },
-        [21293] = { ClassMask = 64, Faction = classicHorde },
-        [21294] = { ClassMask = 1024 },
-        [21295] = { ClassMask = 1024 },
-        [21296] = { ClassMask = 1024 },
-        [21297] = { ClassMask = 1 },
-        [21298] = { ClassMask = 1 },
-        [21299] = { ClassMask = 1 },
-        [21300] = { ClassMask = 8 },
-        [21302] = { ClassMask = 8 },
-        [21303] = { ClassMask = 8 },
-        [21304] = { ClassMask = 4 },
-        [21306] = { ClassMask = 4 },
-        [21307] = { ClassMask = 4 },
-        [21453] = { Faction = classicAlliance },
-        [21454] = { Faction = classicHorde },
-        [21486] = { Faction = classicAlliance },
-        [21487] = { Faction = classicHorde },
-        [21803] = { Faction = classicAlliance },
-        [21804] = { Faction = classicHorde },
-        [21889] = { ClassMask = 2, Faction = classicAlliance },
-        [22349] = { ClassMask = 9 },
-        [22350] = { ClassMask = 1094 },
-        [22351] = { ClassMask = 400 },
-        [22352] = { ClassMask = 9 },
-        [22353] = { ClassMask = 9 },
-        [22354] = { ClassMask = 9 },
-        [22355] = { ClassMask = 9 },
-        [22356] = { ClassMask = 9 },
-        [22357] = { ClassMask = 9 },
-        [22358] = { ClassMask = 9 },
-        [22359] = { ClassMask = 1094 },
-        [22360] = { ClassMask = 1094 },
-        [22361] = { ClassMask = 1094 },
-        [22362] = { ClassMask = 1094 },
-        [22363] = { ClassMask = 1094 },
-        [22364] = { ClassMask = 1094 },
-        [22365] = { ClassMask = 1094 },
-        [22366] = { ClassMask = 400 },
-        [22367] = { ClassMask = 400 },
-        [22368] = { ClassMask = 400 },
-        [22369] = { ClassMask = 400 },
-        [22370] = { ClassMask = 400 },
-        [22371] = { ClassMask = 400 },
-        [22372] = { ClassMask = 400 },
-        [22739] = { ClassMask = 128 },
-        [23059] = { ClassMask = 1 },
-        [23060] = { ClassMask = 8 },
-        [23061] = { ClassMask = 16 },
-        [23062] = { ClassMask = 128 },
-        [23063] = { ClassMask = 256 },
-        [23064] = { ClassMask = 1024 },
-        [23065] = { ClassMask = 64, Faction = classicHorde },
-        [23066] = { ClassMask = 2, Faction = classicAlliance },
-        [23067] = { ClassMask = 4 },
-        [23069] = { ClassMask = 400 },
-        [23664] = { ClassMask = 64, Faction = classicHorde },
-        [23665] = { ClassMask = 64, Faction = classicHorde },
-        [23666] = { ClassMask = 2, Faction = classicAlliance },
-        [23667] = { ClassMask = 2, Faction = classicAlliance },
-        [23668] = { ClassMask = 2, Faction = classicAlliance },
-        [29753] = { ClassMask = 1041 },
-        [29754] = { ClassMask = 74 },
-        [29755] = { ClassMask = 388 },
-        [29756] = { ClassMask = 388 },
-        [29757] = { ClassMask = 74 },
-        [29758] = { ClassMask = 1041 },
-        [29759] = { ClassMask = 388 },
-        [29760] = { ClassMask = 74 },
-        [29761] = { ClassMask = 1041 },
-        [29762] = { ClassMask = 388 },
-        [29763] = { ClassMask = 74 },
-        [29764] = { ClassMask = 1041 },
-        [29765] = { ClassMask = 388 },
-        [29766] = { ClassMask = 74 },
-        [29767] = { ClassMask = 1041 },
-        [30236] = { ClassMask = 74 },
-        [30237] = { ClassMask = 1041 },
-        [30238] = { ClassMask = 388 },
-        [30239] = { ClassMask = 74 },
-        [30240] = { ClassMask = 1041 },
-        [30241] = { ClassMask = 388 },
-        [30242] = { ClassMask = 74 },
-        [30243] = { ClassMask = 1041 },
-        [30244] = { ClassMask = 388 },
-        [30245] = { ClassMask = 74 },
-        [30246] = { ClassMask = 1041 },
-        [30247] = { ClassMask = 388 },
-        [30248] = { ClassMask = 74 },
-        [30249] = { ClassMask = 1041 },
-        [30250] = { ClassMask = 388 },
-        [30446] = { ClassMask = 1 },
-        [30447] = { ClassMask = 2 },
-        [30448] = { ClassMask = 4 },
-        [30449] = { ClassMask = 256 },
-        [30450] = { ClassMask = 8 },
-        [30663] = { ClassMask = 64 },
-        [30664] = { ClassMask = 1024 },
-        [30665] = { ClassMask = 16 },
-        [30720] = { ClassMask = 128 },
-        [31089] = { ClassMask = 274 },
-        [31090] = { ClassMask = 1160 },
-        [31091] = { ClassMask = 69 },
-        [31092] = { ClassMask = 274 },
-        [31093] = { ClassMask = 1160 },
-        [31094] = { ClassMask = 69 },
-        [31095] = { ClassMask = 69 },
-        [31096] = { ClassMask = 1160 },
-        [31097] = { ClassMask = 274 },
-        [31098] = { ClassMask = 274 },
-        [31099] = { ClassMask = 1160 },
-        [31100] = { ClassMask = 69 },
-        [31101] = { ClassMask = 274 },
-        [31102] = { ClassMask = 1160 },
-        [31103] = { ClassMask = 69 },
-        [34848] = { ClassMask = 274 },
-        [34851] = { ClassMask = 69 },
-        [34852] = { ClassMask = 1160 },
-        [34853] = { ClassMask = 274 },
-        [34854] = { ClassMask = 69 },
-        [34855] = { ClassMask = 1160 },
-        [34856] = { ClassMask = 274 },
-        [34857] = { ClassMask = 69 },
-        [34858] = { ClassMask = 1160 },
-        [35186] = { ClassMask = 400 },
-        [35187] = { ClassMask = 2 },
-        [35189] = { ClassMask = 16 },
-        [35190] = { ClassMask = 1024 },
-        [35191] = { ClassMask = 1024 },
-        [35192] = { ClassMask = 64 },
-        [35193] = { ClassMask = 64 },
-        [35194] = { ClassMask = 68 },
-        [35195] = { ClassMask = 35 },
-        [35196] = { ClassMask = 35 },
-        [35197] = { ClassMask = 1032 },
+        [34334] = { Hidden = true },
     },
 };
+
+-- Faction restrictions on equipment should only apply in classic
+if LootReserve:GetCurrentExpansion() == 1 then
+    -- T1
+    LootReserve.Data.ItemConditions[16837] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16838] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16839] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16840] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16841] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16842] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16843] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16844] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16853] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16854] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16855] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16856] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16857] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16858] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16859] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16860] = { Faction = classicAlliance };
+        
+    -- T2
+    LootReserve.Data.ItemConditions[16943] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16944] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16945] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16946] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16947] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16948] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16949] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16950] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[16951] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16952] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16953] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16954] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16955] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16956] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16957] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[16958] = { Faction = classicAlliance };
+        
+    -- BWL trinkets
+    LootReserve.Data.ItemConditions[19343] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[19344] = { Faction = classicHorde };
+        
+    -- ZG gloves
+    LootReserve.Data.ItemConditions[20264] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[20257] = { Faction = classicHorde };
+        
+    -- AQ20 books
+    LootReserve.Data.ItemConditions[21288] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[21289] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[21290] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[21291] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[21292] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[21293] = { Faction = classicHorde };
+        
+    -- AQ20 equipment
+    LootReserve.Data.ItemConditions[21453] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[21454] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[21486] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[21487] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[21803] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[21804] = { Faction = classicHorde };
+        
+    -- AQ40 trash paladin gloves
+    LootReserve.Data.ItemConditions[21889] = { Faction = classicAlliance };
+        
+    -- Naxx rings
+    LootReserve.Data.ItemConditions[23065] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[23066] = { Faction = classicAlliance };
+        
+    -- Naxx trash drops
+    LootReserve.Data.ItemConditions[23664] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[23665] = { Faction = classicHorde };
+    LootReserve.Data.ItemConditions[23666] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[23667] = { Faction = classicAlliance };
+    LootReserve.Data.ItemConditions[23668] = { Faction = classicAlliance };
+end
 
 function LootReserve.Data:IsItemInCategories(itemID, categories)
     for _, category in ipairs(categories) do
