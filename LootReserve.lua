@@ -296,6 +296,15 @@ function LootReserve:FixLink(link)
 end
 
 function LootReserve:SendChatMessage(text, channel, target)
+    if channel == "RAID_WARNING" and not (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
+        channel = "RAID";
+    end
+    if channel == "RAID" and not IsInRaid() then
+        channel = "PARTY";
+    end
+    if channel == "PARTY" and not IsInGroup() then
+        channel, target = "WHISPER", LootReserve:Me();
+    end
     if target and not LootReserve:IsPlayerOnline(target) then return; end
     local function Send(text)
         if #text > 0 then

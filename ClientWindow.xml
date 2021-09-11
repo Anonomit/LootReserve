@@ -350,7 +350,7 @@
 							{ text = format("Current Server: %s", LootReserve.Client.SessionServer and LootReserve:ColoredPlayer(LootReserve.Client.SessionServer) or "|cFF808080Not Connected|r"), isTitle = true },
 							{ text = format("Search For Server%s", cooldown > 0 and format(" (%d |4sec:secs; cooldown)", cooldown) or ""), disabled = cooldown > 0, func = function() LootReserve.Client:SearchForServer(); end },
 							LootReserve:MakeMenuSeparator(),
-							{ text = "Roll Request Popup", isTitle = true },
+							{ text = "Roll Popup", isTitle = true },
 							{ text = "Show Popup", checked = LootReserve.Client.Settings.RollRequestShow, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShow = checked; end },
 							{ text = "Show For Unusable Items", checked = LootReserve.Client.Settings.RollRequestShowUnusable, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShowUnusable = checked; end },
 							{ text = "Glow Only For Reserved Items", checked = LootReserve.Client.Settings.RollRequestGlowOnlyReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestGlowOnlyReserved = checked; end },

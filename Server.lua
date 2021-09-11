@@ -274,7 +274,7 @@ function LootReserve.Server:GetChatChannel(announcement)
     elseif IsInGroup() then
         return "PARTY";
     else
-        return "WHISPER", UnitName("player");
+        return "WHISPER", LootReserve:Me();
     end
 end
 
@@ -2211,31 +2211,39 @@ function LootReserve.Server:PrepareRequestRoll()
             end
         end);
 
-        local function ProcessChat(text, sender)
+        local function ProcessChat(text, sender, isPrivateChannel)
             sender = LootReserve:Player(sender);
 
             text = text:lower();
             text = LootReserve:StringTrim(text);
             if text == "pass" or text == "p" then
                 if self.RequestedRoll then
-                    self:PassRoll(sender, self.RequestedRoll.Item, true);
+                    self:PassRoll(sender, self.RequestedRoll.Item, true, isPrivateChannel);
                 end
                 return;
             end
         end
         local chatTypes =
         {
-            "CHAT_MSG_WHISPER",
-            "CHAT_MSG_SAY",
             "CHAT_MSG_YELL",
-            "CHAT_MSG_PARTY",
-            "CHAT_MSG_PARTY_LEADER",
             "CHAT_MSG_RAID",
             "CHAT_MSG_RAID_LEADER",
             "CHAT_MSG_RAID_WARNING",
         };
-        for _, type in ipairs(chatTypes) do
-            LootReserve:RegisterEvent(type, ProcessChat);
+        local chatTypesPrivate = {
+            "CHAT_MSG_WHISPER",
+            "CHAT_MSG_SAY",
+            "CHAT_MSG_GUILD",
+            "CHAT_MSG_OFFICER",
+        }
+        local partyChat = IsInRaid() and chatTypesPrivate or chatTypes;
+        table.insert(partyChat, "CHAT_MSG_PARTY");
+        table.insert(partyChat, "CHAT_MSG_PARTY_LEADER");
+        for _, eventName in ipairs(chatTypes) do
+            LootReserve:RegisterEvent(eventName, function(text, sender) return ProcessChat(text, sender); end);
+        end
+        for _, eventName in ipairs(chatTypesPrivate) do
+            LootReserve:RegisterEvent(eventName, function(text, sender) return ProcessChat(text, sender, true); end);
         end
 
         local chatTypes =
@@ -2252,9 +2260,9 @@ function LootReserve.Server:PrepareRequestRoll()
             "CHAT_MSG_GUILD",
             "CHAT_MSG_OFFICER",
         };
-        for _, type in ipairs(chatTypes) do
-            local savedType = type:gsub("CHAT_MSG_", "");
-            LootReserve:RegisterEvent(type, function(text, sender)
+        for _, eventName in ipairs(chatTypes) do
+            local savedType = eventName:gsub("CHAT_MSG_", "");
+            LootReserve:RegisterEvent(eventName, function(text, sender)
                 if self.RequestedRoll then
                     local player = LootReserve:Player(sender);
                     self.RequestedRoll.Chat = self.RequestedRoll.Chat or { };
@@ -2440,7 +2448,7 @@ function LootReserve.Server:RaidRoll(item)
     self:UpdateRollList();
 end
 
-function LootReserve.Server:PassRoll(player, item, chat)
+function LootReserve.Server:PassRoll(player, item, chat, isPrivateChannel)
     if not self:IsRolling(item) or not self.RequestedRoll.Players[player] then
         return;
     end
@@ -2470,10 +2478,10 @@ function LootReserve.Server:PassRoll(player, item, chat)
         return;
     end
 
+    local item = self.RequestedRoll.Item;
     if chat then
         LootReserve.Comm:SendRequestRoll(player, LootReserve.Item(0), { }, self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll);
 
-        local item = self.RequestedRoll.Item;
         -- Whisper player
         LootReserve:RunWhenItemCached(item:GetID(), function()
             if not self.RequestedRoll or self.RequestedRoll.Item ~= item then return; end
@@ -2485,6 +2493,20 @@ function LootReserve.Server:PassRoll(player, item, chat)
 
             local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
             LootReserve:SendChatMessage(format("You have passed on %s%s.", link, phase and format(" for %s", phase)), "WHISPER", player);
+        end);
+    end
+    if not chat or isPrivateChannel then
+        -- Announce
+        LootReserve:RunWhenItemCached(item:GetID(), function()
+            if not self.RequestedRoll or self.RequestedRoll.Item ~= item then return; end
+
+            local name, link = item:GetInfo();
+            if not name or not link then
+                return true;
+            end
+
+            local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
+            LootReserve:SendChatMessage(format("%s has passed on %s%s.", player, link, phase and format(" for %s", phase)), "RAID");
         end);
     end
 
