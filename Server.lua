@@ -1749,7 +1749,9 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
             else
                 LootReserve:SendChatMessage(onlyRelevant and "You currently have no reserves. To reserve an item, whisper me:  !reserve ItemLinkOrName" or "There are currently no reserves", player and "WHISPER" or self:GetChatChannel(), player);
             end
-            LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", player);
+            if player then
+                LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", player);
+            end
         end);
     end
 end
@@ -2742,8 +2744,8 @@ function LootReserve.Server:WhisperPlayerWithoutReserves(target)
             member.ReservesLeft,
             member.ReservesLeft == 1 and "reserve" or "reserves"
         ), "WHISPER", target);
-        if not self.AddonUsers[player] then
-            LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", player);
+        if not self.AddonUsers[target] then
+            LootReserve:SendChatMessage("For full support, install the addon:  LootReserve", "WHISPER", target);
         end
     end
 end
