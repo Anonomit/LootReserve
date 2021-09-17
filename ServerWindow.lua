@@ -986,9 +986,7 @@ function LootReserve.Server:LoadNewSessionSettings()
     setDropDownValue(self.Window.PanelSession.DropDownRaid, 1);
     self.Window.PanelSession.DropDownRaid:UpdateText();
     self.Window.PanelSession.EditBoxCount:SetText(tostring(self.NewSessionSettings.MaxReservesPerPlayer));
-    self.Window.PanelSession.EditBoxMultireserve:SetEnabled(not self.CurrentSession and self.NewSessionSettings.MaxReservesPerPlayer > 1);
-    self.Window.PanelSession.EditBoxMultireserve:SetText(self.NewSessionSettings.Multireserve and tostring(self.NewSessionSettings.Multireserve) or "Off");
-    self.Window.PanelSession.EditBoxMultireserve:SetMinMaxValues(1, self.NewSessionSettings.MaxReservesPerPlayer);
+    self.Window.PanelSession.EditBoxMultireserve:SetText(self.NewSessionSettings.Multireserve);
     setDropDownValue(self.Window.PanelSession.DropDownDuration, self.NewSessionSettings.Duration);
     if self.CurrentSession then
         self.Window.PanelSession.CheckButtonEquip:SetChecked(self.CurrentSession.Settings.Equip);

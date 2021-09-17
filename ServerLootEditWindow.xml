@@ -194,7 +194,7 @@
 										self:GetParent().EditBox:ClearFocus();
 										local itemID = self:GetParent():GetParent():GetParent().Item;
 										local conditions = LootReserve.ItemConditions:Make(itemID, true);
-										conditions.Limit = math.min(999, (conditions.Limit or 0) + 1);
+										conditions.Limit = math.min(LootReserve.Constants.MAX_RESERVES_PER_ITEM, (conditions.Limit or 0) + 1);
 										LootReserve.ItemConditions:Save(itemID, true);
 									</OnClick>
 								</Scripts>
@@ -213,7 +213,7 @@
 										end
 										local itemID = self:GetParent():GetParent():GetParent().Item;
 										local conditions = LootReserve.ItemConditions:Make(itemID, true);
-										conditions.Limit = tonumber(self:GetText()) and math.min(999, tonumber(self:GetText()));
+										conditions.Limit = tonumber(self:GetText()) and math.min(LootReserve.Constants.MAX_RESERVES_PER_ITEM, tonumber(self:GetText()));
 										LootReserve.ItemConditions:Save(itemID, true);
 									</OnTextChanged>
 									<OnEnterPressed function="EditBox_ClearFocus" />
@@ -238,7 +238,7 @@
 									local conditions = LootReserve.ItemConditions:Get(itemID, true);
 
 									self.Decrement:SetEnabled(conditions and conditions.Limit and conditions.Limit > 0);
-									self.Increment:SetEnabled(not conditions or not conditions.Limit or conditions.Limit &lt; 999);
+									self.Increment:SetEnabled(not conditions or not conditions.Limit or conditions.Limit &lt; LootReserve.Constants.MAX_RESERVES_PER_ITEM);
 									local text = conditions and conditions.Limit and conditions.Limit > 0 and tostring(conditions.Limit) or "";
 									if self.EditBox:GetText() ~= text then
 										self.EditBox:SetText(text);

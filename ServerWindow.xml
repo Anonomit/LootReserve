@@ -1616,14 +1616,16 @@
 							if LootReserve.Server.CurrentSession then
 								for player, member in pairs(LootReserve.Server.CurrentSession.Members) do
 									if member.ReservesLeft > 0 and not member.OptedOut then
-										table.insert(missingPlayers, player);
+										local max = LootReserve.Server.CurrentSession.Settings.MaxReservesPerPlayer + member.ReservesDelta;
+										table.insert(missingPlayers, {Player = player, Reserves = max - member.ReservesLeft, Max = max});
 									end
 								end
 							end
+							table.sort(missingPlayers, function(a, b) return a.Player &lt; b.Player; end);
 							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 							GameTooltip:SetText(#missingPlayers == 0 and "|cFF00FF00All players reserved items|r" or format("%d |4player:players; missing reserves:", #missingPlayers));
-							for _, player in ipairs(missingPlayers) do
-								GameTooltip:AddLine(format("%s%s", LootReserve:ColoredPlayer(player), LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""));
+							for _, data in ipairs(missingPlayers) do
+								GameTooltip:AddLine(format("|cFF%s[%d/%d] %s%s", data.Reserves == 0 and "FF0000" or "FF7700", data.Reserves, data.Max, LootReserve:ColoredPlayer(data.Player), LootReserve:IsPlayerOnline(data.Player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(data.Player) == false and "|cFF808080 (offline)|r" or ""));
 							end
 							GameTooltip:AddLine("Click for more options", GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
 							GameTooltip:Show();
@@ -1826,7 +1828,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								self:SetMinMaxValues(1, 100);
+								self:SetMinMaxValues(1, LootReserve.Constants.MAX_RESERVES);
 								self:SetJustifyH("CENTER");
 								self.IncrementButton:SetWidth(25);
 								self.IncrementButton:SetHeight(25);
@@ -1843,25 +1845,27 @@
 							</OnLoad>
 							<OnTextChanged inherit="prepend">
 								local count = tonumber(self:GetText());
-								if count and count > 0 then
+								if count then
+									if count &lt;= 0 then
+									  count = 1;
+									elseif count > LootReserve.Constants.MAX_RESERVES then
+									  count = LootReserve.Constants.MAX_RESERVES;
+									end
 									LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer = count;
+									self:SetText(count);
 								else
-									self:SetText("");
+									LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer = 1;
 								end
-								if LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer &lt;= 1 then
-									LootReserve.Server.NewSessionSettings.Multireserve = nil;
-								end
+								self:SetText(LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer);
 								LootReserve.Server.MembersEdit:UpdateMembersList();
 								LootReserve.Server.Import:SessionSettingsUpdated();
-								self:GetParent().EditBoxMultireserve:SetEnabled(not LootReserve.Server.CurrentSession and LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer > 1);
-								self:GetParent().EditBoxMultireserve:SetText(LootReserve.Server.NewSessionSettings.Multireserve and tostring(LootReserve.Server.NewSessionSettings.Multireserve) or "Off");
-								self:GetParent().EditBoxMultireserve:SetMinMaxValues(1, LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer);
+								self:GetParent().EditBoxMultireserve:SetText(LootReserve.Server.NewSessionSettings.Multireserve);
 							</OnTextChanged>
 							<OnEnterPressed method="ClearFocus" />
 							<OnEnter>
 								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 								GameTooltip:SetText("Reserves");
-								GameTooltip:AddLine("How many reserves can each player make.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								GameTooltip:AddLine("How many reserves each player may make.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
 								GameTooltip:Show();
 							</OnEnter>
 							<OnLeave function="GameTooltip_Hide" />
@@ -1874,7 +1878,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								self:SetMinMaxValues(1, 10);
+								self:SetMinMaxValues(1, LootReserve.Constants.MAX_MULTIRESERVES);
 								self:SetJustifyH("CENTER");
 								self.IncrementButton:SetWidth(25);
 								self.IncrementButton:SetHeight(25);
@@ -1891,17 +1895,22 @@
 
 								self:SetNumeric(false);
 								function self:SetNumber(number)
-									self:SetText(number and number > 1 and tostring(number) or "Off");
+									self:SetText(number);
 								end
 							</OnLoad>
 							<OnTextChanged inherit="prepend">
 								local count = tonumber(self:GetText());
-								if count and count > 1 then
+								if count then
+									if count &lt;= 0 then
+									  count = 1;
+									elseif count > LootReserve.Constants.MAX_MULTIRESERVES then
+									  count = LootReserve.Constants.MAX_MULTIRESERVES;
+									end
 									LootReserve.Server.NewSessionSettings.Multireserve = count;
 								else
-									LootReserve.Server.NewSessionSettings.Multireserve = nil;
-									self:SetText("Off");
+									LootReserve.Server.NewSessionSettings.Multireserve = 1;
 								end
+								self:SetText(LootReserve.Server.NewSessionSettings.Multireserve);
 								LootReserve.Server.MembersEdit:UpdateMembersList();
 								LootReserve.Server.Import:SessionSettingsUpdated();
 							</OnTextChanged>
@@ -1909,7 +1918,7 @@
 							<OnEnter>
 								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 								GameTooltip:SetText("Multireserves");
-								GameTooltip:AddLine("If enabled - players will be able to reserve the same item multiple times, with each additional reserve allowing them an extra /roll on the item.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								GameTooltip:AddLine("If set higher than 1, then players will be able to reserve the same item multiple times, with each additional reserve allowing them an extra /roll on the item.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
 								GameTooltip:Show();
 							</OnEnter>
 							<OnLeave function="GameTooltip_Hide" />

@@ -218,7 +218,7 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
     local refPlayers = { };
     for player, member in pairs(session.Members) do
         if not target or LootReserve:IsSamePlayer(player, target) then
-            membersInfo = membersInfo .. (#membersInfo > 0 and ";" or "") .. format("%s=%s,%d", player, session.Settings.Lock and member.Locked and "#" or member.ReservesLeft, session.Settings.MaxReservesPerPlayer);
+            membersInfo = membersInfo .. (#membersInfo > 0 and ";" or "") .. format("%s=%s,%d", player, session.Settings.Lock and member.Locked and "#" or member.ReservesLeft, session.Settings.MaxReservesPerPlayer + member.ReservesDelta);
             table.insert(refPlayers, player);
         end
     end
@@ -287,9 +287,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
     equip = tonumber(equip) == 1;
     blind = tonumber(blind) == 1;
     multireserve = tonumber(multireserve);
-    if multireserve <= 1 then
-        multireserve = nil;
-    end
+    multireserve = math.max(1, multireserve);
 
     if LootReserve.Client.SessionServer and LootReserve.Client.SessionServer ~= sender and LootReserve.Client.StartTime > startTime then
         LootReserve:ShowError("%s is attempting to broadcast their older loot reserve session, but you're already connected to %s.|n|nPlease tell %s that they need to reset their session.", LootReserve:ColoredPlayer(sender), LootReserve:ColoredPlayer(LootReserve.Client.SessionServer), LootReserve:ColoredPlayer(sender));

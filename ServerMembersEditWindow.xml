@@ -9,7 +9,7 @@
 						<Texture parentKey="Texture" setAllPoints="true" nonBlocking="true" />
 						<FontString parentKey="Name" inherits="GameFontNormal" hidden="true" wordwrap="false" justifyH="LEFT">
 							<Anchors>
-								<Anchor point="LEFT" relativePoint="RIGHT" x="1" />
+								<Anchor point="LEFT" relativePoint="RIGHT" x="2" />
 								<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent" relativePoint="RIGHT" />
 							</Anchors>
 						</FontString>
@@ -71,6 +71,22 @@
 						<Anchor point="BOTTOM" />
 						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.Count" />
 						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Count" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="DeltaDecrement" inherits="GameFontNormal" justifyH="CENTER" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.DeltaDecrement" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.DeltaDecrement" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="DeltaIncrement" inherits="GameFontNormal" justifyH="CENTER" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.DeltaIncrement" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.DeltaIncrement" />
 					</Anchors>
 				</FontString>
 				<FontString parentKey="Reserves" inherits="GameFontNormal" justifyH="LEFT" text="">
@@ -196,6 +212,42 @@
 					</OnClick>
 				</Scripts>
 			</CheckButton>
+			<Button parentKey="ButtonDeltaDecrement">
+				<Size x="23" y="22"/>
+				<Anchors>
+					<Anchor point="CENTER" relativeKey="$parent.DeltaDecrement" relativePoint="CENTER" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if self:IsEnabled() then
+							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+							LootReserve.Server:IncrementReservesDelta(self:GetParent().Player, -1 * (IsShiftKeyDown() and 10 or 1));
+						end
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+			</Button>
+			<Button parentKey="ButtonDeltaIncrement">
+				<Size x="23" y="22"/>
+				<Anchors>
+					<Anchor point="CENTER" relativeKey="$parent.DeltaIncrement" relativePoint="CENTER" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if self:IsEnabled() then
+							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+							LootReserve.Server:IncrementReservesDelta(self:GetParent().Player, IsShiftKeyDown() and 10 or 1);
+						end
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+			</Button>
 			<Frame parentKey="ReservesFrame">
 				<Anchors>
 					<Anchor point="TOP" />
@@ -253,12 +305,24 @@
 						<FontString parentKey="Count" inherits="GameFontNormal" justifyH="CENTER" text="">
 							<Size x="32" />
 							<Anchors>
-								<Anchor point="LEFT" relativeKey="$parent.Locked" relativePoint="RIGHT" />
+								<Anchor point="LEFT" relativeKey="$parent.WonRolls" relativePoint="RIGHT" x="60" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="DeltaDecrement" inherits="GameFontNormal" justifyH="CENTER" text="">
+							<Size x="25" />
+							<Anchors>
+								<Anchor point="RIGHT" relativeKey="$parent.Count" relativePoint="LEFT" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="DeltaIncrement" inherits="GameFontNormal" justifyH="CENTER" text="">
+							<Size x="25" />
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.Count" relativePoint="RIGHT" />
 							</Anchors>
 						</FontString>
 						<FontString parentKey="Reserves" inherits="GameFontNormal" justifyH="LEFT" text="Reserves">
 							<Anchors>
-								<Anchor point="LEFT" relativeKey="$parent.Count" relativePoint="RIGHT" x="5" />
+								<Anchor point="LEFT" relativeKey="$parent.DeltaIncrement" relativePoint="RIGHT" x="5" />
 								<Anchor point="RIGHT" x="-16" />
 							</Anchors>
 						</FontString>

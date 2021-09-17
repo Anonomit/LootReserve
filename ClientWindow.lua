@@ -45,7 +45,7 @@ function LootReserve.Client:UpdateReserveStatus()
             local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(self:GetItemReservers(item:GetID()), LootReserve:Me());
             local canReserve = self.SessionServer and self:HasRemainingReserves() and LootReserve.ItemConditions:IsItemReservableOnClient(item:GetID()) and (not self.Multireserve or myReserves < self.Multireserve);
             frame.ReserveFrame.ReserveButton:SetShown(canReserve and myReserves == 0);
-            frame.ReserveFrame.MultiReserveButton:SetShown(canReserve and myReserves > 0 and self.Multireserve);
+            frame.ReserveFrame.MultiReserveButton:SetShown(canReserve and myReserves > 0);
             frame.ReserveFrame.MultiReserveButton:SetText(format("x%d", myReserves + 1));
             frame.ReserveFrame.CancelReserveButton:SetShown(self.SessionServer and self:IsItemReservedByMe(item:GetID()) and self.AcceptingReserves);
             frame.ReserveFrame.CancelReserveButton:SetWidth(frame.ReserveFrame.ReserveButton:GetWidth() - (frame.ReserveFrame.MultiReserveButton:IsShown() and frame.ReserveFrame.MultiReserveButton:GetWidth() - select(4, frame.ReserveFrame.MultiReserveButton:GetPoint(1)) or 0));

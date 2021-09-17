@@ -976,7 +976,7 @@ local function GetReservesString(server, isUpdate, link, reservesText, myReserve
                 blind and "" or " the only player",
                 link,
                 (isUpdate or blind) and "" or " thus far",
-                multireserve and format(" You have %d %s on this item.", myReserves, myReserves == 1 and "reserve" or "reserves") or "");
+                multireserve > 1 and format(" You have %d %s on this item.", myReserves, myReserves == 1 and "reserve" or "reserves") or "");
         else
            return "";
         end
@@ -987,10 +987,10 @@ local function GetReservesString(server, isUpdate, link, reservesText, myReserve
             otherReserves == 1 and "is" or "are",
             isUpdate and " now" or "",
             otherReserves,
-            multireserve and format("%s by %d %s", otherReserves == 1 and "other reserve" or "other reserves",
-                                                   otherReservers,
-                                                   otherReservers == 1 and "player" or "players")
-                         or format("%s", otherReserves == 1 and "other contender" or "other contenders"),
+            multireserve > 1 and format("%s by %d %s", otherReserves == 1 and "other reserve" or "other reserves",
+                                                       otherReservers,
+                                                       otherReservers == 1 and "player" or "players")
+                             or format("%s", otherReserves == 1 and "other contender" or "other contenders"),
             link,
             reservesText);
     else

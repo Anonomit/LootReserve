@@ -19,7 +19,7 @@ LootReserve.Client =
     RollRequest       = nil,
     Equip             = true,
     Blind             = false,
-    Multireserve      = nil,
+    Multireserve      = 1,
 
     Settings =
     {
@@ -220,7 +220,7 @@ function LootReserve.Client:ResetSession(refresh)
     self.ItemConditions    = { };
     self.Equip             = true;
     self.Blind             = false;
-    self.Multireserve      = nil;
+    self.Multireserve      = 1;
     self.PendingItems      = { };
     self.PendingOpts       = nil;
 
