@@ -1345,9 +1345,11 @@ function LootReserve.Server:IncrementReservesDelta(player, amount)
     
     amount = amount or 1;
     
+    if member.ReservesLeft == 0 then
+        member.OptedOut = nil;
+    end
     member.ReservesLeft = member.ReservesLeft + amount;
     member.ReservesDelta = member.ReservesDelta + amount;
-    member.OptedOut = nil;
     
     local count = 0 - member.ReservesLeft
     if count > 0 then
