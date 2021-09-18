@@ -573,17 +573,19 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserve] = function(sender, itemID)
 end
 
 -- CancelReserveResult
-function LootReserve.Comm:SendCancelReserveResult(target, itemID, result, remainingReserves)
+function LootReserve.Comm:SendCancelReserveResult(target, itemID, result, remainingReserves, quiet)
     LootReserve.Comm:Whisper(target, Opcodes.CancelReserveResult,
         itemID,
         result,
-        remainingReserves);
+        remainingReserves,
+        quiet);
 end
-LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID, result, remainingReserves)
+LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID, result, remainingReserves, quiet)
     itemID = tonumber(itemID);
     result = tonumber(result);
     local locked = remainingReserves == "#";
     remainingReserves = tonumber(remainingReserves) or 0;
+    quiet = tonumber(quiet);
 
     if LootReserve.Client.SessionServer == sender then
         LootReserve.Client.RemainingReserves = remainingReserves;
@@ -592,7 +594,9 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
             LootReserve:RunWhenItemCached(itemID, function()
                 local name, link = GetItemInfo(itemID);
                 if name and link then
-                    LootReserve:ShowError("%s removed your reserve for %s", LootReserve:ColoredPlayer(sender), link);
+                    if not quiet then
+                        LootReserve:ShowError("%s removed your reserve for %s", LootReserve:ColoredPlayer(sender), link);
+                    end
                     LootReserve:PrintError("%s removed your reserve for %s", LootReserve:ColoredPlayer(sender), link);
                 else
                     return true;

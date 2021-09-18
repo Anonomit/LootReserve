@@ -52,6 +52,13 @@ LootReserve.Constants =
         BySource = 2,
         ByLooter = 3,
     },
+    WinnerReservesRemoval =
+    {
+        None      = 0,
+        Single    = 1,
+        Duplicate = 2,
+        All       = 3,
+    },
     ChatAnnouncement =
     {
         SessionStart        = 1,
@@ -188,6 +195,15 @@ LootReserve.Constants.ReservesSortingText =
     [enum.ByName]   = "By Item Name",
     [enum.BySource] = "By Boss",
     [enum.ByLooter] = "By Looter",
+};
+
+local enum = LootReserve.Constants.WinnerReservesRemoval;
+LootReserve.Constants.WinnerReservesRemovalText =
+{
+    [enum.None]      = "None",
+    [enum.Single]    = "Just one",
+    [enum.Duplicate] = "Duplicate",
+    [enum.All]       = "All",
 };
 
 for i = 1, LootReserve:GetNumClasses() do

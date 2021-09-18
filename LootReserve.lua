@@ -892,6 +892,10 @@ function LootReserve:FormatPlayersText(players, colorFunc)
     return text;
 end
 
+function LootReserve:FormatPlayersTextColored(players, colorFunc)
+    return self:FormatPlayersText(players, function(...) return self:ColoredPlayer(...); end);
+end
+
 local function FormatReservesText(players, excludePlayer, colorFunc)
     colorFunc = colorFunc or function(...) return ...; end
 
