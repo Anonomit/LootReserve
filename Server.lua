@@ -86,7 +86,7 @@ LootReserve.Server =
     StartupAwaitingAuthorityRegistered = false,
     MasterLootListUpdateRegistered     = false,
     RollHistoryDisplayLimit            = 0,
-    RollHistoryKeepLimit               = 0,
+    RollHistoryKeepLimit               = 99999999,
 };
 
 StaticPopupDialogs["LOOTRESERVE_CONFIRM_FORCED_CANCEL_RESERVE"] =
@@ -949,7 +949,7 @@ function LootReserve.Server:PrepareSession()
                         self:CancelReserve(sender, itemID, count, true);
                     end
                 else
-                    LootReserve:SendChatMessage(format("That item is not reservable in this raid.%s", self:GetSupportString(sender, " ")), "WHISPER", sender);
+                    LootReserve:SendChatMessage(format("That item is not reservable in this raid.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
                 end
             end
 
@@ -979,7 +979,7 @@ function LootReserve.Server:PrepareSession()
                         if not match then
                             LootReserve:SendChatMessage(format("That item was not found in the current raid, which is %s. Check your spelling, or try using a shorter search term.%s",
                                 LootReserve:GetCategoriesText(self.CurrentSession.Settings.LootCategories, false),
-                                self:GetSupportString(sender, " ")
+                                self:GetSupportString(sender, " ", true)
                             ), "WHISPER", sender);
                         elseif match > 0 then
                             handleItemCommand(match, command, count);
@@ -1003,7 +1003,7 @@ function LootReserve.Server:PrepareSession()
                 if #text >= 3 then
                     handleItemCommandByName();
                 else
-                    LootReserve:SendChatMessage(format("That name is too short, 3 or more letters required.%s", self:GetSupportString(sender, " ")), "WHISPER", sender);
+                    LootReserve:SendChatMessage(format("That name is too short, 3 or more letters required.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
                 end
             end
         end
