@@ -1,5 +1,10 @@
 function LootReserve.Client:UpdateReserveStatus()
-    if not self.SessionServer then
+    if not LootReserve.Enabled then
+        self.Window.RemainingText:SetText("|cFFFF0000LootReserve is out of date|r");
+        self.Window.RemainingTextGlow:SetVertexColor(1, 1, 1, 0.15);
+        self.Window.OptOut:SetShown(false);
+        self.Window.OptIn:SetShown(false);
+    elseif not self.SessionServer then
         self.Window.RemainingText:SetText("|cFF808080Loot reserves are not started in your raid|r");
         self.Window.RemainingTextGlow:SetVertexColor(1, 1, 1, 0.15);
         self.Window.OptOut:SetShown(false);
