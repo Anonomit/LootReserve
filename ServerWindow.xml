@@ -1983,6 +1983,7 @@
 								if LootReserve.Server.CurrentSession then
 									LootReserve.Server.CurrentSession.Settings.Equip = self:GetChecked();
 								end
+								LootReserve.Server.Import:SessionSettingsUpdated();
 							</OnClick>
 						</Scripts>
 					</CheckButton>
