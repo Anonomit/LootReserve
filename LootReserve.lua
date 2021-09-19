@@ -465,8 +465,11 @@ function LootReserve:UnitRace(player)
     end);
 end
 
-local function GetPlayerClassColor(player, dim)
+local function GetPlayerClassColor(player, dim, class)
     local className, classFilename, classId = LootReserve:UnitClass(player);
+    if class then
+        className, classFilename, classId = LootReserve:GetClassInfo(class);
+    end
     if classFilename then
         local colors = RAID_CLASS_COLORS[classFilename];
         if colors then
@@ -517,10 +520,10 @@ function LootReserve:GetGroupUnitID(player)
     end
 end
 
-function LootReserve:ColoredPlayer(player)
+function LootReserve:ColoredPlayer(player, class)
     local name, realm = strsplit("-", player);
-    return realm and format("|c%s%s|r|c%s-%s|r", GetPlayerClassColor(player), name, GetPlayerClassColor(player, true), realm)
-                  or format("|c%s%s|r",          GetPlayerClassColor(player), player);
+    return realm and format("|c%s%s|r|c%s-%s|r", GetPlayerClassColor(player, false, class), name, GetPlayerClassColor(player, true, class), realm)
+                  or format("|c%s%s|r",          GetPlayerClassColor(player, false, class), player);
 end
 
 function LootReserve:ForEachRaider(func)

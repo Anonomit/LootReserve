@@ -13,7 +13,7 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     if not example then
         if not self.Settings.RollRequestShow then return; end
         if not LootReserve:Contains(players, LootReserve:Me()) then return; end
-        if custom and not self.Settings.RollRequestShowUnusable and (not LootReserve.ItemConditions:IsItemUsable(item:GetID()) and LootReserve:IsItemBoP(item:GetID())) then return; end
+        if custom and not self.Settings.RollRequestShowUnusable and (not LootReserve.ItemConditions:IsItemUsableByMe(item:GetID()) and LootReserve:IsItemBoP(item:GetID())) then return; end
     end
 
     local _, myCount = LootReserve:GetReservesData(players, LootReserve:Me());

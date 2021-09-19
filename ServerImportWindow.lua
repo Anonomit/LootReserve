@@ -38,11 +38,19 @@ end
 
 local function ParseMultireserveCount(value)
     if type(value) == "string" then
-        value = tonumber(value:match("[Xx]%s-(%d+)") or value:match("(%d+)%s-[Xx]") or value:match("^(%d+)$"));
+        value = tonumber(value:match("[xX*]%s*(%d+)") or value:match("(%d+)%s*[xX*]") or value:match("^(%d+)$"));
     end
     if value and type(value) == "number" and value > 1 then
         return value;
     end
+end
+
+local function ParseClass(value)
+    if value and type(value) == "string" then
+        value = LootReserve.Constants.ClassLocalizedToFilename[value] or value;
+        value = tonumber(LootReserve.Constants.ClassFilenameToClassID[value]);
+    end
+    return value;
 end
 
 function LootReserve.Server.Import:UpdateReservesList()
@@ -87,7 +95,7 @@ function LootReserve.Server.Import:UpdateReservesList()
         frame:Show();
 
         frame.Alt:SetShown(list.LastIndex % 2 == 0);
-        frame.Name:SetText(format("%s%s", LootReserve:ColoredPlayer(player), LootReserve:IsPlayerOnline(player) == nil and format("|cFF808080 (%s)|r", member.NameMatchResult or "not in raid") or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""));
+        frame.Name:SetText(format("%s%s", LootReserve:ColoredPlayer(player, member.Class), LootReserve:IsPlayerOnline(player) == nil and format("|cFF808080 (%s)|r", member.NameMatchResult or "not in raid") or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""));
 
         local last = 0;
         frame.ReservesFrame.Items = frame.ReservesFrame.Items or { };
@@ -219,6 +227,8 @@ function LootReserve.Server.Import:InputOptionsUpdated()
                             break;
                         end
                     end
+                elseif header:find("class") then
+                    self.Columns[i] = "Class";
                 end
             end
         end
@@ -300,6 +310,19 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
             end
         end
 
+        for _, row in ipairs(self.Rows) do
+            row.Class = nil;
+            for i, column in ipairs(self.Columns) do
+                if column == "Class" and row[i] then
+                    if not row.Class then
+                        row.Class = ParseClass(row[i]);
+                    else
+                        return "Only one column can be marked as \"Class\"";
+                    end
+                end
+            end
+        end
+
         local simplifiedRaidNames = nil;
         if self.MatchNames then
             simplifiedRaidNames = { };
@@ -328,6 +351,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         NameMatchResult = nameMatchResult,
                         ReservedItems   = { },
                         InvalidReasons  = { },
+                        Class = nil,
                     };
                 end
                 local member = self.Members[player];
@@ -340,8 +364,9 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                     itemReserveCountByPlayer[player] = itemReserveCountByPlayer[player] or { };
                     itemReserveCountByPlayer[player][itemID] = (itemReserveCountByPlayer[player][itemID] or 0) + 1;
                     local conditions = LootReserve.Server:GetNewSessionItemConditions()[itemID];
-                    local class = select(3, UnitClass(player));
-                    local className, raceName = select(2, LootReserve:UnitClass(LootReserve:Player(player))), LootReserve:UnitRace(LootReserve:Player(player));
+                    local class = select(3, UnitClass(player)) or row.Class;
+                    member.Class = class;
+                    local className, raceName = class and select(2, LootReserve:GetClassInfo(class)), LootReserve:UnitRace(LootReserve:Player(player));
                     if itemID == 0 then
                         member.InvalidReasons[#member.ReservedItems] = "Item with the name \"" .. itemName .. "\" was not be found|nor it can't be reserved due to session settings.";
                     elseif not (LootReserve.Data:IsItemInCategories(itemID, LootReserve.Server.NewSessionSettings.LootCategories) or conditions and conditions.Custom) or not LootReserve.ItemConditions:TestServer(itemID) then

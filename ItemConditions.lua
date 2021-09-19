@@ -239,7 +239,7 @@ local function IsItemUsable(itemID, playerClass, playerRace)
                 local found = line:GetText():match(LOCALIZED_CLASS_NAMES_MALE[playerClass]) or line:GetText():match(LOCALIZED_CLASS_NAMES_FEMALE[playerClass]);
                 LootReserve.TooltipScanner:Hide();
                 return not not found;
-            elseif line:GetText():match(LootReserve.TooltipScanner.RacesAllowed) then
+            elseif line:GetText():match(LootReserve.TooltipScanner.RacesAllowed) and playerRace then
                 local found = line:GetText():match(playerRace);
                 LootReserve.TooltipScanner:Hide();
                 return not not found;
@@ -254,7 +254,10 @@ end
 
 
 function LootReserve.ItemConditions:IsItemUsable(itemID, playerClass, playerRace)
-    return IsItemUsable(itemID, playerClass or select(2, LootReserve:UnitClass(LootReserve:Me())), playerRace or LootReserve:UnitRace(LootReserve:Me()));
+    return IsItemUsable(itemID, playerClass, playerRace);
+end
+function LootReserve.ItemConditions:IsItemUsableByMe(itemID)
+    return IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), LootReserve:UnitRace(LootReserve:Me()));
 end
 
 function LootReserve.ItemConditions:TestClassMask(classMask, playerClass)

@@ -95,7 +95,8 @@ LootReserve.Constants =
         Passed    = -1,
         Deleted   = -2,
     },
-    ClassFilenameToClassID = { },
+    ClassFilenameToClassID   = { },
+    ClassLocalizedToFilename = { },
     ItemQuality =
     {
         [-1] = "All",
@@ -212,4 +213,13 @@ for i = 1, LootReserve:GetNumClasses() do
     if file and id then
         LootReserve.Constants.ClassFilenameToClassID[file] = id;
     end
+end
+for filename, localized in pairs(LOCALIZED_CLASS_NAMES_MALE) do
+    LootReserve.Constants.ClassLocalizedToFilename[localized] = filename;
+end
+for filename, localized in pairs(LOCALIZED_CLASS_NAMES_FEMALE) do
+    LootReserve.Constants.ClassLocalizedToFilename[localized] = filename;
+end
+for localized, filename in pairs(LootReserve.Constants.ClassLocalizedToFilename) do
+    LootReserve.Constants.ClassLocalizedToFilename[localized:lower()] = filename;
 end
