@@ -1044,7 +1044,7 @@
 											end
 											return
 											{
-												text = format("|T%d:0|t %s%s", texture, (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", ""), count and format("|cFF808080 x%d|r", count) or ""),
+												text = format("|T%d:0|t %s%s%s", texture, LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[item:GetID()] and "|TInterface/Buttons/UI-GroupLoot-Dice-Up:0|t " or "", (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", ""), count and format("|cFF808080 x%d|r", count) or ""),
 												arg1 = item,
 												func = SelectItem,
 											};
