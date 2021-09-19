@@ -919,7 +919,7 @@ function LootReserve.Server:PrepareSession()
 
             text = LootReserve:StringTrim(text);
             if command == "cancel" then
-                local count = tonumber(text:match("^[Xx]?%s*(%d+)%s*[Xx]?$"));
+                local count = tonumber(text:match("^[Xx%*]?%s*(%d+)%s*[Xx%*]?$"));
                 if #text == 0 then
                     count = 1;
                 end
@@ -953,14 +953,81 @@ function LootReserve.Server:PrepareSession()
                 end
             end
 
-            local itemID = tonumber(text:match("item:(%d+)"));
-            local count = tonumber(text:match("%]|h|r%s*[xX]?%s*(%d+)"));
+            local itemID = tonumber(text:match("item[:=](%d+)"));
             if itemID then
-                handleItemCommand(itemID, command, count);
+                local charI = 0;
+                local items = { };
+                local itemCommands = { };
+                while true do
+                    local s, e, itemID;
+                    -- Match various forms of item linking, including incorrect ones
+                    if not s then
+                         -- Correctly-formatted itemlink
+                        s, e, itemID = text:find("\124cff......\124hitem:(%d+)[:%d]*\124h%[[^%[%]]*%]\124h\124r", charI);
+                    end
+                    if not s then
+                        -- Wowhead In-Game Link
+                        s, e, itemID = text:find("/%S+%s*default_chat_frame:addmessage%(\"\\124cff......\\124hitem:(%d+)[:%d]*\\124h%[[^%[%]]*%]\\124h\\124r\"%);", charI);
+                    end
+                    if not s then
+                        -- URL
+                        s, e, itemID = text:find("https?://%S*item=(%d+)%S*", charI);
+                    end
+                    itemID = tonumber(itemID);
+                    if itemID then
+                        table.insert(items, {s = s, e = e, ID = itemID});
+                        charI = e + 1;
+                    else
+                        break;
+                    end
+                end
+                for i, itemData in ipairs(items) do
+                    local s, e = items[i-1] and items[i-1].e+1 or 1, items[i+1] and items[i+1].s-1 or text:len();
+                    local pre, post = text:sub(s, itemData.s-1), text:sub(itemData.e+1, e);
+                    local count1, count2 = pre:match("(%d+)%s*[xX%*]"), post:match("[xX%*]%s*(%d+)");
+                    local ambig1, ambig2 = pre:match("(%d+)"), post:match("(%d+)");
+                    local counterambig1, counterambig2 = pre:match("[xX%*]%s*(%d+)"), post:match("(%d+)%s*[xX%*]");
+                    
+                    -- [xX*] is not always necessary, as a solo number is not ambiguous at the start or end
+                    if i == 1 and not count1 then
+                        count1 = ambig1;
+                    end
+                    if i == #items + 1 and not count2 then
+                        count2 = ambig2;
+                    end
+                    
+                    local ambiguous = false;
+                    if ambig1 and not count1 and i ~= 1 then
+                        if not counterambig1 or not items[i-1] then
+                            ambiguous = true;
+                        end
+                    elseif ambig2 and not count2 and i ~= #items + 1 then
+                        if not counterambig2 or not items[i+1] then
+                            ambiguous = true;
+                        end
+                    end
+                    
+                    if count1 and count2 or ambiguous then
+                        LootReserve:SendChatMessage(format("Can't tell how many items you want to reserve. It appears to be ambiguous.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
+                        return;
+                    else
+                        if not itemCommands[itemData.ID] then
+                            itemCommands[itemData.ID] = 0;
+                        end
+                        itemCommands[itemData.ID] = itemCommands[itemData.ID] + (count1 or count2 or 1);
+                    end
+                end
+                
+                for _, itemData in pairs(items) do
+                    if itemCommands[itemData.ID] then
+                        handleItemCommand(itemData.ID, command, itemCommands[itemData.ID]);
+                        itemCommands[itemData.ID] = nil;
+                    end
+                end
             else
-                count = tonumber(text:match("%s*[xX]?%s*(%d+)%s*[Xx]?$"));
+                local count = tonumber(text:match("%s*[xX%*]?%s*(%d+)%s*[Xx%*]?$"));
                 if count then
-                    text = text:match("^(.-)%s*[xX]?%s*(%d+)%s*[Xx]?$");
+                    text = text:match("^(.-)%s*[xX%*]?%s*(%d+)%s*[Xx%*]?$");
                 else
                     count = 1;
                 end
@@ -1716,8 +1783,9 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
                     ));
                     LootReserve:SendChatMessage(format("Your reserve for %s%s has been automatically removed.", link, count > 1 and format(" x%d", count) or ""), "WHISPER", player);
                 else
-                    LootReserve:SendChatMessage(format(forced and "Your reserve for %s has been removed. %d more %s available.%s" or "You cancelled your reserve for %s. %d more %s available.%s",
+                    LootReserve:SendChatMessage(format(forced and "Your reserve for %s%s has been removed. %d more %s available.%s" or "You cancelled your reserve for %s%s. %d more %s available.%s",
                         link,
+                        count > 1 and format(" x%d", count) or "",
                         member.ReservesLeft,
                         member.ReservesLeft == 1 and "reserve" or "reserves",
                         "You can check your reserves with  !myreserves"
