@@ -1326,7 +1326,6 @@
 								arg1 = limit,
 								func = function(info, limit)
 									LootReserve.Server.Settings.RollHistoryKeepLimit = limit;
-									LootReserve.Server.RollHistoryKeepLimit = limit;
 									while #LootReserve.Server.RollHistory > limit do
 										table.remove(LootReserve.Server.RollHistory, 1);
 									end

@@ -86,7 +86,6 @@ LootReserve.Server =
     StartupAwaitingAuthorityRegistered = false,
     MasterLootListUpdateRegistered     = false,
     RollHistoryDisplayLimit            = 0,
-    RollHistoryKeepLimit               = 99999999,
 };
 
 StaticPopupDialogs["LOOTRESERVE_CONFIRM_FORCED_CANCEL_RESERVE"] =
@@ -2195,7 +2194,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                 historicalEntry.Phases = {historicalEntry.Phases[1]};
             end
             table.insert(self.RollHistory, historicalEntry);
-            while #self.RollHistory > self.RollHistoryKeepLimit do
+            while #self.RollHistory > self.Settings.RollHistoryKeepLimit do
                table.remove(self.RollHistory, 1); 
             end
 
