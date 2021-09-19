@@ -46,7 +46,7 @@ function LootReserve.Server:UpdateReserveListRolls(lockdown)
                         button.Roll:Show();
                         button.Roll:SetText(rolled and tostring(roll) or passed and "PASS" or deleted and "DEL" or "...");
                         button.Roll:SetTextColor(color.r, color.g, color.b);
-                        if LootReserve.Server.Settings.HighlightSameItemWinners and not frame.Historical then
+                        if not frame.Historical then
                             button.AlreadyWonHighlight:SetShown(LootReserve.Server:HasAlreadyWon(button.Player, frame.Item));
                             button.WinnerHighlight:Hide();
                         else
@@ -390,7 +390,7 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
                         button.Roll:Show();
                         button.Roll:SetText(rolled and tostring(roll) or passed and "PASS" or deleted and "DEL" or "...");
                         button.Roll:SetTextColor(color.r, color.g, color.b);
-                        if LootReserve.Server.Settings.HighlightSameItemWinners and not frame.Historical then
+                        if not frame.Historical then
                             button.AlreadyWonHighlight:SetShown(LootReserve.Server:HasAlreadyWon(button.Player, frame.Item));
                             button.WinnerHighlight:Hide();
                         else

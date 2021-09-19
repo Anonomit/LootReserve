@@ -47,11 +47,9 @@ LootReserve.Server =
         RollHistoryDisplayLimit         = 10,
         RollHistoryKeepLimit            = 1000,
         RollMasterLoot                  = true,
-        MasterLooting                   = true,
         WinnerReservesRemoval           = LootReserve.Constants.WinnerReservesRemoval.Duplicate,
         ItemConditions                  = { },
         CollapsedExpansions             = { },
-        HighlightSameItemWinners        = true,
         MaxRecentLoot                   = 25,
         MinimumLootQuality              = 2,
         RemoveRecentLootAfterRolling    = true,
@@ -459,8 +457,9 @@ function LootReserve.Server:Load()
         end
     end
     
-    -- 2021-09-13: Add self.CurrentSession.Members[player].ReservesDelta and update self.CurrentSession.Settings.MultiReserve
-    if versionSave < "2021-09-17" then
+    -- 2021-09-19: Add self.CurrentSession.Members[player].ReservesDelta and update self.CurrentSession.Settings.MultiReserve
+    -- 2021-09-19: Prune deprecated settings
+    if versionSave < "2021-09-19" then
         if self.CurrentSession then
             for _, member in pairs(self.CurrentSession.Members) do
                 member.ReservesDelta = member.ReservesDelta or 0;
@@ -469,6 +468,10 @@ function LootReserve.Server:Load()
                 self.CurrentSession.Settings.MultiReserve = 1;
             end
         end
+        self.Settings.ChatThrottle             = nil;
+        self.Settings.KeepUnlootedRecentLoot   = nil;
+        self.Settings.MasterLooting            = nil;
+        self.Settings.HighlightSameItemWinners = nil;
     end
     
     -- Create Item objects
@@ -2109,7 +2112,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
                 end
             end);
 
-            if self.Settings.MasterLooting and self.Settings.RollMasterLoot then
+            if self.Settings.RollMasterLoot then
                 self:MasterLootItem(item, players[1], #players > 1);
             end
         elseif soleReserver and not self.RequestedRoll.Custom and next(self.RequestedRoll.Players) then
@@ -2132,7 +2135,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
                 end
             end);
 
-            if self.Settings.MasterLooting and self.Settings.RollMasterLoot then
+            if self.Settings.RollMasterLoot then
                 self:MasterLootItem(item, player);
             end
         end
@@ -2825,7 +2828,7 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
     if not name or not link then return; end
     local quality = select(3, GetItemInfo(item:GetID()))
 
-    if not self.Settings.MasterLooting or not self.Settings.RollMasterLoot then
+    if not self.Settings.RollMasterLoot then
         -- LootReserve:ShowError("Failed to masterloot %s to %s: masterlooting not enabled in LootReserve settings", link, LootReserve:ColoredPlayer(player));
         return;
     end

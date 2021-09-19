@@ -387,7 +387,7 @@
 									func = function() LootReserve.Server:AdvanceRollPhase(self:GetParent().Item); end,
 								};
 							end
-							if LootReserve.Server.Settings.MasterLooting and LootReserve:IsLootingItem(self:GetParent().Item) then
+							if LootReserve:IsLootingItem(self:GetParent().Item) then
 								table.insert(menu, #menu - 1, LootReserve:MakeMenuSeparator());
 								table.insert(menu, #menu - 1,
 								{
@@ -928,36 +928,33 @@
 							{ text = "Cancel" },
 						};
 
-						if LootReserve.Server.Settings.MasterLooting then
-							table.insert(menu, 6, LootReserve:MakeMenuSeparator());
-							local disableReason = (function()
-								if not IsMasterLooter() or GetLootMethod() ~= "master" then
-									return "Not master looter";
-								end
-								if not LootReserve:IsLootingItem(item) then
-									return "Item not in loot";
-								end
-								local name, link, quality = item:GetInfo();
-								if not name or not quality or GetLootThreshold() > quality then
-									return "Quality below threshold";
-								end
-							end)();
-							if disableReason then
-								table.insert(menu, 6,
-								{
-									text = format("Unavailable: %s", disableReason),
-									disabled = true,
-								});
+						table.insert(menu, 6, LootReserve:MakeMenuSeparator());
+						local warning = (function()
+							if not IsMasterLooter() or GetLootMethod() ~= "master" then
+								return "Not master looter";
 							end
+							if not LootReserve:IsLootingItem(item) then
+								return "Item not in loot";
+							end
+							local name, link, quality = item:GetInfo();
+							if not name or not quality or GetLootThreshold() > quality then
+								return "Quality below threshold";
+							end
+						end)();
+						if warning then
 							table.insert(menu, 6,
 							{
-								text = "Master Loot to Winner",
-								tooltipText = "Automatically masterloot the item away to the roll winner once they're announced.",
-								disabled = disableReason ~= nil,
-								checked = LootReserve.Server.Settings.RollMasterLoot,
-								func = function(_, _, _, checked) LootReserve.Server.Settings.RollMasterLoot = checked; end,
+								text = format("Warning: %s", warning),
+								disabled = true,
 							});
 						end
+						table.insert(menu, 6,
+						{
+							text = "Master Loot to Winner",
+							tooltipText = "Automatically masterloot the item away to the roll winner once they're announced.",
+							checked = LootReserve.Server.Settings.RollMasterLoot,
+							func = function(_, _, _, checked) LootReserve.Server.Settings.RollMasterLoot = checked; end,
+						});
 
 						LootReserve:OpenMenu(menu, self:GetParent().Menu, self);
 					</OnClick>
@@ -1538,7 +1535,6 @@
 								MakeMenuRadio(LootReserve.Constants.ReservesSortingText[LootReserve.Constants.ReservesSorting.BySource], "ReservesSorting", LootReserve.Constants.ReservesSorting.BySource, "Sort reserves by the order of the boss the item first drops from.", RefreshReservesSorting),
 								MakeMenuRadio(LootReserve.Constants.ReservesSortingText[LootReserve.Constants.ReservesSorting.ByLooter], "ReservesSorting", LootReserve.Constants.ReservesSorting.ByLooter, "Sort reserves by the name of one of the players that looted this item in the current session.|n|nFade out items not looted by anyone.|cFF808080 (applies only after some items have been looted in the raid)|r", RefreshReservesSorting),
 							} },
-							MakeMenuToggle("Highlight Previous Winners", "HighlightSameItemWinners", "Show an orange highlight for players who are currently rolling on an item, but have already won that item earlier during the session.|n|nThis disables the green highlight for highest rolling players, but the highest roll number will still be colored green.", function() LootReserve.Server:UpdateReserveList(); LootReserve.Server:UpdateRollList(); end),
 							MakeMenuToggle("Use Unit Frames", "UseUnitFrames", "Make player rows in Reserves and Rolls tabs behave like unit frames, allowing them to be right-clicked for context menu, have items be dropped on them to open trade etc.|n|nOnly works outside of combat.|n|nWhen enabled, this may prevent the server window from being closed and reopened while in combat via minimap button or |cFFFFFFFF/reserve server|r command.", ToggleUseUnitFrames),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Storage", isTitle = true },
@@ -1551,7 +1547,6 @@
 								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.Duplicate], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.Duplicate, "When a reserver wins a reserved item, remove all of the winner's reserves on that item.", RefreshWinnerReservesRemoval),
 								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.All], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.All, "When a reserver wins a reserved item, remove all of that player's reserves on every item.", RefreshWinnerReservesRemoval),
 							} },
-							MakeMenuToggle("Enable Master Looting", "MasterLooting", "Enable automatic loot distribution through master looting.|n|nYou can enable or disable master looting on a per-roll basis from under the \"Start Roll\" or \"End Roll\" menus.|r"),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
 						};
