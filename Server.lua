@@ -494,9 +494,12 @@ function LootReserve.Server:Load()
         self.RecentLoot[i] = LootReserve.Item(item);
     end
 
-    -- Expire session if more than 1 hour has passed since the player was last online
-    if self.CurrentSession and self.CurrentSession.LogoutTime and time() > self.CurrentSession.LogoutTime + 3600 then
+    -- Expire session and end roll if more than 6 hours has passed since the player was last online
+    if self.CurrentSession and self.CurrentSession.LogoutTime and time() > self.CurrentSession.LogoutTime + 6*60*60 then
         self.CurrentSession = nil;
+        if self.RequestedRoll then
+            self:CancelRollRequest(self.RequestedRoll.Item);
+        end
     end
 
     -- Verify that all the required fields are present in the session
