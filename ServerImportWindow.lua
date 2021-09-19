@@ -379,7 +379,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                     itemReserveCountByPlayer[player][itemID] = (itemReserveCountByPlayer[player][itemID] or 0) + 1;
                     local conditions = LootReserve.Server:GetNewSessionItemConditions()[itemID];
                     local class = select(3, UnitClass(player)) or row.Class;
-                    member.Class = class;
+                    member.Class = member.Class or class;
                     local className, raceName = class and select(2, LootReserve:GetClassInfo(class)), LootReserve:UnitRace(LootReserve:Player(player));
                     if itemID == 0 then
                         member.InvalidReasons[#member.ReservedItems] = "Item with the name \"" .. itemName .. "\" was not be found|nor it can't be reserved due to session settings.";
