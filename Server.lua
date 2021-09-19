@@ -415,8 +415,8 @@ function LootReserve.Server:Load()
 
     -- 2021-06-17: Upgrade roll history to support multiple rolls from the same player
     if versionSave < "2021-06-17" then
-        for _, rollTable in ipairs{self.RollHistory, self.RequestedRoll} do
-            for _, roll in ipairs(rollTable) do
+        for _, rollTable in ipairs({self.RollHistory, {self.RequestedRoll}}) do
+            for _, roll in ipairs(rollTable or { }) do
                 local needsUpgrade = false;
                 for player, rolls in pairs(roll.Players) do
                     if type(rolls) == "number" then
@@ -459,6 +459,7 @@ function LootReserve.Server:Load()
     
     -- 2021-09-19: Add self.CurrentSession.Members[player].ReservesDelta and update self.CurrentSession.Settings.MultiReserve
     -- 2021-09-19: Prune deprecated settings
+    -- 2021-09-19: Prune old chat history
     if versionSave < "2021-09-19" then
         if self.CurrentSession then
             for _, member in pairs(self.CurrentSession.Members) do
@@ -468,10 +469,21 @@ function LootReserve.Server:Load()
                 self.CurrentSession.Settings.MultiReserve = 1;
             end
         end
+        
         self.Settings.ChatThrottle             = nil;
         self.Settings.KeepUnlootedRecentLoot   = nil;
         self.Settings.MasterLooting            = nil;
         self.Settings.HighlightSameItemWinners = nil;
+        
+        for _, rollTable in ipairs({self.RollHistory, {self.RequestedRoll}}) do
+            for _, entry in ipairs(rollTable or { }) do
+                for player, lines in pairs(entry.Chat or { }) do
+                    for i = #lines, LootReserve.Constants.MAX_CHAT_STORAGE + 1, -1 do
+                        lines[i] = nil;
+                    end
+                end
+            end
+        end
     end
     
     -- Create Item objects
