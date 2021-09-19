@@ -323,18 +323,32 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
             end
         end
 
-        local simplifiedRaidNames = nil;
+        local simplifiedRaidNames        = nil;
+        local simplifiedRaidNamesByClass = nil;
         if self.MatchNames then
-            simplifiedRaidNames = { };
+            simplifiedRaidNames        = { };
+            simplifiedRaidNamesByClass = { };
             LootReserve:ForEachRaider(function(name)
                 local simplified = LootReserve:SimplifyName(name);
-                local existing = simplifiedRaidNames[simplified];
+                local class      = select(3, LootReserve:UnitClass(name));
+                local existing   = simplifiedRaidNames[simplified];
+                if not simplifiedRaidNamesByClass[class] then
+                    simplifiedRaidNamesByClass[class] = { };
+                end
+                local existingByClass = simplifiedRaidNamesByClass[class][simplified];
                 if not existing then
                     simplifiedRaidNames[simplified] = name;
                 elseif type(existing) == "string" then
                     simplifiedRaidNames[simplified] = 2;
                 elseif type(existing) == "number" then
                     simplifiedRaidNames[simplified] = existing + 1;
+                end
+                if not existingByClass then
+                    simplifiedRaidNamesByClass[class][simplified] = name;
+                elseif type(existingByClass) == "string" then
+                    simplifiedRaidNamesByClass[class][simplified] = 2;
+                elseif type(existingByClass) == "number" then
+                    simplifiedRaidNamesByClass[class][simplified] = existingByClass + 1;
                 end
             end);
         end
@@ -440,13 +454,24 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 if player and #player > 0 then
                     player = LootReserve:Player(LootReserve:NormalizeName(player));
                     if self.MatchNames and LootReserve:IsPlayerOnline(player) == nil then
-                        local simplified = simplifiedRaidNames[LootReserve:SimplifyName(player)];
-                        if not simplified then
-                            nameMatchResult = "not in raid";
-                        elseif type(simplified) == "string" then
-                            player = simplified;
-                        elseif type(simplified) == "number" then
-                            nameMatchResult = "ambiguous name";
+                        if row.Class then
+                            local simplified = simplifiedRaidNamesByClass[row.Class] and simplifiedRaidNamesByClass[row.Class][LootReserve:SimplifyName(player)];
+                            if not simplified then
+                                nameMatchResult = "not in raid";
+                            elseif type(simplified) == "string" then
+                                player = simplified;
+                            elseif type(simplified) == "number" then
+                                nameMatchResult = "ambiguous name";
+                            end
+                        else
+                            local simplified = simplifiedRaidNames[LootReserve:SimplifyName(player)];
+                            if not simplified then
+                                nameMatchResult = "not in raid";
+                            elseif type(simplified) == "string" then
+                                player = simplified;
+                            elseif type(simplified) == "number" then
+                                nameMatchResult = "ambiguous name";
+                            end
                         end
                     end
                     for itemID, itemCount in pairs(row.ItemIDs) do
