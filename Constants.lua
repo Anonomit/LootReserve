@@ -4,6 +4,7 @@ LootReserve.Constants =
     MAX_RESERVES          = 99,
     MAX_MULTIRESERVES     = 99,
     MAX_RESERVES_PER_ITEM = 99,
+    MAX_CHAT_STORAGE      = 25,
     
     OptResult =
     {
