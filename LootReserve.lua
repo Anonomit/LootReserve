@@ -465,6 +465,21 @@ function LootReserve:UnitRace(player)
     end);
 end
 
+function LootReserve:UnitSex(player)
+    if not self:IsCrossRealm() then
+        return UnitSex(player);
+    end
+
+    return self:ForEachRaider(function(name)
+        if self:IsSamePlayer(name, player) then
+            local unitID = self:GetGroupUnitID(player);
+            if unitID then
+                return UnitSex(unitID);
+            end
+        end
+    end);
+end
+
 local function GetPlayerClassColor(player, dim, class)
     local className, classFilename, classId = LootReserve:UnitClass(player);
     if class then

@@ -1890,7 +1890,7 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
     end
 
     if self.CurrentSession.Settings.ChatFallback then
-        -- Announce()
+        -- Announce
         LootReserve:RunWhenItemCached(itemID, function()
             local list = { };
 
@@ -2097,6 +2097,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             for _, player in ipairs(players) do
                 RecordRollWinner(player, item, recordPhase);
             end
+            LootReserve.Comm:BroadcastWinner(item, players, roll, self.RequestedRoll.Custom, recordPhase, raidroll);
 
             LootReserve:RunWhenItemCached(item:GetID(), function()
                 local name, link = item:GetInfo();
@@ -2124,7 +2125,10 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             local player = next(self.RequestedRoll.Players);
             players = { player };
             RecordRollWinner(player, item, LootReserve.Constants.WonRollPhase.Reserve);
-
+            
+            -- Send packets
+            LootReserve.Comm:SendWinner(player, item, players);
+            
             -- Announce
             LootReserve:RunWhenItemCached(item:GetID(), function()
                 local name, link, quality = item:GetInfo();
@@ -2219,22 +2223,24 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
         end
         
         -- Remove winners' reserves
-        for player in pairs(uniqueWinners) do
-            if self.CurrentSession.ItemReserves[item:GetID()] and LootReserve:Contains(self.CurrentSession.ItemReserves[item:GetID()].Players, player) then
-                if self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Single then
-                    self:CancelReserve(player, item:GetID(), 1, false, true, true);
-                    self:IncrementReservesDelta(player, -1);
-                elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Duplicate then
-                    local count = 0;
-                    for i, itemID in ipairs(self.CurrentSession.Members[player].ReservedItems) do
-                        if itemID == item:GetID() then
-                            count = count + 1;
+        if self.CurrentSession and not self.RequestedRoll.Custom then
+            for player in pairs(uniqueWinners) do
+                if self.CurrentSession.ItemReserves[item:GetID()] and LootReserve:Contains(self.CurrentSession.ItemReserves[item:GetID()].Players, player) then
+                    if self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Single then
+                        self:CancelReserve(player, item:GetID(), 1, false, true, true);
+                        self:IncrementReservesDelta(player, -1);
+                    elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Duplicate then
+                        local count = 0;
+                        for i, itemID in ipairs(self.CurrentSession.Members[player].ReservedItems) do
+                            if itemID == item:GetID() then
+                                count = count + 1;
+                            end
                         end
+                        self:CancelReserve(player, item:GetID(), count, false, true, true);
+                        self:IncrementReservesDelta(player, 0 - count);
+                    elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.All then
+                        self:IncrementReservesDelta(player, 0 - self.CurrentSession.Members[player].ReservesLeft - #self.CurrentSession.Members[player].ReservedItems, true);
                     end
-                    self:CancelReserve(player, item:GetID(), count, false, true, true);
-                    self:IncrementReservesDelta(player, 0 - count);
-                elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.All then
-                    self:IncrementReservesDelta(player, 0 - self.CurrentSession.Members[player].ReservesLeft - #self.CurrentSession.Members[player].ReservedItems, true);
                 end
             end
         end

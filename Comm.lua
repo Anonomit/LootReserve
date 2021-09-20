@@ -28,6 +28,7 @@ local Opcodes =
     OptIn                     = 16,
     OptResult                 = 17,
     OptInfo                   = 18,
+    SendWinner                = 19,
 };
 
 local LAST_UNCOMPRESSED_OPCODE = Opcodes.Hello;
@@ -688,4 +689,53 @@ LootReserve.Comm.Handlers[Opcodes.DeletedRoll] = function(sender, item, roll, ph
             return true;
         end
     end);
+end
+
+
+-- SendWinner
+function LootReserve.Comm:BroadcastWinner(...)
+    LootReserve.Comm:SendWinner(nil, ...);
+end
+function LootReserve.Comm:SendWinner(target, item, players, roll, custom, phase, raidRoll)
+    LootReserve.Comm:Send(target, Opcodes.SendWinner,
+        strjoin(",", item:unpack()),
+        strjoin(",", unpack(players)),
+        roll or "",
+        custom == true,
+        phase or "",
+        raidRoll == true);
+end
+LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, players, roll, custom, phase, raidRoll)
+    item     = LootReserve.Item(strsplit(",", item));
+    roll     = tonumber(roll);
+    custom   = tonumber(custom) == 1;
+    phase    = phase and #phase > 0 and phase or nil;
+    raidRoll = tonumber(raidRoll) == 1;
+
+    if LootReserve.Client.SessionServer == sender or custom then
+        if #players > 0 then
+            players = { strsplit(",", players) };
+        else
+            players = { };
+        end
+        if LootReserve:Contains(players, LootReserve:Me()) then
+            LootReserve:RunWhenItemCached(item:GetID(), function()
+                local name, link = item:GetInfo();
+                if name and link then
+                    local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
+                    if race and sex and LootReserve.Constants.Sounds.Cheer[race] and LootReserve.Constants.Sounds.Cheer[race][sex] then
+                        PlaySound(LootReserve.Constants.Sounds.Cheer[race][sex]);
+                    end
+                    LootReserve:PrintMessage("Congratulations! %s has awarded you %s%s%s",
+                        LootReserve:ColoredPlayer(sender),
+                        item:GetLink(),
+                        raidRoll and " via raid-roll" or custom and phase and format(" for %s", phase) or "",
+                        roll and not raidRoll and format(" with a roll of %d", roll) or ""
+                    );
+                else
+                    return true;
+                end
+            end);
+        end
+    end
 end
