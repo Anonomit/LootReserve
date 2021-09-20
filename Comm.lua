@@ -723,9 +723,12 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, players, 
                 local name, link = item:GetInfo();
                 if name and link then
                     local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
-                    if race and sex and LootReserve.Constants.Sounds.Cheer[race] and LootReserve.Constants.Sounds.Cheer[race][sex] then
-                        PlaySound(LootReserve.Constants.Sounds.Cheer[race][sex]);
+                    local soundTable = custom and LootReserve.Constants.Sounds.Cheer or LootReserve.Constants.Sounds.Congratulate;
+                    if race and sex and soundTable[race] and soundTable[race][sex] then
+                        PlaySound(soundTable[race][sex]);
                     end
+                    PlaySound(LootReserve.Constants.Sounds.LevelUp);
+                    
                     LootReserve:PrintMessage("Congratulations! %s has awarded you %s%s%s",
                         LootReserve:ColoredPlayer(sender),
                         item:GetLink(),
