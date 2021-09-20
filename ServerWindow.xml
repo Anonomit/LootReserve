@@ -1831,7 +1831,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								self:SetMinMaxValues(1, LootReserve.Constants.MAX_RESERVES);
+								self:SetMinMaxValues(0, LootReserve.Constants.MAX_RESERVES);
 								self:SetJustifyH("CENTER");
 								self.IncrementButton:SetWidth(25);
 								self.IncrementButton:SetHeight(25);
@@ -1849,8 +1849,8 @@
 							<OnTextChanged inherit="prepend">
 								local count = tonumber(self:GetText());
 								if count then
-									if count &lt;= 0 then
-									  count = 1;
+									if count &lt; 0 then
+									  count = 0;
 									elseif count > LootReserve.Constants.MAX_RESERVES then
 									  count = LootReserve.Constants.MAX_RESERVES;
 									end
