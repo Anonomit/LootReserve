@@ -1698,7 +1698,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
     count = math.max(1, count or 1);
 
     local function Failure(result, reservesLeft, postText, ...)
-        LootReserve.Comm:SendCancelReserveResult(player, itemID, result, reservesLeft);
+        LootReserve.Comm:SendCancelReserveResult(player, itemID, result, reservesLeft, count);
         if chat then
             local text = LootReserve.Constants.CancelReserveResultText[result] or "";
             if postText then
@@ -1767,7 +1767,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
 
     -- Send packets
     LootReserve.Comm:SendOptInfo(player, member.OptedOut);
-    LootReserve.Comm:SendCancelReserveResult(player, itemID, forced and LootReserve.Constants.CancelReserveResult.Forced or LootReserve.Constants.CancelReserveResult.OK, member.ReservesLeft, winner);
+    LootReserve.Comm:SendCancelReserveResult(player, itemID, forced and LootReserve.Constants.CancelReserveResult.Forced or LootReserve.Constants.CancelReserveResult.OK, member.ReservesLeft, count, winner);
     if self.CurrentSession.Settings.Blind then
         local _, myReserves = LootReserve:GetReservesData(reserve.Players, player);
         LootReserve.Comm:SendReserveInfo(player, itemID, LootReserve:RepeatedTable(player, myReserves));
@@ -1792,12 +1792,6 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
                 end
 
                 if winner then
-                    LootReserve:PrintMessage(format("%s'%s reserve for %s%s has been automatically removed.",
-                        LootReserve:ColoredPlayer(player),
-                        player:match(".$") == "s" and "" or "s",
-                        link,
-                        count > 1 and format(" x%d", count) or ""
-                    ));
                     LootReserve:SendChatMessage(format("Your reserve for %s%s has been automatically removed.", link, count > 1 and format(" x%d", count) or ""), "WHISPER", player);
                 else
                     LootReserve:SendChatMessage(format(forced and "Your reserve for %s%s has been removed. %d more %s available.%s" or "You cancelled your reserve for %s%s. %d more %s available.%s",
@@ -1834,6 +1828,21 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
                 end
             end);
         end
+    end
+    
+    if winner then
+        LootReserve:RunWhenItemCached(itemID, function()
+            local name, link = GetItemInfo(itemID);
+            if not name or not link then
+                return true;
+            end
+            LootReserve:PrintMessage(format("%s'%s reserve for %s%s has been automatically removed.",
+                LootReserve:ColoredPlayer(player),
+                player:match(".$") == "s" and "" or "s",
+                link,
+                count > 1 and format(" x%d", count) or ""
+            ));
+        end);
     end
 
     -- Remove member info if player no longer has any reserves left and isn't in the group anymore
@@ -2068,25 +2077,6 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             self.CurrentSession.WonItems[item:GetID()] = itemWinners;
             table.insert(itemWinners.Players, player);
             itemWinners.TotalCount = itemWinners.TotalCount + 1;
-            
-            -- Remove winner's reserves
-            if self.CurrentSession.ItemReserves[item:GetID()] and LootReserve:Contains(self.CurrentSession.ItemReserves[item:GetID()].Players, player) then
-                if self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Single then
-                    self:CancelReserve(player, item:GetID(), 1, false, true, true);
-                    self:IncrementReservesDelta(player, -1);
-                elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Duplicate then
-                    local count = 0;
-                    for i, itemID in ipairs(member.ReservedItems) do
-                        if itemID == item:GetID() then
-                            count = count + 1;
-                        end
-                    end
-                    self:CancelReserve(player, item:GetID(), count, false, true, true);
-                    self:IncrementReservesDelta(player, 0 - count);
-                elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.All then
-                    self:IncrementReservesDelta(player, 0 - member.ReservesLeft - #member.ReservedItems, true);
-                end
-            end
         end
     end
 
@@ -2197,10 +2187,12 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
             end
         end
 
+        local uniqueWinners = { };
         if winners then
             self.RequestedRoll.Winners = { };
             for _, winner in ipairs(winners) do
                 table.insert(self.RequestedRoll.Winners, winner);
+                uniqueWinners[winner] = true;
             end
         end
 
@@ -2222,7 +2214,28 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                 end
             end
             if winners then
-                LootReserve:PrintMessage(format("%s won by: %s", self.RequestedRoll.Item:GetLink(), LootReserve:FormatPlayersTextColored(self.RequestedRoll.Winners)));
+                -- LootReserve:PrintMessage(format("%s won by: %s", self.RequestedRoll.Item:GetLink(), LootReserve:FormatPlayersTextColored(self.RequestedRoll.Winners)));
+            end
+        end
+        
+        -- Remove winners' reserves
+        for player in pairs(uniqueWinners) do
+            if self.CurrentSession.ItemReserves[item:GetID()] and LootReserve:Contains(self.CurrentSession.ItemReserves[item:GetID()].Players, player) then
+                if self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Single then
+                    self:CancelReserve(player, item:GetID(), 1, false, true, true);
+                    self:IncrementReservesDelta(player, -1);
+                elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Duplicate then
+                    local count = 0;
+                    for i, itemID in ipairs(self.CurrentSession.Members[player].ReservedItems) do
+                        if itemID == item:GetID() then
+                            count = count + 1;
+                        end
+                    end
+                    self:CancelReserve(player, item:GetID(), count, false, true, true);
+                    self:IncrementReservesDelta(player, 0 - count);
+                elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.All then
+                    self:IncrementReservesDelta(player, 0 - self.CurrentSession.Members[player].ReservesLeft - #self.CurrentSession.Members[player].ReservedItems, true);
+                end
             end
         end
 

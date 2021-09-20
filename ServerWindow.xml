@@ -857,7 +857,7 @@
 									end
 								end
 								if #winners > 0 then
-									StaticPopup_Show("LOOTRESERVE_CONFIRM_ROLL_RESERVED_ITEM_AGAIN", link, format("%s:|n%s", #winners == 1 and "a reserver" or format("%d reservers", #winners), LootReserve:FormatReservesTextColored(winners)), {Item = item});
+									StaticPopup_Show("LOOTRESERVE_CONFIRM_ROLL_RESERVED_ITEM_AGAIN", link, format("%s:|n%s", #winners == 1 and "a reserver" or format("%d reservers", #winners), LootReserve:FormatReservesTextColored(winners)), {Frame = self:GetParent(), Item = item});
 								else
 									StartRoll(...);
 								end
