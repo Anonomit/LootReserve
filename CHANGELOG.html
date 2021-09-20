@@ -1,3 +1,28 @@
+<h2>2021-09-20</h2>
+<p>&nbsp;</p>
+<p><strong>Server</strong></p>
+<ul>
+<li>Reserve count can be modified for individual players. Available reserves can be increased or decreased in the Players window.</li>
+<li>New config option to remove a winner's reserves when they win a reserved item. This can be configured to remove one reserve, all of the winner's reserves on that item, or all of the winner's reserves on every item.</li>
+<li>Import now accepts more formats. It is possible to have multiple players or items on the same row.</li>
+<li>Import now understands player classes, and will restrict reserves by class even if the player is missing. Name matching will use the imported class to help guess which player is which.</li>
+<li>Chat fallback now supports multiple reserves at once. For example: !res [ItemLink1] 2x[ItemLink2] [ItemLink3] x 3 [ItemLink4] 4</li>
+<li>Recent Loot dropdown shows an icon on reserved items.</li>
+<li>Rolls will be ended if the player is logged out for 6 hours. Session timeout increased from 1 hour to 6 hours.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Your character now cheers or congratulates you when you win an item. Only you can hear it, and there's no message in chat.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Better version checking. It should no longer require a UI reload or group rejoin to discover other addon versions in the group.</li>
+<li>Roll history should no longer clear itself unexpectedly.</li>
+<li>Chat history storage is now capped at a reasonable limit. This will apply retroactively, meaning that if a player were to accidentally leave a roll active for a long time, the addon will purge the excessive chat history. Not that anyone would do that, of course. (Current record: roll ended after accruing chat history for 265 days)</li>
+</ul>
+<p>&nbsp;</p>
 <h2>2021-09-11</h2>
 <p>&nbsp;MANDATORY UPDATE</p>
 <p>&nbsp;</p>

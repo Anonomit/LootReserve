@@ -457,10 +457,10 @@ function LootReserve.Server:Load()
         end
     end
     
-    -- 2021-09-19: Add self.CurrentSession.Members[player].ReservesDelta and update self.CurrentSession.Settings.MultiReserve
-    -- 2021-09-19: Prune deprecated settings
-    -- 2021-09-19: Prune old chat history
-    if versionSave < "2021-09-19" then
+    -- 2021-09-20: Add self.CurrentSession.Members[player].ReservesDelta and update self.CurrentSession.Settings.MultiReserve
+    -- 2021-09-20: Prune deprecated settings
+    -- 2021-09-20: Prune old chat history
+    if versionSave < "2021-09-20" then
         if self.CurrentSession then
             for _, member in pairs(self.CurrentSession.Members) do
                 member.ReservesDelta = member.ReservesDelta or 0;
