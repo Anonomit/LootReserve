@@ -144,7 +144,7 @@ LootReserve.Constants =
         ["Wands"]             = "Wand",
     },
     Sounds = {
-        LevelUp = 124,
+        LevelUp = 1440,
         Cheer = {
             [1]  = {[2] = 2677, [3] = 2689},
             [2]  = {[2] = 2701, [3] = 2713},
