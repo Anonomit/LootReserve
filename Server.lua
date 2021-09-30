@@ -2911,7 +2911,7 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
                 if MasterLooterFrame and MasterLooterFrame:IsShown() then
                    MasterLooterFrame:Hide(); 
                 end
-                LootReserve:ShowError("Failed to masterloot %s to %s: Player is not a masterloot candidate for this item", link, LootReserve:ColoredPlayer(pending.Player));
+                LootReserve:ShowError("Failed to masterloot %s to %s: Player is not a masterloot candidate for this item", pending.Link, LootReserve:ColoredPlayer(pending.Player));
             end
         end);
     end
@@ -2925,6 +2925,7 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
     self.PendingMasterLoot =
     {
         Item      = item,
+        Link      = link,
         ItemIndex = itemIndex,
         Player    = player,
         Timeout   = time() + 5,
