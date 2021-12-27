@@ -882,7 +882,7 @@ function LootReserve.Server:PrepareSession()
 
             text = text:lower();
             text = LootReserve:StringTrim(text);
-            if text == "!reserves" then
+            if text:find("^%s*!reserves") then
                 if self.Settings.ChatReservesList then
                     self:SendReservesList(sender);
                 end
