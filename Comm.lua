@@ -554,7 +554,7 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, player
             LootReserve.Client:FlashCategory("Reserves", "my", wasReserver == isReserver and not isViewingMyReserves);
         end
         if wasReserver and isReserver and myOldReserves == myNewReserves then
-            PlaySound(SOUNDKIT.ALARM_CLOCK_WARNING_3);
+            PlaySound(oldRolls < newRolls and SOUNDKIT.ALARM_CLOCK_WARNING_3 or SOUNDKIT.ALARM_CLOCK_WARNING_2);
             LootReserve:RunWhenItemCached(itemID, function()
                 local name, link = GetItemInfo(itemID);
                 if name and link then
