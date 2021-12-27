@@ -139,12 +139,31 @@
 					</Layer>
 				</Layers>
 				<Scripts>
+					<OnLoad>
+						local function OnEvent(self, event, button, pressed)
+							if event == "MODIFIER_STATE_CHANGED" then
+								if self.isOnEnter then
+									if button == "LSHIFT" or button == "RSHIFT" then
+										if pressed == 1 then
+											GameTooltip_ShowCompareItem(GameTooltip)
+										else
+											ShoppingTooltip1:Hide()
+											ShoppingTooltip2:Hide()
+										end
+									end
+								end
+							end
+						end
+						self:SetScript("OnEvent", OnEvent)
+						self:RegisterEvent("MODIFIER_STATE_CHANGED")
+					</OnLoad>
 					<OnClick>
 						if button == "LeftButton" then
 							HandleModifiedItemClick(self:GetParent():GetParent().Link);
 						end
 					</OnClick>
 					<OnEnter>
+						self.isOnEnter = true
 						if self:GetParent().tooltipRight then
 							GameTooltip:SetOwner(self, "ANCHOR_NONE");
 							GameTooltip:ClearAllPoints();
@@ -154,8 +173,14 @@
 						end
 						GameTooltip:SetHyperlink(LootReserve.Item(self:GetParent():GetParent().Item):GetString());
 						GameTooltip:Show();
+						if IsShiftKeyDown() then
+							GameTooltip_ShowCompareItem(GameTooltip)
+						end
 					</OnEnter>
-					<OnLeave function="GameTooltip_Hide" />
+					<OnLeave>
+						self.isOnEnter = nil
+						GameTooltip_Hide()
+					</OnLeave>
 				</Scripts>
 			</Button>
 			<Frame parentKey="IconGlow">
