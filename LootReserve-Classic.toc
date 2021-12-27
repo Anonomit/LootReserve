@@ -1,7 +1,7 @@
 ## Interface: 11401
 ## Title: LootReserve
 ## Notes: Soft reserves management addon
-## Version: 2021-09-20
+## Version: 2021-12-27
 ## X-Min-Allowed-Version: 2021-09-11
 ## Author: Damage-Incendius|nOriginal addon by Tagar-NethergardeKeep
 ## SavedVariables: LootReserveGlobalSave

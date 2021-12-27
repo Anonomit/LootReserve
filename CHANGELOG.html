@@ -1,3 +1,37 @@
+<h2>2021-12-27</h2>
+<p>&nbsp;FILE CHANGES. UPDATING REQUIRES GAME RESTART</p>
+<p>&nbsp;</p>
+<p><strong>Server</strong></p>
+<ul>
+<li>Items in combined raids may now be hidden.</li>
+<li>Custom items will now appear in combined raids.</li>
+<li>Changed "help message" shown when attempting to edit combined raids. It should be more clear that this can be done by inheriting loot from individual raids.</li>
+<li>Import/Export now supports modified reserves count.</li>
+<li>Placing an item in the Rolls tab will show the number of reserving players instead of the total number of reserves.</li>
+<li>Minimum reserve count lowered to 0.</li>
+<li>Improved detection of "!reserves" chat message.</li>
+<li>Rephrased "Not tradeable" -> "Cannot distribute".</li>
+<li>Players window default width increased.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Item shift comparison has been added everywhere. Hold shift to compare with equipped items.</li>
+<li>Levelup sound which plays when an item is won will now be quieter. Character will still cheer/congratulate at the same volume.</li>
+<li>When someone <i>removes</i> a reserve from an item you have reserved, the notification sound is slightly different. It is now possible to distinguish audibly whether your reserved item has become more or less popular.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Classic Era (including Season of Mastery) should now actually work! Testing was brief since I do not play this version of the game.</li>
+<li>Fixed icon glow in Rolls tab affecting the wrong icons sometimes. This change reintroduces a bug where the glow sometimes looks very odd. It seems to be a problem with the glow library. I've removed my workaround since I've decided that this visual bug is the lesser of the two.</li>
+<li>Server should be better at remembering "significant" players between groups (including logout). Players are considered insignificant if they have placed no reserves, have not had their reserves limit adjusted, are not opted out, and have not won any rolls.</li>
+<li>Fixed error which could happen when importing reserves with players missing from the group.</li>
+<li>Fixed incorrect error shown when failing to masterloot an item. Probably. It's hard to reproduce this since Blizzard has raised minimum loot threshold.</li>
+<li>A player passing on a reserved item should now correctly cause a whisper to be sent to the reserver.</li>
+<li>Fixed a rare error which happened when an uncached item was reserved.</li>
+</ul>
+<p>&nbsp;</p>
 <h2>2021-09-20</h2>
 <p>&nbsp;</p>
 <p><strong>Server</strong></p>
