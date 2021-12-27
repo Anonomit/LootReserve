@@ -506,24 +506,24 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 local winner = frame.Roll.Winners[1];
                 if LootReserve:IsLootingItem(item) then
                     if LibCustomGlow then
-                        C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow) end);
+                        LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow)
                     end
                 elseif LootReserve:GetTradeableItemCount(item) > 0 and TradeFrame:IsShown() and LootReserve:Player(UnitName("npc")) == winner and not LootReserve:IsItemBeingTraded(item) then
                     if LibCustomGlow then
-                        C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow) end);
+                        LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow)
                     end
                 elseif LootReserve:GetTradeableItemCount(item) > 0 and not TradeFrame:IsShown() and winner ~= LootReserve:Me() then
                     if LibCustomGlow then
-                        C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow) end);
+                        LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow)
                     end
                 else
                     if LibCustomGlow then
-                        C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Stop(frame.ItemFrame.IconGlow) end);
+                        LibCustomGlow.ButtonGlow_Stop(frame.ItemFrame.IconGlow)
                     end
                 end
             else
                 if LibCustomGlow then
-                    C_Timer.After(0, function() LibCustomGlow.ButtonGlow_Stop(frame.ItemFrame.IconGlow) end);
+                    LibCustomGlow.ButtonGlow_Stop(frame.ItemFrame.IconGlow)
                 end
             end
 
