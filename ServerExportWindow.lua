@@ -2,13 +2,15 @@ function LootReserve.Server.Export:UpdateExportText()
     local members = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members or LootReserve.Server.NewSessionSettings.ImportedMembers;
     local text = "";
     if members and next(members) then
-        text = text .. "Player,Item,Delta";
+        local maxItems = 0
         for player, member in LootReserve:Ordered(members, function(aMember, bMember, aPlayer, bPlayer) return aPlayer < bPlayer; end) do
-            for _, itemID in ipairs(member.ReservedItems) do
-                text = text .. format("\n%s,%d", player, itemID);
+            text = text .. format("\n%s,%d", player, member.ReservesDelta);
+            for i, itemID in ipairs(member.ReservedItems) do
+                text = text .. format(",%d", itemID);
+                maxItems = i > maxItems and i or maxItems;
             end
-            text = text .. format(",%d", member.ReservesDelta);
         end
+        text = format("Player,Delta%s", string.rep(",Item", maxItems)) .. text;
     end
     self.Window.Output.Scroll.EditBox:SetText(text);
     self.Window.Output.Scroll.EditBox:SetFocus();
