@@ -292,6 +292,7 @@ function LootReserve.ItemConditions:TestPlayer(player, itemID, server)
         -- Show all items until connected to a server
         return true;
     end
+    local playerClass, playerClassID = select(2, LootReserve:UnitClass(player))
 
     local conditions = self:Get(itemID, server);
     local equip
@@ -303,10 +304,10 @@ function LootReserve.ItemConditions:TestPlayer(player, itemID, server)
     if conditions and conditions.Hidden then
         return false, LootReserve.Constants.ReserveResult.ItemNotReservable;
     end
-    if conditions and conditions.ClassMask and not self:TestClassMask(conditions.ClassMask, select(3, LootReserve:UnitClass(player))) then
+    if conditions and conditions.ClassMask and playerClass and not self:TestClassMask(conditions.ClassMask, playerClassID) then
         return false, LootReserve.Constants.ReserveResult.FailedClass;
     end
-    if equip and not self:IsItemUsable(itemID, select(2, LootReserve:UnitClass(player)), LootReserve:UnitRace(player)) then
+    if equip and playerClass and not self:IsItemUsable(itemID, playerClass, LootReserve:UnitRace(player)) then
         return false, LootReserve.Constants.ReserveResult.FailedUsable;
     end
     if conditions and conditions.Faction and not self:TestFaction(conditions.Faction) then
