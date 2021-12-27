@@ -409,9 +409,9 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                     elseif conditions and conditions.Limit and itemReserveCount[itemID] > conditions.Limit then
                         member.InvalidReasons[#member.ReservedItems] = "This item has hit the limit of how many times it can be reserved.|nEdit the raid loot to increase or remove the limit on this item, or it will not be imported.";
                     elseif #member.ReservedItems > LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer + (member.ReservesDelta or 0) then
-                        member.InvalidReasons[#member.ReservedItems] = "Player has more reserved items than allowed by the session settings.|nIncrease the number of allowed reserves, or this item will not be imported.";
+                        member.InvalidReasons[#member.ReservedItems] = "Player has more reserved items than allowed.|nIncrease the number of allowed reserves, or this item will not be imported.";
                     elseif itemReserveCountByPlayer[player][itemID] > LootReserve.Server.NewSessionSettings.Multireserve then
-                        member.InvalidReasons[#member.ReservedItems] = "Player has reserved this item more times than allowed by the session settings.|nIncrease the number of allowed multireserves, or this item will not be imported.";
+                        member.InvalidReasons[#member.ReservedItems] = "Player has reserved this item more times than allowed.|nIncrease the number of allowed multireserves, or this item will not be imported.";
                     end
                 end
             end
