@@ -743,7 +743,7 @@ function LootReserve.Server:UpdateGroupMembers()
         -- Remove member info for players who left with no reserves
         local leavers = { };
         for player, member in pairs(self.CurrentSession.Members) do
-            if not LootReserve:UnitInGroup(player) and #member.ReservedItems == 0 then
+            if not LootReserve:UnitInGroup(player) and #member.ReservedItems == 0 and member.ReservesDelta == 0 then
                 table.insert(leavers, player);
 
                 -- for i = #member.ReservedItems, 1, -1 do
