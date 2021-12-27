@@ -534,8 +534,10 @@ function LootReserve.Server:UpdateRollList(lockdown)
             else
                 local reservers = 0;
                 if LootReserve.Server.CurrentSession then
-                    local reserve = LootReserve.Server.CurrentSession.ItemReserves[item:GetID()];
-                    reservers = reserve and #reserve.Players or 0;
+                    if self.CurrentSession.ItemReserves[item:GetID()] then
+                        local _, _, uniquePlayers = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[item:GetID()].Players);
+                        reservers = uniquePlayers;
+                    end
                 end
                 frame.ItemFrame.Misc:SetText(reservers > 0 and format("Reserved by %d |4player:players;", reservers) or "Not reserved");
             end

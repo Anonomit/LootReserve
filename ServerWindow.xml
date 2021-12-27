@@ -1258,8 +1258,10 @@
 
 						local reservers = 0;
 						if LootReserve.Server.CurrentSession then
-							local reserve = LootReserve.Server.CurrentSession.ItemReserves[item:GetID()];
-							reservers = reserve and #reserve.Players or 0;
+							if LootReserve.Server.CurrentSession.ItemReserves[item:GetID()] then
+								local _, _, uniquePlayers = LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[item:GetID()].Players);
+								reservers = uniquePlayers;
+							end
 						end
 
 						self.ItemFrame.Icon:SetTexture(texture);
