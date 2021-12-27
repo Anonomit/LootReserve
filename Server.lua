@@ -1890,8 +1890,8 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
     end
 
     if self.CurrentSession.Settings.ChatFallback then
-        -- Announce
-        LootReserve:RunWhenItemCached(itemID, function()
+        -- whisper player
+        local function WhisperPlayer()
             local list = { };
 
             local function sortByItemName(_, _, aItem, bItem)
@@ -1902,16 +1902,22 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
                 return aName < bName;
             end
 
+            local uncached = false
             for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sortByItemName) do
                 local name, link = GetItemInfo(itemID);
                 if not name or not link then
-                    return true;
+                    uncached = true;
+                else
+                    local reservesText = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players);
+                    local _, myReserves = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players, player);
+                    if not onlyRelevant or myReserves > 0 then
+                        table.insert(list, format("%s: %s", link, reservesText));
+                    end
                 end
-                local reservesText = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players);
-                local _, myReserves = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players, player);
-                if not onlyRelevant or myReserves > 0 then
-                    table.insert(list, format("%s: %s", link, reservesText));
-                end
+            end
+            if uncached then
+                C_Timer.After(0.25, WhisperPlayer);
+                return;
             end
 
             if #list > 0 then
@@ -1923,7 +1929,8 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
                 LootReserve:SendChatMessage(onlyRelevant and "You currently have no reserves. To reserve an item, whisper me:  !reserve ItemLinkOrName" or "There are currently no reserves", player and "WHISPER" or self:GetChatChannel(), player);
             end
             self:SendSupportString(player);
-        end);
+        end
+        WhisperPlayer();
     end
 end
 
