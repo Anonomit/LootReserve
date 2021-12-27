@@ -311,6 +311,7 @@ local function GetSavedItemConditions(categories)
         for itemID, conditions in pairs(GetSavedItemConditionsSingle(category)) do
             container[itemID] = container[itemID] or { };
             container[itemID].ClassMask = bit.bor(container[itemID].ClassMask or 0, conditions.ClassMask or 0);
+            container[itemID].Custom = container[itemID].Custom or conditions.Custom or nil;
             container[itemID].Hidden = container[itemID].Hidden or conditions.Hidden or nil;
             container[itemID].Limit = (container[itemID].Limit or 0) + (conditions.Limit or 0);
             if container[itemID].ClassMask == 0 then
