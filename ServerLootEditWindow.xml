@@ -52,7 +52,7 @@
 							</OnLoad>
 							<OnClick>
 								if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
-									LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+									LootReserve:ShowError("Cannot edit Loot List while multiple raids are selected.|n|nTo modify loot for combined raids, select and edit each raid individually before combining.|n|nCombined raids inherit their Loot List from each selected raid.");
 									return;
 								end
 								local itemID = self:GetParent():GetParent().Item;
@@ -127,7 +127,7 @@
 							</OnLoad>
 							<OnClick>
 								if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
-									LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+									LootReserve:ShowError("Cannot edit Loot List while multiple raids are selected.|n|nTo modify loot for combined raids, select and edit each raid individually before combining.|n|nCombined raids inherit their Loot List from each selected raid.");
 									return;
 								end
 								local itemID = self:GetParent():GetParent().Item;
@@ -165,7 +165,7 @@
 								<Scripts>
 									<OnClick>
 										if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
-											LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+											LootReserve:ShowError("Cannot edit Loot List while multiple raids are selected.|n|nTo modify loot for combined raids, select and edit each raid individually before combining.|n|nCombined raids inherit their Loot List from each selected raid.");
 											return;
 										end
 										self:GetParent().EditBox:ClearFocus();
@@ -188,7 +188,7 @@
 								<Scripts>
 									<OnClick>
 										if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
-											LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+											LootReserve:ShowError("Cannot edit Loot List while multiple raids are selected.|n|nTo modify loot for combined raids, select and edit each raid individually before combining.|n|nCombined raids inherit their Loot List from each selected raid.");
 											return;
 										end
 										self:GetParent().EditBox:ClearFocus();
@@ -355,7 +355,7 @@
 				<Scripts>
 					<OnClick>
 						if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
-							LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+							LootReserve:ShowError("Cannot edit Loot List while multiple raids are selected.|n|nTo modify loot for combined raids, select and edit each raid individually before combining.|n|nCombined raids inherit their Loot List from each selected raid.");
 							return;
 						end
 						LootReserve.ItemConditions:Clear(true);
@@ -453,7 +453,7 @@
 						<Scripts>
 							<OnClick>
 								if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
-									LootReserve:ShowError("Cannot edit Loot List for multiple raids at once.|n|nTo modify this loot, select a single raid.");
+									LootReserve:ShowError("Cannot edit Loot List while multiple raids are selected.|n|nTo modify loot for combined raids, select and edit each raid individually before combining.|n|nCombined raids inherit their Loot List from each selected raid.");
 									return;
 								end
 								local frame = self:GetParent():GetParent();
