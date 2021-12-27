@@ -170,7 +170,7 @@
 	<Frame name="LootReserveServerImportOptionColumnTemplate" virtual="true" inherits="LootReserveServerImportOptionTemplate" parentArray="Columns">
 		<KeyValues>
 			<KeyValue key="field" type="string" value="Columns" />
-			<KeyValue key="values" type="string" value="|cFF808080Unused|r=Unused$Player$Item$Count$Class" />
+			<KeyValue key="values" type="string" value="|cFF808080Unused|r=Unused$Player$Item$Count$Delta$Class" />
 			<KeyValue key="width" type="number" value="65" />
 			<KeyValue key="justify" type="string" value="LEFT" />
 		</KeyValues>

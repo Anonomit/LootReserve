@@ -2,11 +2,12 @@ function LootReserve.Server.Export:UpdateExportText()
     local members = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members or LootReserve.Server.NewSessionSettings.ImportedMembers;
     local text = "";
     if members and next(members) then
-        text = text .. "Player,Item";
+        text = text .. "Player,Item,Delta";
         for player, member in LootReserve:Ordered(members, function(aMember, bMember, aPlayer, bPlayer) return aPlayer < bPlayer; end) do
             for _, itemID in ipairs(member.ReservedItems) do
                 text = text .. format("\n%s,%d", player, itemID);
             end
+            text = text .. format(",%d", member.ReservesDelta);
         end
     end
     self.Window.Output.Scroll.EditBox:SetText(text);

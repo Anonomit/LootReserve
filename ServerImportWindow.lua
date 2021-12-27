@@ -38,9 +38,18 @@ end
 
 local function ParseMultireserveCount(value)
     if type(value) == "string" then
-        value = tonumber(value:match("[xX*]%s*(%d+)") or value:match("(%d+)%s*[xX*]") or value:match("^(%d+)$"));
+        value = tonumber(value:match("[xX%*]%s*(%d+)") or value:match("(%d+)%s*[xX*]") or value:match("^(%d+)$"));
     end
     if value and type(value) == "number" and value > 1 then
+        return value;
+    end
+end
+
+local function ParseDelta(value)
+    if type(value) == "string" then
+        value = tonumber(value:match("([%+%-]?%d+)"));
+    end
+    if value and type(value) == "number" then
         return value;
     end
 end
@@ -227,6 +236,8 @@ function LootReserve.Server.Import:InputOptionsUpdated()
                             break;
                         end
                     end
+                elseif header:find("delta") then
+                    self.Columns[i] = "Delta"
                 elseif header:find("class") then
                     self.Columns[i] = "Class";
                 end
@@ -299,6 +310,8 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
 
         for _, row in ipairs(self.Rows) do
             row.Count = nil;
+            row.Delta = nil;
+            row.Class = nil;
             for i, column in ipairs(self.Columns) do
                 if column == "Count" and row[i] then
                     if not row.Count then
@@ -307,12 +320,13 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         return "Only one column can be marked as \"Count\"";
                     end
                 end
-            end
-        end
-
-        for _, row in ipairs(self.Rows) do
-            row.Class = nil;
-            for i, column in ipairs(self.Columns) do
+                if column == "Delta" and row[i] then
+                    if not row.Delta then
+                        row.Delta = ParseDelta(row[i]);
+                    else
+                        return "Only one column can be marked as \"Delta\"";
+                    end
+                end
                 if column == "Class" and row[i] then
                     if not row.Class then
                         row.Class = ParseClass(row[i]);
@@ -322,6 +336,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 end
             end
         end
+
 
         local simplifiedRaidNames        = nil;
         local simplifiedRaidNamesByClass = nil;
@@ -365,7 +380,8 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         NameMatchResult = nameMatchResult,
                         ReservedItems   = { },
                         InvalidReasons  = { },
-                        Class = nil,
+                        ReservesDelta   = nil,
+                        Class           = nil,
                     };
                 end
                 local member = self.Members[player];
@@ -377,6 +393,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                     itemReserveCount[itemID] = (itemReserveCount[itemID] or 0) + 1;
                     itemReserveCountByPlayer[player] = itemReserveCountByPlayer[player] or { };
                     itemReserveCountByPlayer[player][itemID] = (itemReserveCountByPlayer[player][itemID] or 0) + 1;
+                    member.ReservesDelta = member.ReservesDelta or row.Delta;
                     local conditions = LootReserve.Server:GetNewSessionItemConditions()[itemID];
                     local class = select(3, UnitClass(player)) or row.Class;
                     member.Class = member.Class or class;
@@ -391,7 +408,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         member.InvalidReasons[#member.ReservedItems] = player .. "'s class cannot reserve this item.|nEdit the raid loot to change the class restrictions on this item, or it will not be imported.";
                     elseif conditions and conditions.Limit and itemReserveCount[itemID] > conditions.Limit then
                         member.InvalidReasons[#member.ReservedItems] = "This item has hit the limit of how many times it can be reserved.|nEdit the raid loot to increase or remove the limit on this item, or it will not be imported.";
-                    elseif #member.ReservedItems > LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer then
+                    elseif #member.ReservedItems > LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer + (member.ReservesDelta or 0) then
                         member.InvalidReasons[#member.ReservedItems] = "Player has more reserved items than allowed by the session settings.|nIncrease the number of allowed reserves, or this item will not be imported.";
                     elseif itemReserveCountByPlayer[player][itemID] > LootReserve.Server.NewSessionSettings.Multireserve then
                         member.InvalidReasons[#member.ReservedItems] = "Player has reserved this item more times than allowed by the session settings.|nIncrease the number of allowed multireserves, or this item will not be imported.";
@@ -517,6 +534,16 @@ function LootReserve.Server.Import:Import()
                     };
                     table.insert(LootReserve.Server.NewSessionSettings.ImportedMembers[player].ReservedItems, itemID);
                 end
+            end
+            if member.ReservesDelta then
+                LootReserve.Server.NewSessionSettings.ImportedMembers[player] = LootReserve.Server.NewSessionSettings.ImportedMembers[player] or { 
+                    ReservesLeft  = nil,
+                    ReservesDelta = 0,
+                    ReservedItems = { },
+                    Locked        = nil,
+                    OptedOut      = nil,
+                };
+                LootReserve.Server.NewSessionSettings.ImportedMembers[player].ReservesDelta = member.ReservesDelta
             end
         end
     end
