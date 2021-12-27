@@ -18,7 +18,6 @@ Comm.lua
 Data.lua
 ItemConditions.lua
 ItemSearch.lua
-Common-BCC.xml
 Common.xml
 ClientWindow.xml
 ServerWindow.xml

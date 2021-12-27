@@ -1,4 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<Frame name="LootReserveBackdropTemplate" virtual="true" inherits="BackdropTemplate" />
 	<Button name="LootReserveCommonFrameMovingHeaderTemplate" virtual="true">
 		<Size y="22" />
 		<Anchors>
