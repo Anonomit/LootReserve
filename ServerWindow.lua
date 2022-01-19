@@ -784,6 +784,9 @@ function LootReserve.Server:OnWindowLoad(window)
     self:UpdateServerAuthority();
     self:LoadNewSessionSettings();
 
+    LootReserve:RegisterEvent("PLAYER_ENTERING_WORLD", function()
+        self.Window:Hide();
+    end);
     LootReserve:RegisterEvent("GROUP_JOINED", "GROUP_LEFT", "PARTY_LEADER_CHANGED", "PARTY_LOOT_METHOD_CHANGED", "GROUP_ROSTER_UPDATE", function()
         self:UpdateServerAuthority();
         self:UpdateAddonUsers();
