@@ -2220,6 +2220,7 @@
 			<OnHide>
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
+				LootReserve.Server.RollHistoryDisplayLimit = LootReserve.Server.Settings.RollHistoryDisplayLimit;
 				LootReserve:PrintMessage("Server window can be reopened by typing |cFFFFD200/reserve server|r");
 			</OnHide>
 		</Scripts>

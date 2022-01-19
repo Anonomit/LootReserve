@@ -682,7 +682,8 @@ function LootReserve.Server:UpdateRollList(lockdown)
             createFrame(self.RequestedRoll.Item, self.RequestedRoll, false);
         --end
     end
-    for i = #self.RollHistory, 1, -1 do
+    for i = #self.RollHistory, #self.RollHistory - self.RollHistoryDisplayLimit, -1 do
+        
         local roll = self.RollHistory[i];
         if not filter or matchesFilter(roll.Item, roll, filter) then
             createFrame(roll.Item, roll, true);
@@ -690,10 +691,12 @@ function LootReserve.Server:UpdateRollList(lockdown)
     end
     for i = list.LastIndex + 1, #list.Frames do
         local frame = list.Frames[i];
-        frame:Hide();
-        if not lockdown then
-            for _, button in ipairs(frame.ReservesFrame.Players) do
-                button:SetAttribute("unit", nil);
+        if frame then
+            frame:Hide();
+            if not lockdown then
+                for _, button in ipairs(frame.ReservesFrame.Players) do
+                    button:SetAttribute("unit", nil);
+                end
             end
         end
     end
@@ -714,6 +717,7 @@ end
 function LootReserve.Server:SetWindowTab(tab, lockdown)
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
+    self.RollHistoryDisplayLimit = self.Settings.RollHistoryDisplayLimit;
     if tab == 1 then
         self.Window.InsetBg:SetPoint("TOPLEFT", self.Window, "TOPLEFT", 4, -24);
         self.Window.Duration:Hide();
@@ -741,7 +745,6 @@ function LootReserve.Server:SetWindowTab(tab, lockdown)
         self.Window.Search:SetPoint("TOPLEFT", self.Window, "TOPLEFT", 10, -25);
         self.Window.Search:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", -7, -25);
         (lockdown and self.Window.PanelRollsLockdown or self.Window.PanelRolls):SetPoint("TOPLEFT", self.Window, "TOPLEFT", 7, -48);
-        self.RollHistoryDisplayLimit = self.Settings.RollHistoryDisplayLimit;
         self.RollHistoryKeepLimit    = self.Settings.RollHistoryKeepLimit;
     end
 
