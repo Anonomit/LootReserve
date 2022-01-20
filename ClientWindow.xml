@@ -181,7 +181,7 @@
 						<Scripts>
 							<OnEnter>
 								local item = self:GetParent():GetParent().Item;
-								local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(LootReserve.Client:GetItemReservers(item:GetID()), LootReserve:Me());
+								local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(LootReserve.Client:GetItemReservers(item:GetID()), LootReserve.Client.Masquerade or LootReserve:Me());
 
 								if LootReserve.Client:IsItemReservedByMe(item:GetID()) and LootReserve.Client.Blind then
 									GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
@@ -366,6 +366,71 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+			<Button parentKey="PlayerSelection" inherits="UIMenuButtonStretchTemplate" frameLevel="100" hidden="true">
+				<Size x="140" y="19" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="25" y="-1" />
+				</Anchors>
+				<Layers>
+					<Layer>
+						<FontString parentKey="Text" inherits="GameFontNormal" justifyH="LEFT" wordwrap="false">
+						<Anchors>
+							<Anchor point="CENTER" />
+						</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
+				</Frames>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
+				<Scripts>
+					<OnClick>
+						local menu = {
+							{ text = "Reserve as", isTitle = true },
+						};
+						local menuPlayers = { };
+						if LootReserve.Server and LootReserve.Server.CurrentSession then
+							for player, member in pairs(LootReserve.Server.CurrentSession.Members) do
+								local max = LootReserve.Server.CurrentSession.Settings.MaxReservesPerPlayer + member.ReservesDelta;
+								local reserves = max - member.ReservesLeft;
+								table.insert(menuPlayers, {Player = player, Reserves = reserves, Max = max});
+							end
+							
+							table.sort(menuPlayers, function(a, b) if LootReserve:IsMe(a.Player) then return true elseif LootReserve:IsMe(b.Player) then return false end return a.Player &lt; b.Player; end);
+							
+							for _, data in ipairs(menuPlayers) do
+								table.insert(menu, 
+								{
+									text = format("|cff%s[%d/%d] %s%s", data.Reserves == 0 and "FF0000" or "FF7700", data.Reserves, data.Max, LootReserve:ColoredPlayer(data.Player), LootReserve:IsPlayerOnline(data.Player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(data.Player) == false and "|cFF808080 (offline)|r" or ""),
+									arg1 = data.Player,
+									func = function(info) LootReserve.Client:SetMasquerade(info.arg1) end,
+								});
+							end
+							table.insert(menu, 3, LootReserve:MakeMenuSeparator());
+							table.insert(menu, LootReserve:MakeMenuSeparator());
+							table.insert(menu, { text = "Close" });
+							LootReserve:OpenMenu(menu, self.Menu, self);
+						end
+					</OnClick>
+					<OnLoad>
+						self:SetPushedTextOffset(1, -1);
+					</OnLoad>
+					<OnMouseDown>
+						self.Text:SetPoint("CENTER", self:GetPushedTextOffset());
+					</OnMouseDown>
+					<OnMouseUp>
+						self.Text:SetPoint("CENTER");
+					</OnMouseUp>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText("Opt Out");
+						GameTooltip:AddLine("This indicates that you have completed reserving, and do not intend to make any more reserves.|n|nYou will no longer be notified to complete your reserves.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+		  	</Scripts>
+			</Button>
 			<Button parentKey="OptOut" inherits="UIPanelButtonTemplate" text="Opt Out" frameLevel="100" hidden="true">
 				<Size x="80" y="19" />
 		  	<Anchors>
@@ -373,7 +438,9 @@
 		  	</Anchors>
 		  	<Scripts>
 		  		<OnClick>
-    				LootReserve.Client.Window:Hide();
+		  			if not LootReserve.Client.Masquerade then
+    					LootReserve.Client.Window:Hide();
+    				end
 		  			LootReserve.Client:OptOut();
 		  		</OnClick>
 					<OnEnter>
@@ -487,8 +554,10 @@
 					LootReserve.Client:UpdateCategories(); -- Needed to update collapsed state after settings are loaded
 				end
 				LootReserve.Client.PendingOpen = false;
+				LootReserve.Client:SetMasquerade(nil);
 			</OnShow>
 			<OnHide>
+				LootReserve.Client.Masquerade = nil;
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 				LootReserve:PrintMessage("Window can be reopened by typing |cFFFFD200/reserve|r");

@@ -333,13 +333,13 @@ function LootReserve.ItemConditions:TestServer(itemID)
 end
 
 function LootReserve.ItemConditions:IsItemVisibleOnClient(itemID)
-    local canReserve, conditionResult = self:TestPlayer(LootReserve:Me(), itemID, false);
+    local canReserve, conditionResult = self:TestPlayer(LootReserve.Client.Masquerade or LootReserve:Me(), itemID, false);
     return canReserve or conditionResult == LootReserve.Constants.ReserveResult.FailedLimit
            or ((conditionResult == LootReserve.Constants.ReserveResult.FailedClass or conditionResult == LootReserve.Constants.ReserveResult.FailedUsable) and (LootReserve.Client.Locked or not LootReserve.Client.AcceptingReserves));
 end
 
 function LootReserve.ItemConditions:IsItemReservableOnClient(itemID)
-    local canReserve, conditionResult = self:TestPlayer(LootReserve:Me(), itemID, false);
+    local canReserve, conditionResult = self:TestPlayer(LootReserve.Client.Masquerade or LootReserve:Me(), itemID, false);
     return canReserve;
 end
 

@@ -1474,8 +1474,14 @@ function LootReserve.Server:IncrementReservesDelta(player, amount, winner)
 end
 
 function LootReserve.Server:Opt(player, out, chat)
+    local masquerade;
+    if LootReserve:IsMe(player) and LootReserve.Client.Masquerade then
+        player     = LootReserve.Client.Masquerade;
+        masquerade = LootReserve:Me();
+    end
+    
     local function Failure(result, reservesLeft, postText, ...)
-        LootReserve.Comm:SendOptResult(player, result);
+        LootReserve.Comm:SendOptResult(masquerade or player, result);
         if chat then
             local text = LootReserve.Constants.OptResultText[result] or "";
             if postText then
@@ -1486,7 +1492,7 @@ function LootReserve.Server:Opt(player, out, chat)
         return false;
     end
 
-    if not LootReserve:IsPlayerOnline(player) then
+    if not masquerade and not LootReserve:IsPlayerOnline(player) then
         return Failure(LootReserve.Constants.ReserveResult.NotInRaid, 0);
     end
 
@@ -1504,10 +1510,14 @@ function LootReserve.Server:Opt(player, out, chat)
     -- Send packets
     LootReserve.Comm:SendOptResult(player, LootReserve.Constants.OptResult.OK);
     LootReserve.Comm:SendOptInfo(player, out);
+    if masquerade then
+        LootReserve.Comm:SendOptResult(masquerade, LootReserve.Constants.OptResult.OK);
+        LootReserve.Comm:SendOptInfo(masquerade, out);
+    end
 
     -- Send chat messages
     if self.CurrentSession.Settings.ChatFallback then
-        if chat or not self:IsAddonUser(player) then
+        if chat or not self:IsAddonUser(player) and LootReserve:IsPlayerOnline(player) then
             local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
             
             LootReserve:SendChatMessage(format("You have opted %s using your %d%s reserve%s%s. You can opt back %s with  !opt %s",
@@ -1532,9 +1542,15 @@ end
 
 function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
     count = math.max(1, count or 1);
+    
+    local masquerade;
+    if LootReserve:IsMe(player) and LootReserve.Client.Masquerade then
+        player     = LootReserve.Client.Masquerade;
+        masquerade = LootReserve:Me();
+    end
 
     local function Failure(result, reservesLeft, postText, ...)
-        LootReserve.Comm:SendReserveResult(player, itemID, result, reservesLeft);
+        LootReserve.Comm:SendReserveResult(masquerade or player, itemID, result, reservesLeft);
         if chat then
             local text = LootReserve.Constants.ReserveResultText[result] or "";
             if postText then
@@ -1545,7 +1561,7 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
         return false;
     end
 
-    if not skipChecks and not LootReserve:IsPlayerOnline(player) then
+    if not masquerade and not skipChecks and not LootReserve:IsPlayerOnline(player) then
         return Failure(LootReserve.Constants.ReserveResult.NotInRaid, 0);
     end
 
@@ -1558,7 +1574,7 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
         return Failure(LootReserve.Constants.ReserveResult.NotMember, 0);
     end
 
-    if not skipChecks and self.CurrentSession.Settings.Lock and member.Locked then
+    if not masquerade and not skipChecks and self.CurrentSession.Settings.Lock and member.Locked then
         return Failure(LootReserve.Constants.ReserveResult.Locked, "#");
     end
 
@@ -1625,18 +1641,26 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
     table.sort(reserve.Players);
 
     -- Send packets
-    LootReserve.Comm:SendReserveResult(player, itemID, result, member.ReservesLeft);
+    LootReserve.Comm:SendReserveResult(player, itemID, result, member.ReservesLeft, not not masquerade);
     LootReserve.Comm:SendOptInfo(player, member.OptedOut);
+    if masquerade then
+        LootReserve.Comm:SendReserveResult(masquerade, itemID, result, member.ReservesLeft);
+        LootReserve.Comm:SendOptInfo(masquerade, member.OptedOut);
+    end
+    
     if self.CurrentSession.Settings.Blind then
         local _, myReserves = LootReserve:GetReservesData(reserve.Players, player);
         LootReserve.Comm:SendReserveInfo(player, itemID, LootReserve:RepeatedTable(player, myReserves));
+        if masquerade then
+            LootReserve.Comm:SendReserveInfo(masquerade, itemID, LootReserve:RepeatedTable(player, myReserves));
+        end
     else
         LootReserve.Comm:BroadcastReserveInfo(itemID, reserve.Players);
     end
 
     -- Send chat messages
     if self.CurrentSession.Settings.ChatFallback then
-        if chat or not self:IsAddonUser(player) then
+        if chat or not self:IsAddonUser(player) and LootReserve:IsPlayerOnline(player) then
             -- Whisper player
             LootReserve:RunWhenItemCached(itemID, function()
                 local reserve = self.CurrentSession.ItemReserves[itemID];
@@ -1697,9 +1721,15 @@ end
 
 function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, winner)
     count = math.max(1, count or 1);
+    
+    local masquerade;
+    if LootReserve:IsMe(player) and LootReserve.Client.Masquerade then
+        player     = LootReserve.Client.Masquerade;
+        masquerade = LootReserve:Me();
+    end
 
     local function Failure(result, reservesLeft, postText, ...)
-        LootReserve.Comm:SendCancelReserveResult(player, itemID, result, reservesLeft, count);
+        LootReserve.Comm:SendCancelReserveResult(masquerade or player, itemID, result, reservesLeft, count);
         if chat then
             local text = LootReserve.Constants.CancelReserveResultText[result] or "";
             if postText then
@@ -1710,7 +1740,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
         return false;
     end
 
-    if not LootReserve:IsPlayerOnline(player) and not forced then
+    if not masquerade and not LootReserve:IsPlayerOnline(player) and not forced then
         return Failure(LootReserve.Constants.CancelReserveResult.NotInRaid, 0);
     end
 
@@ -1723,7 +1753,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
         return Failure(LootReserve.Constants.CancelReserveResult.NotMember, 0);
     end
 
-    if self.CurrentSession.Settings.Lock and member.Locked and not forced then
+    if not masquerade and self.CurrentSession.Settings.Lock and member.Locked and not forced then
         return Failure(LootReserve.Constants.CancelReserveResult.Locked, "#");
     end
 
@@ -1768,10 +1798,18 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
 
     -- Send packets
     LootReserve.Comm:SendOptInfo(player, member.OptedOut);
-    LootReserve.Comm:SendCancelReserveResult(player, itemID, forced and LootReserve.Constants.CancelReserveResult.Forced or LootReserve.Constants.CancelReserveResult.OK, member.ReservesLeft, count, winner);
+    LootReserve.Comm:SendCancelReserveResult(player, itemID, (forced or masquerade) and LootReserve.Constants.CancelReserveResult.Forced or LootReserve.Constants.CancelReserveResult.OK, member.ReservesLeft, count, winner);
+    if masquerade then
+        LootReserve.Comm:SendOptInfo(masquerade, member.OptedOut);
+        LootReserve.Comm:SendCancelReserveResult(masquerade, itemID, LootReserve.Constants.CancelReserveResult.OK, member.ReservesLeft, count, winner);
+    end
+    
     if self.CurrentSession.Settings.Blind then
         local _, myReserves = LootReserve:GetReservesData(reserve.Players, player);
         LootReserve.Comm:SendReserveInfo(player, itemID, LootReserve:RepeatedTable(player, myReserves));
+        if masquerade then
+            LootReserve.Comm:SendReserveInfo(masquerade, itemID, LootReserve:RepeatedTable(player, myReserves));
+        end
     else
         LootReserve.Comm:BroadcastReserveInfo(itemID, reserve.Players);
     end
@@ -1784,7 +1822,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
 
     -- Send chat messages
     if self.CurrentSession.Settings.ChatFallback then
-        if chat or not self:IsAddonUser(player) then
+        if chat or not self:IsAddonUser(player) and LootReserve:IsPlayerOnline(player) then
             -- Whisper player
             LootReserve:RunWhenItemCached(itemID, function()
                 local name, link = GetItemInfo(itemID);

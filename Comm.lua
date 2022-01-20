@@ -39,6 +39,7 @@ local function ThrottlingError()
 end
 
 function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
+    
     local message = "";
     for _, part in ipairs({ ... }) do
         if type(part) == "boolean" then
@@ -57,6 +58,21 @@ function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
             length = -length;
         end
         message = length .. "|" .. message;
+    end
+    
+    if channel ~= "WHISPER" or target and LootReserve:IsMe(target) then
+        local length
+        local message = message
+        if opcode > LAST_UNCOMPRESSED_OPCODE then
+            length, message = strsplit("|", message, 2);
+            length = tonumber(length);
+
+            if length > 0 then
+                message = LibDeflate:DecodeForWoWAddonChannel(message);
+                message = message and LibDeflate:DecompressDeflate(message);
+            end
+            C_Timer.After(0, function() self.Handlers[opcode](LootReserve:Me(), strsplit("|", message)) end);
+        end
     end
 
     message = opcode .. "|" .. message;
@@ -99,7 +115,9 @@ function LootReserve.Comm:StartListening()
 
                     sender = LootReserve:Player(sender);
                     LootReserve.Server:SetAddonUser(sender, true);
-                    handler(sender, strsplit("|", message));
+                    if not LootReserve:IsMe(sender) then
+                        handler(sender, strsplit("|", message));
+                    end
                 end
             end
         end);
@@ -219,6 +237,11 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
     if not session then return; end
 
     target = target and LootReserve:Player(target);
+    local realTarget = target
+    if target and LootReserve:IsMe(target) and LootReserve.Client.Masquerade then
+        realTarget = target
+        target     = LootReserve.Client.Masquerade
+    end
     if target and not session.Members[target] then return; end
 
     local membersInfo = "";
@@ -270,7 +293,7 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
         lootCategories = format("%s%s%s", lootCategories, i == 1 and "" or ";", category);
     end
 
-    LootReserve.Comm:Send(target, Opcodes.SessionInfo,
+    LootReserve.Comm:Send(realTarget, Opcodes.SessionInfo,
         starting == true,
         session.StartTime or 0,
         session.AcceptingReserves,
@@ -320,7 +343,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
         for _, infoStr in ipairs(membersInfo) do
             local player, info = strsplit("=", infoStr, 2);
             table.insert(refPlayers, player);
-            if LootReserve:IsMe(player) then
+            if LootReserve:IsSamePlayer(LootReserve.Client.Masquerade or LootReserve:Me(), player) then
                 local remainingReserves, maxReserves = strsplit(",", info);
                 LootReserve.Client.RemainingReserves = tonumber(remainingReserves) or 0;
                 LootReserve.Client.MaxReserves = tonumber(maxReserves) or 0;
@@ -334,7 +357,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
         for _, infoStr in ipairs(optInfo) do
             local player, info = strsplit("=", infoStr, 2);
             table.insert(refPlayers, player);
-            if LootReserve:IsMe(player) then
+            if LootReserve:IsSamePlayer(LootReserve.Client.Masquerade or LootReserve:Me(), player) then
                 local optOut = strsplit(",", info);
                 LootReserve.Client.OptedOut = optOut == "1" or nil;
             end
@@ -426,7 +449,9 @@ LootReserve.Comm.Handlers[Opcodes.OptInfo] = function(sender, out)
             LootReserve.Client.Window:Show();
         end
     elseif LootReserve.Client.OptedOut then
-        LootReserve.Client.Window:Hide();
+        if not LootReserve.Client.Masquerade then
+            LootReserve.Client.Window:Hide();
+        end
     end
 end
 
@@ -483,17 +508,19 @@ LootReserve.Comm.Handlers[Opcodes.ReserveItem] = function(sender, itemID)
 end
 
 -- ReserveResult
-function LootReserve.Comm:SendReserveResult(target, itemID, result, remainingReserves)
+function LootReserve.Comm:SendReserveResult(target, itemID, result, remainingReserves, forced)
     LootReserve.Comm:Whisper(target, Opcodes.ReserveResult,
         itemID,
         result,
-        remainingReserves);
+        remainingReserves,
+        forced);
 end
-LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, result, remainingReserves)
+LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, result, remainingReserves, forced)
     itemID = tonumber(itemID);
     result = tonumber(result);
     local locked = remainingReserves == "#";
     remainingReserves = tonumber(remainingReserves) or 0;
+    forced = tonumber(forced) == 1;
 
     if LootReserve.Client.SessionServer == sender then
         LootReserve.Client.RemainingReserves = remainingReserves;
@@ -505,6 +532,16 @@ LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, resu
         local text = LootReserve.Constants.ReserveResultText[result];
         if not text or #text > 0 then
             LootReserve:ShowError("Failed to reserve the item:|n%s", text or "Unknown error");
+        end
+        if forced then
+            LootReserve:RunWhenItemCached(itemID, function()
+                local name, link = GetItemInfo(itemID);
+                if name and link then
+                    LootReserve:ShowError("%s has reserved an item for you:|n%s", LootReserve:ColoredPlayer(sender), link);
+                else
+                    return true;
+                end
+            end);
         end
 
         LootReserve.Client:SetItemPending(itemID, false);
@@ -525,7 +562,7 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, player
     itemID = tonumber(itemID);
 
     if LootReserve.Client.SessionServer == sender then
-        local wasReserver = LootReserve.Client:IsItemReservedByMe(itemID);
+        local wasReserver = LootReserve.Client:IsItemReservedByMe(itemID, true);
 
         if #players > 0 then
             players = { strsplit(",", players) };
@@ -548,7 +585,7 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, player
         if not LootReserve.Client.Blind then
             LootReserve.Client:FlashCategory("Reserves", "all");
         end
-        local isReserver = LootReserve.Client:IsItemReservedByMe(itemID);
+        local isReserver = LootReserve.Client:IsItemReservedByMe(itemID, true);
         if wasReserver or isReserver then
             local isViewingMyReserves = LootReserve.Client.SelectedCategory and LootReserve.Client.SelectedCategory.Reserves == "my";
             LootReserve.Client:FlashCategory("Reserves", "my", wasReserver == isReserver and not isViewingMyReserves);

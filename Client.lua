@@ -3,6 +3,7 @@ LootReserve.Client =
 {
     -- Server Connection
     SessionServer = nil,
+    Masquerade    = nil,
 
     -- Server Session Info
     StartTime         = 0,
@@ -114,6 +115,17 @@ function LootReserve.Client:SearchForServer(startup)
     self.ServerSearchTimeoutTime = time() + 10;
 
     LootReserve.Comm:BroadcastHello();
+end
+
+function LootReserve.Client:SetMasquerade(player)
+    if self.SessionServer and LootReserve:IsMe(self.SessionServer) and LootReserve.Server and LootReserve.Server.CurrentSession then
+        if not player or LootReserve:IsMe(player) then
+            self.Masquerade = nil
+        else
+            self.Masquerade = player
+        end
+        LootReserve.Comm:SendSessionInfo(LootReserve:Me());
+    end
 end
 
 function LootReserve.Client:StartSession(server, starting, startTime, acceptingReserves, lootCategories, duration, maxDuration, equip, blind, multireserve)
@@ -242,9 +254,9 @@ end
 function LootReserve.Client:IsItemReserved(itemID)
     return #self:GetItemReservers(itemID) > 0;
 end
-function LootReserve.Client:IsItemReservedByMe(itemID)
+function LootReserve.Client:IsItemReservedByMe(itemID, bypassMasquerade)
     for _, player in ipairs(self:GetItemReservers(itemID)) do
-        if LootReserve:IsMe(player) then
+        if LootReserve:IsSamePlayer(not bypassMasquerade and LootReserve.Client.Masquerade or LootReserve:Me(), player) then
             return true;
         end
     end

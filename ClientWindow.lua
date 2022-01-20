@@ -37,9 +37,13 @@ function LootReserve.Client:UpdateReserveStatus()
         self.Window.OptOut:SetShown(not self.OptedOut);
         self.Window.OptIn:SetShown(self.OptedOut);
     end
+    self.Window.PlayerSelection:SetShown(self.SessionServer and LootReserve:IsMe(self.SessionServer));
+    self.Window.PlayerSelection:SetShown(true);
+    self.Window.PlayerSelection.Text:SetText(LootReserve:ColoredPlayer(self.Masquerade or LootReserve:Me()))
 
     self.Window.OptOut:SetEnabled(not self:IsOptPending());
     self.Window.OptIn:SetEnabled(not self:IsOptPending());
+    
 
     local list = self.Window.Loot.Scroll.Container;
     list.Frames = list.Frames or { };
@@ -47,7 +51,7 @@ function LootReserve.Client:UpdateReserveStatus()
     for i, frame in ipairs(list.Frames) do
         local item = frame.Item;
         if item:GetID() ~= 0 then
-            local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(self:GetItemReservers(item:GetID()), LootReserve:Me());
+            local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(self:GetItemReservers(item:GetID()), self.Masquerade or LootReserve:Me());
             local canReserve = self.SessionServer and self:HasRemainingReserves() and LootReserve.ItemConditions:IsItemReservableOnClient(item:GetID()) and (not self.Multireserve or myReserves < self.Multireserve);
             frame.ReserveFrame.ReserveButton:SetShown(canReserve and myReserves == 0);
             frame.ReserveFrame.MultiReserveButton:SetShown(canReserve and myReserves > 0);
@@ -385,7 +389,7 @@ function LootReserve.Client:UpdateCategories()
         end
     end
 
-    local categories = LootReserve:GetCategoriesText(self.LootCategories);
+    local categories = LootReserve:GetCategoriesText(self.LootCategories, true);
     if categories ~= "" then
         self.Window.TitleText:SetText(format("LootReserve:  %s", categories));
     else
