@@ -30,6 +30,12 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
         Count       = myCount,
     };
     local roll = self.RollRequest;
+    
+    if not roll.Custom and LootReserve.Client.Settings.RollRequestAutoRollReserved then
+        LootReserve:PrintMessage("Automatically rolling on reserved item: %s%s", roll.Item:GetLink(), roll.Count > 1 and ("x" .. roll.Count) or "");
+        LootReserve.Client:RespondToRollRequest(true);
+        return;
+    end
 
     local description = LootReserve:GetItemDescription(item:GetID());
     local name, link, texture = item:GetNameLinkTexture();
