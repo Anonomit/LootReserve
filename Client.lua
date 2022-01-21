@@ -215,6 +215,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
     end
 
     if starting then
+        self.Masquerade = nil;
         PlaySound(SOUNDKIT.GS_CHARACTER_SELECTION_ENTER_WORLD);
     end
 end

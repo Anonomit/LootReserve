@@ -476,12 +476,14 @@ LootReserve.Comm.Handlers[Opcodes.OptIn] = function(sender)
 end
 
 -- OptResult
-function LootReserve.Comm:SendOptResult(target, result)
+function LootReserve.Comm:SendOptResult(target, result, forced)
     LootReserve.Comm:Whisper(target, Opcodes.OptResult,
-        result);
+        result,
+        forced);
 end
-LootReserve.Comm.Handlers[Opcodes.OptResult] = function(sender, result)
+LootReserve.Comm.Handlers[Opcodes.OptResult] = function(sender, result, forced)
     result = tonumber(result);
+    forced = tonumber(forced) == 1;
 
     if LootReserve.Client.SessionServer == sender then
 
@@ -490,6 +492,23 @@ LootReserve.Comm.Handlers[Opcodes.OptResult] = function(sender, result)
             LootReserve:ShowError("Failed to opt out/in:|n%s", text or "Unknown error");
         end
 
+        if forced then
+            local categories = LootReserve:GetCategoriesText(LootReserve.Client.LootCategories);
+            local msg1 = format("%s has opted you %s using your %d%s reserve%s%s.",
+                LootReserve:ColoredPlayer(sender),
+                result and "out of" or "into",
+                LootReserve.Client.ReservesLeft,
+                LootReserve.Client:GetMaxReserves() == 0 and "" or " remaining",
+                LootReserve.Client.ReservesLeft == 1 and "" or "s",
+                categories ~= "" and format(" for %s", categories) or "");
+            local msg2 = format("You can opt back %s with  !opt %s.",
+                result and "in" or "out",
+                result and "in" or "out");
+            LootReserve:PrintError(msg1 .. " " .. msg2)
+            LootReserve:ShowError(msg1 .. "|n" .. msg2)
+        else
+        
+        end
         LootReserve.Client:SetOptPending(false);
         LootReserve.Client:UpdateReserveStatus();
     end
@@ -537,6 +556,7 @@ LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, resu
             LootReserve:RunWhenItemCached(itemID, function()
                 local name, link = GetItemInfo(itemID);
                 if name and link then
+                    LootReserve:PrintError("%s has reserved an item for you: %s", LootReserve:ColoredPlayer(sender), link);
                     LootReserve:ShowError("%s has reserved an item for you:|n%s", LootReserve:ColoredPlayer(sender), link);
                 else
                     return true;

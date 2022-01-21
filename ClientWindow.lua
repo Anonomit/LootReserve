@@ -24,7 +24,9 @@ function LootReserve.Client:UpdateReserveStatus()
     else
         local reservesLeft = LootReserve.Client:GetRemainingReserves();
         local maxReserves = self:GetMaxReserves();
-        self.Window.RemainingText:SetText(format("You have|cFF%s %d%s|r item |4reserve:reserves; %s", 
+        self.Window.RemainingText:SetText(format("%s %s|cFF%s %d%s|r item |4reserve:reserves; %s", 
+            self.Masquerade and LootReserve:ColoredPlayer(self.Masquerade) or "You",
+            self.Masquerade and "has" or "have",
             reservesLeft > 0 and (reservesLeft < maxReserves and "FF7700" or "00FF00") or "FF0000",
             reservesLeft,
             reservesLeft < maxReserves and format("/%d", maxReserves) or "",
@@ -37,9 +39,8 @@ function LootReserve.Client:UpdateReserveStatus()
         self.Window.OptOut:SetShown(not self.OptedOut);
         self.Window.OptIn:SetShown(self.OptedOut);
     end
-    self.Window.PlayerSelection:SetShown(self.SessionServer and LootReserve:IsMe(self.SessionServer));
-    self.Window.PlayerSelection:SetShown(true);
-    self.Window.PlayerSelection.Text:SetText(LootReserve:ColoredPlayer(self.Masquerade or LootReserve:Me()))
+    self.Window.MasqueradeSelection:SetShown(self.SessionServer and LootReserve:IsMe(self.SessionServer));
+    self.Window.MasqueradeSelection.Text:SetText(LootReserve:ColoredPlayer(self.Masquerade or LootReserve:Me()))
 
     self.Window.OptOut:SetEnabled(not self:IsOptPending());
     self.Window.OptIn:SetEnabled(not self:IsOptPending());

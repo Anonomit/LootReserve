@@ -1455,6 +1455,9 @@ function LootReserve.Server:IncrementReservesDelta(player, amount, winner)
 
     -- Send packets
     LootReserve.Comm:SendSessionInfo(player);
+    if LootReserve.Client.Masquerade and LootReserve:IsSamePlayer(LootReserve.Client.Masquerade, player) then
+        LootReserve.Comm:SendSessionInfo(LootReserve:Me());
+    end
 
     -- Send chat messages
     if self.CurrentSession.Settings.ChatFallback then
@@ -1508,7 +1511,7 @@ function LootReserve.Server:Opt(player, out, chat)
     member.OptedOut = out;
 
     -- Send packets
-    LootReserve.Comm:SendOptResult(player, LootReserve.Constants.OptResult.OK);
+    LootReserve.Comm:SendOptResult(player, LootReserve.Constants.OptResult.OK, masquerade);
     LootReserve.Comm:SendOptInfo(player, out);
     if masquerade then
         LootReserve.Comm:SendOptResult(masquerade, LootReserve.Constants.OptResult.OK);
@@ -1520,7 +1523,9 @@ function LootReserve.Server:Opt(player, out, chat)
         if chat or not self:IsAddonUser(player) and LootReserve:IsPlayerOnline(player) then
             local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
             
-            LootReserve:SendChatMessage(format("You have opted %s using your %d%s reserve%s%s. You can opt back %s with  !opt %s",
+            LootReserve:SendChatMessage(format("%s have opted%s %s using your %d%s reserve%s%s. You can opt back %s with  !opt %s",
+                masquerade and "I" or "You",
+                masquerade and " you" or "",
                 member.OptedOut and "out of" or "into",
                 member.ReservesLeft,
                 #member.ReservedItems == 0 and "" or " remaining",
@@ -1672,7 +1677,8 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
                 end
 
                 local _, myReserves = LootReserve:GetReservesData(reserve.Players, player);
-                LootReserve:SendChatMessage(format("You reserved %s%s. %s more %s available. To cancel a reserve, whisper me:  !cancel ItemLinkOrName",
+                LootReserve:SendChatMessage(format("You %s %s%s. %s more %s available. To cancel a reserve, whisper me:  !cancel ItemLinkOrName",
+                    masquerade and "have had an item added to your reserves:" or "reserved",
                     link,
                     myReserves > 1 and format(" x%d", myReserves) or "",
                     member.ReservesLeft == 0 and "No" or tostring(member.ReservesLeft),
@@ -1833,7 +1839,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
                 if winner then
                     LootReserve:SendChatMessage(format("Your reserve for %s%s has been automatically removed.", link, count > 1 and format(" x%d", count) or ""), "WHISPER", player);
                 else
-                    LootReserve:SendChatMessage(format(forced and "Your reserve for %s%s has been removed. %d more %s available.%s" or "You cancelled your reserve for %s%s. %d more %s available.%s",
+                    LootReserve:SendChatMessage(format((forced or masquerade) and "Your reserve for %s%s has been removed. %d more %s available.%s" or "You cancelled your reserve for %s%s. %d more %s available.%s",
                         link,
                         count > 1 and format(" x%d", count) or "",
                         member.ReservesLeft,

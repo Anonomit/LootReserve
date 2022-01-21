@@ -208,6 +208,9 @@
 							if LootReserve:IsPlayerOnline(self:GetParent().Player) then
 								LootReserve.Comm:SendSessionInfo(self:GetParent().Player);
 							end
+							if LootReserve.Client.Masquerade and LootReserve:IsSamePlayer(LootReserve.Client.Masquerade, self:GetParent().Player) then
+								LootReserve.Comm:SendSessionInfo(LootReserve:Me());
+							end
 						end
 					</OnClick>
 				</Scripts>
