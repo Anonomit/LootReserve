@@ -354,7 +354,7 @@
 							{ text = "Show Popup", checked = LootReserve.Client.Settings.RollRequestShow, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShow = checked; end },
 							{ text = "Show For Unusable Items", checked = LootReserve.Client.Settings.RollRequestShowUnusable, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShowUnusable = checked; end },
 							{ text = "Glow Only For Reserved Items", checked = LootReserve.Client.Settings.RollRequestGlowOnlyReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestGlowOnlyReserved = checked; end },
-							{ text = "Auto Roll Reserved Items", checked = LootReserve.Client.Settings.AutoRollReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.AutoRollReserved = checked; end },
+							{ text = "Auto Roll Reserved Items", checked = LootReserve.Client.Settings.RollRequestAutoRollReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestAutoRollReserved = checked; end },
 							{ text = "Open Example Popup", func = function() LootReserve.Client:RollRequested(LootReserve:Me(), LootReserve.Item(18582), { LootReserve:Me() }, true, 30, 30, "Swag-Spec", true); end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Data Broker", isTitle = true },
