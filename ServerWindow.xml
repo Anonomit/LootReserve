@@ -1528,7 +1528,7 @@
 								MakeMenuRadio(LootReserve.Server.Settings.ChatAnnounceWinToGuild and format("%s%s|r", ITEM_QUALITY_COLORS[0].hex, ITEM_QUALITY0_DESC) or ITEM_QUALITY0_DESC, "ChatAnnounceWinToGuildThreshold", 0, nil, RefreshWinToGuildThreshold):DisableIf(not LootReserve.Server.Settings.ChatAnnounceWinToGuild),
 							} },
 							MakeMenuToggle("Enable !reserves command", "ChatReservesList",  "Allow players to request all currently made reserves to be whispered back to them when they invoke |cFFFFFFFF!reserves|r command."),
-							MakeMenuToggle("Send Reserve Updates",     "ChatUpdates",       "Send whispers to players without addons if someone else reserves or cancels the reserve of the items that they have reserved as well."),
+							MakeMenuToggle("Whisper Reserve Updates",     "ChatUpdates",       "Send whispers to players without addons if someone else reserves or cancels the reserve of the items that they have reserved as well."),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Display", isTitle = true },
 							{ text = format("Sort Reserves: |cFF00FF00%s|r", LootReserve.Constants.ReservesSortingText[LootReserve.Server.Settings.ReservesSorting] or "???"), arg1 = "#sort", menuList = {

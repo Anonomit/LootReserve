@@ -864,15 +864,12 @@ function LootReserve.Server:PrepareSession()
     if self.CurrentSession.Settings.ChatFallback and not self.ChatFallbackRegistered then
         self.ChatFallbackRegistered = true;
 
-        local prefix1A = "!reserve";
-        local prefix1B = "!res";
-        local prefix1C = "!";
+        local reservesStrings = {"^[!¡]+reserves"};
+        local myResStrings    = {"^[!¡]+myreserves", "^[!¡]+myreserve", "^[!¡]+myres"};
+        local optStrings      = {"^[!¡]+opt%s*(in)", "^[!¡]+opt%s*(out)"};
+        local cancelStrings   = {"^[!¡]+cancelreserve(.*)", "^[!¡]+cancelres(.*)", "^[!¡]+cancel(.*)", "^[!¡]+unreserve(.*)", "^[!¡]+unres(.*)"};
+        local reserveStrings  = {"^[!¡]+reserve(.*)", "^[!¡]+res(.*)", "^[!¡]+(.*)"};
         
-        local prefix2A = "!cancelreserve";
-        local prefix2B = "!cancelres";
-        local prefix2C = "!cancel";
-        local prefix2D = "!unreserve";
-        -- local prefixZ = "!cancelreserves";
 
         local function ProcessChat(text, sender)
             sender = LootReserve:Player(sender);
@@ -883,41 +880,59 @@ function LootReserve.Server:PrepareSession()
 
             text = text:lower();
             text = LootReserve:StringTrim(text);
-            if text:find("^%s*!reserves") then
-                if self.Settings.ChatReservesList then
-                    self:SendReservesList(sender);
+            
+            
+            for _, pattern in ipairs(reservesStrings) do
+                if text:match(pattern) then
+                    if self.Settings.ChatReservesList then
+                        self:SendReservesList(sender);
+                    end
+                return;
                 end
-                return;
-            elseif text == "!myreserve" or text == "!myreserves" or text == "!myres" then
-                if self.Settings.ChatReservesList then
-                    self:SendReservesList(sender, true);
-                end
-                return;
-            elseif stringStartsWith(text, "!opt") then
-                local direction = text:match("^!opt%s*(.*)");
-                if stringStartsWith(direction, "out") then
-                    self:Opt(sender, true, true);
-                elseif stringStartsWith(direction, "in") then
-                    self:Opt(sender, nil, true);
-                end
-                return;
-            elseif stringStartsWith(text, prefix1A) then
-                text = text:sub(1 + #prefix1A);
-            elseif stringStartsWith(text, prefix1B) then
-                text = text:sub(1 + #prefix1B);
-            elseif stringStartsWith(text, prefix2A) then
-                text = "cancel" .. text:sub(1 + #prefix2A);
-            elseif stringStartsWith(text, prefix2B) then
-                text = "cancel" .. text:sub(1 + #prefix2B);
-            elseif stringStartsWith(text, prefix2C) then
-                text = "cancel" .. text:sub(1 + #prefix2C);
-            elseif stringStartsWith(text, prefix2D) then
-                text = "cancel" .. text:sub(1 + #prefix2D);
-            elseif stringStartsWith(text, prefix1C) then
-                text = text:sub(1 + #prefix1C);
-            else
-                return;
             end
+            
+            for _, pattern in ipairs(myResStrings) do
+                if text:match(pattern) then
+                    if self.Settings.ChatReservesList then
+                        self:SendReservesList(sender, true);
+                    end
+                    return;
+                end
+            end
+            
+            for _, pattern in ipairs(optStrings) do
+                local direction = text:match(pattern);
+                if direction == "in" then
+                    self:Opt(sender, nil, true);
+                    return;
+                elseif direction == "out" then
+                    self:Opt(sender, true, true);
+                    return;
+                end
+            end
+            
+            local command
+            for _, pattern in ipairs(cancelStrings) do
+                local args = text:match(pattern);
+                if args then
+                    command = "cancel";
+                    text = args;
+                    break;
+                end
+            end
+            
+            if not command then
+                for _, pattern in ipairs(reserveStrings) do
+                    local args = text:match(pattern);
+                    if args then
+                        command = "reserve";
+                        text = args;
+                        break;
+                    end
+                end
+            end
+            
+            if not command then return; end
 
             if not self.CurrentSession.AcceptingReserves then
                 LootReserve:SendChatMessage("Loot reserves are no longer being accepted.", "WHISPER", sender);
@@ -930,12 +945,8 @@ function LootReserve.Server:PrepareSession()
                 LootReserve:SendChatMessage("Seems like you forgot to enter the item you want to reserve. Whisper  !reserve ItemLinkOrName", "WHISPER", sender);
                 self:SendSupportString(sender, true);
                 return;
-            elseif stringStartsWith(text, "cancel") then
-                text = text:sub(1 + #("cancel"));
-                command = "cancel";
             end
 
-            text = LootReserve:StringTrim(text);
             if command == "cancel" then
                 local count = tonumber(text:match("^[Xx%*]?%s*(%d+)%s*[Xx%*]?$"));
                 if #text == 0 then
@@ -981,11 +992,11 @@ function LootReserve.Server:PrepareSession()
                     -- Match various forms of item linking, including incorrect ones
                     if not s then
                          -- Correctly-formatted itemlink
-                        s, e, itemID = text:find("\124cff......\124hitem:(%d+)[:%d]*\124h%[[^%[%]]*%]\124h\124r", charI);
+                        s, e, itemID = text:find("\124cff%x%x%x%x%x%x\124hitem:(%d+)[:%d]*\124h%[[^%[%]]*%]\124h\124r", charI);
                     end
                     if not s then
                         -- Wowhead In-Game Link
-                        s, e, itemID = text:find("/%S+%s*default_chat_frame:addmessage%(\"\\124cff......\\124hitem:(%d+)[:%d]*\\124h%[[^%[%]]*%]\\124h\\124r\"%);", charI);
+                        s, e, itemID = text:find("/%S+%s*default_chat_frame:addmessage%(\"\\124cff%x%x%x%x%x%x\\124hitem:(%d+)[:%d]*\\124h%[[^%[%]]*%]\\124h\\124r\"%);", charI);
                     end
                     if not s then
                         -- URL
@@ -1026,7 +1037,7 @@ function LootReserve.Server:PrepareSession()
                     end
                     
                     if count1 and count2 or ambiguous then
-                        LootReserve:SendChatMessage(format("Can't tell how many items you want to reserve. It appears to be ambiguous.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
+                        LootReserve:SendChatMessage(format("Can't tell how many items you want to reserve. Please be less ambiguous.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
                         return;
                     else
                         if not itemCommands[itemData.ID] then
