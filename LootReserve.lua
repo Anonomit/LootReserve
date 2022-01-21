@@ -440,7 +440,15 @@ end
 
 function LootReserve:UnitClass(player)
     if not self:IsCrossRealm() then
-        return UnitClass(player);
+        local className, classFilename, classId = UnitClass(player);
+        if not className then
+            if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members[player] and LootReserve.Server.CurrentSession.Members[player].Class then
+                return LootReserve:GetClassInfo(LootReserve.Server.CurrentSession.Members[player].Class);
+            elseif LootReserve.Server.NewSessionSettings and LootReserve.Server.NewSessionSettings.ImportedMembers and LootReserve.Server.NewSessionSettings.ImportedMembers[player] and LootReserve.Server.NewSessionSettings.ImportedMembers[player].Class then
+                return LootReserve:GetClassInfo(LootReserve.Server.NewSessionSettings.ImportedMembers[player].Class);
+            end
+        end
+        return className, classFilename, classId;
     end
 
     return self:ForEachRaider(function(name, _, _, _, className, classFilename)

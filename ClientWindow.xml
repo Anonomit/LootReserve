@@ -369,7 +369,7 @@
 			<Button parentKey="MasqueradeSelection" inherits="UIMenuButtonStretchTemplate" frameLevel="100" hidden="true">
 				<Size x="140" y="20" />
 				<Anchors>
-					<Anchor point="TOPLEFT" x="19" y="-1" />
+					<Anchor point="TOPLEFT" x="18" y="-1" />
 				</Anchors>
 				<Layers>
 					<Layer>

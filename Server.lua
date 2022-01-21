@@ -763,6 +763,7 @@ function LootReserve.Server:UpdateGroupMembers()
             if not self.CurrentSession.Members[name] then
                 self.CurrentSession.Members[name] =
                 {
+                    Class         = select(3, LootReserve:UnitClass(player)),
                     ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
                     ReservesDelta = 0,
                     ReservedItems = { },
@@ -1219,6 +1220,7 @@ function LootReserve.Server:StartSession()
         {
             [PlayerName] =
             {
+                Class         = 1,
                 ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
                 ReservesDelta = 0,
                 ReservedItems = { ItemID, ItemID, ... },
@@ -1268,6 +1270,7 @@ function LootReserve.Server:StartSession()
     LootReserve:ForEachRaider(function(name)
         self.CurrentSession.Members[name] =
         {
+            Class         = select(3, LootReserve:UnitClass(name)),
             ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
             ReservesDelta = 0,
             ReservedItems = { },
@@ -1282,6 +1285,7 @@ function LootReserve.Server:StartSession()
     for player, importedMember in pairs(self.CurrentSession.Settings.ImportedMembers) do
         local member = self.CurrentSession.Members[player] or
         {
+            Class         = importedMember.Class,
             ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
             ReservesDelta = 0,
             ReservedItems = { },

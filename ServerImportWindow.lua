@@ -525,7 +525,8 @@ function LootReserve.Server.Import:Import()
         for player, member in pairs(self.Members) do
             for i, itemID in ipairs(member.ReservedItems) do
                 if not member.InvalidReasons[i] then
-                    LootReserve.Server.NewSessionSettings.ImportedMembers[player] = LootReserve.Server.NewSessionSettings.ImportedMembers[player] or { 
+                    LootReserve.Server.NewSessionSettings.ImportedMembers[player] = LootReserve.Server.NewSessionSettings.ImportedMembers[player] or {
+                        Class         = member.Class,
                         ReservesLeft  = nil,
                         ReservesDelta = 0,
                         ReservedItems = { },
@@ -536,7 +537,8 @@ function LootReserve.Server.Import:Import()
                 end
             end
             if member.ReservesDelta then
-                LootReserve.Server.NewSessionSettings.ImportedMembers[player] = LootReserve.Server.NewSessionSettings.ImportedMembers[player] or { 
+                LootReserve.Server.NewSessionSettings.ImportedMembers[player] = LootReserve.Server.NewSessionSettings.ImportedMembers[player] or {
+                    Class         = member.Class,
                     ReservesLeft  = nil,
                     ReservesDelta = 0,
                     ReservedItems = { },
