@@ -1626,10 +1626,9 @@
 									end
 								end
 							end
-							table.sort(missingPlayers, function(a, b) return a.Player &lt; b.Player; end);
 							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 							GameTooltip:SetText(#missingPlayers == 0 and "|cFF00FF00All players reserved items|r" or format("%d |4player:players; missing reserves:", #missingPlayers));
-							for _, data in ipairs(missingPlayers) do
+							for _, data in LootReserve:Ordered(missingPlayers, function(a, b) return a.Player &lt; b.Player; end) do
 								GameTooltip:AddLine(format("|cFF%s[%d/%d] %s%s", data.Reserves == 0 and "FF0000" or "FF7700", data.Reserves, data.Max, LootReserve:ColoredPlayer(data.Player), LootReserve:IsPlayerOnline(data.Player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(data.Player) == false and "|cFF808080 (offline)|r" or ""));
 							end
 							GameTooltip:AddLine("Click for more options", GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
@@ -1639,11 +1638,14 @@
 					<OnClick>
 						local menuWhisperPlayers = { };
 						if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.AcceptingReserves then
-							for player, member in pairs(LootReserve.Server.CurrentSession.Members) do
+							for player, member in LootReserve:Ordered(LootReserve.Server.CurrentSession.Members, function(_, _, a, b) return a &lt; b end) do
 								if member.ReservesLeft > 0 and not member.OptedOut then
+									local max = LootReserve.Server.CurrentSession.Settings.MaxReservesPerPlayer + member.ReservesDelta;
+									local reserves = max - member.ReservesLeft;
 									table.insert(menuWhisperPlayers,
 									{
 										text = format("%s%s", LootReserve:ColoredPlayer(player), LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""),
+										text = format("|cFF%s[%d/%d] %s%s", reserves == 0 and "FF0000" or "FF7700", reserves, max, LootReserve:ColoredPlayer(player), LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""),
 										arg1 = player,
 										func = function(info) LootReserve.Server:WhisperPlayerWithoutReserves(info.arg1); LootReserve:ReopenMenu(self, "#whisper"); end,
 									});

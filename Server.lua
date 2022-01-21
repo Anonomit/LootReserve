@@ -1308,6 +1308,9 @@ function LootReserve.Server:StartSession()
                 table.insert(reserve.Players, player);
             end
         end
+        for _, reserve in pairs(self.CurrentSession.ItemReserves) do
+            table.sort(reserve.Players)
+        end
     end
     table.wipe(self.NewSessionSettings.ImportedMembers);
     table.wipe(self.CurrentSession.Settings.ImportedMembers);

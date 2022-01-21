@@ -909,10 +909,9 @@ function LootReserve:FormatPlayersText(players, colorFunc)
            playerNames[player] = true;
         end
     end
-    table.sort(playersSorted);
 
     local text = "";
-    for _, player in ipairs(playersSorted) do
+    for _, player in LootReserve:Ordered(playersSorted) do
         text = text .. (#text > 0 and ", " or "") .. colorFunc(player);
     end
     return text;

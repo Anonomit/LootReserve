@@ -91,11 +91,10 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
         for itemID, count in pairs(reservedItems) do
             table.insert(itemOrder, itemID);
         end
-        table.sort(itemOrder, function(a, b) return GetItemInfo(a) < GetItemInfo(b) end);
         
         local last = 0;
         local lastCount = 0;
-        for _, itemID in ipairs(itemOrder) do
+        for _, itemID in LootReserve:Ordered(itemOrder, function(a, b) return GetItemInfo(a) < GetItemInfo(b) end) do
             local count = reservedItems[itemID];
             last = last + 1;
             local button = frame.ReservesFrame.Items[last];

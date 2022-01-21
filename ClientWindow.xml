@@ -404,11 +404,8 @@
 								end
 							end
 							
-							table.sort(completePlayers  , function(a, b) return a.Player &lt; b.Player; end);
-							table.sort(incompletePlayers, function(a, b) return a.Player &lt; b.Player; end);
-							
 							for _, players in ipairs{me, incompletePlayers, completePlayers} do
-								for _, data in ipairs(players) do
+								for _, data in LootReserve:Ordered(players, function(a, b) return a.Player &lt; b.Player end) do
 									table.insert(menu, 
 									{
 										text = format("|cff%s[%d/%d] %s%s", (data.Reserves == data.Max or data.OptedOut) and "00FF00" or data.Reserves == 0 and "FF0000" or "FF7700", data.Reserves, data.Max, LootReserve:ColoredPlayer(data.Player), LootReserve:IsPlayerOnline(data.Player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(data.Player) == false and "|cFF808080 (offline)|r" or ""),
