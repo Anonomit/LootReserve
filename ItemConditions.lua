@@ -319,7 +319,7 @@ function LootReserve.ItemConditions:TestPlayer(player, itemID, server)
     if conditions and conditions.ClassMask and playerClass and not self:TestClassMask(conditions.ClassMask, playerClassID) then
         return false, LootReserve.Constants.ReserveResult.FailedClass;
     end
-    if equip and playerClass and not self:IsItemUsable(itemID, playerClass, LootReserve:UnitRace(player)) then
+    if equip and playerClass and not self:IsItemUsable(itemID, playerClass) then
         return false, LootReserve.Constants.ReserveResult.FailedUsable;
     end
     if conditions and conditions.Faction and not self:TestFaction(conditions.Faction) then

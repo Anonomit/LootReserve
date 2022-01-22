@@ -69,6 +69,7 @@ LootReserve.Server =
     ExtraRollRequestNag = { },
 
     ReservableItems                    = { },
+    ReservableTokenRewards             = { },
     ItemNames                          = { },
     LootTrackingRegistered             = false,
     GuildMemberTrackingRegistered      = false,
@@ -972,6 +973,9 @@ function LootReserve.Server:PrepareSession()
 
             local function handleItemCommand(itemID, command, count)
                 count = count or 1;
+                if not self.ReservableItems[itemID] and self.ReservableTokenRewards[itemID] then
+                    itemID = LootReserve.Data:GetToken(itemID);
+                end
                 if self.ReservableItems[itemID] then
                     if command == "reserve" then
                         self:Reserve(sender, itemID, count, true);
@@ -1067,6 +1071,9 @@ function LootReserve.Server:PrepareSession()
                         local match = nil;
                         local matches = { };
                         for itemID, name in pairs(self.ItemNames) do
+                            if not self.ReservableItems[itemID] and self.ReservableTokenRewards[itemID] then
+                                itemID = LootReserve.Data:GetToken(itemID);
+                            end
                             if self.ReservableItems[itemID] and string.find(name, text, 1, true) and not LootReserve:Contains(matches, itemID) then
                                 match = match and 0 or itemID;
                                 table.insert(matches, itemID);
@@ -1124,9 +1131,19 @@ function LootReserve.Server:PrepareSession()
 
     -- Cache the list of items players can reserve
     table.wipe(self.ReservableItems);
+    table.wipe(self.ReservableTokenRewards);
     for itemID, conditions in pairs(self.CurrentSession.ItemConditions) do
-        if itemID ~= 0 and conditions.Custom and LootReserve.ItemConditions:TestServer(itemID) then
-            self.ReservableItems[itemID] = true;
+        if itemID ~= 0 and conditions.Custom then
+            if LootReserve.ItemConditions:TestServer(itemID) then
+                self.ReservableItems[itemID] = true;
+                if LootReserve.Data:IsToken(itemID) then
+                    for _, reward in pairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                        if LootReserve.ItemConditions:TestServer(reward) then
+                            self.ReservableTokenRewards[reward] = true;
+                        end
+                    end
+                end
+            end
         end
     end
     for id, category in pairs(LootReserve.Data.Categories) do
@@ -1134,8 +1151,17 @@ function LootReserve.Server:PrepareSession()
             for _, child in ipairs(category.Children) do
                 if child.Loot then
                     for _, itemID in ipairs(child.Loot) do
-                        if itemID ~= 0 and LootReserve.ItemConditions:TestServer(itemID) then
-                            self.ReservableItems[itemID] = true;
+                        if itemID ~= 0 then
+                            if LootReserve.ItemConditions:TestServer(itemID) then
+                                self.ReservableItems[itemID] = true;
+                                if LootReserve.Data:IsToken(itemID) then
+                                    for _, reward in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                                        if LootReserve.ItemConditions:TestServer(reward) then
+                                            self.ReservableTokenRewards[reward] = true;
+                                        end
+                                    end
+                                end
+                            end
                         end
                     end
                 end
@@ -1156,6 +1182,16 @@ function LootReserve.Server:UpdateItemNameCache()
             else
                 self.AllItemNamesCached = false;
             end
+            if LootReserve.Data:IsToken(itemID) then
+                for _, reward in pairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                    local name = GetItemInfo(reward);
+                    if name then
+                        self.ItemNames[reward] = LootReserve:TransformSearchText(name);
+                    else
+                        self.AllItemNamesCached = false;
+                    end
+                end
+            end
         end
     end
     if self.CurrentSession then
@@ -1167,6 +1203,16 @@ function LootReserve.Server:UpdateItemNameCache()
                 else
                     self.AllItemNamesCached = false;
                 end
+                if LootReserve.Data:IsToken(itemID) then
+                    for _, reward in pairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                        local name = GetItemInfo(reward);
+                        if name then
+                            self.ItemNames[reward] = LootReserve:TransformSearchText(name);
+                        else
+                            self.AllItemNamesCached = false;
+                        end
+                    end
+                end
             end
         end
     end
@@ -1175,12 +1221,26 @@ function LootReserve.Server:UpdateItemNameCache()
             for _, child in ipairs(category.Children) do
                 if child.Loot then
                     for _, itemID in ipairs(child.Loot) do
-                        if itemID ~= 0 and not self.ItemNames[itemID] then
-                            local name = GetItemInfo(itemID);
-                            if name then
-                                self.ItemNames[itemID] = LootReserve:TransformSearchText(name);
-                            else
-                                self.AllItemNamesCached = false;
+                        if itemID ~= 0 then
+                            if not self.ItemNames[itemID] then
+                                local name = GetItemInfo(itemID);
+                                if name then
+                                    self.ItemNames[itemID] = LootReserve:TransformSearchText(name);
+                                else
+                                    self.AllItemNamesCached = false;
+                                end
+                            end
+                            if LootReserve.Data:IsToken(itemID) then
+                                for _, reward in pairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                                    if not self.ItemNames[reward] then
+                                        local name = GetItemInfo(reward);
+                                        if name then
+                                            self.ItemNames[reward] = LootReserve:TransformSearchText(name);
+                                        else
+                                            self.AllItemNamesCached = false;
+                                        end
+                                    end
+                                end
                             end
                         end
                     end
@@ -1294,6 +1354,9 @@ function LootReserve.Server:StartSession()
         };
         self.CurrentSession.Members[player] = member;
         for _, itemID in ipairs(importedMember.ReservedItems) do
+            if not self.ReservableItems[itemID] then
+                itemID = LootReserve.Data:GetToken(itemID);
+            end
             if self.ReservableItems[itemID] and member.ReservesLeft > 0 then
                 member.ReservesLeft = member.ReservesLeft - 1;
                 table.insert(member.ReservedItems, itemID);

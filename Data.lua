@@ -1799,7 +1799,317 @@ LootReserve.Data =
         -- Thoridal
         [34334] = { Hidden = true },
     },
+    TokenMap = {
+        Tokens  = { },
+        Rewards = { },
+    },
 };
+
+local tokenMap = {
+    -- MC
+    
+    -- Eye of Sulfuras
+    [17204] = {17182},
+    -- The Eye of Divinity
+    [18646] = {18608, 18609},
+    -- Ancient Petrified Leaf
+    [18703] = {18714, 18713, 18715},
+    
+    
+    -- Ony
+    -- Can't add mature black dragon sinew because it's a token reward in MC
+    -- Head of Onyxia
+    [18423] = {18404, 18403, 18406},
+    
+    
+    -- Ony/BWL
+    
+    -- Sack of Gems
+    [11938] = {17962, 17963, 17964, 17965, 17969},
+    
+    
+    -- BWL
+    
+    -- Head of Nefarian
+    [19003] = {19383, 19384, 19366},
+    
+    
+    -- ZG
+    
+    -- Primal Hakkari Bindings
+    [19716] = {19827, 19833, 19846},
+    -- Primal Hakkari Sash
+    [19720] = {19842, 19849, 19839},
+    -- Primal Hakkari Armsplint
+    [19717] = {19824, 19836, 19830},
+    -- Primal Hakkari Tabard
+    [19722] = {19825, 19828, 19838},
+    -- Primal Hakkari Girdle
+    [19719] = {19823, 19835, 19829},
+    -- Primal Hakkari Aegis
+    [19724] = {19831, 19834, 19841},
+    -- Heart of Hakkar
+    [19802] = {19950, 19949, 19948},
+    -- Primal Hakkari Idol
+    [22637] = {19789, 19787, 19788, 19784, 19790, 19785, 19786, 19783, 19782},
+    -- Primal Hakkari Shawl
+    [19721] = {19826, 19832, 19845},
+    -- Primal Hakkari Kossack
+    [19723] = {19822, 20034, 20033},
+    -- Primal Hakkari Stanchion
+    [19718] = {19843, 19848, 19840},
+    
+    
+    -- AQ20
+    
+    -- Qiraji Ornate Hilt
+    [20890] = {21410, 21413, 21416, 21407},
+    -- Qiraji Martial Drape
+    [20885] = {21394, 21406, 21412, 21415},
+    -- Qiraji Ceremonial Ring
+    [20888] = {21402, 21405, 21411, 21417},
+    -- Head of Ossirian the Unscarred
+    [21220] = {21504, 21507, 21505, 21506},
+    -- Qiraji Magisterial Ring
+    [20884] = {21393, 21396, 21399, 21414, 21408},
+    -- Qiraji Regal Drape
+    [20889] = {21397, 21403, 21400, 21418, 21409},
+    -- Qiraji Spiked Hilt
+    [20886] = {21392, 21395, 21401, 21404, 21398},
+    
+    
+    -- AQ40
+    
+    -- Carapace of the Old God
+    [20929] = {21331, 21389, 21370, 21364, 21374},
+    -- Ouro's Intact Hide
+    [20927] = {21332, 21362, 21352, 21346},
+    -- Imperial Qiraji Regalia
+    [21237] = {21268, 21273, 21275},
+    -- Vek'nilash's Circlet
+    [20926] = {21329, 21348, 21347, 21337},
+    -- Qiraji Bindings of Dominance
+    [20932] = {21391, 21388, 21376, 21373, 21345, 21344, 21335, 21338, 21354, 21355},
+    -- Imperial Qiraji Armaments
+    [21232] = {21242, 21244, 21272, 21269},
+    -- Vek'lor's Diadem
+    [20930] = {21387, 21366, 21360, 21372, 21353},
+    -- Skin of the Great Sandworm
+    [20931] = {21390, 21368, 21375, 21336, 21356},
+    -- Qiraji Bindings of Command
+    [20928] = {21330, 21333, 21367, 21365, 21361, 21359, 21350, 21349},
+    -- Eye of C'Thun
+    [21221] = {21712, 21710, 21709},
+    -- Husk of the Old God
+    [20933] = {21351, 21343, 21334, 21357},
+    
+    
+    -- Naxx
+    
+    -- Desecrated Handguards
+    [22364] = {22426, 22441, 22469, 22493},
+    -- Desecrated Circlet
+    [22367] = {22514, 22498, 22506},
+    -- Desecrated Robe
+    [22351] = {22512, 22496, 22504},
+    -- Desecrated Legplates
+    [22352] = {22417, 22477},
+    -- Desecrated Leggings
+    [22366] = {22513, 22497, 22505},
+    -- Desecrated Gloves
+    [22371] = {22517, 22501, 22509},
+    -- Desecrated Breastplate
+    [22349] = {22416, 22476},
+    -- Desecrated Headpiece
+    [22360] = {22428, 22438, 22466, 22490},
+    -- Desecrated Belt
+    [22370] = {22518, 22502, 22510},
+    -- The Phylactery of Kel'Thuzad
+    [22520] = {23207, 23206},
+    -- Desecrated Legguards
+    [22359] = {22427, 22437, 22465, 22489},
+    -- Desecrated Sandals
+    [22372] = {22516, 22500, 22508},
+    -- Desecrated Pauldrons
+    [22354] = {22419, 22479},
+    -- Desecrated Tunic
+    [22350] = {22425, 22436, 22464, 22488},
+    -- Desecrated Sabatons
+    [22358] = {22420, 22480},
+    -- Desecrated Bracers
+    [22355] = {22423, 22483},
+    -- Desecrated Waistguard
+    [22356] = {22422, 22482},
+    -- Desecrated Wristguards
+    [22362] = {22424, 22443, 22471, 22495},
+    -- Desecrated Shoulderpads
+    [22368] = {22515, 22499, 22507},
+    -- Desecrated Spaulders
+    [22361] = {22429, 22439, 22467, 22491},
+    -- Desecrated Girdle
+    [22363] = {22431, 22442, 22470, 22494},
+    -- Desecrated Boots
+    [22365] = {22430, 22440, 22468, 22492},
+    -- Desecrated Gauntlets
+    [22357] = {22421, 22481},
+    -- Desecrated Bindings
+    [22369] = {22519, 22503, 22511},
+    -- Desecrated Helmet
+    [22353] = {22418, 22478},
+    
+    
+    
+    -- Kara
+    
+    -- Helm of the Fallen Hero
+    [29759] = {29081, 29076, 28963},
+    -- Helm of the Fallen Champion
+    [29760] = {29061, 29068, 29073, 29044, 29028, 29035, 29040},
+    -- Gloves of the Fallen Hero
+    [29756] = {29085, 29080, 28968},
+    -- Gloves of the Fallen Champion
+    [29757] = {29065, 29067, 29072, 29048, 29032, 29034, 29039},
+    -- Gloves of the Fallen Defender
+    [29758] = {29017, 29020, 29055, 29057, 29090, 29092, 29097},
+    -- Helm of the Fallen Defender
+    [29761] = {29011, 29021, 29049, 29058, 29086, 29093, 29098},
+    
+    
+    -- Gruul
+    
+    -- Pauldrons of the Fallen Hero
+    [29762] = {29084, 29079, 28967},
+    -- Pauldrons of the Fallen Defender
+    [29764] = {29016, 29023, 29054, 29060, 29100, 29095, 29089},
+    -- Pauldrons of the Fallen Champion
+    [29763] = {29064, 29070, 29075, 29047, 29037, 29031, 29043},
+    -- Leggings of the Fallen Defender
+    [29767] = {29022, 29015, 29059, 29053, 29094, 29099, 29088},
+    -- Leggings of the Fallen Champion
+    [29766] = {29074, 29063, 29069, 29046, 29030, 29036, 29042},
+    -- Leggings of the Fallen Hero
+    [29765] = {29083, 29078, 28966},
+    
+    
+    -- Mag
+    
+    -- Chestguard of the Fallen Hero
+    [29755] = {29082, 29077, 28964},
+    -- Magtheridon's Head
+    [32385] = {28791, 28790, 28793, 28792},
+    -- Chestguard of the Fallen Champion
+    [29754] = {29071, 29066, 29062, 29045, 29038, 29033, 29029},
+    -- Chestguard of the Fallen Defender
+    [29753] = {29012, 29019, 29050, 29056, 29087, 29091, 29096},
+    
+    
+    -- SSC
+    
+    -- Gloves of the Vanquished Hero
+    [30241] = {30140, 30205, 30211},
+    -- Gloves of the Vanquished Champion
+    [30239] = {30130, 30135, 30124, 30145, 30189, 30165, 30170},
+    -- Helm of the Vanquished Hero
+    [30244] = {30141, 30206, 30212},
+    -- Gloves of the Vanquished Defender
+    [30240] = {30114, 30119, 30160, 30151, 30223, 30217, 30232},
+    -- Leggings of the Vanquished Champion
+    [30245] = {30132, 30137, 30126, 30148, 30172, 30167, 30192},
+    -- Helm of the Vanquished Champion
+    [30242] = {30125, 30136, 30131, 30146, 30166, 30171, 30190},
+    -- Helm of the Vanquished Defender
+    [30243] = {30120, 30115, 30161, 30152, 30228, 30219, 30233},
+    -- Leggings of the Vanquished Hero
+    [30247] = {30142, 30207, 30213},
+    -- Leggings of the Vanquished Defender
+    [30246] = {30121, 30116, 30153, 30162, 30229, 30220, 30234},
+    
+    
+    -- TK
+    
+    -- Pauldrons of the Vanquished Hero
+    [30250] = {30143, 30210, 30215},
+    -- Verdant Sphere
+    [32405] = {30018, 30017, 30007, 30015},
+    -- Chestguard of the Vanquished Defender
+    [30237] = {30113, 30118, 30150, 30159, 30216, 30222, 30231},
+    -- Chestguard of the Vanquished Hero
+    [30238] = {30139, 30196, 30214},
+    -- Pauldrons of the Vanquished Champion
+    [30248] = {30127, 30133, 30138, 30149, 30168, 30173, 30194},
+    -- Chestguard of the Vanquished Champion
+    [30236] = {30123, 30129, 30134, 30144, 30164, 30169, 30185},
+    -- Pauldrons of the Vanquished Defender
+    [30249] = {30117, 30122, 30154, 30163, 30221, 30230, 30235},
+    
+    
+    -- Hyjal
+    
+    -- Helm of the Forgotten Protector
+    [31095] = {30972, 30974, 31003, 31012, 31014, 31015},
+    -- Gloves of the Forgotten Vanquisher
+    [31093] = {31026, 31055, 31032, 31034, 31035},
+    -- Gloves of the Forgotten Protector
+    [31094] = {30969, 30970, 31001, 31007, 31008, 31011},
+    -- Helm of the Forgotten Vanquisher
+    [31096] = {31027, 31056, 31037, 31040, 31039},
+    -- Gloves of the Forgotten Conqueror
+    [31092] = {30982, 30983, 30985, 31060, 31061, 31050},
+    -- Helm of the Forgotten Conqueror
+    [31097] = {30987, 30988, 30989, 31063, 31064, 31051},
+    
+    
+    -- BT
+    
+    -- Chestguard of the Forgotten Protector
+    [31091] = {30975, 30976, 31004, 31016, 31017, 31018},
+    -- Pauldrons of the Forgotten Vanquisher
+    [31102] = {31030, 31059, 31047, 31048, 31049},
+    -- Chestguard of the Forgotten Conqueror
+    [31089] = {30990, 30991, 30992, 31065, 31066, 31052},
+    -- Leggings of the Forgotten Protector
+    [31100] = {30977, 30978, 31005, 31019, 31020, 31021},
+    -- Pauldrons of the Forgotten Protector
+    [31103] = {30979, 30980, 31006, 31022, 31023, 31024},
+    -- Pauldrons of the Forgotten Conqueror
+    [31101] = {30996, 30997, 30998, 31069, 31070, 31054},
+    -- Leggings of the Forgotten Vanquisher
+    [31099] = {31029, 31058, 31044, 31045, 31046},
+    -- Chestguard of the Forgotten Vanquisher
+    [31090] = {31028, 31057, 31041, 31042, 31043},
+    -- Leggings of the Forgotten Conqueror
+    [31098] = {30993, 30994, 30995, 31067, 31068, 31053},
+    
+    
+    -- SWP
+    
+    -- Boots of the Forgotten Protector
+    [34857] = {34568, 34569, 34570, 34565, 34566, 34567},
+    -- Bracers of the Forgotten Protector
+    [34851] = {34441, 34442, 34443, 34437, 34438, 34439},
+    -- Bracers of the Forgotten Conqueror
+    [34848] = {34431, 34432, 34433, 34434, 34435, 34436},
+    -- Belt of the Forgotten Vanquisher
+    [34855] = {34558, 34557, 34554, 34555, 34556},
+    -- Bracers of the Forgotten Vanquisher
+    [34852] = {34448, 34447, 34444, 34445, 34446},
+    -- Belt of the Forgotten Protector
+    [34854] = {34546, 34547, 34549, 34542, 34543, 34545},
+    -- Boots of the Forgotten Conqueror
+    [34856] = {34559, 34560, 34561, 34562, 34563, 34564},
+    -- Belt of the Forgotten Conqueror
+    [34853] = {34485, 34487, 34488, 34527, 34528, 34541},
+    -- Boots of the Forgotten Vanquisher
+    [34858] = {34575, 34574, 34571, 34572, 34573},
+    
+};
+
+for token, rewards in pairs(tokenMap) do
+    LootReserve.Data.TokenMap.Rewards[token] = rewards;
+    for _, reward in ipairs(rewards) do
+        LootReserve.Data.TokenMap.Tokens[reward] = token;
+    end
+end
 
 -- Faction restrictions on equipment should only apply in classic
 if LootReserve:GetCurrentExpansion() == 1 then
@@ -1922,4 +2232,17 @@ function LootReserve.Data.CategorySorter(a, b, aID, bID)
         return a.Expansion > b.Expansion;
     end
     return aID < bID;
+end
+
+function LootReserve.Data:GetToken(itemID)
+    return self.TokenMap.Tokens[itemID];
+end
+function LootReserve.Data:GetTokenRewards(itemID)
+    return self.TokenMap.Rewards[itemID];
+end
+function LootReserve.Data:IsToken(itemID)
+    return self:GetTokenRewards(itemID) ~= nil;
+end
+function LootReserve.Data:IsTokenReward(itemID)
+    return self:GetToken(itemID) ~= nil;
 end
