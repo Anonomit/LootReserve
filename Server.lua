@@ -844,8 +844,29 @@ function LootReserve.Server:PrepareSession()
 
                 local item = LootReserve.Item(link);
                 if self.CurrentSession.WonItems[item:GetID()] then
-                    local reservesText = LootReserve:FormatReservesTextColored(self.CurrentSession.WonItems[item:GetID()].Players);
-                    tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Coin-Up:32:32:0:-4|t Won by " .. reservesText, 1, 1, 1);
+                    local playerCounts = { };
+                    for _, player in ipairs(self.CurrentSession.WonItems[item:GetID()].Players) do
+                        playerCounts[player] = playerCounts[player] and playerCounts[player] + 1 or 1;
+                        local found = 0;
+                        for _, roll in ipairs(self.CurrentSession.Members[player].WonRolls) do
+                            if item == LootReserve.Item(roll.Item) then
+                                found = found + 1;
+                                if found == playerCounts[player] then
+                                    local phase = roll.Phase;
+                                    if type(phase) == "number" then
+                                        if phase == LootReserve.Constants.WonRollPhase.Reserve then
+                                            phase = nil;
+                                        elseif phase == LootReserve.Constants.WonRollPhase.RaidRoll then
+                                            phase = "Raid-Roll";
+                                        end
+                                    end
+                                    local text = format("%s%s", LootReserve:ColoredPlayer(player), phase and format(" for %s", phase or "") or "")
+                                    tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Coin-Up:32:32:0:-4|t Won by " .. text, 1, 1, 1);
+                                    break;
+                                end
+                            end
+                        end
+                    end
                 end
                 if self.CurrentSession.ItemReserves[item:GetID()] then
                     local reservesText = LootReserve:FormatReservesTextColored(self.CurrentSession.ItemReserves[item:GetID()].Players);
