@@ -1799,6 +1799,40 @@ LootReserve.Data =
         -- Thoridal
         [34334] = { Hidden = true },
     },
+    QuestStarts = {
+        -- Ancient Petrified Leaf
+        [18703] = 7632,
+        
+        -- Head of Onyxia
+        [18422] = 7495,
+        [18423] = 7490,
+
+        -- Head of Nefarian
+        [19002] = 7781,
+        [19003] = 7783,
+        
+        -- Heart of Hakkar
+        [19802] = 8183,
+        
+        -- Head of Ossirian the Unscarred
+        [21220] = 8791,
+        
+        -- Eye of C'Thun
+        [21221] = 8801,
+        
+        -- The Phylactery of Kel'Thuzad
+        [22520] = 9120,
+            
+        -- Magtheridon's Head
+        [32385] = 11002,
+        [32386] = 11003,
+        
+        -- Verdant Sphere
+        [32405] = 11007,
+        
+        -- Blood of Zul'jin
+        [33102] = 11178,
+    },
     TokenMap = {
         Tokens  = { },
         Rewards = { },
@@ -2232,6 +2266,10 @@ function LootReserve.Data.CategorySorter(a, b, aID, bID)
         return a.Expansion > b.Expansion;
     end
     return aID < bID;
+end
+
+function LootReserve.Data:GetQuest(itemID)
+    return self.QuestStarts[itemID];
 end
 
 function LootReserve.Data:GetToken(itemID)
