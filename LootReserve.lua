@@ -717,6 +717,25 @@ function LootReserve:GetItemDescription(itemID)
     local itemText = "";
     if not itemType then return; end
     
+    if not LootReserve.TooltipScanner then
+        LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
+        LootReserve.TooltipScanner:Hide();
+    end
+    if not LootReserve.TooltipScanner.Unique then
+        LootReserve.TooltipScanner.Unique = format("^(%s)$", ITEM_UNIQUE);
+    end
+    LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
+    LootReserve.TooltipScanner:SetHyperlink("item:" .. itemID);
+    for i = 1, LootReserve.TooltipScanner:NumLines() do
+        local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
+        if line and line:GetText() then
+            if line:GetText():match(LootReserve.TooltipScanner.Unique) then
+                itemText = ITEM_UNIQUE .. " " .. itemText;
+                break;
+            end
+        end
+    end
+    
     if LootReserve.Constants.RedundantSubTypes[itemSubType] then
         itemText = LootReserve.Constants.RedundantSubTypes[itemSubType];
     elseif itemType == ARMOR then
@@ -727,12 +746,6 @@ function LootReserve:GetItemDescription(itemID)
         end
     elseif itemType == WEAPON then
         itemText = itemText .. (_G[equipLoc] and (_G[equipLoc] .. " ") or "") .. (LootReserve.Constants.WeaponTypeNames[itemSubType] or "");
-    elseif itemType == MISCELLANEOUS then
-        if itemSubType == "Junk" or itemSubType == "Other" then
-            itemText = itemType;
-        else
-           itemText = itemSubType; 
-        end
     elseif itemType == "Recipe" then
         if itemSubType == "Book" then
             itemText = itemText .. "Skill Book";
@@ -743,9 +756,36 @@ function LootReserve:GetItemDescription(itemID)
         itemText = itemText .. (_G[equipLoc] or "");
     elseif itemType == "Trade Goods" then
         itemText = itemText .. "Trade Good";
+    elseif itemType == MISCELLANEOUS then
+        local isQuestItem = false;
+        
+        if not LootReserve.TooltipScanner.StartsQuest then
+            LootReserve.TooltipScanner.StartsQuest = format("^(%s)$", ITEM_STARTS_QUEST);
+        end
+        for i = 1, LootReserve.TooltipScanner:NumLines() do
+            local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
+            if line and line:GetText() then
+                if line:GetText():match(LootReserve.TooltipScanner.StartsQuest) then
+                    isQuestItem = true;
+                    break;
+                end
+            end
+        end
+        
+        if isQuestItem then
+            itemText = itemText .. "Quest";
+        else
+            if itemSubType == "Junk" or itemSubType == "Other" then
+                itemText = itemType;
+            else
+               itemText = itemSubType;
+            end
+        end
     else
         itemText = itemText .. itemType;
     end
+    
+    LootReserve.TooltipScanner:Hide();
     
     if bindType == LE_ITEM_BIND_ON_ACQUIRE then
         -- itemText = itemText .. "  (BoP)";

@@ -208,7 +208,7 @@ setClassWeapons("WARRIOR", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swo
                            "Bows", "Crossbows", "Guns", "Thrown");
 
 
-local function IsItemUsable(itemID, playerClass, playerRace)
+local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
     -- If item is Armor or Weapon then fail if class cannot equip it
     local _, _, _, _, _, itemType, itemSubType = GetItemInfo(itemID);
     if UNUSABLE_EQUIPMENT[playerClass][itemType] then
@@ -218,6 +218,7 @@ local function IsItemUsable(itemID, playerClass, playerRace)
     end
     
     -- If item is class-locked or race-locked then make sure this class/race is listed
+    -- Also make sure the item is not unique if I already own one
     if not LootReserve.TooltipScanner then
         LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
         LootReserve.TooltipScanner:Hide();
@@ -229,35 +230,46 @@ local function IsItemUsable(itemID, playerClass, playerRace)
     if not LootReserve.TooltipScanner.RacesAllowed then
         LootReserve.TooltipScanner.RacesAllowed = ITEM_RACES_ALLOWED:gsub("%.", "%%."):gsub("%%s", "(.+)");
     end
+    if not LootReserve.TooltipScanner.Unique then
+        LootReserve.TooltipScanner.Unique = format("^(%s)$", ITEM_UNIQUE);
+    end
 
     LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
     LootReserve.TooltipScanner:SetHyperlink("item:" .. itemID);
-    for i = 1, 50 do
+    for i = 1, LootReserve.TooltipScanner:NumLines() do
         local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
         if line and line:GetText() then
             if line:GetText():match(LootReserve.TooltipScanner.ClassesAllowed) then
                 local found = line:GetText():match(LOCALIZED_CLASS_NAMES_MALE[playerClass]) or line:GetText():match(LOCALIZED_CLASS_NAMES_FEMALE[playerClass]);
-                LootReserve.TooltipScanner:Hide();
-                return not not found;
+                if not found then
+                    LootReserve.TooltipScanner:Hide();
+                    return false;
+                end
             elseif line:GetText():match(LootReserve.TooltipScanner.RacesAllowed) and playerRace then
                 local found = line:GetText():match(playerRace);
                 LootReserve.TooltipScanner:Hide();
-                return not not found;
+                if not found then
+                    LootReserve.TooltipScanner:Hide();
+                    return false;
+                end
+            elseif line:GetText():match(LootReserve.TooltipScanner.Unique) and numOwned > 0 then
+                LootReserve.TooltipScanner:Hide();
+                return false;
             end
         end
     end
-    
-    
     LootReserve.TooltipScanner:Hide();
+    
+    
     return true;
 end
 
 
-function LootReserve.ItemConditions:IsItemUsable(itemID, playerClass, playerRace)
-    return IsItemUsable(itemID, playerClass, playerRace);
+function LootReserve.ItemConditions:IsItemUsable(itemID, playerClass, playerRace, numOwned)
+    return IsItemUsable(itemID, playerClass, playerRace, numOwned or 0);
 end
 function LootReserve.ItemConditions:IsItemUsableByMe(itemID)
-    return IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), LootReserve:UnitRace(LootReserve:Me()));
+    return self:IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), LootReserve:UnitRace(LootReserve:Me()), GetItemCount(itemID, true) - LootReserve:GetTradeableItemCount(itemID));
 end
 
 function LootReserve.ItemConditions:TestClassMask(classMask, playerClass)

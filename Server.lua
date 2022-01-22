@@ -507,7 +507,7 @@ function LootReserve.Server:Load()
         self.RecentLoot[i] = LootReserve.Item(item);
     end
 
-    -- Warn player if more than 6 hours has passed since the player was last online
+    -- Warn player if a stale session or roll exists
     if self.CurrentSession and self.CurrentSession.LogoutTime and time() > self.CurrentSession.LogoutTime + 1*15*60 then
         LootReserve:ShowError("You logged out with an active session.|nYou can reset the session in the server window:|n|cFFFFD200/reserve server|r")
     end
