@@ -6,7 +6,7 @@ LootReserve.ItemSearch =
     LoadingTicker = nil,
     Names         = { },
     PendingNames  = { };
-    MaxID         = 24283,
+    MaxID         = 40000,
     LoadedNames   = 0,
     TotalNames    = 0,
 };
