@@ -229,11 +229,27 @@ function LootReserve.Server:UpdateReserveList(lockdown)
             return true;
         end
 
+        local missing = false;
         local name, link = GetItemInfo(itemID);
         if name then
             if string.find(name:upper(), filter, 1, true) then
                 return true;
             end
+        else
+            missing = true;
+        end
+        if LootReserve.Data:IsToken(itemID) then
+            for _, reward in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                local match = matchesFilter(reward, reserve, filter);
+                if match then
+                    return true;
+                elseif match == nil then
+                    missing = true;
+                end
+            end
+        end
+        if missing then
+            return nil;
         end
         
         for _, player in pairs(reserve.Players) do
@@ -660,11 +676,27 @@ function LootReserve.Server:UpdateRollList(lockdown)
             return true;
         end
 
+        local missing = false;
         local name, link = item:GetInfo();
         if name then
             if string.find(name:upper(), filter, 1, true) then
                 return true;
             end
+        else
+            missing = true;
+        end
+        if LootReserve.Data:IsToken(item:GetID()) then
+            for _, reward in ipairs(LootReserve.Data:GetTokenRewards(item:GetID())) do
+                local match = matchesFilter(LootReserve.Item(reward), roll, filter);
+                if match then
+                    return true;
+                elseif match == nil then
+                    missing = true;
+                end
+            end
+        end
+        if missing then
+            return nil;
         end
         
         for player in pairs(roll.Players) do

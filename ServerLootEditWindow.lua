@@ -95,12 +95,26 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             return true;
         end
 
+        local missing = false;
         local name, link = GetItemInfo(itemID);
         if name then
             if string.find(name:upper(), filter, 1, true) then
                 return true;
             end
         else
+            missing = true;
+        end
+        if LootReserve.Data:IsToken(itemID) then
+            for _, reward in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                local match = matchesFilter(reward, filter);
+                if match then
+                    return true;
+                elseif match == nil then
+                    missing = true;
+                end
+            end
+        end
+        if missing then
             return nil;
         end
 

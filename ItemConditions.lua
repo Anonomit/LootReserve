@@ -208,7 +208,12 @@ setClassWeapons("WARRIOR", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swo
                            "Bows", "Crossbows", "Guns", "Thrown");
 
 
-local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
+local function IsItemUsable(itemID, playerClass, playerRace, isMe)
+    local numOwned
+    if isMe then
+        numOwned = GetItemCount(itemID, true) - LootReserve:GetTradeableItemCount(itemID);
+    end
+    
     -- If item is Armor or Weapon then fail if class cannot equip it
     local _, _, _, _, _, itemType, itemSubType = GetItemInfo(itemID);
     if UNUSABLE_EQUIPMENT[playerClass][itemType] then
@@ -246,7 +251,7 @@ local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
         local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
         if line and line:GetText() then
                 
-            if line:GetText():match(LootReserve.TooltipScanner.AlreadyKnown) then
+            if isMe and line:GetText():match(LootReserve.TooltipScanner.AlreadyKnown) then
                 local r, g, b = line:GetTextColor();
                 r, g, b = r*255, g*255, b*255;
                 if r > 254 and r <= 255 and g > 31 and g <= 32 and b > 31 and b <= 32 then
@@ -269,11 +274,11 @@ local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
                     return false;
                 end
                 
-            elseif line:GetText():match(LootReserve.TooltipScanner.Unique) and numOwned > 0 then
+            elseif isMe and line:GetText():match(LootReserve.TooltipScanner.Unique) and numOwned > 0 then
                 LootReserve.TooltipScanner:Hide();
                 return false;
                 
-            elseif line:GetText():match(LootReserve.TooltipScanner.ProfessionAllowed) then
+            elseif isMe and line:GetText():match(LootReserve.TooltipScanner.ProfessionAllowed) then
                 if numOwned > 0 then
                     return false;
                 else
@@ -292,7 +297,7 @@ local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
     -- If item starts a quest, make sure the quest is not completed or in progress
     local questStartID = LootReserve.Data:GetQuestStarted(itemID);
     local questDropID  = LootReserve.Data:GetQuestDropRequirement(itemID);
-    if questStartID or questDropID then
+    if isMe and questStartID or questDropID then
         if C_QuestLog.IsQuestFlaggedCompleted(questStartID or questDropID) then
             return false;
         end
@@ -326,10 +331,10 @@ end
 
 
 function LootReserve.ItemConditions:IsItemUsable(itemID, playerClass, playerRace, numOwned)
-    return IsItemUsable(itemID, playerClass, playerRace, numOwned or 0);
+    return IsItemUsable(itemID, playerClass, playerRace, false);
 end
 function LootReserve.ItemConditions:IsItemUsableByMe(itemID)
-    return self:IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), LootReserve:UnitRace(LootReserve:Me()), GetItemCount(itemID, true) - LootReserve:GetTradeableItemCount(itemID));
+    return self:IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), LootReserve:UnitRace(LootReserve:Me()), true);
 end
 
 function LootReserve.ItemConditions:TestClassMask(classMask, playerClass)
