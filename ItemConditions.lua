@@ -225,13 +225,19 @@ local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
     end
 
     if not LootReserve.TooltipScanner.ClassesAllowed then
-        LootReserve.TooltipScanner.ClassesAllowed = ITEM_CLASSES_ALLOWED:gsub("%.", "%%."):gsub("%%s", "(.+)");
+        LootReserve.TooltipScanner.ClassesAllowed = ITEM_CLASSES_ALLOWED:gsub("%%s", "(.+)");
     end
     if not LootReserve.TooltipScanner.RacesAllowed then
-        LootReserve.TooltipScanner.RacesAllowed = ITEM_RACES_ALLOWED:gsub("%.", "%%."):gsub("%%s", "(.+)");
+        LootReserve.TooltipScanner.RacesAllowed = ITEM_RACES_ALLOWED:gsub("%%s", "(.+)");
     end
     if not LootReserve.TooltipScanner.Unique then
         LootReserve.TooltipScanner.Unique = format("^(%s)$", ITEM_UNIQUE);
+    end
+    if not LootReserve.TooltipScanner.AlreadyKnown then
+        LootReserve.TooltipScanner.AlreadyKnown = format("^(%s)$", ITEM_SPELL_KNOWN);
+    end
+    if not LootReserve.TooltipScanner.ProfessionAllowed then
+        LootReserve.TooltipScanner.ProfessionAllowed = ITEM_MIN_SKILL:gsub("%%s ", "[%%u%%l%%s]+ "):gsub("%(%%d%)", "%%(%%d+%%)");
     end
 
     LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
@@ -239,12 +245,22 @@ local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
     for i = 1, LootReserve.TooltipScanner:NumLines() do
         local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
         if line and line:GetText() then
-            if line:GetText():match(LootReserve.TooltipScanner.ClassesAllowed) then
+                
+            if line:GetText():match(LootReserve.TooltipScanner.AlreadyKnown) then
+                local r, g, b = line:GetTextColor();
+                r, g, b = r*255, g*255, b*255;
+                if r > 254 and r <= 255 and g > 31 and g <= 32 and b > 31 and b <= 32 then
+                    LootReserve.TooltipScanner:Hide();
+                    return false;
+                end
+            
+            elseif line:GetText():match(LootReserve.TooltipScanner.ClassesAllowed) then
                 local found = line:GetText():match(LOCALIZED_CLASS_NAMES_MALE[playerClass]) or line:GetText():match(LOCALIZED_CLASS_NAMES_FEMALE[playerClass]);
                 if not found then
                     LootReserve.TooltipScanner:Hide();
                     return false;
                 end
+                
             elseif line:GetText():match(LootReserve.TooltipScanner.RacesAllowed) and playerRace then
                 local found = line:GetText():match(playerRace);
                 LootReserve.TooltipScanner:Hide();
@@ -252,9 +268,22 @@ local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
                     LootReserve.TooltipScanner:Hide();
                     return false;
                 end
+                
             elseif line:GetText():match(LootReserve.TooltipScanner.Unique) and numOwned > 0 then
                 LootReserve.TooltipScanner:Hide();
                 return false;
+                
+            elseif line:GetText():match(LootReserve.TooltipScanner.ProfessionAllowed) then
+                if numOwned > 0 then
+                    return false;
+                else
+                    local r, g, b = line:GetTextColor();
+                    r, g, b = r*255, g*255, b*255;
+                    if r > 254 and r <= 255 and g > 31 and g <= 32 and b > 31 and b <= 32 then
+                        LootReserve.TooltipScanner:Hide();
+                        return false;
+                    end
+                end
             end
         end
     end
