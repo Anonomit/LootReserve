@@ -261,8 +261,8 @@ local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
     LootReserve.TooltipScanner:Hide();
     
     -- If item starts a quest, make sure the quest is not completed or in progress
-    local questStartID = LootReserve.Data:GetQuestStarted(itemID)
-    local questDropID  = LootReserve.Data:GetQuestDropRequirement(itemID)
+    local questStartID = LootReserve.Data:GetQuestStarted(itemID);
+    local questDropID  = LootReserve.Data:GetQuestDropRequirement(itemID);
     if questStartID or questDropID then
         if C_QuestLog.IsQuestFlaggedCompleted(questStartID or questDropID) then
             return false;
@@ -271,11 +271,11 @@ local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
         local collapsedHeaders = { };
         local i = 1;
         while GetQuestLogTitle(i) do
-            local _, _, _, isHeader, isCollapsed, _, _, questID = GetQuestLogTitle(i);
+            local name, _, _, isHeader, isCollapsed, _, _, questID = GetQuestLogTitle(i);
             if isHeader then
                 if isCollapsed then
-                    table.insert(collapsedHeaders, i);
-                    ExpandFactionHeader(i);
+                    table.insert(collapsedHeaders, 1, i);
+                    ExpandQuestHeader(i);
                 end
             elseif questID == questStartID or questID == questDropID then
                 found = true;
@@ -285,7 +285,7 @@ local function IsItemUsable(itemID, playerClass, playerRace, numOwned)
         end
 
         for _, i in ipairs(collapsedHeaders) do
-            CollapseFactionHeader(i);
+            CollapseQuestHeader(i);
         end
         if (found and questStartID) or (not found and questDropID) then
             return false;
