@@ -1799,7 +1799,8 @@ LootReserve.Data =
         -- Thoridal
         [34334] = { Hidden = true },
     },
-    QuestStarts = {
+    -- Items that start a quest which can only be completed one time
+    QuestStarters = {
         -- Ancient Petrified Leaf
         [18703] = 7632,
         
@@ -1832,6 +1833,21 @@ LootReserve.Data =
         
         -- Blood of Zul'jin
         [33102] = 11178,
+    },
+    
+    -- Items that you must be on a quest to loot
+    QuestDrops = {
+        -- Narain's Scrying Goggles
+        [20951] = 8578,
+        
+        -- Draconic for Dummies
+        [21110] = 8620,
+        
+        -- Head of the Broodlord Lashlayer
+        [20383] = 8288,
+        
+        -- Red Scepter Shard
+        [21138] = 8730,
     },
     TokenMap = {
         Tokens  = { },
@@ -2268,8 +2284,11 @@ function LootReserve.Data.CategorySorter(a, b, aID, bID)
     return aID < bID;
 end
 
-function LootReserve.Data:GetQuest(itemID)
-    return self.QuestStarts[itemID];
+function LootReserve.Data:GetQuestStarted(itemID)
+    return self.QuestStarters[itemID];
+end
+function LootReserve.Data:GetQuestDropRequirement(itemID)
+    return self.QuestDrops[itemID];
 end
 
 function LootReserve.Data:GetToken(itemID)
