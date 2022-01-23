@@ -986,7 +986,7 @@ function LootReserve.Server:PrepareSession()
                             self:CancelReserve(sender, itemID, count, true);
                         end
                     else
-                        self:SendChatMessage(format("You have no items reserved.%s", self:GetSupportString(sender, " ")), "WHISPER", sender);
+                        LootReserve:SendChatMessage(format("You have no items reserved.%s", self:GetSupportString(sender, " ")), "WHISPER", sender);
                     end
                     return;
                 end
