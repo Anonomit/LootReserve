@@ -651,7 +651,7 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
     local locked = remainingReserves == "#";
     remainingReserves = tonumber(remainingReserves) or 0;
     count = tonumber(count);
-    quiet = tonumber(quiet);
+    quiet = tonumber(quiet) == 1;
 
     if LootReserve.Client.SessionServer == sender then
         LootReserve.Client.RemainingReserves = remainingReserves;
