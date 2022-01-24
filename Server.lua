@@ -31,6 +31,7 @@ LootReserve.Server =
         ChatAnnounceWinToGuild          = false,
         ChatAnnounceWinToGuildThreshold = 3,
         ChatReservesList                = true,
+        ChatReservesListLimit           = 5,
         ChatUpdates                     = true,
         ReservesSorting                 = LootReserve.Constants.ReservesSorting.ByBoss,
         UseGlobalProfile                = false,
@@ -887,7 +888,7 @@ function LootReserve.Server:PrepareSession()
     if self.CurrentSession.Settings.ChatFallback and not self.ChatFallbackRegistered then
         self.ChatFallbackRegistered = true;
 
-        local reservesStrings = {"^[!¡]+reserves"};
+        local reservesStrings = {"^[!¡]+reserves(.*)"};
         local myResStrings    = {"^[!¡]+myreserves", "^[!¡]+myreserve", "^[!¡]+myres"};
         local optStrings      = {"^[!¡]+opt%s*(in)", "^[!¡]+opt%s*(out)"};
         local cancelStrings   = {"^[!¡]+cancelreserve(.*)", "^[!¡]+cancelres(.*)", "^[!¡]+cancel(.*)", "^[!¡]+unreserve(.*)", "^[!¡]+unres(.*)"};
@@ -905,12 +906,13 @@ function LootReserve.Server:PrepareSession()
             text = LootReserve:StringTrim(text);
             
             
+            local command;
             for _, pattern in ipairs(reservesStrings) do
-                if text:match(pattern) then
-                    if self.Settings.ChatReservesList then
-                        self:SendReservesList(sender);
-                    end
-                return;
+                local args = text:match(pattern);
+                if args then
+                    command = "reserves";
+                    text = args;
+                    break;
                 end
             end
             
@@ -934,13 +936,14 @@ function LootReserve.Server:PrepareSession()
                 end
             end
             
-            local command
-            for _, pattern in ipairs(cancelStrings) do
-                local args = text:match(pattern);
-                if args then
-                    command = "cancel";
-                    text = args;
-                    break;
+            if not command then
+                for _, pattern in ipairs(cancelStrings) do
+                    local args = text:match(pattern);
+                    if args then
+                        command = "cancel";
+                        text = args;
+                        break;
+                    end
                 end
             end
             
@@ -957,16 +960,29 @@ function LootReserve.Server:PrepareSession()
             
             if not command then return; end
 
-            if not self.CurrentSession.AcceptingReserves then
+            if not self.CurrentSession.AcceptingReserves and (command == "reserve" or command == "cancel") then
                 LootReserve:SendChatMessage("Loot reserves are no longer being accepted.", "WHISPER", sender);
                 return;
             end
 
             text = LootReserve:StringTrim(text);
-            local command = "reserve";
-            if #text == 0 then
+            if command == "reserve" and #text == 0 then
                 LootReserve:SendChatMessage("Seems like you forgot to enter the item you want to reserve. Whisper  !reserve ItemLinkOrName", "WHISPER", sender);
                 self:SendSupportString(sender, true);
+                return;
+            elseif command == "reserves" and #text == 0 then
+                if self.Settings.ChatReservesList then
+                    local count = 0;
+                    for id in pairs(self.CurrentSession.ItemReserves) do
+                        count = count + 1;
+                    end
+                    if self.Settings.ChatReservesListLimit == LootReserve.Constants.ChatReservesListLimit.None or count <= self.Settings.ChatReservesListLimit then
+                        self:SendReservesList(sender);
+                    else
+                        LootReserve:SendChatMessage(format("Reserves messaging is limited. You may enter up to %d item%s at a time to see reserves. Whisper  !reserves ItemLinkOrName", self.Settings.ChatReservesListLimit, self.Settings.ChatReservesListLimit == 1 and "" or "s"), "WHISPER", sender);
+                        self:SendSupportString(sender, true);
+                    end
+                end
                 return;
             end
 
@@ -1002,6 +1018,8 @@ function LootReserve.Server:PrepareSession()
                         self:Reserve(sender, itemID, count, true);
                     elseif command == "cancel" then
                         self:CancelReserve(sender, itemID, count, true);
+                    elseif command == "reserves" then
+                        self:SendReservesList(sender);
                     end
                 else
                     LootReserve:SendChatMessage(format("That item is not reservable in this raid.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
@@ -1012,7 +1030,7 @@ function LootReserve.Server:PrepareSession()
             if itemID then
                 local charI = 0;
                 local items = { };
-                local itemCommands = { };
+                local itemCounts = { };
                 while true do
                     local s, e, itemID;
                     -- Match various forms of item linking, including incorrect ones
@@ -1036,47 +1054,61 @@ function LootReserve.Server:PrepareSession()
                         break;
                     end
                 end
-                for i, itemData in ipairs(items) do
-                    local s, e = items[i-1] and items[i-1].e+1 or 1, items[i+1] and items[i+1].s-1 or text:len();
-                    local pre, post = text:sub(s, itemData.s-1), text:sub(itemData.e+1, e);
-                    local count1, count2 = pre:match("(%d+)%s*[xX%*]"), post:match("[xX%*]%s*(%d+)");
-                    local ambig1, ambig2 = pre:match("(%d+)"), post:match("(%d+)");
-                    local counterambig1, counterambig2 = pre:match("[xX%*]%s*(%d+)"), post:match("(%d+)%s*[xX%*]");
-                    
-                    -- [xX*] is not always necessary, as a solo number is not ambiguous at the start or end
-                    if i == 1 and not count1 then
-                        count1 = ambig1;
-                    end
-                    if i == #items + 1 and not count2 then
-                        count2 = ambig2;
-                    end
-                    
-                    local ambiguous = false;
-                    if ambig1 and not count1 and i ~= 1 then
-                        if not counterambig1 or not items[i-1] then
-                            ambiguous = true;
+                if command == "reserve" or command == "cancel" then
+                    for i, itemData in ipairs(items) do
+                        local s, e = items[i-1] and items[i-1].e+1 or 1, items[i+1] and items[i+1].s-1 or text:len();
+                        local pre, post = text:sub(s, itemData.s-1), text:sub(itemData.e+1, e);
+                        local count1, count2 = pre:match("(%d+)%s*[xX%*]"), post:match("[xX%*]%s*(%d+)");
+                        local ambig1, ambig2 = pre:match("(%d+)"), post:match("(%d+)");
+                        local counterambig1, counterambig2 = pre:match("[xX%*]%s*(%d+)"), post:match("(%d+)%s*[xX%*]");
+                        
+                        -- [xX*] is not always necessary, as a solo number is not ambiguous at the start or end
+                        if i == 1 and not count1 then
+                            count1 = ambig1;
                         end
-                    elseif ambig2 and not count2 and i ~= #items + 1 then
-                        if not counterambig2 or not items[i+1] then
-                            ambiguous = true;
+                        if i == #items + 1 and not count2 then
+                            count2 = ambig2;
+                        end
+                        
+                        local ambiguous = false;
+                        if ambig1 and not count1 and i ~= 1 then
+                            if not counterambig1 or not items[i-1] then
+                                ambiguous = true;
+                            end
+                        elseif ambig2 and not count2 and i ~= #items + 1 then
+                            if not counterambig2 or not items[i+1] then
+                                ambiguous = true;
+                            end
+                        end
+                        
+                        if count1 and count2 or ambiguous then
+                            LootReserve:SendChatMessage(format("Can't tell how many items you want to reserve. Please be less ambiguous.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
+                            return;
+                        else
+                            if not itemCounts[itemData.ID] then
+                                itemCounts[itemData.ID] = 0;
+                            end
+                            itemCounts[itemData.ID] = itemCounts[itemData.ID] + (count1 or count2 or 1);
                         end
                     end
-                    
-                    if count1 and count2 or ambiguous then
-                        LootReserve:SendChatMessage(format("Can't tell how many items you want to reserve. Please be less ambiguous.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
-                        return;
+                    for _, itemData in pairs(items) do
+                        if itemCounts[itemData.ID] then
+                            handleItemCommand(itemData.ID, command, itemCounts[itemData.ID]);
+                            itemCounts[itemData.ID] = nil;
+                        end
+                    end
+                elseif command == "reserves" and self.Settings.ChatReservesList then
+                    local whitelist = { };
+                    local count = 0;
+                    for _, itemData in pairs(items) do
+                        whitelist[itemData.ID] = true;
+                        count = count + 1;
+                    end
+                    if self.Settings.ChatReservesListLimit == LootReserve.Constants.ChatReservesListLimit.None or count <= self.Settings.ChatReservesListLimit then
+                        self:SendReservesList(sender, nil, nil, whitelist);
                     else
-                        if not itemCommands[itemData.ID] then
-                            itemCommands[itemData.ID] = 0;
-                        end
-                        itemCommands[itemData.ID] = itemCommands[itemData.ID] + (count1 or count2 or 1);
-                    end
-                end
-                
-                for _, itemData in pairs(items) do
-                    if itemCommands[itemData.ID] then
-                        handleItemCommand(itemData.ID, command, itemCommands[itemData.ID]);
-                        itemCommands[itemData.ID] = nil;
+                        LootReserve:SendChatMessage(format("Reserves messaging is limited. You may enter up to %d item%s at a time to see reserves. Whisper  !reserves ItemLinkOrName", self.Settings.ChatReservesListLimit, self.Settings.ChatReservesListLimit == 1 and "" or "s"), "WHISPER", sender);
+                        self:SendSupportString(sender, true);
                     end
                 end
             else
@@ -1086,6 +1118,7 @@ function LootReserve.Server:PrepareSession()
                 else
                     count = 1;
                 end
+                local whitelist = { };
                 text = LootReserve:TransformSearchText(text);
                 local function handleItemCommandByName()
                     if self:UpdateItemNameCache() then
@@ -1107,7 +1140,12 @@ function LootReserve.Server:PrepareSession()
                                 self:GetSupportString(sender, " ", true)
                             ), "WHISPER", sender);
                         elseif match > 0 then
-                            handleItemCommand(match, command, count);
+                            if command == "reserve" or command == "cancel" then
+                                handleItemCommand(match, command, count);
+                                print"scuse me"
+                            elseif command == "reserves" then
+                                whitelist[match] = true;
+                            end
                         elseif match == 0 then
                             local names = { };
                             for i = 1, math.min(5, #matches) do
@@ -1122,6 +1160,18 @@ function LootReserve.Server:PrepareSession()
                         end
                     else
                         C_Timer.After(0.1, handleItemCommandByName);
+                    end
+                    if command == "reserves" and self.Settings.ChatReservesList then
+                        local count = 0;
+                        for i in pairs(whitelist) do
+                            count = count + 1;
+                        end
+                        if self.Settings.ChatReservesListLimit == LootReserve.Constants.ChatReservesListLimit.None or count <= self.Settings.ChatReservesListLimit then
+                            self:SendReservesList(sender, nil, nil, whitelist);
+                        else
+                            LootReserve:SendChatMessage(format("Reserves messaging is limited. You may enter up to %d item%s at a time to see reserves. Whisper  !reserves ItemLinkOrName", self.Settings.ChatReservesListLimit, self.Settings.ChatReservesListLimit == 1 and "" or "s"), "WHISPER", sender);
+                            self:SendSupportString(sender, true);
+                        end
                     end
                 end
 
@@ -2011,7 +2061,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
     return true;
 end
 
-function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
+function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemList)
     if player then
         if not LootReserve:IsPlayerOnline(player) then
             LootReserve:SendChatMessage("You are not in the raid", "WHISPER", player);
@@ -2059,14 +2109,16 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
 
             local uncached = false
             for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sortByItemName) do
-                local name, link = GetItemInfo(itemID);
-                if not name or not link then
-                    uncached = true;
-                else
-                    local reservesText = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players);
-                    local _, myReserves = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players, player);
-                    if not onlyRelevant or myReserves > 0 then
-                        table.insert(list, format("%s: %s", link, reservesText));
+                if not itemList or itemList[itemID] then
+                    local name, link = GetItemInfo(itemID);
+                    if not name or not link then
+                        uncached = true;
+                    else
+                        local reservesText = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players);
+                        local _, myReserves = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players, player);
+                        if not onlyRelevant or myReserves > 0 then
+                            table.insert(list, format("%s: %s", link, reservesText));
+                        end
                     end
                 end
             end

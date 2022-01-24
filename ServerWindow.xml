@@ -1454,11 +1454,11 @@
 							LootReserve.Server:UpdateReserveList();
 							LootReserve:ReopenMenu(self, "#sort");
 						end
-						local function RefreshWinnerReservesRemoval()
-							LootReserve:ReopenMenu(self, "#reservesRemoval");
-						end
 						local function RefreshWinToGuildThreshold()
 							LootReserve:ReopenMenu(self, "#guild");
+						end
+						local function RefreshChatReservesLimit()
+							LootReserve:ReopenMenu(self, "#chatReservesLimit");
 						end
 						local function RefreshReservesAndRolls()
 							LootReserve.Server:UpdateReserveList();
@@ -1487,6 +1487,9 @@
 								StaticPopup_Show("LOOTRESERVE_CONFIRM_GLOBAL_PROFILE_DISABLE");
 							end
 						end
+						local function RefreshWinnerReservesRemoval()
+							LootReserve:ReopenMenu(self, "#reservesRemoval");
+						end
 
 						local function MakeChatColoredText(text, chatType)
 							local info = ChatTypeInfo[chatType or "RAID_WARNING"];
@@ -1506,7 +1509,7 @@
 						{
 							{ text = "Communications", isTitle = true },
 							{ text = format("Announce to %s...", MakeChatColoredText("/rw", "RAID_WARNING")), menuList = {
-								MakeMenuToggle("Reserves Started",              { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.SessionStart              }, MakeRaidWarningTooltip("when starting to accept reserves")),
+								MakeMenuToggle("Reserves Started",              { "ChatAsRaidWarning", 1              }, MakeRaidWarningTooltip("when starting to accept reserves")),
 								MakeMenuToggle("Reserves Resumed",              { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.SessionResume             }, MakeRaidWarningTooltip("when resuming reserves")),
 								MakeMenuToggle("Reserves Stopped",              { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.SessionStop               }, MakeRaidWarningTooltip("when stopping reserves")),
 								MakeMenuToggle("Blind Reserves Toggled",        { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.SessionBlindToggle        }, MakeRaidWarningTooltip("when enabling or disabling blind reserves")),
@@ -1527,7 +1530,19 @@
 								MakeMenuRadio(LootReserve.Server.Settings.ChatAnnounceWinToGuild and format("%s%s|r", ITEM_QUALITY_COLORS[1].hex, ITEM_QUALITY1_DESC) or ITEM_QUALITY1_DESC, "ChatAnnounceWinToGuildThreshold", 1, nil, RefreshWinToGuildThreshold):DisableIf(not LootReserve.Server.Settings.ChatAnnounceWinToGuild),
 								MakeMenuRadio(LootReserve.Server.Settings.ChatAnnounceWinToGuild and format("%s%s|r", ITEM_QUALITY_COLORS[0].hex, ITEM_QUALITY0_DESC) or ITEM_QUALITY0_DESC, "ChatAnnounceWinToGuildThreshold", 0, nil, RefreshWinToGuildThreshold):DisableIf(not LootReserve.Server.Settings.ChatAnnounceWinToGuild),
 							} },
-							MakeMenuToggle("Enable !reserves command", "ChatReservesList",  "Allow players to request all currently made reserves to be whispered back to them when they invoke |cFFFFFFFF!reserves|r command."),
+							MakeMenuToggle("Enable !reserves command", "ChatReservesList",  "Allow players to request all currently made reserves to be whispered back to them when they invoke |cFFFFFFFF!reserves|r command.|nWarning: Can result in slow chat messages."),
+							{ text = format("Limit !reserves response: |cFF00FF00%s|r", LootReserve.Constants.ChatReservesListLimitText[LootReserve.Server.Settings.ChatReservesListLimit] or LootReserve.Server.Settings.ChatReservesListLimit), arg1 = "#chatReservesLimit", menuList = {
+								MakeMenuRadio("1",    "ChatReservesListLimit", 1,  nil, RefreshChatReservesLimit),
+								MakeMenuRadio("2",    "ChatReservesListLimit", 2,  nil, RefreshChatReservesLimit),
+								MakeMenuRadio("3",    "ChatReservesListLimit", 3,  nil, RefreshChatReservesLimit),
+								MakeMenuRadio("5",    "ChatReservesListLimit", 5,  nil, RefreshChatReservesLimit),
+								MakeMenuRadio("10",   "ChatReservesListLimit", 10, nil, RefreshChatReservesLimit),
+								MakeMenuRadio("20",   "ChatReservesListLimit", 20, nil, RefreshChatReservesLimit),
+								MakeMenuRadio("30",   "ChatReservesListLimit", 30, nil, RefreshChatReservesLimit),
+								MakeMenuRadio("40",   "ChatReservesListLimit", 40, nil, RefreshChatReservesLimit),
+								MakeMenuRadio(LootReserve.Constants.ChatReservesListLimitText[LootReserve.Constants.ChatReservesListLimit.None], "ChatReservesListLimit", LootReserve.Constants.ChatReservesListLimit.None, nil, RefreshChatReservesLimit),
+							} },
+							
 							MakeMenuToggle("Whisper Reserve Updates",     "ChatUpdates",       "Send whispers to players without addons if someone else reserves or cancels the reserve of the items that they have reserved as well."),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Display", isTitle = true },

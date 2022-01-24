@@ -60,6 +60,10 @@ LootReserve.Constants =
         Duplicate = 2,
         All       = 3,
     },
+    ChatReservesListLimit =
+    {
+        None = -1,
+    },
     ChatAnnouncement =
     {
         SessionStart        = 1,
@@ -233,6 +237,12 @@ LootReserve.Constants.WinnerReservesRemovalText =
     [enum.Single]    = "Just one",
     [enum.Duplicate] = "Duplicate",
     [enum.All]       = "All",
+};
+
+local enum = LootReserve.Constants.ChatReservesListLimit;
+LootReserve.Constants.ChatReservesListLimitText =
+{
+    [enum.None] = "None",
 };
 
 for i = 1, LootReserve:GetNumClasses() do
