@@ -580,7 +580,7 @@
 							LootReserve:OpenMenu(menu, self.ItemFrame.Menu, self.ItemFrame.Scroll);
 						end
 						if missing then
-							C_Timer.After(0.25, UpdateText);
+							C_Timer.After(0.1, UpdateText);
 						end
 					end
 					UpdateText();

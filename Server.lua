@@ -2071,7 +2071,7 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force)
                 end
             end
             if uncached then
-                C_Timer.After(0.25, WhisperPlayer);
+                C_Timer.After(0.1, WhisperPlayer);
                 return;
             end
 
@@ -2568,7 +2568,7 @@ function LootReserve.Server:PrepareRequestRoll()
                                 end
                                 local name, link = closureItem:GetName(), closureItem:GetLink();
                                 if not name or not link then
-                                    C_Timer.After(0.25, WhisperPlayer);
+                                    C_Timer.After(0.1, WhisperPlayer);
                                     return;
                                 end
                                 local durationStr = "";
@@ -2737,7 +2737,7 @@ function LootReserve.Server:RequestRoll(item, duration, phases, allowedPlayers)
                     end
                     local name, link = closureItem:GetName(), closureItem:GetLink();
                     if not name or not link then
-                        C_Timer.After(0.25, WhisperPlayer);
+                        C_Timer.After(0.1, WhisperPlayer);
                         return;
                     end
                     LootReserve:SendChatMessage(format("Please /roll on %s you reserved%s.%s",
@@ -2825,7 +2825,7 @@ function LootReserve.Server:RequestCustomRoll(item, duration, phases, allowedPla
                     end
                     local name, link = closureItem:GetName(), closureItem:GetLink();
                     if not name or not link then
-                        C_Timer.After(0.25, WhisperPlayer);
+                        C_Timer.After(0.1, WhisperPlayer);
                         return;
                     end
                     LootReserve:SendChatMessage(format("Please /roll on %s%s.%s",
