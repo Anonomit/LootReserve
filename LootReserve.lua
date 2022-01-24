@@ -553,13 +553,14 @@ function LootReserve:ForEachRaider(func)
     if not IsInGroup() then
         local className, classFilename = UnitClass("player");
         local raceName,  raceFilename  = UnitRace("player");
-        return func(self:Me(), 0, 1, UnitLevel("player"), className, classFilename, nil, true, UnitIsDead("player"), raceName, raceFilename);
+        return func(self:Me(), 0, 1, UnitLevel("player"), className, classFilename, nil, true, UnitIsDead("player"), nil, nil, nil, "player");
     end
 
     for i = 1, MAX_RAID_MEMBERS do
         local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i);
         if name then
-            local result, a, b = func(self:Player(name), rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole);
+            local index = UnitInRaid("player") and ("raid" .. i) or ("party" .. i)
+            local result, a, b = func(self:Player(name), rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole, index);
             if result ~= nil then
                 return result, a, b;
             end

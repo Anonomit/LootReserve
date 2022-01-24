@@ -760,11 +760,11 @@ function LootReserve.Server:UpdateGroupMembers()
         end
 
         -- Add member info for players who joined
-        LootReserve:ForEachRaider(function(name)
+        LootReserve:ForEachRaider(function(name, _, _, _, _, _, _, _, _, _, _, _, index)
             if not self.CurrentSession.Members[name] then
                 self.CurrentSession.Members[name] =
                 {
-                    Class         = select(3, LootReserve:UnitClass(player)),
+                    Class         = select(3, LootReserve:UnitClass(index)),
                     ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
                     ReservesDelta = 0,
                     ReservedItems = { },
