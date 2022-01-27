@@ -89,12 +89,17 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
             reservedItems[itemID] = reservedItems[itemID] + 1;
         end
         for itemID, count in pairs(reservedItems) do
-            table.insert(itemOrder, itemID);
+            local item = LootReserve.ItemSearch:Get(itemID);
+            if item and item:Cache() then
+                table.insert(itemOrder, itemID);
+            else
+                missing = true;
+            end
         end
         
         local last = 0;
         local lastCount = 0;
-        for _, itemID in LootReserve:Ordered(itemOrder, function(a, b) return GetItemInfo(a) < GetItemInfo(b) end) do
+        for _, itemID in LootReserve:Ordered(itemOrder, function(a, b) return (GetItemInfo(a) or "") < (GetItemInfo(b) or "") end) do
             local count = reservedItems[itemID];
             last = last + 1;
             local button = frame.ReservesFrame.Items[last];
@@ -151,9 +156,13 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
     list:GetParent():UpdateScrollChildRect();
 
     if missing then
-        C_Timer.After(0.1, function()
-            self:UpdateMembersList();
-        end);
+        if not self.PendingMembersEditUpdate then
+            C_Timer.After(0.1, function()
+                self.PendingMembersEditUpdate = false;
+                self:UpdateMembersList();
+            end);
+            self.PendingMembersEditUpdate = true;
+        end
     end
 end
 

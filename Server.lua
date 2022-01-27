@@ -86,8 +86,11 @@ LootReserve.Server =
     StartupAwaitingAuthorityRegistered = false,
     MasterLootListUpdateRegistered     = false,
     RollHistoryDisplayLimit            = 0,
-    PendingReserveListUpdate           = nil,
-    PendingRollListUpdate              = nil,
+    
+    PendingReserveListUpdate = nil,
+    PendingRollListUpdate    = nil,
+    PendingMembersEditUpdate = nil,
+    PendingLootEditUpdate    = nil,
 };
 
 StaticPopupDialogs["LOOTRESERVE_CONFIRM_FORCED_CANCEL_RESERVE"] =

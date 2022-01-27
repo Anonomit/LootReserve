@@ -257,7 +257,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         return false;
     end
 
-    local missingName = false;
+    local missing = false;
     local function getSortingTime(reserve)
         if LootReserve:IsLootingItem(reserve.Item) then
             return 0;
@@ -270,7 +270,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         end
         local name = GetItemInfo(reserve.Item);
         if not name then
-            missingName = true;
+            missing = true;
         end
         return (name or ""):upper();
     end
@@ -370,10 +370,6 @@ function LootReserve.Server:UpdateReserveList(lockdown)
     list:GetParent():UpdateScrollChildRect();
 
     self:UpdateReserveListRolls(lockdown);
-
-    if missingName then
-        C_Timer.After(0.1, function() self:UpdateReserveList(); end);
-    end
 end
 
 function LootReserve.Server:UpdateRollListRolls(lockdown)
