@@ -2,7 +2,6 @@ local LibCustomGlow = LibStub("LibCustomGlow-1.0");
 
 function LootReserve.Server:UpdateReserveListRolls(lockdown)
     if not self.Window:IsShown() then return; end
-    print"updating reserve list rolls"
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
@@ -69,7 +68,6 @@ end
 
 function LootReserve.Server:UpdateReserveListButtons(lockdown)
     if not self.Window:IsShown() then return; end
-    print"updating reserve list buttons"
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
@@ -92,7 +90,6 @@ end
 
 function LootReserve.Server:UpdateReserveList(lockdown)
     if not self.Window:IsShown() then return; end
-    print"updating reserve list"
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
@@ -227,37 +224,33 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         list.ContentHeight = list.ContentHeight + frame:GetHeight();
     end
 
-    local function matchesFilter(itemID, reserve, filter)
+    local function matchesFilter(item, reserve, filter)
         if #filter == 0 then
             return true;
         end
 
-        local missing = false;
-        local name, link = GetItemInfo(itemID);
-        if name then
-            if string.find(LootReserve:TransformSearchText(name), filter, 1, true) then
-                return true;
-            end
-        else
-            missing = true;
+        if item:GetID() == tonumber(filter) then
+            return true;
         end
-        if LootReserve.Data:IsToken(itemID) then
-            for _, reward in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
-                local match = matchesFilter(reward, reserve, filter);
-                if match then
-                    return true;
-                elseif match == nil then
-                    missing = true;
+        if string.find(item:GetSearchName(), filter, 1, true) then
+            return true;
+        end
+        if LootReserve.Data:IsToken(item:GetID()) then
+            for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(item:GetID())) do
+                local reward = LootReserve.ItemSearch:Get(rewardID);
+                if reward and reward:GetInfo() then
+                    if matchesFilter(reward, nil, filter) then
+                        return true;
+                    end
                 end
             end
         end
-        if missing then
-            return nil;
-        end
         
-        for _, player in pairs(reserve.Players) do
-            if string.find(LootReserve:SimplifyName(player):upper(), filter, 1, true) then
-                return true;
+        if reserve then
+            for _, player in pairs(reserve.Players) do
+                if string.find(LootReserve:SimplifyName(player):upper(), filter, 1, true) then
+                    return true;
+                end
             end
         end
 
@@ -345,19 +338,14 @@ function LootReserve.Server:UpdateReserveList(lockdown)
     for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sorter) do
         local item = LootReserve.ItemSearch:Get(itemID);
         if item and item:GetInfo() then
-            if not filter or matchesFilter(item, roll, filter) then
-                createFrame(item, roll, true);
+            if not filter or matchesFilter(item, reserve, filter) then
+                createFrame(item, reserve, true);
                 if not item:Cache() then
                     missing = true;
                 end
             end
-        elseif item or LootReserve.ItemSearch:IsPending(roll.Item:GetID()) then
+        elseif item or LootReserve.ItemSearch:IsPending(itemID) then
             missing = true;
-        end
-    end
-    for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sorter) do
-        if not filter or matchesFilter(itemID, reserve, filter) then
-            createFrame(itemID, reserve);
         end
     end
     for i = list.LastIndex + 1, #list.Frames do
