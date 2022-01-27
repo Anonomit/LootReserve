@@ -2,6 +2,7 @@ local LibCustomGlow = LibStub("LibCustomGlow-1.0");
 
 function LootReserve.Server:UpdateReserveListRolls(lockdown)
     if not self.Window:IsShown() then return; end
+    print"updating reserve list rolls"
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
@@ -68,6 +69,7 @@ end
 
 function LootReserve.Server:UpdateReserveListButtons(lockdown)
     if not self.Window:IsShown() then return; end
+    print"updating reserve list buttons"
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
@@ -90,11 +92,12 @@ end
 
 function LootReserve.Server:UpdateReserveList(lockdown)
     if not self.Window:IsShown() then return; end
+    print"updating reserve list"
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
     local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
-    if #filter == 0 then
+    if #filter == 0 and not tonumber(filter) then
         filter = nil;
     end
 
@@ -232,7 +235,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         local missing = false;
         local name, link = GetItemInfo(itemID);
         if name then
-            if string.find(name:upper(), filter, 1, true) then
+            if string.find(LootReserve:TransformSearchText(name), filter, 1, true) then
                 return true;
             end
         else
@@ -338,6 +341,20 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         return a.Item < b.Item;
     end
 
+    local missing = false;
+    for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sorter) do
+        local item = LootReserve.ItemSearch:Get(itemID);
+        if item and item:GetInfo() then
+            if not filter or matchesFilter(item, roll, filter) then
+                createFrame(item, roll, true);
+                if not item:Cache() then
+                    missing = true;
+                end
+            end
+        elseif item or LootReserve.ItemSearch:IsPending(roll.Item:GetID()) then
+            missing = true;
+        end
+    end
     for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sorter) do
         if not filter or matchesFilter(itemID, reserve, filter) then
             createFrame(itemID, reserve);
@@ -350,6 +367,15 @@ function LootReserve.Server:UpdateReserveList(lockdown)
             for _, button in ipairs(frame.ReservesFrame.Players) do
                 button:SetAttribute("unit", nil);
             end
+        end
+    end
+    if missing then
+        if not self.PendingReserveListUpdate then
+            C_Timer.After(0.1, function()
+                self.PendingReserveListUpdate = false;
+                self:UpdateReserveList();
+            end);
+            self.PendingReserveListUpdate = true;
         end
     end
 
@@ -447,12 +473,12 @@ function LootReserve.Server:UpdateRollListButtons(lockdown)
 end
 
 function LootReserve.Server:UpdateRollList(lockdown)
-    if not self.Window:IsShown() then return; end
+    if not self.Window:IsShown() or not self.Window.Panels[3]:IsShown() then return; end
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
     local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
-    if #filter == 0 then
+    if #filter < 3 and not tonumber(filter) then
         filter = nil;
     end
 
@@ -676,32 +702,28 @@ function LootReserve.Server:UpdateRollList(lockdown)
             return true;
         end
 
-        local missing = false;
-        local name, link = item:GetInfo();
-        if name then
-            if string.find(name:upper(), filter, 1, true) then
-                return true;
-            end
-        else
-            missing = true;
+        if item:GetID() == tonumber(filter) then
+            return true;
+        end
+        if string.find(item:GetSearchName(), filter, 1, true) then
+            return true;
         end
         if LootReserve.Data:IsToken(item:GetID()) then
-            for _, reward in ipairs(LootReserve.Data:GetTokenRewards(item:GetID())) do
-                local match = matchesFilter(LootReserve.Item(reward), roll, filter);
-                if match then
-                    return true;
-                elseif match == nil then
-                    missing = true;
+            for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(item:GetID())) do
+                local reward = LootReserve.ItemSearch:Get(rewardID);
+                if reward and reward:GetInfo() then
+                    if matchesFilter(reward, nil, filter) then
+                        return true;
+                    end
                 end
             end
         end
-        if missing then
-            return nil;
-        end
         
-        for player in pairs(roll.Players) do
-            if string.find(LootReserve:SimplifyName(player):upper(), filter, 1, true) then
-                return true;
+        if roll then
+            for player in pairs(roll.Players) do
+                if string.find(LootReserve:SimplifyName(player):upper(), filter, 1, true) then
+                    return true;
+                end
             end
         end
 
@@ -714,11 +736,19 @@ function LootReserve.Server:UpdateRollList(lockdown)
             createFrame(self.RequestedRoll.Item, self.RequestedRoll, false);
         --end
     end
-    for i = #self.RollHistory, #self.RollHistory - self.RollHistoryDisplayLimit, -1 do
-        
-        local roll = self.RollHistory[i];
-        if not filter or matchesFilter(roll.Item, roll, filter) then
-            createFrame(roll.Item, roll, true);
+    local missing = false;
+    for i = #self.RollHistory, 1, -1 do
+        local roll = self.RollHistory[i]
+        local item = LootReserve.ItemSearch:Get(roll.Item:GetID());
+        if item and item:GetInfo() then
+            if not filter or matchesFilter(item, roll, filter) then
+                createFrame(item, roll, true);
+                if not item:Cache() then
+                    missing = true;
+                end
+            end
+        elseif item or LootReserve.ItemSearch:IsPending(roll.Item:GetID()) then
+            missing = true;
         end
     end
     for i = list.LastIndex + 1, #list.Frames do
@@ -730,6 +760,15 @@ function LootReserve.Server:UpdateRollList(lockdown)
                     button:SetAttribute("unit", nil);
                 end
             end
+        end
+    end
+    if missing then
+        if not self.PendingRollListUpdate then
+            C_Timer.After(0.1, function()
+                self.PendingRollListUpdate = false;
+                self:UpdateRollList();
+            end);
+            self.PendingRollListUpdate = true;
         end
     end
 
@@ -777,7 +816,7 @@ function LootReserve.Server:SetWindowTab(tab, lockdown)
         self.Window.Search:SetPoint("TOPLEFT", self.Window, "TOPLEFT", 10, -25);
         self.Window.Search:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", -7, -25);
         (lockdown and self.Window.PanelRollsLockdown or self.Window.PanelRolls):SetPoint("TOPLEFT", self.Window, "TOPLEFT", 7, -48);
-        self.RollHistoryKeepLimit    = self.Settings.RollHistoryKeepLimit;
+        self.RollHistoryKeepLimit = self.Settings.RollHistoryKeepLimit;
     end
 
     for i, panel in ipairs(self.Window.Panels) do
@@ -825,23 +864,6 @@ function LootReserve.Server:OnWindowLoad(window)
     LootReserve:RegisterEvent("GROUP_JOINED", "GROUP_LEFT", "PARTY_LEADER_CHANGED", "PARTY_LOOT_METHOD_CHANGED", "GROUP_ROSTER_UPDATE", function()
         self:UpdateServerAuthority();
         self:UpdateAddonUsers();
-    end);
-    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
-        if itemID and self.CurrentSession and self.CurrentSession.ItemReserves[itemID] then
-            self:UpdateReserveList();
-        end
-        if itemID and self.RequestedRoll and self.RequestedRoll.Item:GetID() == itemID then
-            self:UpdateRollList();
-            return;
-        end
-        if itemID and self.RollHistory then
-            for _, roll in ipairs(self.RollHistory) do
-                if roll.Item:GetID() == itemID then
-                    self:UpdateRollList();
-                    return;
-                end
-            end
-        end
     end);
     function self.OnEnterCombat()
         -- Swap out the real (tainted) reserves and rolls panels for slightly less functional ones, but ones that don't have taint

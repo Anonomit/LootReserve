@@ -537,9 +537,10 @@
 								func = SelectItem,
 							});
 						elseif not itemID and #text >= 3 then
-							local results, progress = LootReserve.ItemSearch:Search(text);
-							if results then
-								for i, itemID in ipairs(results) do
+							local progress, loadState = LootReserve.ItemSearch:GetProgress();
+							if loadState == LootReserve.Constants.LoadState.AllDone then
+								local results = LootReserve.ItemSearch:Search(text);
+								for i, item in ipairs(results) do
 									if i > 10 then
 										table.insert(menu,
 										{
@@ -548,7 +549,7 @@
 										});
 										break;
 									else
-										local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemID);
+										local name, link, texture = item:GetNameLinkTexture();
 										if not link then
 											missing = true;
 										end
@@ -561,6 +562,7 @@
 									end
 								end
 							else
+								LootReserve.ItemSearch:SetSpeed(250);
 								table.insert(menu,
 								{
 									text = format("Loading search database... (%d%%)", progress),

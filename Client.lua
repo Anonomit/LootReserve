@@ -43,6 +43,7 @@ LootReserve.Client =
     DurationUpdateRegistered = false,
     SessionEventsRegistered  = false,
     CategoryFlashing         = false,
+    PendingLootListUpdate    = false,
 
     SelectedCategory = nil,
 };
@@ -94,6 +95,8 @@ function LootReserve.Client:Load()
             tooltip:AddLine(format("Right-Click: Open %s Window", self.Settings.SwapLDBButtons and "Client" or "Server"));
         end,
     }), self.Settings.LibDBIcon);
+    
+    LootReserve.ItemSearch:Load(10);
 end
 
 function LootReserve.Client:IsFavorite(itemID)

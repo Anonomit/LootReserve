@@ -567,6 +567,7 @@
 			</OnShow>
 			<OnHide>
 				LootReserve.Client.Masquerade = nil;
+				self.Search:SetText"";
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 				LootReserve:PrintMessage("Window can be reopened by typing |cFFFFD200/reserve|r");

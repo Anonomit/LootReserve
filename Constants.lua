@@ -99,6 +99,14 @@ LootReserve.Constants =
         Passed    = -1,
         Deleted   = -2,
     },
+    LoadState =
+    {
+        NotStarted = 0,
+        Started    = 1,
+        ClientDone = 2,
+        Pending    = 3,
+        AllDone    = 4,
+    },
     ClassFilenameToClassID   = { },
     ClassLocalizedToFilename = { },
     ItemQuality =

@@ -98,7 +98,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
         local missing = false;
         local name, link = GetItemInfo(itemID);
         if name then
-            if string.find(name:upper(), filter, 1, true) then
+            if string.find(LootReserve:TransformSearchText(name), filter, 1, true) then
                 return true;
             end
         else

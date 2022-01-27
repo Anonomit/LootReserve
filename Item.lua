@@ -6,19 +6,32 @@ local itemMeta = {
   __eq    = function(item1, item2) return item1.id == item2.id and item1.suffix == item2.suffix end,
 }
 
-local function NewItem(id, suffix, uniqueID)
-  return setmetatable({id = tonumber(id), suffix = tonumber(suffix), uniqueID = tonumber(uniqueID)}, itemMeta);
+local function NewItem(id, suffix, uniqueID, info, texture, link, name, searchName)
+  return setmetatable({
+      id          = tonumber(id),
+      suffix      = tonumber(suffix),
+      uniqueID    = tonumber(uniqueID),
+      info        = info,
+      texture     = texture,
+      link        = link,
+      name        = name,
+      searchName  = searchName
+    }, itemMeta);
+end
+
+local function UnpackItem(Item)
+  return Item.id, Item.suffix, Item.uniqueID, Item.info, Item.texture, Item.link, Item.name, Item.searchName;
 end
 
 setmetatable(LootReserve.Item, {
-  __call = function(self, arg1, arg2, arg3)
+  __call = function(self, arg1, ...)
     if type(arg1) == "table" then
-      return NewItem(arg1.id, arg1.suffix, arg1.uniqueID);
+      return NewItem(UnpackItem(arg1));
     elseif type(arg1) == "string" and arg1:find("item:") then
       local id, suffix, uniqueID = arg1:match("^.-item:(%d-):%d-:%d-:%d-:%d-:%d-:(.-):(.-):");
       return NewItem(id, suffix, uniqueID);
     else
-      return NewItem(tonumber(arg1), tonumber(arg2), tonumber(arg3));
+      return NewItem(arg1, unpack{...});
     end
   end
 });
@@ -28,26 +41,48 @@ function LootReserve.Item:GetID()
 end
 
 function LootReserve.Item:GetSuffix()
-  return self.suffix or "";
+  return self.suffix;
 end
 
 function LootReserve.Item:GetUniqueID()
-  return self.uniqueID or "";
+  return self.uniqueID;
 end
 
-function LootReserve.Item:unpack()
-  return self:GetID(), self:GetSuffix(), self:GetUniqueID();
+function LootReserve.Item:GetStringData()
+  return self:GetID(), self:GetSuffix() or "", self:GetUniqueID() or "";
 end
 
 
 function LootReserve.Item:GetString()
-  return format("item:%d::::::%d:%d::::::::::", self:unpack());
+  return format("item:%d::::::%d:%d::::::::::", self:GetStringData());
 end
 
 function LootReserve.Item:GetInfo()
-  return GetItemInfo(self:GetString())
+  if not self.name then
+    local info = {GetItemInfo(self:GetString())};
+    self.info = info;
+    local name, link, _, _, _, _, _, _, _, texture = unpack(info);
+    if name then
+      self.texture    = teture;
+      self.link       = link;
+      self.name       = name;
+      self.searchName = LootReserve:TransformSearchText(name);
+    end
+  end
+  if self.name then
+    return unpack(self.info);
+  end
+  return nil;
 end
 
+function LootReserve.Item:Cache()
+  return GetItemInfo(self:GetID()) ~= nil;
+end
+
+
+function LootReserve.Item:GetSearchName()
+  return self.searchName;
+end
 
 function LootReserve.Item:GetName()
   return ({self:GetInfo()})[1];

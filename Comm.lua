@@ -692,7 +692,7 @@ function LootReserve.Comm:BroadcastRequestRoll(item, players, custom, duration, 
 end
 function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duration, maxDuration, phase)
     LootReserve.Comm:Send(target, Opcodes.RequestRoll,
-        strjoin(",", item:unpack()),
+        strjoin(",", item:GetStringData()),
         strjoin(",", unpack(players)),
         custom == true,
         format("%.2f", duration or 0),
@@ -718,7 +718,7 @@ end
 
 -- PassRoll
 function LootReserve.Comm:SendPassRoll(item)
-    LootReserve.Comm:Whisper(LootReserve.Client.RollRequest.Sender, Opcodes.PassRoll, strjoin(",", item:unpack()));
+    LootReserve.Comm:Whisper(LootReserve.Client.RollRequest.Sender, Opcodes.PassRoll, strjoin(",", item:GetStringData()));
 end
 LootReserve.Comm.Handlers[Opcodes.PassRoll] = function(sender, item)
     item = LootReserve.Item(strsplit(",", item));
@@ -731,7 +731,7 @@ end
 -- DeletedRoll
 function LootReserve.Comm:SendDeletedRoll(player, item, roll, phase)
     LootReserve.Comm:Whisper(player, Opcodes.DeletedRoll,
-        strjoin(",", item:unpack()), roll, phase);
+        strjoin(",", item:GetStringData()), roll, phase);
 end
 LootReserve.Comm.Handlers[Opcodes.DeletedRoll] = function(sender, item, roll, phase)
     item = LootReserve.Item(strsplit(",", item));
@@ -755,7 +755,7 @@ function LootReserve.Comm:BroadcastWinner(...)
 end
 function LootReserve.Comm:SendWinner(target, item, players, roll, custom, phase, raidRoll)
     LootReserve.Comm:Send(target, Opcodes.SendWinner,
-        strjoin(",", item:unpack()),
+        strjoin(",", item:GetStringData()),
         strjoin(",", unpack(players)),
         roll or "",
         custom == true,

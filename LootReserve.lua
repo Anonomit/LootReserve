@@ -815,6 +815,9 @@ function LootReserve:TransformSearchText(text)
     text = self:StringTrim(text, "[%s%[%]]");
     text = text:upper();
     text = text:gsub("`", "'"):gsub("´", "'"); -- For whatever reason [`´] doesn't work
+    if not tonumber(text) then -- allow for item ids
+        text = text:gsub("%A", "");
+    end
     return text;
 end
 
