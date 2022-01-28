@@ -150,7 +150,11 @@ function LootReserve.Client:UpdateLootList()
             frame:SetHeight(44);
             frame:Show();
 
-            local description = format("%s%s", LootReserve.ItemConditions:IsItemUsableByMe(item:GetID()) and "" or "|cFFFF2020", LootReserve:GetItemDescription(item:GetID()) or "");
+            local usable = LootReserve.ItemConditions:IsItemUsableByMe(item:GetID());
+            if source then
+                source = format("%s%s", usable and "" or "|cFFFF2020", source);
+            end
+            local description = format("%s%s", usable and "" or "|cFFFF2020", LootReserve:GetItemDescription(item:GetID()) or "");
             local name, link, texture = item:GetNameLinkTexture();
             frame.Link = link;
 
