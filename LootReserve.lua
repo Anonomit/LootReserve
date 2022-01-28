@@ -753,7 +753,7 @@ function LootReserve:GetItemDescription(itemID)
         if itemSubType == "Book" then
             itemText = itemText .. "Skill Book";
         else
-            itemText = itemText .. itemSubType .. " " .. itemType;
+            itemText = itemText .. itemSubType .. " " .. name:match("^[^:]+");
         end
     elseif itemType == "Container" then
         itemText = itemText .. (_G[equipLoc] or "");
@@ -779,9 +779,9 @@ function LootReserve:GetItemDescription(itemID)
             itemText = itemText .. "Quest";
         else
             if itemSubType == "Junk" or itemSubType == "Other" then
-                itemText = itemType;
+                itemText = itemText .. itemType;
             else
-               itemText = itemSubType;
+               itemText = itemText .. itemSubType;
             end
         end
     else

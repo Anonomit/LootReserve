@@ -51,7 +51,7 @@ function LootReserve.ItemSearch:Load()
             self.AttemptedIDs[itemID] = true;
             if success then
                 self.Items[itemID] = LootReserve.Item(itemID);
-                self.Items[itemID]:GetInfo(); -- Make Item cache its info
+                self.Items[itemID]:GetInfo(); -- Make sure Item stores its info while it's available
                 self.LoadedItems = self.LoadedItems + 1;
             end
         end
