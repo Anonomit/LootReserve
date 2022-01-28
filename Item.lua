@@ -6,22 +6,22 @@ local itemMeta = {
     __eq    = function(item1, item2) return item1.id == item2.id and item1.suffix == item2.suffix end,
 }
 
-local function NewItem(id, suffix, uniqueID, info, texture, link, name, searchName, classesAllowed)
+local function NewItem(id, suffix, uniqueID, info, name, link, texture, searchName, classesAllowed)
     return setmetatable({
         id             = tonumber(id),
         suffix         = tonumber(suffix),
         uniqueID       = tonumber(uniqueID),
         info           = info,
-        texture        = texture,
-        link           = link,
         name           = name,
+        link           = link,
+        texture        = texture,
         searchName     = searchName,
         classesAllowed = classesAllowed
     }, itemMeta);
 end
 
 local function UnpackItem(Item)
-    return Item.id, Item.suffix, Item.uniqueID, Item.info, Item.texture, Item.link, Item.name, Item.searchName, Item.classesAllowed;
+    return Item.id, Item.suffix, Item.uniqueID, Item.info, Item.name, Item.link, Item.texture, Item.searchName, Item.classesAllowed;
 end
 
 setmetatable(LootReserve.Item, {
@@ -62,11 +62,11 @@ function LootReserve.Item:GetInfo()
     if not self.name then
         local info = {GetItemInfo(self:GetString())};
         self.info = info;
-        local name, link, _, _, _, _, _, _, _, texture = unpack(info);
+        local name, link, _, _, _, itemType, itemSubType, _, _, texture = unpack(info);
         if name then
-            self.texture    = teture;
-            self.link       = link;
             self.name       = name;
+            self.link       = link;
+            self.texture    = texture;
             self.searchName = LootReserve:TransformSearchText(name);
 
             if not LootReserve.TooltipScanner then
@@ -118,11 +118,9 @@ end
 function LootReserve.Item:GetName()
   return ({self:GetInfo()})[1];
 end
-
 function LootReserve.Item:GetLink()
   return ({self:GetInfo()})[2];
 end
-
 function LootReserve.Item:GetTexture()
   return ({self:GetInfo()})[10];
 end

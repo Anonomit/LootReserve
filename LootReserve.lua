@@ -714,7 +714,9 @@ function LootReserve:PutItemInTrade(bag, slot)
 end
 
 function LootReserve:GetItemDescription(itemID)
-    local name, link, _, _, _, itemType, itemSubType, _, equipLoc, texture, _, _, _, bindType = GetItemInfo(itemID);
+    local item = LootReserve.ItemSearch:Get(itemID);
+    if not item then return; end
+    local name, link, _, _, _, itemType, itemSubType, _, equipLoc, texture, _, _, _, bindType = item:GetInfo();
     local itemText = "";
     if not itemType then return; end
     
