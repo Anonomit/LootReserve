@@ -1050,9 +1050,13 @@
 													missing = true;
 												end
 											end
+					            local token;
+					            if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
+					                token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+					            end
 											return
 											{
-												text = format("|T%d:0|t %s%s%s", texture, LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[item:GetID()] and (select(3, LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[item:GetID()].Players)) .. "x|TInterface/Buttons/UI-GroupLoot-Dice-Up:0|t ") or "", (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", ""), count and format("|cFF808080 x%d|r", count) or ""),
+												text = format("|T%d:0|t %s%s%s", texture, LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] and (select(3, LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players)) .. "x|TInterface/Buttons/UI-GroupLoot-Dice-Up:0|t ") or "", (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", ""), count and format("|cFF808080 x%d|r", count) or ""),
 												arg1 = item,
 												func = SelectItem,
 											};
@@ -1264,10 +1268,14 @@
 							return;
 						end
 
+            local token;
+            if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
+                token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+            end
 						local reservers = 0;
 						if LootReserve.Server.CurrentSession then
-							if LootReserve.Server.CurrentSession.ItemReserves[item:GetID()] then
-								local _, _, uniquePlayers = LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[item:GetID()].Players);
+							if LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
+								local _, _, uniquePlayers = LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players);
 								reservers = uniquePlayers;
 							end
 						end

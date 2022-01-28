@@ -561,10 +561,14 @@ function LootReserve.Server:UpdateRollList(lockdown)
             elseif LootReserve:GetTradeableItemCount(item) < 1 and not LootReserve:IsLootingItem(item) then
                 frame.ItemFrame.Misc:SetText("|cFFFF0000Cannot distribute|r");
             else
+                local token;
+                if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
+                    token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+                end
                 local reservers = 0;
                 if LootReserve.Server.CurrentSession then
-                    if self.CurrentSession.ItemReserves[item:GetID()] then
-                        local _, _, uniquePlayers = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[item:GetID()].Players);
+                    if self.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
+                        local _, _, uniquePlayers = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players);
                         reservers = uniquePlayers;
                     end
                 end
