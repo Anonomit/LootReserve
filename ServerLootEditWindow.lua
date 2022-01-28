@@ -378,20 +378,4 @@ function LootReserve.Server.LootEdit:OnWindowLoad(window)
     self.Window.TitleText:SetText("LootReserve Server - Loot List Edit");
     self.Window:SetMinResize(550, 250);
     self:UpdateCategories();
-    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
-        if not itemID or not self.SelectedCategory then return; end
-
-        if self.SelectedCategory.Edited or self.SelectedCategory.Custom then
-            local conditions = LootReserve.Server:GetNewSessionItemConditions()[itemID];
-            if conditions and (not self.SelectedCategory.Custom or conditions.Custom) then
-                self:UpdateLootList();
-            end
-        elseif self.SelectedCategory.Loot then
-            for _, loot in ipairs(self.SelectedCategory.Loot) do
-                if itemID == loot then
-                    self:UpdateLootList();
-                end
-            end
-        end
-    end);
 end

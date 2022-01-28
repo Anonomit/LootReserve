@@ -106,6 +106,7 @@ function LootReserve.Server.Import:UpdateReservesList()
         frame.Alt:SetShown(list.LastIndex % 2 == 0);
         frame.Name:SetText(format("%s%s", LootReserve:ColoredPlayer(player, member.Class), LootReserve:IsPlayerOnline(player) == nil and format("|cFF808080 (%s)|r", member.NameMatchResult or "not in raid") or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""));
 
+        local missing = false;
         local last = 0;
         frame.ReservesFrame.Items = frame.ReservesFrame.Items or { };
         for index, itemID in ipairs(member.ReservedItems) do
@@ -122,9 +123,12 @@ function LootReserve.Server.Import:UpdateReservesList()
                 button = frame.ReservesFrame.Items[last];
             end
             button:Show();
-            button.Item = LootReserve.Item(itemID);
+            button.Item = LootReserve.ItemSearch:Get(itemID) or LootReserve.Item(itemID);
+            if not button.Item:Cache() then
+                missing = true;
+            end
 
-            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemID);
+            local name, link, texture = button.Item:GetNameLinkTexture();
             button.Link = link;
             button.Icon.Texture:SetTexture(texture or "INTERFACE\\ICONS\\INV_MISC_QUESTIONMARK");
             if #member.ReservedItems == 1 and itemID ~= 0 then
@@ -139,6 +143,15 @@ function LootReserve.Server.Import:UpdateReservesList()
             else
                 button.Tooltip = nil;
                 button.Icon.Texture:SetVertexColor(1, 1, 1);
+            end
+        end
+        if missing then
+            if not self.PendingReservesListUpdate then
+                C_Timer.After(0.1, function()
+                    self.PendingReservesListUpdate = false;
+                    self:UpdateReservesList();
+                end);
+                self.PendingReservesListUpdate = true;
             end
         end
         for i = last + 1, #frame.ReservesFrame.Items do
@@ -572,14 +585,4 @@ function LootReserve.Server.Import:OnWindowLoad(window)
     self.Window.TitleText:SetText("LootReserve Server - Import");
     self.Window:SetMinResize(LootReserve:IsCrossRealm() and 490 or 390, 440);
     self:InputUpdated();
-    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
-        if success and self.Members then
-            for player, member in pairs(self.Members) do
-                if LootReserve:Contains(member.ReservedItems, itemID) then
-                    self:UpdateReservesList();
-                    return;
-                end
-            end
-        end
-    end);
 end

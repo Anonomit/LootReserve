@@ -92,6 +92,7 @@ LootReserve.Server =
     PendingMembersEditUpdate  = nil,
     PendingLootEditUpdate     = nil,
     PendingInputOptionsUpdate = nil,
+    PendingReservesListUpdate = nil,
 };
 
 StaticPopupDialogs["LOOTRESERVE_CONFIRM_FORCED_CANCEL_RESERVE"] =

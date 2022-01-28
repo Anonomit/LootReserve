@@ -640,22 +640,4 @@ function LootReserve.Client:OnWindowLoad(window)
             self.Window.RemainingTextGlow:SetVertexColor(r, g, b, 0.15 + r * 0.25);
         end
     end);
-    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
-        if not itemID or not self.SelectedCategory then return; end
-
-        if self.SelectedCategory.Custom then
-            local conditions = LootReserve.ItemConditions:Get(itemID, false);
-            if conditions and conditions.Custom then
-                self:UpdateLootList();
-            end
-        elseif self.SelectedCategory.Loot then
-            for _, loot in ipairs(self.SelectedCategory.Loot) do
-                if itemID == loot then
-                    self:UpdateLootList();
-                end
-            end
-        elseif self.SelectedCategory.Favorites and self:IsFavorite(itemID) then
-            self:UpdateLootList();
-        end
-    end);
 end
