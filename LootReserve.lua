@@ -628,13 +628,21 @@ function LootReserve:NormalizeName(name)
     return name:utf8sub(1, 1):utf8upper() .. name:utf8sub(2):utf8lower();
 end
 
-function LootReserve:SimplifyName(name)
+local simplifiedNamesMemo = { };
+local function SimplifyName(self, name)
     for i = 1, name:utf8len() do
         if name:utf8sub(i, i) == "-" then
             return self:NormalizeName(name:utf8sub(1, i - 1):utf8replace(simplificationMapping));
         end
     end
     return self:NormalizeName(name:utf8replace(simplificationMapping));
+end
+
+function LootReserve:SimplifyName(name)
+    if not simplifiedNamesMemo[name] then
+        simplifiedNamesMemo[name] = SimplifyName(self, name);
+    end
+    return simplifiedNamesMemo[name];
 end
 
 function LootReserve:GetNumGroupMembers(func)
