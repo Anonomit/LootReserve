@@ -134,7 +134,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                 elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                     missing = true;
                 end
-                if not match and LootReserve.Data:IsToken(itemID) then
+                if filter and not match and LootReserve.Data:IsToken(itemID) then
                     for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                         local reward = LootReserve.ItemSearch:Get(rewardID);
                         if reward and reward:GetInfo() then
@@ -175,7 +175,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                                     elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                                         missing = true;
                                     end
-                                    if not match and LootReserve.Data:IsToken(itemID) then
+                                    if filter and not match and LootReserve.Data:IsToken(itemID) then
                                         for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                                             local reward = LootReserve.ItemSearch:Get(rewardID);
                                             if reward and reward:GetInfo() then

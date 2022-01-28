@@ -339,7 +339,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         elseif item or LootReserve.ItemSearch:IsPending(itemID) then
             missing = true;
         end
-        if not match and LootReserve.Data:IsToken(itemID) then
+        if filter and not match and LootReserve.Data:IsToken(itemID) then
             for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                 local reward = LootReserve.ItemSearch:Get(rewardID);
                 if reward and reward:Cache() then
@@ -734,7 +734,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
         elseif item or LootReserve.ItemSearch:IsPending(roll.Item:GetID()) then
             missing = true;
         end
-        if not match and LootReserve.Data:IsToken(roll.Item:GetID()) then
+        if filter and not match and LootReserve.Data:IsToken(roll.Item:GetID()) then
             for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(roll.Item:GetID())) do
                 local reward = LootReserve.ItemSearch:Get(rewardID);
                 if reward and reward:GetInfo() then
