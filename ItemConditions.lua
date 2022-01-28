@@ -147,7 +147,7 @@ end
 
 
 
-local UNUSABLE_EQUIPMENT = {};
+local UNUSABLE_EQUIPMENT = { };
 
 local armorClasses = {"Miscellaneous", "Cloth", "Leather", "Mail", "Shields", "Plate", "Librams", "Idols", "Totems"};
 
@@ -208,7 +208,7 @@ setClassWeapons("WARRIOR", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swo
                            "Bows", "Crossbows", "Guns", "Thrown");
 
 
-local function IsItemUsable(itemID, playerClass, playerRace, isMe)
+local function IsItemUsable(itemID, playerClass, isMe)
     local numOwned
     if isMe then
         numOwned = GetItemCount(itemID, true) - LootReserve:GetTradeableItemCount(itemID);
@@ -221,78 +221,6 @@ local function IsItemUsable(itemID, playerClass, playerRace, isMe)
            return false; 
         end
     end
-    
-    -- If item is class-locked or race-locked then make sure this class/race is listed
-    -- Also make sure the item is not unique if I already own one
-    if not LootReserve.TooltipScanner then
-        LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
-        LootReserve.TooltipScanner:Hide();
-    end
-
-    if not LootReserve.TooltipScanner.ClassesAllowed then
-        LootReserve.TooltipScanner.ClassesAllowed = ITEM_CLASSES_ALLOWED:gsub("%%s", "(.+)");
-    end
-    if not LootReserve.TooltipScanner.RacesAllowed then
-        LootReserve.TooltipScanner.RacesAllowed = ITEM_RACES_ALLOWED:gsub("%%s", "(.+)");
-    end
-    if not LootReserve.TooltipScanner.Unique then
-        LootReserve.TooltipScanner.Unique = format("^(%s)$", ITEM_UNIQUE);
-    end
-    if not LootReserve.TooltipScanner.AlreadyKnown then
-        LootReserve.TooltipScanner.AlreadyKnown = format("^(%s)$", ITEM_SPELL_KNOWN);
-    end
-    if not LootReserve.TooltipScanner.ProfessionAllowed then
-        LootReserve.TooltipScanner.ProfessionAllowed = ITEM_MIN_SKILL:gsub("%%s ", "[%%u%%l%%s]+ "):gsub("%(%%d%)", "%%(%%d+%%)");
-    end
-
-    LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
-    LootReserve.TooltipScanner:SetHyperlink("item:" .. itemID);
-    for i = 1, LootReserve.TooltipScanner:NumLines() do
-        local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
-        if line and line:GetText() then
-                
-            if isMe and line:GetText():match(LootReserve.TooltipScanner.AlreadyKnown) then
-                local r, g, b = line:GetTextColor();
-                r, g, b = r*255, g*255, b*255;
-                if r > 254 and r <= 255 and g > 31 and g <= 32 and b > 31 and b <= 32 then
-                    LootReserve.TooltipScanner:Hide();
-                    return false;
-                end
-            
-            elseif line:GetText():match(LootReserve.TooltipScanner.ClassesAllowed) then
-                local found = line:GetText():match(LOCALIZED_CLASS_NAMES_MALE[playerClass]) or line:GetText():match(LOCALIZED_CLASS_NAMES_FEMALE[playerClass]);
-                if not found then
-                    LootReserve.TooltipScanner:Hide();
-                    return false;
-                end
-                
-            elseif line:GetText():match(LootReserve.TooltipScanner.RacesAllowed) and playerRace then
-                local found = line:GetText():match(playerRace);
-                LootReserve.TooltipScanner:Hide();
-                if not found then
-                    LootReserve.TooltipScanner:Hide();
-                    return false;
-                end
-                
-            elseif isMe and line:GetText():match(LootReserve.TooltipScanner.Unique) and numOwned > 0 then
-                LootReserve.TooltipScanner:Hide();
-                return false;
-                
-            elseif isMe and line:GetText():match(LootReserve.TooltipScanner.ProfessionAllowed) then
-                if numOwned > 0 then
-                    return false;
-                else
-                    local r, g, b = line:GetTextColor();
-                    r, g, b = r*255, g*255, b*255;
-                    if r > 254 and r <= 255 and g > 31 and g <= 32 and b > 31 and b <= 32 then
-                        LootReserve.TooltipScanner:Hide();
-                        return false;
-                    end
-                end
-            end
-        end
-    end
-    LootReserve.TooltipScanner:Hide();
     
     -- If item starts a quest, make sure the quest is not completed or in progress
     local questStartID = LootReserve.Data:GetQuestStarted(itemID);
@@ -326,15 +254,82 @@ local function IsItemUsable(itemID, playerClass, playerRace, isMe)
         end
     end
     
+    local item = LootReserve.ItemSearch:Get(itemID)
+    if item and item:GetInfo() then
+        local classesAllowed = item:GetClassesAllowed();
+        if classesAllowed ~= true and not classesAllowed:match(LOCALIZED_CLASS_NAMES_MALE[playerClass]) and not classesAllowed:match(LOCALIZED_CLASS_NAMES_FEMALE[playerClass]) then
+            return false;
+        end
+    else
+        return false;
+    end
+    
+    if isMe then
+        -- If item is class-locked then make sure this class is listed
+        -- Also make sure the item is not unique if I already own one
+        if not LootReserve.TooltipScanner then
+            LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
+            LootReserve.TooltipScanner:Hide();
+        end
+        if not LootReserve.TooltipScanner.RacesAllowed then
+            LootReserve.TooltipScanner.RacesAllowed = ITEM_RACES_ALLOWED:gsub("%%s", "(.+)");
+        end
+        if not LootReserve.TooltipScanner.Unique then
+            LootReserve.TooltipScanner.Unique = format("^(%s)$", ITEM_UNIQUE);
+        end
+        if not LootReserve.TooltipScanner.AlreadyKnown then
+            LootReserve.TooltipScanner.AlreadyKnown = format("^(%s)$", ITEM_SPELL_KNOWN);
+        end
+        if not LootReserve.TooltipScanner.ProfessionAllowed then
+            LootReserve.TooltipScanner.ProfessionAllowed = ITEM_MIN_SKILL:gsub("%%s ", "[%%u%%l%%s]+ "):gsub("%(%%d%)", "%%(%%d+%%)");
+        end
+
+        LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
+        LootReserve.TooltipScanner:SetHyperlink("item:" .. itemID);
+        for i = 1, LootReserve.TooltipScanner:NumLines() do
+            local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
+            if line and line:GetText() then
+                local problem = false;
+                    
+                if line:GetText():match(LootReserve.TooltipScanner.AlreadyKnown) then
+                    local r, g, b = line:GetTextColor();
+                    r, g, b = r*255, g*255, b*255;
+                    if r > 254 and r <= 255 and g > 31 and g <= 32 and b > 31 and b <= 32 then
+                        problem = true;
+                    end
+                    
+                elseif line:GetText():match(LootReserve.TooltipScanner.Unique) and numOwned > 0 then
+                    problem = true;
+                    
+                elseif line:GetText():match(LootReserve.TooltipScanner.ProfessionAllowed) then
+                    if numOwned > 0 then
+                        problem = true;
+                    else
+                        local r, g, b = line:GetTextColor();
+                        r, g, b = r*255, g*255, b*255;
+                        if r > 254 and r <= 255 and g > 31 and g <= 32 and b > 31 and b <= 32 then
+                            problem = true;
+                        end
+                    end
+                end
+                if problem then
+                    LootReserve.TooltipScanner:Hide();
+                    return false;
+                end
+            end
+        end
+        LootReserve.TooltipScanner:Hide();
+    end
+    
     return true;
 end
 
 
 function LootReserve.ItemConditions:IsItemUsable(itemID, playerClass, playerRace, numOwned)
-    return IsItemUsable(itemID, playerClass, playerRace, false);
+    return IsItemUsable(itemID, playerClass, false);
 end
 function LootReserve.ItemConditions:IsItemUsableByMe(itemID)
-    return self:IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), LootReserve:UnitRace(LootReserve:Me()), true);
+    return self:IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), true);
 end
 
 function LootReserve.ItemConditions:TestClassMask(classMask, playerClass)

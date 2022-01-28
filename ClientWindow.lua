@@ -135,7 +135,6 @@ function LootReserve.Client:UpdateLootList()
             frame = list.Frames[list.LastIndex];
         end
 
-        item = LootReserve.Item(item);
         frame.Item = LootReserve.Item(item);
 
         if item:GetID() == 0 then
@@ -184,18 +183,8 @@ function LootReserve.Client:UpdateLootList()
         if item:GetID() == tonumber(filter) then
             return true;
         end
-        if string.find(item:GetSearchName(), filter, 1, true) then
+        if item:GetSearchName():find(filter, 1, true) then
             return true;
-        end
-        if LootReserve.Data:IsToken(item:GetID()) then
-            for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(item:GetID())) do
-                local reward = LootReserve.ItemSearch:Get(rewardID);
-                if reward and reward:GetInfo() then
-                    if matchesFilter(reward, filter) then
-                        return true;
-                    end
-                end
-            end
         end
 
         return false;
@@ -209,12 +198,21 @@ function LootReserve.Client:UpdateLootList()
         return aName < bName;
     end
 
+    local missing = false;
     if self.SelectedCategory and self.SelectedCategory.Reserves and self.SessionServer then
         for itemID in LootReserve:Ordered(self.ItemReserves, sortByItemName) do
-            if self.SelectedCategory.Reserves == "my" and self:IsItemReservedByMe(itemID) then
-                createFrame(itemID);
-            elseif self.SelectedCategory.Reserves == "all" and self:IsItemReserved(itemID) and not self.Blind then
-                createFrame(itemID);
+            local item = LootReserve.ItemSearch:Get(itemID);
+            if item and item:GetInfo() then
+                if self.SelectedCategory.Reserves == "my" and self:IsItemReservedByMe(itemID) then
+                    createFrame(item);
+                elseif self.SelectedCategory.Reserves == "all" and self:IsItemReserved(itemID) and not self.Blind then
+                    createFrame(item);
+                end
+                if not item:Cache() then
+                    missing = true;
+                end
+            elseif item or LootReserve.ItemSearch:IsPending(itemID) then
+                missing = true;
             end
         end
     elseif self.SelectedCategory and self.SelectedCategory.Favorites then
@@ -245,43 +243,92 @@ function LootReserve.Client:UpdateLootList()
                             list.ContentHeight = list.ContentHeight + list.GlobalFavoritesHeader:GetHeight();
                         end
                     end
-                    createFrame(itemID);
+                    
+                    local item = LootReserve.ItemSearch:Get(itemID);
+                    if item and item:GetInfo() then
+                        createFrame(item);
+                        if not item:Cache() then
+                            missing = true;
+                        end
+                    elseif item or LootReserve.ItemSearch:IsPending(itemID) then
+                        missing = true;
+                    end
                 end
             end
         end
     elseif self.SelectedCategory and self.SelectedCategory.Search and filter then
-        local missing = false;
         for itemID, conditions in pairs(self.ItemConditions) do
             if itemID ~= 0 and conditions.Custom and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                local match = false;
                 local item = LootReserve.ItemSearch:Get(itemID);
                 if item and item:GetInfo() then
                     if matchesFilter(item, filter) then
                         createFrame(item, "Custom Item");
-                        if not item:Cache() then
+                        match = true;
+                        if not item:GetInfo() then
                             missing = true;
                         end
                     end
                 elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                     missing = true;
                 end
+                if not match and LootReserve.Data:IsToken(itemID) then
+                    for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                        local reward = LootReserve.ItemSearch:Get(rewardID);
+                        if reward and reward:GetInfo() then
+                            if matchesFilter(reward, filter) then
+                                createFrame(item, "Custom Item");
+                                if not item:GetInfo() then
+                                    missing = true;
+                                end
+                                break;
+                            end
+                        elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
+                            missing = true;
+                        end
+                    end
+                end
             end
         end
-        for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
-            if category.Children and (not self.LootCategories or LootReserve:Contains(self.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
-                for _, child in ipairs(category.Children) do
-                    if child.Loot then
-                        for _, itemID in ipairs(child.Loot) do
-                            if itemID ~= 0 and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
-                                local item = LootReserve.ItemSearch:Get(itemID);
-                                if item and item:GetInfo() then
-                                    if matchesFilter(item, filter) then
-                                        createFrame(item, format("%s > %s", category.Name, child.Name));
-                                        if not item:Cache() then
-                                            missing = true;
+        if select(2, LootReserve.ItemSearch:GetProgress()) < LootReserve.Constants.LoadState.SessionDone then
+            LootReserve.ItemSearch:SetSpeed(250);
+            missing = true;
+        else
+            for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
+                if category.Children and (not self.LootCategories or LootReserve:Contains(self.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
+                    for _, child in ipairs(category.Children) do
+                        if child.Loot then
+                            for _, itemID in ipairs(child.Loot) do
+                                if itemID ~= 0 and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                                    local match = false;
+                                    local item = LootReserve.ItemSearch:Get(itemID);
+                                    if item and item:GetInfo() then
+                                        if matchesFilter(item, filter) then
+                                            createFrame(item, format("%s > %s", category.Name, child.Name));
+                                            match = true;
+                                            if not item:Cache() then
+                                                missing = true;
+                                            end
+                                        end
+                                    elseif item or LootReserve.ItemSearch:IsPending(itemID) then
+                                        missing = true;
+                                    end
+                                    if not match and LootReserve.Data:IsToken(itemID) then
+                                        for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                                            local reward = LootReserve.ItemSearch:Get(rewardID);
+                                            if reward and reward:GetInfo() then
+                                                if matchesFilter(reward, filter) then
+                                                    createFrame(item, format("%s > %s", category.Name, child.Name));
+                                                    if not item:Cache() then
+                                                        missing = true;
+                                                    end
+                                                    break;
+                                                end
+                                            elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
+                                                missing = true;
+                                            end
                                         end
                                     end
-                                elseif item or LootReserve.ItemSearch:IsPending(itemID) then
-                                    missing = true;
                                 end
                             end
                         end
@@ -290,26 +337,42 @@ function LootReserve.Client:UpdateLootList()
             end
         end
         
-        if missing then
-            if not self.PendingLootListUpdate then
-                C_Timer.After(0.1, function()
-                    self.PendingLootListUpdate = false;
-                    self:UpdateLootList();
-                end);
-                self.PendingLootListUpdate = true;
-            end
-        end
     elseif self.SelectedCategory and self.SelectedCategory.Custom then
         for itemID, conditions in pairs(self.ItemConditions) do
             if itemID ~= 0 and conditions.Custom and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
-                createFrame(itemID);
+                local item = LootReserve.ItemSearch:Get(itemID);
+                if item and item:GetInfo() then
+                    createFrame(item);
+                    if not item:Cache() then
+                        missing = true;
+                    end
+                elseif item or LootReserve.ItemSearch:IsPending(itemID) then
+                    missing = true;
+                end
             end
         end
     elseif self.SelectedCategory and self.SelectedCategory.Loot then
         for _, itemID in ipairs(self.SelectedCategory.Loot) do
             if LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
-                createFrame(itemID);
+                local item = LootReserve.ItemSearch:Get(itemID);
+                if item and item:GetInfo() then
+                    createFrame(item);
+                    if not item:Cache() then
+                        missing = true;
+                    end
+                elseif item or LootReserve.ItemSearch:IsPending(itemID) then
+                    missing = true;
+                end
             end
+        end
+    end
+    if missing then
+        if not self.PendingLootListUpdate then
+            C_Timer.After(0.1, function()
+                self.PendingLootListUpdate = false;
+                self:UpdateLootList();
+            end);
+            self.PendingLootListUpdate = true;
         end
     end
     for i = list.LastIndex + 1, #list.Frames do
@@ -586,8 +649,6 @@ function LootReserve.Client:OnWindowLoad(window)
                 end
             end
         elseif self.SelectedCategory.Favorites and self:IsFavorite(itemID) then
-            self:UpdateLootList();
-        elseif self.SelectedCategory.Reserves then
             self:UpdateLootList();
         end
     end);

@@ -235,16 +235,6 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         if string.find(item:GetSearchName(), filter, 1, true) then
             return true;
         end
-        if LootReserve.Data:IsToken(item:GetID()) then
-            for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(item:GetID())) do
-                local reward = LootReserve.ItemSearch:Get(rewardID);
-                if reward and reward:GetInfo() then
-                    if matchesFilter(reward, nil, filter) then
-                        return true;
-                    end
-                end
-            end
-        end
         
         if reserve then
             for _, player in pairs(reserve.Players) do
@@ -336,16 +326,34 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
     local missing = false;
     for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sorter) do
+        local match = false;
         local item = LootReserve.ItemSearch:Get(itemID);
         if item and item:GetInfo() then
             if not filter or matchesFilter(item, reserve, filter) then
                 createFrame(item, reserve, true);
+                match = true;
                 if not item:Cache() then
                     missing = true;
                 end
             end
         elseif item or LootReserve.ItemSearch:IsPending(itemID) then
             missing = true;
+        end
+        if not match and LootReserve.Data:IsToken(itemID) then
+            for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                local reward = LootReserve.ItemSearch:Get(rewardID);
+                if reward and reward:Cache() then
+                    if matchesFilter(reward, nil, filter) then
+                        createFrame(item, nil, true);
+                        if not item:Cache() then
+                            missing = true;
+                        end
+                        break;
+                    end
+                elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
+                    missing = true;
+                end
+            end
         end
     end
     for i = list.LastIndex + 1, #list.Frames do
@@ -692,16 +700,6 @@ function LootReserve.Server:UpdateRollList(lockdown)
         if string.find(item:GetSearchName(), filter, 1, true) then
             return true;
         end
-        if LootReserve.Data:IsToken(item:GetID()) then
-            for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(item:GetID())) do
-                local reward = LootReserve.ItemSearch:Get(rewardID);
-                if reward and reward:GetInfo() then
-                    if matchesFilter(reward, nil, filter) then
-                        return true;
-                    end
-                end
-            end
-        end
         
         if roll then
             for player in pairs(roll.Players) do
@@ -722,17 +720,35 @@ function LootReserve.Server:UpdateRollList(lockdown)
     end
     local missing = false;
     for i = #self.RollHistory, 1, -1 do
+        local match = false;
         local roll = self.RollHistory[i]
         local item = LootReserve.ItemSearch:Get(roll.Item:GetID());
         if item and item:GetInfo() then
             if not filter or matchesFilter(item, roll, filter) then
                 createFrame(item, roll, true);
+                match = true;
                 if not item:Cache() then
                     missing = true;
                 end
             end
         elseif item or LootReserve.ItemSearch:IsPending(roll.Item:GetID()) then
             missing = true;
+        end
+        if not match and LootReserve.Data:IsToken(itemID) then
+            for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                local reward = LootReserve.ItemSearch:Get(rewardID);
+                if reward and reward:GetInfo() then
+                    if matchesFilter(reward, nil, filter) then
+                        createFrame(item, nil, true);
+                        if not item:Cache() then
+                            missing = true;
+                        end
+                        break;
+                    end
+                elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
+                    missing = true;
+                end
+            end
         end
     end
     for i = list.LastIndex + 1, #list.Frames do

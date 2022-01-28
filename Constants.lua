@@ -46,6 +46,11 @@ LootReserve.Constants =
         InternalError     = 8,
         NotEnoughReserves = 9,
     },
+    ReserveDeltaResult =
+    {
+        NoSession         = 0,
+        NotMember         = 1,
+    },
     ReservesSorting =
     {
         ByTime   = 0,
@@ -101,11 +106,11 @@ LootReserve.Constants =
     },
     LoadState =
     {
-        NotStarted = 0,
-        Started    = 1,
-        ClientDone = 2,
-        Pending    = 3,
-        AllDone    = 4,
+        NotStarted  = 0,
+        Started     = 1,
+        SessionDone = 2,
+        Pending     = 3,
+        AllDone     = 4,
     },
     ClassFilenameToClassID   = { },
     ClassLocalizedToFilename = { },
@@ -212,6 +217,7 @@ LootReserve.Constants.ReserveResultText =
     [result.FailedFaction]            = "Your faction cannot reserve that item",
     [result.FailedLimit]              = "That item has reached the limit of reserves",
     [result.FailedLimitPartial]       = "Not all of your reserves were accepted because the item reached the limit of reserves",
+    [result.FailedUsable]             = "You may not reserve unusable items",
 };
 
 local result = LootReserve.Constants.CancelReserveResult;
@@ -227,6 +233,13 @@ LootReserve.Constants.CancelReserveResultText =
     [result.Locked]            = "Your reserves are locked-in and cannot be changed anymore",
     [result.InternalError]     = "Internal error",
     [result.NotEnoughReserves] = "You don't have that many reserves on that item",
+};
+
+local result = LootReserve.Constants.ReserveDeltaResult;
+LootReserve.Constants.ReserveDeltaResultText =
+{
+    [result.NoSession]         = "Loot reserves aren't active in your raid",
+    [result.NotMember]         = "You are not participating in loot reserves",
 };
 
 local enum = LootReserve.Constants.ReservesSorting;

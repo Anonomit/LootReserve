@@ -69,8 +69,8 @@ LootReserve.Server =
     PendingMasterLoot   = nil,
     ExtraRollRequestNag = { },
 
-    ReservableItems                    = { },
-    ReservableTokenRewards             = { },
+    ReservableIDs                      = { },
+    ReservableRewardIDs                = { },
     ItemNames                          = { },
     LootTrackingRegistered             = false,
     GuildMemberTrackingRegistered      = false,
@@ -87,10 +87,11 @@ LootReserve.Server =
     MasterLootListUpdateRegistered     = false,
     RollHistoryDisplayLimit            = 0,
     
-    PendingReserveListUpdate = nil,
-    PendingRollListUpdate    = nil,
-    PendingMembersEditUpdate = nil,
-    PendingLootEditUpdate    = nil,
+    PendingReserveListUpdate  = nil,
+    PendingRollListUpdate     = nil,
+    PendingMembersEditUpdate  = nil,
+    PendingLootEditUpdate     = nil,
+    PendingInputOptionsUpdate = nil,
 };
 
 StaticPopupDialogs["LOOTRESERVE_CONFIRM_FORCED_CANCEL_RESERVE"] =
@@ -648,7 +649,7 @@ function LootReserve.Server:PrepareLootTracking()
                 end
             end
 
-            if self.CurrentSession and self.ReservableItems[item:GetID()] then
+            if self.CurrentSession and self.ReservableIDs[item:GetID()] then
                 local tracking = self.CurrentSession.LootTracking[item:GetID()] or
                 {
                     TotalCount = 0,
@@ -1015,10 +1016,10 @@ function LootReserve.Server:PrepareSession()
 
             local function handleItemCommand(itemID, command, count)
                 count = count or 1;
-                if not self.ReservableItems[itemID] and self.ReservableTokenRewards[itemID] then
+                if not self.ReservableIDs[itemID] and self.ReservableRewardIDs[itemID] then
                     itemID = LootReserve.Data:GetToken(itemID);
                 end
-                if self.ReservableItems[itemID] then
+                if self.ReservableIDs[itemID] then
                     if command == "reserve" then
                         self:Reserve(sender, itemID, count, true);
                     elseif command == "cancel" then
@@ -1126,40 +1127,62 @@ function LootReserve.Server:PrepareSession()
                 local whitelist = { };
                 text = LootReserve:TransformSearchText(text);
                 local function handleItemCommandByName()
-                    if self:UpdateItemNameCache() then
-                        local match = nil;
-                        local matches = { };
-                        for itemID, name in pairs(self.ItemNames) do
-                            if not self.ReservableItems[itemID] and self.ReservableTokenRewards[itemID] then
-                                itemID = LootReserve.Data:GetToken(itemID);
-                            end
-                            if self.ReservableItems[itemID] and string.find(name, text, 1, true) and not LootReserve:Contains(matches, itemID) then
-                                match = match and 0 or itemID;
+                    local matches = { };
+                    local missing = false;
+                    for itemID in pairs(self.ReservableIDs) do
+                        local match = false;
+                        local item = LootReserve.ItemSearch:Get(itemID);
+                        if item and item:GetInfo() then
+                            if item:GetSearchName():match(text, 1, true) then
                                 table.insert(matches, itemID);
+                                match = true;
+                            end
+                        elseif item or LootReserve.ItemSearch:IsPending(itemID) then
+                            missing = true;
+                        end
+                        if not match and LootReserve.Data:IsToken(itemID) then
+                            for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                                local reward = LootReserve.ItemSearch:Get(rewardID);
+                                if reward and reward:GetInfo() then
+                                    if reward:GetSearchName():match(text, 1, true) and not LootReserve:Contains(matches, itemID) then
+                                        table.insert(matches, itemID);
+                                        break;
+                                    end
+                                elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
+                                    missing = true;
+                                end
                             end
                         end
+                    end
 
-                        if not match then
+                    if not missing then
+                        if #matches == 0 then
                             LootReserve:SendChatMessage(format("That item was not found in the current raid, which is %s. Check your spelling, or try using a shorter search term.%s",
                                 LootReserve:GetCategoriesText(self.CurrentSession.Settings.LootCategories, false),
                                 self:GetSupportString(sender, " ", true)
                             ), "WHISPER", sender);
-                        elseif match > 0 then
+                        elseif #matches == 1 then
                             if command == "reserve" or command == "cancel" then
-                                handleItemCommand(match, command, count);
-                                print"scuse me"
+                                handleItemCommand(matches[1], command, count);
                             elseif command == "reserves" then
-                                whitelist[match] = true;
+                                whitelist[matches[1]] = true;
                             end
-                        elseif match == 0 then
+                        elseif #matches > 1 then
                             local names = { };
-                            for i = 1, math.min(5, #matches) do
-                                names[i] = GetItemInfo(matches[i]);
+                            for _, itemID in ipairs(matches) do
+                                local item = LootReserve.ItemSearch:Get(itemID);
+                                if item and item:GetInfo() then
+                                    table.insert(names, item:GetName());
+                                end
+                                if #matches >= 5 then
+                                    break;
+                                end
                             end
-                            LootReserve:SendChatMessage(format("Try being more specific, %d items match that name: %s%s",
+                            LootReserve:SendChatMessage(format("Try being more specific, %d items match that name%s%s%s",
                                 #matches,
+                                #names > 0 and ": " or "",
                                 strjoin(", ", unpack(names)),
-                                #matches > #names and format(" and %d more...", #matches - #names) or ""
+                                #names > 0 and #matches > #names and format(" and %d more...", #matches - #names) or ""
                             ), "WHISPER", sender);
                             self:SendSupportString(sender, true);
                         end
@@ -1206,16 +1229,16 @@ function LootReserve.Server:PrepareSession()
     end
 
     -- Cache the list of items players can reserve
-    table.wipe(self.ReservableItems);
-    table.wipe(self.ReservableTokenRewards);
+    table.wipe(self.ReservableIDs);
+    table.wipe(self.ReservableRewardIDs);
     for itemID, conditions in pairs(self.CurrentSession.ItemConditions) do
         if itemID ~= 0 and conditions.Custom then
             if LootReserve.ItemConditions:TestServer(itemID) then
-                self.ReservableItems[itemID] = true;
+                self.ReservableIDs[itemID] = true;
                 if LootReserve.Data:IsToken(itemID) then
                     for _, reward in pairs(LootReserve.Data:GetTokenRewards(itemID)) do
                         if LootReserve.ItemConditions:TestServer(reward) then
-                            self.ReservableTokenRewards[reward] = true;
+                            self.ReservableRewardIDs[reward] = true;
                         end
                     end
                 end
@@ -1229,11 +1252,11 @@ function LootReserve.Server:PrepareSession()
                     for _, itemID in ipairs(child.Loot) do
                         if itemID ~= 0 then
                             if LootReserve.ItemConditions:TestServer(itemID) then
-                                self.ReservableItems[itemID] = true;
+                                self.ReservableIDs[itemID] = true;
                                 if LootReserve.Data:IsToken(itemID) then
                                     for _, reward in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                                         if LootReserve.ItemConditions:TestServer(reward) then
-                                            self.ReservableTokenRewards[reward] = true;
+                                            self.ReservableRewardIDs[reward] = true;
                                         end
                                     end
                                 end
@@ -1244,6 +1267,9 @@ function LootReserve.Server:PrepareSession()
             end
         end
     end
+    
+    -- Add myself if not in a group
+    self:UpdateGroupMembers();
 end
 
 function LootReserve.Server:UpdateItemNameCache()
@@ -1430,10 +1456,10 @@ function LootReserve.Server:StartSession()
         };
         self.CurrentSession.Members[player] = member;
         for _, itemID in ipairs(importedMember.ReservedItems) do
-            if not self.ReservableItems[itemID] then
+            if not self.ReservableIDs[itemID] then
                 itemID = LootReserve.Data:GetToken(itemID);
             end
-            if self.ReservableItems[itemID] and member.ReservesLeft > 0 then
+            if self.ReservableIDs[itemID] and member.ReservesLeft > 0 then
                 member.ReservesLeft = member.ReservesLeft - 1;
                 table.insert(member.ReservedItems, itemID);
 
@@ -1576,7 +1602,7 @@ end
 
 function LootReserve.Server:IncrementReservesDelta(player, amount, winner)
     local function Failure(result, ...)
-        LootReserve:ShowError(LootReserve.Constants.ReserveResultText[result]);
+        LootReserve:ShowError(LootReserve.Constants.ReserveDeltaResultText[result]);
         return false;
     end
 
@@ -1745,7 +1771,7 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
         return Failure(LootReserve.Constants.ReserveResult.Locked, "#");
     end
 
-    if not self.ReservableItems[itemID] then
+    if not self.ReservableIDs[itemID] then
         return Failure(LootReserve.Constants.ReserveResult.ItemNotReservable, member.ReservesLeft);
     end
 
@@ -1925,7 +1951,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
         return Failure(LootReserve.Constants.CancelReserveResult.Locked, "#");
     end
 
-    if not self.ReservableItems[itemID] then
+    if not self.ReservableIDs[itemID] then
         return Failure(LootReserve.Constants.CancelReserveResult.ItemNotReservable, member.ReservesLeft);
     end
 

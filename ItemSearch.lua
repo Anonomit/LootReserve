@@ -65,8 +65,9 @@ function LootReserve.ItemSearch:Load()
                 end
             end
         end
-        self.LoadState = LootReserve.Constants.LoadState.ClientDone;
+        self.LoadState = LootReserve.Constants.LoadState.SessionDone;
         self.Speed = 10;
+        
         for _, IDList in ipairs(self.IDLists) do
             for itemID = IDList.min, IDList.max do
                 self:LoadItem(itemID);

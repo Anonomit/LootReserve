@@ -90,8 +90,11 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
         end
         for itemID, count in pairs(reservedItems) do
             local item = LootReserve.ItemSearch:Get(itemID);
-            if item and item:Cache() then
-                table.insert(itemOrder, itemID);
+            if item and item:GetInfo() then
+                table.insert(itemOrder, item);
+                if not item:Cache() then
+                    missing = true;
+                end
             else
                 missing = true;
             end
@@ -99,8 +102,8 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
         
         local last = 0;
         local lastCount = 0;
-        for _, itemID in LootReserve:Ordered(itemOrder, function(a, b) return (GetItemInfo(a) or "") < (GetItemInfo(b) or "") end) do
-            local count = reservedItems[itemID];
+        for _, item in LootReserve:Ordered(itemOrder, function(a, b) return a:GetName() < b:GetName() end) do
+            local count = reservedItems[item:GetID()];
             last = last + 1;
             local button = frame.ReservesFrame.Items[last];
             while not button do
@@ -114,12 +117,12 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
                 button:SetPoint("LEFT", frame.ReservesFrame.Items[last - 1], "RIGHT", 4 + (lastCount > 0 and 10 or 0) + lastCount*8, 0);
             end
             button:Show();
-            button.Item = itemID;
+            button.Item = item:GetID();
 
-            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemID);
+            local name, link, texture = item:GetNameLinkTexture();
             button.Link = link;
             button.Icon.Texture:SetTexture(texture);
-            if uniqueCount == 1 and itemID ~= 0 then
+            if uniqueCount == 1 and item:GetID() ~= 0 then
                 if link then
                     button.Icon.Name:SetText((link):gsub("[%[%]]", "") .. (count > 1 and ("|r x" .. count) or ""));
                 else

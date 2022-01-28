@@ -397,14 +397,14 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                     local conditions = LootReserve.Server:GetNewSessionItemConditions()[itemID];
                     local class = select(3, UnitClass(player)) or row.Class;
                     member.Class = member.Class or class;
-                    local className, raceName = class and select(2, LootReserve:GetClassInfo(class)), LootReserve:UnitRace(LootReserve:Player(player));
+                    local className = class and select(2, LootReserve:GetClassInfo(class));
                     if itemID == 0 then
                         member.InvalidReasons[#member.ReservedItems] = "Item with the name \"" .. itemName .. "\" was not be found|nor it can't be reserved due to session settings.";
                     elseif not (LootReserve.Data:IsItemInCategories(itemID, LootReserve.Server.NewSessionSettings.LootCategories) or conditions and conditions.Custom) or not LootReserve.ItemConditions:TestServer(itemID) then
                         member.InvalidReasons[#member.ReservedItems] = "Item can't be reserved due to session settings.|nChange to the appropriate raid map or add this item as a custom item.";
                     elseif conditions and conditions.ClassMask and class and not LootReserve.ItemConditions:TestClassMask(conditions.ClassMask, class) then
                         member.InvalidReasons[#member.ReservedItems] = player .. "'s class cannot reserve this item.|nEdit the raid loot to change the class restrictions on this item, or it will not be imported.";
-                    elseif LootReserve.Server.NewSessionSettings.Equip and className and not LootReserve.ItemConditions:IsItemUsable(itemID, className, raceName) then
+                    elseif LootReserve.Server.NewSessionSettings.Equip and className and not LootReserve.ItemConditions:IsItemUsable(itemID, className) then
                         member.InvalidReasons[#member.ReservedItems] = player .. "'s class cannot reserve this item.|nEdit the raid loot to change the class restrictions on this item, or it will not be imported.";
                     elseif conditions and conditions.Limit and itemReserveCount[itemID] > conditions.Limit then
                         member.InvalidReasons[#member.ReservedItems] = "This item has hit the limit of how many times it can be reserved.|nEdit the raid loot to increase or remove the limit on this item, or it will not be imported.";
@@ -439,17 +439,23 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 if itemID and itemID ~= 0 and itemID ~= "" then
                     -- Transform Item Name -> Item ID
                     if type(itemID) == "string" then
-                        if not LootReserve.Server:UpdateItemNameCache() then
-                            C_Timer.After(0.1, function() LootReserve.Server.Import:InputOptionsUpdated(); end);
+                        if select(2, LootReserve.ItemSearch:GetProgress()) < LootReserve.Constants.LoadState.SessionDone then
+                            LootReserve.ItemSearch:SetSpeed(250);
+                            
+                            if not self.PendingInputOptionsUpdate then
+                                C_Timer.After(0.1, function()
+                                    self.PendingInputOptionsUpdate = false;
+                                    self:InputOptionsUpdated();
+                                end);
+                                self.PendingInputOptionsUpdate = true;
+                            end
                             return "Loading item names, please wait...";
                         end
+                        
 
-                        itemID = LootReserve:TransformSearchText(itemID);
-                        for id, name in pairs(LootReserve.Server.ItemNames) do
-                            if name == itemID and LootReserve.ItemConditions:TestServer(id) then
-                                itemID = id;
-                                break;
-                            end
+                        local results = LootReserve.ItemSearch:Search(LootReserve:TransformSearchText(itemID))
+                        if #results == 1 then
+                            itemID = results[1]:GetID();
                         end
 
                         if type(itemID) == "string" then

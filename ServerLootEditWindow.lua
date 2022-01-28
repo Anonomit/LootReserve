@@ -33,7 +33,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
         frame.ConditionsFrame.Limit.EditBox:ClearFocus();
     end
 
-    local function createFrame(itemID, source)
+    local function createFrame(item, source)
         list.LastIndex = list.LastIndex + 1;
         local frame = list.Frames[list.LastIndex];
         while not frame do
@@ -50,13 +50,13 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             frame = list.Frames[list.LastIndex];
         end
 
-        if frame.Item ~= itemID then
+        if frame.Item ~= item:GetID() then
             cleanupFrame(frame);
         end
 
-        frame.Item = itemID;
+        frame.Item = item:GetID();
 
-        if itemID == 0 then
+        if item:GetID() == 0 then
             if list.LastIndex <= 1 or not list.Frames[list.LastIndex - 1]:IsShown() then
                 frame:SetHeight(0.00001);
                 frame:Hide();
@@ -68,8 +68,8 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             frame:SetHeight(44);
             frame:Show();
 
-            local description = LootReserve:GetItemDescription(itemID);
-            local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemID);
+            local description = LootReserve:GetItemDescription(item:GetID());
+            local name, link, texture = item:GetNameLinkTexture();
 
             frame.Link = link;
 
@@ -101,32 +101,32 @@ function LootReserve.Server.LootEdit:UpdateLootList()
         if string.find(item:GetSearchName(), filter, 1, true) then
             return true;
         end
-        if LootReserve.Data:IsToken(item:GetID()) then
-            for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(item:GetID())) do
-                local reward = LootReserve.ItemSearch:Get(rewardID);
-                if reward and reward:GetInfo() then
-                    if matchesFilter(reward, filter) then
-                        return true;
-                    end
-                end
-            end
-        end
 
         return false;
     end
 
+    local missing = false;
     if self.SelectedCategory and self.SelectedCategory.Edited then
         for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
-            createFrame(itemID);
+            local item = LootReserve.ItemSearch:Get(itemID);
+            if item and item:GetInfo() then
+                createFrame(item);
+                if not item:Cache() then
+                    missing = true;
+                end
+            elseif item or LootReserve.ItemSearch:IsPending(itemID) then
+                missing = true;
+            end
         end
     elseif self.SelectedCategory and self.SelectedCategory.Search and filter then
-        local missing = false;
         for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
             if itemID ~= 0 and conditions.Custom then
+                local match = false;
                 local item = LootReserve.ItemSearch:Get(itemID);
                 if item and item:GetInfo() then
                     if matchesFilter(item, filter) then
-                        createFrame(item:GetID(), "Custom Item");
+                        createFrame(item, "Custom Item");
+                        match = true;
                         if not item:Cache() then
                             missing = true;
                         end
@@ -134,24 +134,63 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                 elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                     missing = true;
                 end
+                if not match and LootReserve.Data:IsToken(itemID) then
+                    for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                        local reward = LootReserve.ItemSearch:Get(rewardID);
+                        if reward and reward:GetInfo() then
+                            if matchesFilter(reward, filter) then
+                                createFrame(item, "Custom Item");
+                                if not item:Cache() then
+                                    missing = true;
+                                end
+                                break;
+                            end
+                        elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
+                            missing = true;
+                        end
+                    end
+                end
             end
         end
-        for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
-            if category.Children and (not LootReserve.Server.NewSessionSettings.LootCategories or LootReserve:Contains(LootReserve.Server.NewSessionSettings.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
-                for _, child in ipairs(category.Children) do
-                    if child.Loot then
-                        for _, itemID in ipairs(child.Loot) do
-                            if itemID ~= 0 then
-                                local item = LootReserve.ItemSearch:Get(itemID);
-                                if item and item:GetInfo() then
-                                    if matchesFilter(item, filter) then
-                                        createFrame(item:GetID(), format("%s > %s", category.Name, child.Name));
-                                        if not item:Cache() then
-                                            missing = true;
+        if select(2, LootReserve.ItemSearch:GetProgress()) < LootReserve.Constants.LoadState.SessionDone then
+            LootReserve.ItemSearch:SetSpeed(250);
+            missing = true;
+        else
+            for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
+                if category.Children and (not LootReserve.Server.NewSessionSettings.LootCategories or LootReserve:Contains(LootReserve.Server.NewSessionSettings.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
+                    for _, child in ipairs(category.Children) do
+                        if child.Loot then
+                            for _, itemID in ipairs(child.Loot) do
+                                if itemID ~= 0 then
+                                    local match = false;
+                                    local item = LootReserve.ItemSearch:Get(itemID);
+                                    if item and item:GetInfo() then
+                                        if matchesFilter(item, filter) then
+                                            createFrame(item, format("%s > %s", category.Name, child.Name));
+                                            match = true;
+                                            if not item:GetInfo() then
+                                                missing = true;
+                                            end
+                                        end
+                                    elseif item or LootReserve.ItemSearch:IsPending(itemID) then
+                                        missing = true;
+                                    end
+                                    if not match and LootReserve.Data:IsToken(itemID) then
+                                        for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                                            local reward = LootReserve.ItemSearch:Get(rewardID);
+                                            if reward and reward:GetInfo() then
+                                                if matchesFilter(reward, filter) then
+                                                    createFrame(item, format("%s > %s", category.Name, child.Name));
+                                                    if not item:GetInfo() then
+                                                        missing = true;
+                                                    end
+                                                    break;
+                                                end
+                                            elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
+                                                missing = true;
+                                            end
                                         end
                                     end
-                                elseif item or LootReserve.ItemSearch:IsPending(itemID) then
-                                    missing = true;
                                 end
                             end
                         end
@@ -159,24 +198,40 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                 end
             end
         end
-        if missing then
-            if not self.PendingLootEditUpdate then
-                C_Timer.After(0.1, function()
-                    self.PendingLootEditUpdate = false;
-                    self:UpdateLootList();
-                end);
-                self.PendingLootEditUpdate = true;
-            end
-        end
     elseif self.SelectedCategory and self.SelectedCategory.Custom then
         for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
             if itemID ~= 0 and conditions.Custom then
-                createFrame(itemID);
+                local item = LootReserve.ItemSearch:Get(itemID);
+                if item and item:GetInfo() then
+                    createFrame(item);
+                    if not item:Cache() then
+                        missing = true;
+                    end
+                elseif item or LootReserve.ItemSearch:IsPending(itemID) then
+                    missing = true;
+                end
             end
         end
     elseif self.SelectedCategory and self.SelectedCategory.Loot then
         for _, itemID in ipairs(self.SelectedCategory.Loot) do
-            createFrame(itemID);
+            local item = LootReserve.ItemSearch:Get(itemID);
+            if item and item:GetInfo() then
+                createFrame(item);
+                if not item:Cache() then
+                    missing = true;
+                end
+            elseif item or LootReserve.ItemSearch:IsPending(itemID) then
+                missing = true;
+            end
+        end
+    end
+    if missing then
+        if not self.PendingLootEditUpdate then
+            C_Timer.After(0.1, function()
+                self.PendingLootEditUpdate = false;
+                self:UpdateLootList();
+            end);
+            self.PendingLootEditUpdate = true;
         end
     end
 
