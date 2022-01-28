@@ -209,7 +209,7 @@ setClassWeapons("WARRIOR", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swo
 
 
 local function IsItemUsable(itemID, playerClass, isMe)
-    local numOwned
+    local numOwned;
     if isMe then
         numOwned = GetItemCount(itemID, true) - LootReserve:GetTradeableItemCount(itemID);
     end
@@ -325,11 +325,11 @@ local function IsItemUsable(itemID, playerClass, isMe)
 end
 
 
-function LootReserve.ItemConditions:IsItemUsable(itemID, playerClass, playerRace, numOwned)
+function LootReserve.ItemConditions:IsItemUsable(itemID, playerClass)
     return IsItemUsable(itemID, playerClass, false);
 end
 function LootReserve.ItemConditions:IsItemUsableByMe(itemID)
-    return self:IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), true);
+    return IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), true);
 end
 
 function LootReserve.ItemConditions:TestClassMask(classMask, playerClass)
