@@ -149,7 +149,11 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_ROLL_RESERVED_ITEM_AGAIN"] =
         if self.data.Frame then
             self.data.Frame:SetItem(nil);
         end
-        if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[self.data.Item:GetID()] then
+        local tokenID;
+        if not LootReserve.Server.ReservableIDs[self.data.Item:GetID()] and LootReserve.Server.ReservableRewardIDs[self.data.Item:GetID()] then
+            tokenID = LootReserve.Data:GetToken(self.data.Item:GetID());
+        end
+        if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[tokenID or self.data.Item:GetID()] then
             LootReserve.Server:RequestRoll(self.data.Item);
         end
     end,
@@ -868,7 +872,7 @@ function LootReserve.Server:PrepareSession()
                                             phase = "Raid-Roll";
                                         end
                                     end
-                                    local text = format("%s%s", LootReserve:ColoredPlayer(player), phase and format(" for %s", phase or "") or "")
+                                    local text = format("%s%s", LootReserve:ColoredPlayer(player), not roll.Custom and " as a reserve" or phase and format(" for %s", phase or "") or "")
                                     tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Coin-Up:32:32:0:-4|t Won by " .. text, 1, 1, 1);
                                     break;
                                 end
@@ -2305,22 +2309,26 @@ end
 function LootReserve.Server:FinishRollRequest(item, soleReserver)
     local function RecordRollWinner(player, item, phase)
         if self.CurrentSession then
+            local token;
+            if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
+                token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+            end
             local member = self.CurrentSession.Members[player];
             if member then
                 if not member.WonRolls then member.WonRolls = { }; end
                 table.insert(member.WonRolls,
                 {
-                    Item  = item,
+                    Item  = token or item,
                     Phase = phase,
                     Time  = time(),
                 });
             end
 
-            local itemWinners = self.CurrentSession.WonItems[item:GetID()] or {
+            local itemWinners = self.CurrentSession.WonItems[token and token:GetID() or item:GetID()] or {
                 TotalCount = 0,
                 Players    = { },
             };
-            self.CurrentSession.WonItems[item:GetID()] = itemWinners;
+            self.CurrentSession.WonItems[token and token:GetID() or item:GetID()] = itemWinners;
             table.insert(itemWinners.Players, player);
             itemWinners.TotalCount = itemWinners.TotalCount + 1;
         end
@@ -2470,19 +2478,24 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
         
         -- Remove winners' reserves
         if self.CurrentSession and not self.RequestedRoll.Custom then
+            local token;
+            if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
+                token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+            end
+            local itemID = token and token:GetID() or item:GetID();
             for player in pairs(uniqueWinners) do
-                if self.CurrentSession.ItemReserves[item:GetID()] and LootReserve:Contains(self.CurrentSession.ItemReserves[item:GetID()].Players, player) then
+                if self.CurrentSession.ItemReserves[itemID] and LootReserve:Contains(self.CurrentSession.ItemReserves[itemID].Players, player) then
                     if self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Single then
-                        self:CancelReserve(player, item:GetID(), 1, false, true, true, true);
+                        self:CancelReserve(player, itemID, 1, false, true, true, true);
                         self:IncrementReservesDelta(player, -1);
                     elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Duplicate then
                         local count = 0;
-                        for i, itemID in ipairs(self.CurrentSession.Members[player].ReservedItems) do
-                            if itemID == item:GetID() then
+                        for i, id in ipairs(self.CurrentSession.Members[player].ReservedItems) do
+                            if id == itemID then
                                 count = count + 1;
                             end
                         end
-                        self:CancelReserve(player, item:GetID(), count, false, true, true, true);
+                        self:CancelReserve(player, itemID, count, false, true, true, true);
                         self:IncrementReservesDelta(player, 0 - count);
                     elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.All then
                         self:IncrementReservesDelta(player, 0 - self.CurrentSession.Members[player].ReservesLeft - #self.CurrentSession.Members[player].ReservedItems, true);
@@ -2749,6 +2762,9 @@ function LootReserve.Server:RequestRoll(item, duration, phases, allowedPlayers)
     end
 
     local reserve = self.CurrentSession.ItemReserves[item:GetID()];
+    if not reserve and not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
+        reserve = self.CurrentSession.ItemReserves[LootReserve.Data:GetToken(item:GetID())];
+    end
     if not reserve then
         LootReserve:ShowError("That item is not reserved by anyone");
         return;

@@ -738,7 +738,11 @@
 							local frame = self:GetParent();
 							local item = frame.Item;
 							frame:SetItem(nil);
-							if info and info.arg1 and LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[item:GetID()] then
+							local token;
+							if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
+								token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+							end
+							if info and info.arg1 and LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
 								LootReserve.Server:RequestRoll(item);
 							else
 								LootReserve.Server:RequestCustomRoll(item,
@@ -843,15 +847,19 @@
 							});
 						end
 						local item, link = self:GetParent().Item, self:GetParent().Link;
+						local token;
+						if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
+							token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+						end
 
 						local menu =
 						{
 							{ text = "Start Roll", isTitle = true },
-							{ text = "Among Reserving Players", arg1 = true, disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[item:GetID()], func = function(...)
+							{ text = "Among Reserving Players", arg1 = true, disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()], func = function(...)
 								local winners = { };
-								if LootReserve.Server.CurrentSession.WonItems and LootReserve.Server.CurrentSession.WonItems[item:GetID()] then
-									for _, player in ipairs(LootReserve.Server.CurrentSession.WonItems[item:GetID()].Players) do
-										if LootReserve:Contains(LootReserve.Server.CurrentSession.ItemReserves[item:GetID()].Players, player) then
+								if LootReserve.Server.CurrentSession.WonItems and LootReserve.Server.CurrentSession.WonItems[token and token:GetID() or item:GetID()] then
+									for _, player in ipairs(LootReserve.Server.CurrentSession.WonItems[token and token:GetID() or item:GetID()].Players) do
+										if LootReserve:Contains(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players, player) then
 											table.insert(winners, player);
 										end
 									end
@@ -863,10 +871,10 @@
 								end
 							end, },
 							{ text = "Among All Players", func = function(...)
-									if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[item:GetID()] then
+									if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
 										StartRoll(...)
 									else
-										StaticPopup_Show("LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM", link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[item:GetID()].Players), {Item = item, Frame = self:GetParent()});
+										StaticPopup_Show("LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM", link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players), {Item = item, Frame = self:GetParent()});
 									end
 								end },
 							{ text = "Auto Raid-Roll", func = RaidRoll },
