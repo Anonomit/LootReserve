@@ -142,7 +142,7 @@ function LootReserve.Client:UpdateLootList()
                 frame:SetHeight(0.00001);
                 frame:Hide();
             else
-                frame:SetHeight(16);
+                frame:SetHeight(32);
                 frame:Hide();
             end
             frame.Favorite:Hide();
@@ -353,7 +353,7 @@ function LootReserve.Client:UpdateLootList()
         end
     elseif self.SelectedCategory and self.SelectedCategory.Loot then
         for _, itemID in ipairs(self.SelectedCategory.Loot) do
-            if LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+            if itemID ~= 0 and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                 local item = LootReserve.ItemSearch:Get(itemID);
                 if item and item:GetInfo() then
                     createFrame(item);
@@ -363,6 +363,8 @@ function LootReserve.Client:UpdateLootList()
                 elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                     missing = true;
                 end
+            elseif itemID == 0 then
+                createFrame(LootReserve.Item(0));
             end
         end
     end
