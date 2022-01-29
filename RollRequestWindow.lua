@@ -10,13 +10,21 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     self.RollRequest = nil;
     frame:Hide();
 
+    local _, myCount = LootReserve:GetReservesData(players, LootReserve:Me());
+    
+    if LootReserve.Client.Settings.RollRequestAutoRollReserved and not custom then
+        LootReserve:PrintMessage("Automatically rolling on reserved item: %s%s", item:GetLink(), (myCount or 1) > 1 and ("x" .. myCount) or "");
+        for i = 1, myCount or 1 do
+            RandomRoll(1, 100);
+        end
+        return;
+    end
+    
     if not example then
         if not self.Settings.RollRequestShow then return; end
         if not LootReserve:Contains(players, LootReserve:Me()) then return; end
         if custom and not self.Settings.RollRequestShowUnusable and (not LootReserve.ItemConditions:IsItemUsableByMe(item:GetID()) and LootReserve:IsItemBoP(item:GetID())) then return; end
     end
-
-    local _, myCount = LootReserve:GetReservesData(players, LootReserve:Me());
 
     self.RollRequest =
     {
@@ -30,12 +38,6 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
         Count       = myCount,
     };
     local roll = self.RollRequest;
-    
-    if not roll.Custom and LootReserve.Client.Settings.RollRequestAutoRollReserved then
-        LootReserve:PrintMessage("Automatically rolling on reserved item: %s%s", roll.Item:GetLink(), roll.Count > 1 and ("x" .. roll.Count) or "");
-        LootReserve.Client:RespondToRollRequest(true);
-        return;
-    end
 
     local description = LootReserve:GetItemDescription(item:GetID());
     local name, link, texture = item:GetNameLinkTexture();
@@ -106,7 +108,7 @@ end
 
 function LootReserve.Client:RollRequested(sender, item, ...)
     local args = {...};
-    LootReserve:RunWhenItemCached(item:GetID(), function() return RollRequested(LootReserve.Client, sender, item, unpack(args)) end);
+    LootReserve:RunWhenItemCached(item:GetID(), function() if not item:GetInfo() then return true; end return RollRequested(LootReserve.Client, sender, item, unpack(args)) end);
 end
 
 function LootReserve.Client:RespondToRollRequest(response)

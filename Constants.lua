@@ -1,201 +1,210 @@
 LootReserve = LootReserve or { };
-LootReserve.Constants =
-{
-    MAX_RESERVES          = 99,
-    MAX_MULTIRESERVES     = 99,
-    MAX_RESERVES_PER_ITEM = 99,
-    MAX_CHAT_STORAGE      = 25,
-    
-    OptResult =
-    {
-        OK                       = 0,
-        NotInRaid                = 1,
-        NoSession                = 2,
-        NotMember                = 3,
-    },
-    ReserveResult =
-    {
-        OK                       = 0,
-        NotInRaid                = 1,
-        NoSession                = 2,
-        NotMember                = 3,
-        ItemNotReservable        = 4,
-        AlreadyReserved          = 5,
-        NoReservesLeft           = 6,
-        FailedConditions         = 7,
-        Locked                   = 8,
-        NotEnoughReservesLeft    = 9,
-        MultireserveLimit        = 10,
-        MultireserveLimitPartial = 11,
-        FailedClass              = 12,
-        FailedFaction            = 13,
-        FailedLimit              = 14,
-        FailedLimitPartial       = 15,
-        FailedUsable             = 16,
-    },
-    CancelReserveResult =
-    {
-        OK                = 0,
-        NotInRaid         = 1,
-        NoSession         = 2,
-        NotMember         = 3,
-        ItemNotReservable = 4,
-        NotReserved       = 5,
-        Forced            = 6,
-        Locked            = 7,
-        InternalError     = 8,
-        NotEnoughReserves = 9,
-    },
-    ReserveDeltaResult =
-    {
-        NoSession         = 0,
-        NotMember         = 1,
-    },
-    ReservesSorting =
-    {
-        ByTime   = 0,
-        ByName   = 1,
-        BySource = 2,
-        ByLooter = 3,
-    },
-    WinnerReservesRemoval =
-    {
-        None      = 0,
-        Single    = 1,
-        Duplicate = 2,
-        All       = 3,
-    },
-    ChatReservesListLimit =
-    {
-        None = -1,
-    },
-    ChatAnnouncement =
-    {
-        SessionStart        = 1,
-        SessionResume       = 2,
-        SessionStop         = 3,
-        RollStartReserved   = 4,
-        RollStartCustom     = 5,
-        RollWinner          = 6,
-        RollTie             = 7,
-        SessionInstructions = 8,
-        RollCountdown       = 9,
-        SessionBlindToggle  = 10,
-    },
-    DefaultPhases =
-    {
-        "Main-Spec",
-        "Off-Spec",
-        "Learning",
-        "Quest",
-        "Reputation",
-        "Profession",
-        "Looks",
-        "Vendor",
-    },
-    WonRollPhase =
-    {
-        Reserve  = 1,
-        RaidRoll = 2,
-    },
-    RollType =
-    {
-        NotRolled = 0,
-        Passed    = -1,
-        Deleted   = -2,
-    },
-    LoadState =
-    {
-        NotStarted  = 0,
-        Started     = 1,
-        SessionDone = 2,
-        Pending     = 3,
-        AllDone     = 4,
-    },
-    ClassFilenameToClassID   = { },
-    ClassLocalizedToFilename = { },
-    ItemQuality =
-    {
-        [-1] = "All",
-        [0]  = "Junk",
-        [1]  = "Common",
-        [2]  = "Uncommon",
-        [3]  = "Rare",
-        [4]  = "Epic",
-        [5]  = "Legendary",
-        [6]  = "Artifact",
-        [7]  = "Heirloom",
-        [99] = "None",
-    },
-    RedundantSubTypes = {
-        ["Polearms"]  = "Polearm",
-        ["Staves"]    = "Staff",
-        ["Bows"]      = "Bow",
-        ["Crossbows"] = "Crossbow",
-        ["Guns"]      = "Gun",
-        ["Thrown"]    = "Thrown Weapon",
-        ["Wands"]     = "Wand",
-        ["Relic"]     = "Relic",
-        
-        ["Shields"]   = "Shield",
-        ["Idols"]     = "Idol",
-        ["Librams"]   = "Libram",
-        ["Totems"]    = "Totem",
-        ["Sigils"]    = "Sigil",
-    },
-    WeaponTypeNames = {
-        ["Two-Handed Axes"]   = "Axe",
-        ["One-Handed Axes"]   = "Axe",
-        ["Two-Handed Swords"] = "Sword",
-        ["One-Handed Swords"] = "Sword",
-        ["Two-Handed Maces"]  = "Mace",
-        ["One-Handed Maces"]  = "Mace",
-        ["Polearms"]          = "Polearm",
-        ["Staves"]            = "Staff",
-        ["Daggers"]           = "Dagger",
-        ["Fist Weapons"]      = "Fist Weapon",
-        ["Bows"]              = "Bow",
-        ["Crossbows"]         = "Crossbow",
-        ["Guns"]              = "Gun",
-        ["Thrown"]            = "Thrown Weapon",
-        ["Wands"]             = "Wand",
-    },
-    Sounds = {
-        LevelUp = 1440,
-        Cheer = {
-            [1]  = {[2] = 2677, [3] = 2689},
-            [2]  = {[2] = 2701, [3] = 2713},
-            [3]  = {[2] = 2725, [3] = 2737},
-            [4]  = {[2] = 2749, [3] = 2761},
-            [5]  = {[2] = 2773, [3] = 2785},
-            [6]  = {[2] = 2797, [3] = 2810},
-            [7]  = {[2] = 2835, [3] = 2847},
-            [8]  = {[2] = 2859, [3] = 2871},
-            [10] = {[2] = 9656, [3] = 9632},
-            [11] = {[2] = 9706, [3] = 9681},
-        },
-        Congratulate = {
-            [1]  = {[2] = 6168, [3] = 6141},
-            [2]  = {[2] = 6366, [3] = 6357},
-            [3]  = {[2] = 6113, [3] = 6104},
-            [4]  = {[2] = 6186, [3] = 6177},
-            [5]  = {[2] = 6420, [3] = 6411},
-            [6]  = {[2] = 6384, [3] = 6375},
-            [7]  = {[2] = 6131, [3] = 6122},
-            [8]  = {[2] = 6402, [3] = 6393},
-            [10] = {[2] = 9657, [3] = 9641},
-            [11] = {[2] = 9707, [3] = 9682},
-        },
-    },
-};
+LootReserve.Constants = { };
 
-local result = LootReserve.Constants.OptResult;
-LootReserve.Constants.OptResultText =
-{
-    [result.OK]                       = "",
-    [result.NotInRaid]                = "You are not in the raid",
-    [result.NoSession]                = "Loot reserves aren't active in your raid",
-    [result.NotMember]                = "You are not participating in loot reserves",
+LootReserve.Constants.MAX_RESERVES          = 99;
+LootReserve.Constants.MAX_MULTIRESERVES     = 99;
+LootReserve.Constants.MAX_RESERVES_PER_ITEM = 99;
+LootReserve.Constants.MAX_CHAT_STORAGE      = 25;
+
+LootReserve.Constants.ReserveResult = {
+    OK                       = 0,
+    NotInRaid                = 1,
+    NoSession                = 2,
+    NotAccepting             = 3,
+    NotMember                = 4,
+    ItemNotReservable        = 5,
+    AlreadyReserved          = 6,
+    NoReservesLeft           = 7,
+    FailedConditions         = 8,
+    Locked                   = 9,
+    NotEnoughReservesLeft    = 10,
+    MultireserveLimit        = 11,
+    MultireserveLimitPartial = 12,
+    FailedClass              = 13,
+    FailedFaction            = 14,
+    FailedLimit              = 15,
+    FailedLimitPartial       = 16,
+    FailedUsable             = 17,
+};
+LootReserve.Constants.CancelReserveResult = {
+    OK                = 0,
+    NotInRaid         = 1,
+    NoSession         = 2,
+    NotAccepting      = 3,
+    NotMember         = 4,
+    ItemNotReservable = 5,
+    NotReserved       = 6,
+    Forced            = 7,
+    Locked            = 8,
+    InternalError     = 9,
+    NotEnoughReserves = 10,
+};
+LootReserve.Constants.OptResult = {
+    OK                = 0,
+    NotInRaid         = 1,
+    NoSession         = 2,
+    NotMember         = 4,
+};
+LootReserve.Constants.ReserveDeltaResult = {
+    NoSession         = 2,
+    NotMember         = 4,
+};
+LootReserve.Constants.ReservesSorting = {
+    ByTime   = 0,
+    ByName   = 1,
+    BySource = 2,
+    ByLooter = 3,
+};
+LootReserve.Constants.WinnerReservesRemoval = {
+    None      = 0,
+    Single    = 1,
+    Duplicate = 2,
+    All       = 3,
+};
+LootReserve.Constants.ChatReservesListLimit = {
+    None = -1,
+};
+LootReserve.Constants.ChatAnnouncement = {
+    SessionStart        = 1,
+    SessionResume       = 2,
+    SessionStop         = 3,
+    RollStartReserved   = 4,
+    RollStartCustom     = 5,
+    RollWinner          = 6,
+    RollTie             = 7,
+    SessionInstructions = 8,
+    RollCountdown       = 9,
+    SessionBlindToggle  = 10,
+};
+LootReserve.Constants.DefaultPhases = {
+    "Main-Spec",
+    "Off-Spec",
+    "Learning",
+    "Quest",
+    "Reputation",
+    "Profession",
+    "Looks",
+    "Vendor",
+};
+LootReserve.Constants.WonRollPhase = {
+    Reserve  = 1,
+    RaidRoll = 2,
+};
+LootReserve.Constants.RollType = {
+    NotRolled = 0,
+    Passed    = -1,
+    Deleted   = -2,
+};
+LootReserve.Constants.LoadState = {
+    NotStarted  = 0,
+    Started     = 1,
+    SessionDone = 2,
+    Pending     = 3,
+    AllDone     = 4,
+};
+LootReserve.Constants.ClassFilenameToClassID   = { };
+LootReserve.Constants.ClassLocalizedToFilename = { };
+LootReserve.Constants.ItemQuality = {
+    [-1] = "All",
+    [0]  = "Junk",
+    [1]  = "Common",
+    [2]  = "Uncommon",
+    [3]  = "Rare",
+    [4]  = "Epic",
+    [5]  = "Legendary",
+    [6]  = "Artifact",
+    [7]  = "Heirloom",
+    [99] = "None",
+};
+LootReserve.Constants.RedundantSubTypes = {
+    ["Polearms"]  = "Polearm",
+    ["Staves"]    = "Staff",
+    ["Bows"]      = "Bow",
+    ["Crossbows"] = "Crossbow",
+    ["Guns"]      = "Gun",
+    ["Thrown"]    = "Thrown Weapon",
+    ["Wands"]     = "Wand",
+    ["Relic"]     = "Relic",
+    
+    ["Shields"]   = "Shield",
+    ["Idols"]     = "Idol",
+    ["Librams"]   = "Libram",
+    ["Totems"]    = "Totem",
+    ["Sigils"]    = "Sigil",
+};
+LootReserve.Constants.WeaponTypeNames = {
+    ["Two-Handed Axes"]   = "Axe",
+    ["One-Handed Axes"]   = "Axe",
+    ["Two-Handed Swords"] = "Sword",
+    ["One-Handed Swords"] = "Sword",
+    ["Two-Handed Maces"]  = "Mace",
+    ["One-Handed Maces"]  = "Mace",
+    ["Polearms"]          = "Polearm",
+    ["Staves"]            = "Staff",
+    ["Daggers"]           = "Dagger",
+    ["Fist Weapons"]      = "Fist Weapon",
+    ["Bows"]              = "Bow",
+    ["Crossbows"]         = "Crossbow",
+    ["Guns"]              = "Gun",
+    ["Thrown"]            = "Thrown Weapon",
+    ["Wands"]             = "Wand",
+};
+LootReserve.Constants.Genders = {
+    Male   = 2,
+    Female = 3,
+};
+LootReserve.Constants.Races = {
+    Human    = 1,
+    Dwarf    = 3,
+    Gnome    = 7,
+    NightElf = 4,
+    Orc      = 2,
+    Troll    = 8,
+    Tauren   = 6,
+    Scourge  = 5,
+    Draenei  = 11,
+    BloodElf = 10,
+    Worgen   = 22,
+    Goblin   = 9,
+};
+LootReserve.Constants.Sounds = {
+    LevelUp = 1440,
+    Cheer = {
+        [LootReserve.Constants.Races.Human]    = {[LootReserve.Constants.Genders.Male] = 2677, [LootReserve.Constants.Genders.Female] = 2689},
+        [LootReserve.Constants.Races.Dwarf]    = {[LootReserve.Constants.Genders.Male] = 2725, [LootReserve.Constants.Genders.Female] = 2737},
+        [LootReserve.Constants.Races.Gnome]    = {[LootReserve.Constants.Genders.Male] = 2835, [LootReserve.Constants.Genders.Female] = 2847},
+        [LootReserve.Constants.Races.NightElf] = {[LootReserve.Constants.Genders.Male] = 2749, [LootReserve.Constants.Genders.Female] = 2761},
+        [LootReserve.Constants.Races.Orc]      = {[LootReserve.Constants.Genders.Male] = 2701, [LootReserve.Constants.Genders.Female] = 2713},
+        [LootReserve.Constants.Races.Troll]    = {[LootReserve.Constants.Genders.Male] = 2859, [LootReserve.Constants.Genders.Female] = 2871},
+        [LootReserve.Constants.Races.Tauren]   = {[LootReserve.Constants.Genders.Male] = 2797, [LootReserve.Constants.Genders.Female] = 2810},
+        [LootReserve.Constants.Races.Scourge]  = {[LootReserve.Constants.Genders.Male] = 2773, [LootReserve.Constants.Genders.Female] = 2785},
+        [LootReserve.Constants.Races.Draenei]  = {[LootReserve.Constants.Genders.Male] = 9706, [LootReserve.Constants.Genders.Female] = 9681},
+        [LootReserve.Constants.Races.BloodElf] = {[LootReserve.Constants.Genders.Male] = 9656, [LootReserve.Constants.Genders.Female] = 9632},
+    },
+    Congratulate = {
+        [LootReserve.Constants.Races.Human]    = {[LootReserve.Constants.Genders.Male] = 6168, [LootReserve.Constants.Genders.Female] = 6141},
+        [LootReserve.Constants.Races.Dwarf]    = {[LootReserve.Constants.Genders.Male] = 6113, [LootReserve.Constants.Genders.Female] = 6104},
+        [LootReserve.Constants.Races.Gnome]    = {[LootReserve.Constants.Genders.Male] = 6131, [LootReserve.Constants.Genders.Female] = 6122},
+        [LootReserve.Constants.Races.NightElf] = {[LootReserve.Constants.Genders.Male] = 6186, [LootReserve.Constants.Genders.Female] = 6177},
+        [LootReserve.Constants.Races.Orc]      = {[LootReserve.Constants.Genders.Male] = 6366, [LootReserve.Constants.Genders.Female] = 6357},
+        [LootReserve.Constants.Races.Troll]    = {[LootReserve.Constants.Genders.Male] = 6402, [LootReserve.Constants.Genders.Female] = 6393},
+        [LootReserve.Constants.Races.Tauren]   = {[LootReserve.Constants.Genders.Male] = 6384, [LootReserve.Constants.Genders.Female] = 6375},
+        [LootReserve.Constants.Races.Scourge]  = {[LootReserve.Constants.Genders.Male] = 6420, [LootReserve.Constants.Genders.Female] = 6411},
+        [LootReserve.Constants.Races.Draenei]  = {[LootReserve.Constants.Genders.Male] = 9707, [LootReserve.Constants.Genders.Female] = 9682},
+        [LootReserve.Constants.Races.BloodElf] = {[LootReserve.Constants.Genders.Male] = 9657, [LootReserve.Constants.Genders.Female] = 9641},
+    },
+    Cry = {
+        [LootReserve.Constants.Races.Human]    = {[LootReserve.Constants.Genders.Male] = 6921, [LootReserve.Constants.Genders.Female] = 6916},
+        [LootReserve.Constants.Races.Dwarf]    = {[LootReserve.Constants.Genders.Male] = 6901, [LootReserve.Constants.Genders.Female] = 6895},
+        [LootReserve.Constants.Races.Gnome]    = {[LootReserve.Constants.Genders.Male] = 6911, [LootReserve.Constants.Genders.Female] = 6906},
+        [LootReserve.Constants.Races.NightElf] = {[LootReserve.Constants.Genders.Male] = 6931, [LootReserve.Constants.Genders.Female] = 6926},
+        [LootReserve.Constants.Races.Orc]      = {[LootReserve.Constants.Genders.Male] = 6941, [LootReserve.Constants.Genders.Female] = 6936},
+        [LootReserve.Constants.Races.Troll]    = {[LootReserve.Constants.Genders.Male] = 6961, [LootReserve.Constants.Genders.Female] = 6956},
+        [LootReserve.Constants.Races.Tauren]   = {[LootReserve.Constants.Genders.Male] = 6951, [LootReserve.Constants.Genders.Female] = 6946},
+        [LootReserve.Constants.Races.Scourge]  = {[LootReserve.Constants.Genders.Male] = 6972, [LootReserve.Constants.Genders.Female] = 6967},
+        [LootReserve.Constants.Races.Draenei]  = {[LootReserve.Constants.Genders.Male] = 9701, [LootReserve.Constants.Genders.Female] = 9676},
+        [LootReserve.Constants.Races.BloodElf] = {[LootReserve.Constants.Genders.Male] = 9651, [LootReserve.Constants.Genders.Female] = 9647},
+    },
 };
 
 local result = LootReserve.Constants.ReserveResult;
@@ -203,7 +212,8 @@ LootReserve.Constants.ReserveResultText =
 {
     [result.OK]                       = "",
     [result.NotInRaid]                = "You are not in the raid",
-    [result.NoSession]                = "Loot reserves aren't active in your raid",
+    [result.NoSession]                = "Loot reserves aren't active",
+    [result.NotAccepting]             = "Loot reserves are closed",
     [result.NotMember]                = "You are not participating in loot reserves",
     [result.ItemNotReservable]        = "That item cannot be reserved in this raid",
     [result.AlreadyReserved]          = "You are already reserving that item",
@@ -225,7 +235,8 @@ LootReserve.Constants.CancelReserveResultText =
 {
     [result.OK]                = "",
     [result.NotInRaid]         = "You are not in the raid",
-    [result.NoSession]         = "Loot reserves aren't active in your raid",
+    [result.NoSession]         = "Loot reserves aren't active",
+    [result.NotAccepting]      = "Loot reserves are closed",
     [result.NotMember]         = "You are not participating in loot reserves",
     [result.ItemNotReservable] = "That item cannot be reserved in this raid",
     [result.NotReserved]       = "You did not reserve that item",
@@ -235,10 +246,19 @@ LootReserve.Constants.CancelReserveResultText =
     [result.NotEnoughReserves] = "You don't have that many reserves on that item",
 };
 
+local result = LootReserve.Constants.OptResult;
+LootReserve.Constants.OptResultText =
+{
+    [result.OK]                       = "",
+    [result.NotInRaid]                = "You are not in the raid",
+    [result.NoSession]                = "Loot reserves aren't active",
+    [result.NotMember]                = "You are not participating in loot reserves",
+};
+
 local result = LootReserve.Constants.ReserveDeltaResult;
 LootReserve.Constants.ReserveDeltaResultText =
 {
-    [result.NoSession]         = "Loot reserves aren't active in your raid",
+    [result.NoSession]         = "Loot reserves aren't active",
     [result.NotMember]         = "You are not participating in loot reserves",
 };
 

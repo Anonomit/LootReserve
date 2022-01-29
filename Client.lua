@@ -28,6 +28,8 @@ LootReserve.Client =
         RollRequestShowUnusable     = false,
         RollRequestGlowOnlyReserved = true,
         RollRequestAutoRollReserved = true,
+        RollRequestWinnerReaction   = true,
+        RollRequestLoserReaction    = true,
         CollapsedExpansions         = { },
         CollapsedCategories         = { },
         SwapLDBButtons              = false,
@@ -43,6 +45,7 @@ LootReserve.Client =
     DurationUpdateRegistered = false,
     SessionEventsRegistered  = false,
     CategoryFlashing         = false,
+    
     PendingLootListUpdate    = false,
 
     SelectedCategory = nil,

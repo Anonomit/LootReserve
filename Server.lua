@@ -899,11 +899,12 @@ function LootReserve.Server:PrepareSession()
     if self.CurrentSession.Settings.ChatFallback and not self.ChatFallbackRegistered then
         self.ChatFallbackRegistered = true;
 
-        local reservesStrings = {"^[!¡]+reserves(.*)"};
-        local myResStrings    = {"^[!¡]+myreserves", "^[!¡]+myreserve", "^[!¡]+myres"};
-        local optStrings      = {"^[!¡]+opt%s*(in)", "^[!¡]+opt%s*(out)"};
-        local cancelStrings   = {"^[!¡]+cancelreserve(.*)", "^[!¡]+cancelres(.*)", "^[!¡]+cancel(.*)", "^[!¡]+unreserve(.*)", "^[!¡]+unres(.*)"};
-        local reserveStrings  = {"^[!¡]+reserve(.*)", "^[!¡]+res(.*)", "^[!¡]+(.*)"};
+        local reservesStrings  = {"^[!¡]+reserves(.*)"};
+        local myResStrings     = {"^[!¡]+myreserves", "^[!¡]+myreserve", "^[!¡]+myres"};
+        local optStrings       = {"^[!¡]+opt%s*(in)", "^[!¡]+opt%s*(out)"};
+        local cancelStrings    = {"^[!¡]+cancelreserve(.*)", "^[!¡]+cancelres(.*)", "^[!¡]+cancel(.*)", "^[!¡]+unreserve(.*)", "^[!¡]+unres(.*)"};
+        local reserveStrings   = {"^[!¡]+reserve(.*)", "^[!¡]+res(.*)"};
+        local greedyResStrings = {"^[!¡]+(.*)"};
         
 
         local function ProcessChat(text, sender)
@@ -917,7 +918,7 @@ function LootReserve.Server:PrepareSession()
             text = LootReserve:StringTrim(text);
             
             
-            local command;
+            local command, greedy;
             for _, pattern in ipairs(reservesStrings) do
                 local args = text:match(pattern);
                 if args then
@@ -969,16 +970,28 @@ function LootReserve.Server:PrepareSession()
                 end
             end
             
+            if not command then
+                for _, pattern in ipairs(greedyResStrings) do
+                    local args = text:match(pattern);
+                    if args then
+                        command = "reserve";
+                        text = args;
+                        greedy = true;
+                        break;
+                    end
+                end
+            end
+            
             if not command then return; end
 
-            if not self.CurrentSession.AcceptingReserves and (command == "reserve" or command == "cancel") then
+            if not self.CurrentSession.AcceptingReserves and (command == "reserve" or command == "cancel") and not greedy then
                 LootReserve:SendChatMessage("Loot reserves are no longer being accepted.", "WHISPER", sender);
                 return;
             end
 
             text = LootReserve:StringTrim(text);
-            if command == "reserve" and #text == 0 then
-                LootReserve:SendChatMessage("Seems like you forgot to enter the item you want to reserve. Whisper  !reserve ItemLinkOrName", "WHISPER", sender);
+            if command == "reserve" and #text == 0 and not greedy then
+                LootReserve:SendChatMessage("Seems like you forgot to enter the item you want to reserve. Whisper  !reserve ItemLinkOrName. You can link the item, or spell out the partial or full name.", "WHISPER", sender);
                 self:SendSupportString(sender, true);
                 return;
             elseif command == "reserves" and #text == 0 then
@@ -990,7 +1003,7 @@ function LootReserve.Server:PrepareSession()
                     if self.Settings.ChatReservesListLimit == LootReserve.Constants.ChatReservesListLimit.None or count <= self.Settings.ChatReservesListLimit then
                         self:SendReservesList(sender);
                     else
-                        LootReserve:SendChatMessage(format("Reserves messaging is limited. You may enter up to %d item%s at a time to see reserves. Whisper  !reserves ItemLinkOrName", self.Settings.ChatReservesListLimit, self.Settings.ChatReservesListLimit == 1 and "" or "s"), "WHISPER", sender);
+                        LootReserve:SendChatMessage(format("Usage of  !reserves  is limited to %d item%s. You may use  !myreserves  to check your own reserves, or whisper  !reserves ItemLinkOrName", self.Settings.ChatReservesListLimit, self.Settings.ChatReservesListLimit == 1 and "" or "s"), "WHISPER", sender);
                         self:SendSupportString(sender, true);
                     end
                 end
@@ -1093,7 +1106,7 @@ function LootReserve.Server:PrepareSession()
                         end
                         
                         if count1 and count2 or ambiguous then
-                            LootReserve:SendChatMessage(format("Can't tell how many items you want to reserve. Please be less ambiguous.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
+                            LootReserve:SendChatMessage(format("Can't tell how many items you want to reserve. Please be unambiguous.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
                             return;
                         else
                             if not itemCounts[itemData.ID] then
@@ -1162,10 +1175,12 @@ function LootReserve.Server:PrepareSession()
 
                     if not missing then
                         if #matches == 0 then
-                            LootReserve:SendChatMessage(format("That item was not found in the current raid, which is %s. Check your spelling, or try using a shorter search term.%s",
-                                LootReserve:GetCategoriesText(self.CurrentSession.Settings.LootCategories, false),
-                                self:GetSupportString(sender, " ", true)
-                            ), "WHISPER", sender);
+                            if not greedy then
+                                LootReserve:SendChatMessage(format("That item was not found in the current raid, which is %s. Check your spelling, or try using a shorter search term.%s",
+                                    LootReserve:GetCategoriesText(self.CurrentSession.Settings.LootCategories, false),
+                                    self:GetSupportString(sender, " ", true)
+                                ), "WHISPER", sender);
+                            end
                         elseif #matches == 1 then
                             if command == "reserve" or command == "cancel" then
                                 handleItemCommand(matches[1], command, count);
@@ -1210,7 +1225,7 @@ function LootReserve.Server:PrepareSession()
 
                 if #text >= 3 then
                     handleItemCommandByName();
-                else
+                elseif not greedy then
                     LootReserve:SendChatMessage(format("That name is too short, 3 or more letters required.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
                 end
             end
@@ -1491,20 +1506,17 @@ function LootReserve.Server:StartSession()
         local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
         local duration = self.CurrentSession.Settings.Duration
         local count = self.CurrentSession.Settings.MaxReservesPerPlayer;
-        LootReserve:SendChatMessage(format("Loot reserves are now started%s%s%s. %d reserved %s per character%s.",
+        LootReserve:SendChatMessage(format("Loot reserves are now started%s%s%s. %d reserve%s per player%s.",
             categories ~= "" and format(" for %s", categories) or "",
             self.CurrentSession.Settings.Blind and " (blind)" or "",
             duration ~= 0 and format(" and will last for %d:%02d minutes", math.floor(duration / 60), duration % 60) or "",
             count,
-            count == 1 and "item" or "items",
-            self.CurrentSession.Settings.Multireserve > 1 and ", multiple reserves on the same item are permitted" or ""
+            count == 1 and "" or "s",
+            self.CurrentSession.Settings.Multireserve > 1 and ", reserving an item multiple times is permitted" or ""
         ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
+        LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
         if self.Settings.ChatReservesList and not self.CurrentSession.Settings.Blind then
-            LootReserve:SendChatMessage("To see all reserves made, whisper me:  !reserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
-        end
-        LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
-        if self.CurrentSession.Settings.Multireserve > 1 then
-            LootReserve:SendChatMessage("To reserve an item multiple times, whisper me:  !reserve ItemLinkOrName x2", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
+            LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
         end
     end
 
@@ -1529,15 +1541,13 @@ function LootReserve.Server:ResumeSession()
     if self.CurrentSession.Settings.ChatFallback then
         local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
         
-        LootReserve:SendChatMessage(format("Accepting loot reserves again%s.",
-            categories ~= "" and format(" for %s", categories) or ""
+        LootReserve:SendChatMessage(format("Accepting loot reserves again%s.%s",
+            categories ~= "" and format(" for %s", categories) or "",
+            self.CurrentSession.Settings.Lock and " Session is locked. Previous members may not change reserves." or ""
         ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
-        if self.Settings.ChatReservesList and not self.CurrentSession.Settings.Blind then
-            LootReserve:SendChatMessage("To see all reserves made, whisper me:  !reserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
-        end
         LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
-        if self.CurrentSession.Settings.Multireserve > 1 then
-            LootReserve:SendChatMessage("To reserve an item multiple times, whisper me:  !reserve ItemLinkOrName x2", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+        if self.Settings.ChatReservesList and not self.CurrentSession.Settings.Blind then
+            LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
         end
     end
 
@@ -1612,12 +1622,12 @@ function LootReserve.Server:IncrementReservesDelta(player, amount, winner)
     end
 
     if not self.CurrentSession then
-        return Failure(LootReserve.Constants.ReserveResult.NoSession);
+        return Failure(LootReserve.Constants.ReserveDeltaResult.NoSession);
     end
 
     local member = self.CurrentSession.Members[player];
     if not member then
-        return Failure(LootReserve.Constants.ReserveResult.NotMember);
+        return Failure(LootReserve.Constants.ReserveDeltaResult.NotMember);
     end
     
     if amount == 0 then return; end
@@ -1689,16 +1699,16 @@ function LootReserve.Server:Opt(player, out, chat)
     end
 
     if not masquerade and not LootReserve:IsPlayerOnline(player) then
-        return Failure(LootReserve.Constants.ReserveResult.NotInRaid, 0);
+        return Failure(LootReserve.Constants.OptResult.NotInRaid, 0);
     end
 
-    if not self.CurrentSession or not self.CurrentSession.AcceptingReserves then
-        return Failure(LootReserve.Constants.ReserveResult.NoSession, 0);
+    if not self.CurrentSession then
+        return Failure(LootReserve.Constants.OptResult.NoSession, 0);
     end
 
     local member = self.CurrentSession.Members[player];
     if not member then
-        return Failure(LootReserve.Constants.ReserveResult.NotMember, 0);
+        return Failure(LootReserve.Constants.OptResult.NotMember, 0);
     end
     
     member.OptedOut = out;
@@ -1763,8 +1773,12 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
         return Failure(LootReserve.Constants.ReserveResult.NotInRaid, 0);
     end
 
-    if not self.CurrentSession or not self.CurrentSession.AcceptingReserves then
+    if not self.CurrentSession then
         return Failure(LootReserve.Constants.ReserveResult.NoSession, 0);
+    end
+    
+    if not self.CurrentSession.AcceptingReserves then
+        return Failure(LootReserve.Constants.ReserveResult.NotAccepting, 0);
     end
 
     local member = self.CurrentSession.Members[player];
@@ -1922,7 +1936,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
     count = math.max(1, count or 1);
     
     local masquerade;
-    if LootReserve:IsMe(player) and LootReserve.Client.Masquerade and not forced then
+    if not forced and LootReserve:IsMe(player) and LootReserve.Client.Masquerade then
         player     = LootReserve.Client.Masquerade;
         masquerade = LootReserve:Me();
     end
@@ -1939,12 +1953,16 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
         return false;
     end
 
-    if not masquerade and not LootReserve:IsPlayerOnline(player) and not forced then
+    if not forced and not masquerade and not LootReserve:IsPlayerOnline(player) then
         return Failure(LootReserve.Constants.CancelReserveResult.NotInRaid, 0);
     end
 
-    if not self.CurrentSession or (not self.CurrentSession.AcceptingReserves and not forced) then
+    if not self.CurrentSession then
         return Failure(LootReserve.Constants.CancelReserveResult.NoSession, 0);
+    end
+    
+    if not forced and not self.CurrentSession.AcceptingReserves then
+        return Failure(LootReserve.Constants.CancelReserveResult.NotAccepting, 0);
     end
 
     local member = self.CurrentSession.Members[player];
@@ -1952,7 +1970,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
         return Failure(LootReserve.Constants.CancelReserveResult.NotMember, 0);
     end
 
-    if not masquerade and self.CurrentSession.Settings.Lock and member.Locked and not forced then
+    if not forced and not masquerade and self.CurrentSession.Settings.Lock and member.Locked then
         return Failure(LootReserve.Constants.CancelReserveResult.Locked, "#");
     end
 
@@ -2223,7 +2241,7 @@ function LootReserve.Server:TryFinishRoll()
                 count = count + 1;
                 winner = player;
             end
-            if count == 1 and LootReserve:IsPlayerOnline(winner) then
+            if count == 1 then
                 self:FinishRollRequest(self.RequestedRoll.Item, true);
                 self:RollEnded();
                 return true;
@@ -2264,43 +2282,60 @@ function LootReserve.Server:GetWinningRollAndPlayers()
     if self.RequestedRoll then
         local highestRoll = LootReserve.Constants.RollType.NotRolled;
         local highestPlayers = { };
+        local losers = { };
         for player, roll in self:GetOrderedPlayerRolls(self.RequestedRoll.Players) do
-            if highestRoll <= roll and LootReserve:IsPlayerOnline(player) then
+            if highestRoll <= roll and roll > LootReserve.Constants.RollType.NotRolled then
                 if highestRoll ~= roll then
                     highestRoll = roll;
+                    for _, player in ipairs(highestPlayers) do
+                        table.insert(losers, player);
+                    end
                     table.wipe(highestPlayers);
                 end
                 if not LootReserve:Contains(highestPlayers, player) then
                     table.insert(highestPlayers, player);
                 end
+            elseif roll > LootReserve.Constants.RollType.NotRolled then
+                table.insert(losers, player);
             end
         end
         if highestRoll > LootReserve.Constants.RollType.NotRolled then
-            return highestRoll, highestPlayers;
+            return highestRoll, highestPlayers, losers;
         end
     end
 end
 
 function LootReserve.Server:ResolveRollTie(item)
     if self:IsRolling(item) then
-        local roll, players = self:GetWinningRollAndPlayers();
-        if roll and players and #players > 1 then
+        local roll, winners, losers = self:GetWinningRollAndPlayers();
+        if roll and winners and #winners > 1 then
             LootReserve:RunWhenItemCached(item:GetID(), function()
                 local name, link = item:GetInfo();
                 if not name or not link then
                     return true;
                 end
 
-                local playersText = LootReserve:FormatReservesText(players);
+                local playersText = LootReserve:FormatReservesText(winners);
                 LootReserve:SendChatMessage(format("Tie for %s between players %s. All rolled %d. Please /roll again", link, playersText, roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollTie));
             end);
 
+            
+            local phase;
+            if self.RequestedRoll.RaidRoll then
+                phase = LootReserve.Constants.WonRollPhase.RaidRoll;
+            elseif self.RequestedRoll.Custom then
+                phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1];
+            else
+                phase = LootReserve.Constants.WonRollPhase.Reserve;
+            end
+            LootReserve.Comm:BroadcastWinner(item, { }, losers, roll, self.RequestedRoll.Custom, phase, self.RequestedRoll.RaidRoll);
+            
             if self.RequestedRoll.Custom then
                 self:CancelRollRequest(item);
-                self:RequestCustomRoll(item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil, nil, players);
+                self:RequestCustomRoll(item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil, nil, winners);
             else
                 self:CancelRollRequest(item);
-                self:RequestRoll(item, nil, nil, players);
+                self:RequestRoll(item, nil, nil, winners);
             end
         end
     end
@@ -2335,8 +2370,8 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
     end
 
     if self:IsRolling(item) then
-        local roll, players = self:GetWinningRollAndPlayers();
-        if roll and players then
+        local roll, winners, losers = self:GetWinningRollAndPlayers();
+        if roll and winners then
             local raidroll = self.RequestedRoll.RaidRoll;
             local phases = LootReserve:Deepcopy(self.RequestedRoll.Phases);
 
@@ -2348,10 +2383,10 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             else
                 recordPhase = LootReserve.Constants.WonRollPhase.Reserve;
             end
-            for _, player in ipairs(players) do
+            for _, player in ipairs(winners) do
                 RecordRollWinner(player, item, recordPhase);
             end
-            LootReserve.Comm:BroadcastWinner(item, players, roll, self.RequestedRoll.Custom, recordPhase, raidroll);
+            LootReserve.Comm:BroadcastWinner(item, winners, losers, roll, self.RequestedRoll.Custom, recordPhase, raidroll);
 
             LootReserve:RunWhenItemCached(item:GetID(), function()
                 local name, link = item:GetInfo();
@@ -2360,10 +2395,10 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
                 end
 
                 local quality = select(3, GetItemInfo(item:GetID()));
-                local playersText = LootReserve:FormatPlayersText(players);
+                local playersText = LootReserve:FormatPlayersText(winners);
                 LootReserve:SendChatMessage(format(raidroll and "%s won %s%s via raid-roll" or "%s won %s%s with a roll of %d", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or "", roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
                 if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and quality >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
-                    for _, player in ipairs(players) do
+                    for _, player in ipairs(winners) do
                         if LootReserve:Contains(self.GuildMembers, player) then
                             LootReserve:SendChatMessage(format("%s won %s%s", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or ""), "GUILD");
                             break;
@@ -2373,15 +2408,15 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             end);
 
             if self.Settings.RollMasterLoot then
-                self:MasterLootItem(item, players[1], #players > 1);
+                self:MasterLootItem(item, winners[1], #winners > 1);
             end
         elseif soleReserver and not self.RequestedRoll.Custom and next(self.RequestedRoll.Players) then
             local player = next(self.RequestedRoll.Players);
-            players = { player };
+            winners = { player };
             RecordRollWinner(player, item, LootReserve.Constants.WonRollPhase.Reserve);
             
             -- Send packets
-            LootReserve.Comm:SendWinner(player, item, players);
+            LootReserve.Comm:SendWinner(player, item, winners, { });
             
             -- Announce
             LootReserve:RunWhenItemCached(item:GetID(), function()
@@ -2403,7 +2438,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             end
         end
 
-        self:CancelRollRequest(item, players);
+        self:CancelRollRequest(item, winners);
     end
 
     self:UpdateReserveListRolls();
