@@ -1685,9 +1685,6 @@ LootReserve.Data =
         -- Red Scepter Shard
         [21138] = { Hidden = true },
 
-        -- Sack of Gems
-        [11938] = { Hidden = true },
-
         -- ZG Coins
         [19698] = { Hidden = true },
         [19699] = { Hidden = true },
