@@ -61,7 +61,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                 frame:SetHeight(0.00001);
                 frame:Hide();
             else
-                frame:SetHeight(16);
+                frame:SetHeight(32);
                 frame:Hide();
             end
         else
@@ -214,14 +214,18 @@ function LootReserve.Server.LootEdit:UpdateLootList()
         end
     elseif self.SelectedCategory and self.SelectedCategory.Loot then
         for _, itemID in ipairs(self.SelectedCategory.Loot) do
-            local item = LootReserve.ItemSearch:Get(itemID);
-            if item and item:GetInfo() then
-                createFrame(item);
-                if not item:Cache() then
+            if itemID ~= 0 then
+                local item = LootReserve.ItemSearch:Get(itemID);
+                if item and item:GetInfo() then
+                    createFrame(item);
+                    if not item:Cache() then
+                        missing = true;
+                    end
+                elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                     missing = true;
                 end
-            elseif item or LootReserve.ItemSearch:IsPending(itemID) then
-                missing = true;
+            elseif itemID == 0 then
+                createFrame(LootReserve.Item(0))
             end
         end
     end
