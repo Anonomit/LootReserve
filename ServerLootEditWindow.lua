@@ -8,7 +8,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
     if not self.Window:IsShown() then return; end
 
     local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
-    if #filter < 3 then
+    if #filter < 3 and not tonumber(filter) then
         filter = nil;
     end
 
