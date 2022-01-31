@@ -271,9 +271,6 @@ local function IsItemUsable(itemID, playerClass, isMe)
             LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
             LootReserve.TooltipScanner:Hide();
         end
-        if not LootReserve.TooltipScanner.RacesAllowed then
-            LootReserve.TooltipScanner.RacesAllowed = ITEM_RACES_ALLOWED:gsub("%%s", "(.+)");
-        end
         if not LootReserve.TooltipScanner.Unique then
             LootReserve.TooltipScanner.Unique = format("^(%s)$", ITEM_UNIQUE);
         end
