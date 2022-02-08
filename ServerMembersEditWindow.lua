@@ -179,7 +179,7 @@ end
 function LootReserve.Server.MembersEdit:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
-    self.Window.TitleText:SetText("LootReserve Server - Players");
+    self.Window.TitleText:SetText("LootReserve Host - Players");
     self.Window:SetMinResize(LootReserve:IsCrossRealm() and 650 or 550, 150);
     self:UpdateMembersList();
 end

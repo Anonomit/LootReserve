@@ -70,7 +70,7 @@ function SlashCmdList.LOOTRESERVE(command)
 
     if command == "" then
         LootReserve.Client.Window:SetShown(not LootReserve.Client.Window:IsShown());
-    elseif command == "server" then
+    elseif command == "server" or command == "host" then
         LootReserve:ToggleServerWindow(not LootReserve.Server.Window:IsShown());
     elseif command == "roll" or command == "rolls" then
         LootReserve:ToggleServerWindow(not LootReserve.Server.Window:IsShown(), true);
@@ -92,7 +92,7 @@ function LootReserve:ToggleServerWindow(state, rolls)
                 end
             end);
         end
-        self:PrintMessage("Server window will %s once you're out of combat", state and "open" or "close");
+        self:PrintMessage("Host window will %s once you're out of combat", state and "open" or "close");
         return;
     end
 

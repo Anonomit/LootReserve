@@ -347,8 +347,8 @@
 						local cooldown = math.max(0, (LootReserve.Client.ServerSearchTimeoutTime or 0) - time());
 						local menu =
 						{
-							{ text = format("Current Server: %s", LootReserve.Client.SessionServer and LootReserve:ColoredPlayer(LootReserve.Client.SessionServer) or "|cFF808080Not Connected|r"), isTitle = true },
-							{ text = format("Search For Server%s", cooldown > 0 and format(" (%d |4sec:secs; cooldown)", cooldown) or ""), disabled = cooldown > 0, func = function() LootReserve.Client:SearchForServer(); end },
+							{ text = format("Current Host: %s", LootReserve.Client.SessionServer and LootReserve:ColoredPlayer(LootReserve.Client.SessionServer) or "|cFF808080Not Connected|r"), isTitle = true },
+							{ text = format("Search For Host%s", cooldown > 0 and format(" (%d |4sec:secs; cooldown)", cooldown) or ""), disabled = cooldown > 0, func = function() LootReserve.Client:SearchForServer(); end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Roll Popup", isTitle = true },
 							{ text = "Show Popup", checked = LootReserve.Client.Settings.RollRequestShow, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShow = checked; end },
@@ -363,7 +363,7 @@
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Data Broker", isTitle = true },
 							{ text = "Show Minimap Icon", checked = not LootReserve.Client.Settings.LibDBIcon.hide, func = function(_, _, _, checked) LootReserve.Client.Settings.LibDBIcon.hide = not checked; if LootReserve.Client.Settings.LibDBIcon.hide then LibStub("LibDBIcon-1.0"):Hide("LootReserve"); else LibStub("LibDBIcon-1.0"):Show("LootReserve") end end },
-							{ text = "Swap Button Functions", tooltipText = "Enable to make left-clicking the LDB/minimap icon open the server window instead.", checked = LootReserve.Client.Settings.SwapLDBButtons, func = function(_, _, _, checked) LootReserve.Client.Settings.SwapLDBButtons = checked; end },
+							{ text = "Swap Button Functions", tooltipText = "Enable to make left-clicking the LDB/minimap icon open the host window instead.", checked = LootReserve.Client.Settings.SwapLDBButtons, func = function(_, _, _, checked) LootReserve.Client.Settings.SwapLDBButtons = checked; end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
 						};

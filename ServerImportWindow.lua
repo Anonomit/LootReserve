@@ -582,7 +582,7 @@ end
 function LootReserve.Server.Import:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
-    self.Window.TitleText:SetText("LootReserve Server - Import");
+    self.Window.TitleText:SetText("LootReserve Host - Import");
     self.Window:SetMinResize(LootReserve:IsCrossRealm() and 490 or 390, 440);
     self:InputUpdated();
 end

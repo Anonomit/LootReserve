@@ -35,7 +35,7 @@ local LAST_UNCOMPRESSED_OPCODE = Opcodes.Hello;
 local MAX_UNCOMPRESSED_SIZE = 20;
 
 local function ThrottlingError()
-    LootReserve:ShowError("There was an error when reading session server's communications.|n|nIf both your and the server's addons are up to date, then this is likely due to Blizzard's excessive addon communication throttling which results in some messages outright not being delivered.|n|nWait a few seconds and click \"Search For Server\" in LootReserve client window's settings menu to request up to date information from the server.");
+    LootReserve:ShowError("There was an error when reading session host's communications.|n|nIf both your and the host's addons are up to date, then this is likely due to Blizzard's excessive addon communication throttling which results in some messages outright not being delivered.|n|nWait a few seconds and click \"Search For Host\" in LootReserve client window's settings menu to request up to date information from the host.");
 end
 
 function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)

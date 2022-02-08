@@ -1568,7 +1568,7 @@
 								MakeMenuRadio(LootReserve.Constants.ReservesSortingText[LootReserve.Constants.ReservesSorting.BySource], "ReservesSorting", LootReserve.Constants.ReservesSorting.BySource, "Sort reserves by the order of the boss the item first drops from.", RefreshReservesSorting),
 								MakeMenuRadio(LootReserve.Constants.ReservesSortingText[LootReserve.Constants.ReservesSorting.ByLooter], "ReservesSorting", LootReserve.Constants.ReservesSorting.ByLooter, "Sort reserves by the name of one of the players that looted this item in the current session.|n|nFade out items not looted by anyone.|cFF808080 (applies only after some items have been looted in the raid)|r", RefreshReservesSorting),
 							} },
-							MakeMenuToggle("Use Unit Frames", "UseUnitFrames", "Make player rows in Reserves and Rolls tabs behave like unit frames, allowing them to be right-clicked for context menu, have items be dropped on them to open trade etc.|n|nOnly works outside of combat.|n|nWhen enabled, this may prevent the server window from being closed and reopened while in combat via minimap button or |cFFFFFFFF/reserve server|r command.", ToggleUseUnitFrames),
+							MakeMenuToggle("Use Unit Frames", "UseUnitFrames", "Make player rows in Reserves and Rolls tabs behave like unit frames, allowing them to be right-clicked for context menu, have items be dropped on them to open trade etc.|n|nOnly works outside of combat.|n|nWhen enabled, this may prevent the host window from being closed and reopened while in combat via minimap button or |cFFFFFFFF/reserve host|r command.", ToggleUseUnitFrames),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Storage", isTitle = true },
 							MakeMenuToggle("Use Global Profile", "UseGlobalProfile", "By default all the data about the active reserves session is stored per-character. Enable this to share the same session between all characters on your account.|n|nThe session from your current character will be the one propagated to others.", ToggleGlobalProfile),
@@ -1988,7 +1988,7 @@
 						<KeyValues>
 							<KeyValue key="text" value="Lock-in" type="string" />
 							<KeyValue key="tooltipText" value="Reserves Lock-in" type="string" />
-							<KeyValue key="tooltipSubtext" value="All reserves (made or missed) are final and cannot be changed after the server stops accepting reserves, even if the session is later resumed. New players, who haven't yet participated in reserves, will be allowed to make them.|n|nThe state of player lock-ins can be viewed and adjusted by clicking the button below." type="string" />
+							<KeyValue key="tooltipSubtext" value="All reserves (made or missed) are final and cannot be changed after the host stops accepting reserves, even if the session is later resumed. New players, who haven't yet participated in reserves, will be allowed to make them.|n|nThe state of player lock-ins can be viewed and adjusted by clicking the button below." type="string" />
 						</KeyValues>
 						<Anchors>
 							<Anchor point="TOP" relativeKey="$parent.CheckButtonBlind" relativePoint="BOTTOM" y="2" />
@@ -2254,7 +2254,7 @@
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 				LootReserve.Server.RollHistoryDisplayLimit = LootReserve.Server.Settings.RollHistoryDisplayLimit;
-				LootReserve:PrintMessage("Server window can be reopened by typing |cFFFFD200/reserve server|r");
+				LootReserve:PrintMessage("Server window can be reopened by typing |cFFFFD200/reserve host|r");
 			</OnHide>
 		</Scripts>
 	</Frame>
