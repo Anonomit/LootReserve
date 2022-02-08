@@ -725,26 +725,10 @@ function LootReserve:GetItemDescription(itemID)
     local item = LootReserve.ItemSearch:Get(itemID);
     if not item then return; end
     local name, link, _, _, _, itemType, itemSubType, _, equipLoc, texture, _, _, _, bindType = item:GetInfo();
-    local itemText = "";
     if not itemType then return; end
-    
-    if not LootReserve.TooltipScanner then
-        LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
-        LootReserve.TooltipScanner:Hide();
-    end
-    if not LootReserve.TooltipScanner.Unique then
-        LootReserve.TooltipScanner.Unique = format("^(%s)$", ITEM_UNIQUE);
-    end
-    LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
-    LootReserve.TooltipScanner:SetHyperlink("item:" .. itemID);
-    for i = 1, LootReserve.TooltipScanner:NumLines() do
-        local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
-        if line and line:GetText() then
-            if line:GetText():match(LootReserve.TooltipScanner.Unique) then
-                itemText = ITEM_UNIQUE .. " " .. itemText;
-                break;
-            end
-        end
+    local itemText = "";
+    if item:IsUnique() then
+        itemText = ITEM_UNIQUE .. " " .. itemText
     end
     
     if LootReserve.Constants.RedundantSubTypes[itemSubType] then

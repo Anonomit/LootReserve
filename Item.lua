@@ -6,7 +6,7 @@ local itemMeta = {
     __eq    = function(item1, item2) return item1.id == item2.id and item1.suffix == item2.suffix end,
 }
 
-local function NewItem(id, suffix, uniqueID, info, name, link, texture, searchName, classesAllowed)
+local function NewItem(id, suffix, uniqueID, info, name, link, texture, searchName, classesAllowed, unique)
     return setmetatable({
         id             = tonumber(id),
         suffix         = tonumber(suffix),
@@ -16,12 +16,13 @@ local function NewItem(id, suffix, uniqueID, info, name, link, texture, searchNa
         link           = link,
         texture        = texture,
         searchName     = searchName,
-        classesAllowed = classesAllowed
+        classesAllowed = classesAllowed,
+        classesAllowed = unique
     }, itemMeta);
 end
 
 local function UnpackItem(Item)
-    return Item.id, Item.suffix, Item.uniqueID, Item.info, Item.name, Item.link, Item.texture, Item.searchName, Item.classesAllowed;
+    return Item.id, Item.suffix, Item.uniqueID, Item.info, Item.name, Item.link, Item.texture, Item.searchName, Item.classesAllowed, Item.unique;
 end
 
 setmetatable(LootReserve.Item, {
@@ -75,7 +76,10 @@ function LootReserve.Item:GetInfo()
             end
 
             if not LootReserve.TooltipScanner.ClassesAllowed then
-                LootReserve.TooltipScanner.ClassesAllowed = ITEM_CLASSES_ALLOWED:gsub("%%s", "(.+)");
+                LootReserve.TooltipScanner.ClassesAllowed = format("^%s$", ITEM_CLASSES_ALLOWED:gsub("%%s", "(.+)"));
+            end
+            if not LootReserve.TooltipScanner.Unique then
+                LootReserve.TooltipScanner.Unique = format("^(%s)$", ITEM_UNIQUE);
             end
 
             LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
@@ -83,16 +87,21 @@ function LootReserve.Item:GetInfo()
             for i = 1, LootReserve.TooltipScanner:NumLines() do
                 local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
                 if line and line:GetText() then
-                    local match = line:GetText():match(LootReserve.TooltipScanner.ClassesAllowed);
-                    if match then
-                        self.classesAllowed = match;
-                        break;
+                    if line:GetText():match(LootReserve.TooltipScanner.ClassesAllowed) then
+                        self.classesAllowed = line:GetText():match(LootReserve.TooltipScanner.ClassesAllowed);
+                    
+                    elseif line:GetText():match(LootReserve.TooltipScanner.Unique) then
+                        self.unique = true;
+                    
                     end
                 end
             end
             LootReserve.TooltipScanner:Hide();
             if not self.classesAllowed then
                 self.classesAllowed = true;
+            end
+            if not self.unique then
+                self.unique = false;
             end
         end
     end
@@ -113,6 +122,9 @@ end
 
 function LootReserve.Item:GetClassesAllowed()
   return self.classesAllowed;
+end
+function LootReserve.Item:IsUnique()
+  return self.unique;
 end
 
 function LootReserve.Item:GetName()
