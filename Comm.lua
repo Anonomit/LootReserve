@@ -795,7 +795,7 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
                     LootReserve:PrintMessage("Congratulations! %s has awarded you %s%s%s",
                         LootReserve:ColoredPlayer(sender),
                         item:GetLink(),
-                        raidRoll and " via raid-roll" or custom and phase and format(" for %s", phase) or "",
+                        raidRoll and " via raid-roll" or custom and phase and format(" for %s", phase or "") or "",
                         roll and not raidRoll and format(" with a roll of %d", roll) or ""
                     );
                 else
