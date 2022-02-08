@@ -764,8 +764,6 @@ function LootReserve:GetItemDescription(itemID)
         itemText = itemText .. itemType;
     end
     
-    LootReserve.TooltipScanner:Hide();
-    
     if bindType == LE_ITEM_BIND_ON_ACQUIRE then
         -- itemText = itemText .. "  (BoP)";
     elseif bindType == LE_ITEM_BIND_ON_EQUIP then
