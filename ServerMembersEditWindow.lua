@@ -182,14 +182,4 @@ function LootReserve.Server.MembersEdit:OnWindowLoad(window)
     self.Window.TitleText:SetText("LootReserve Server - Players");
     self.Window:SetMinResize(LootReserve:IsCrossRealm() and 650 or 550, 150);
     self:UpdateMembersList();
-    LootReserve:RegisterEvent("GET_ITEM_INFO_RECEIVED", function(itemID, success)
-        if success then
-            for player, member in pairs(LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members or LootReserve.Server.NewSessionSettings.ImportedMembers) do
-                if LootReserve:Contains(member.ReservedItems, itemID) then
-                    self:UpdateMembersList();
-                    return;
-                end
-            end
-        end
-    end);
 end
