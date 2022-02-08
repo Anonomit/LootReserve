@@ -837,7 +837,7 @@ function LootReserve:StringTrim(str, chars)
 end
 
 function LootReserve:FormatToRegexp(fmt)
-    return fmt:gsub("%(", "%%("):gsub("%)", "%%)"):gsub("%%s", "(.+)"):gsub("%%d", "(%%d+)");
+    return fmt:gsub("%d+%$",""):gsub("%(", "%%("):gsub("%)", "%%)"):gsub("%%s", "(.+)"):gsub("%%d", "(%%d+)");
 end
 
 function LootReserve:Deepcopy(orig)
