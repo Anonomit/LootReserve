@@ -3060,7 +3060,7 @@ function LootReserve.Server:PassRoll(player, item, chat, isPrivateChannel)
             end
 
             local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
-            LootReserve:SendChatMessage(format("%s has passed on %s%s.", player, link, phase and format(" for %s", phase)), "RAID");
+            LootReserve:SendChatMessage(format("%s has passed on %s%s.", player, link, phase and format(" for %s", phase) or ""), "RAID");
         end);
     end
 
