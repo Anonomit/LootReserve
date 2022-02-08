@@ -96,14 +96,14 @@
 		<Size y="16" />
 		<Layers>
 			<Layer>
-				<Texture parentKey="AlreadyWonHighlight" file="Interface\QUESTFRAME\UI-QuestTitleHighlight" alphaMode="ADD" alpha="0.5">
+				<Texture parentKey="RedHighlight" file="Interface\QUESTFRAME\UI-QuestTitleHighlight" alphaMode="ADD" alpha="0.5">
 					<Anchors>
 						<Anchor point="TOPLEFT" x="16" />
 						<Anchor point="BOTTOMRIGHT" />
 					</Anchors>
 					<Color r="1" g="0.5" b="0" />
 				</Texture>
-				<Texture parentKey="WinnerHighlight" file="Interface\QUESTFRAME\UI-QuestTitleHighlight" alphaMode="ADD" alpha="0.5">
+				<Texture parentKey="GreenHighlight" file="Interface\QUESTFRAME\UI-QuestTitleHighlight" alphaMode="ADD" alpha="0.5">
 					<Anchors>
 						<Anchor point="TOPLEFT" x="16" />
 						<Anchor point="BOTTOMRIGHT" />

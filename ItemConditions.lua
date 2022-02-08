@@ -366,7 +366,11 @@ function LootReserve.ItemConditions:TestPlayer(player, itemID, server)
     local conditions = self:Get(itemID, server);
     local equip
     if server then
-        equip = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings.Equip or false;
+        if LootReserve.Server.CurrentSession then
+            equip = LootReserve.Server.CurrentSession.Settings.Equip;
+        else
+            equip = LootReserve.Server.NewSessionSettings.Equip or false;
+        end
     else
         equip = LootReserve.Client.Equip;
     end

@@ -47,16 +47,16 @@ function LootReserve.Server:UpdateReserveListRolls(lockdown)
                         button.Roll:SetText(rolled and tostring(roll) or passed and "PASS" or deleted and "DEL" or "...");
                         button.Roll:SetTextColor(color.r, color.g, color.b);
                         if not frame.Historical then
-                            button.AlreadyWonHighlight:SetShown(LootReserve.Server:HasAlreadyWon(button.Player, frame.Item));
-                            button.WinnerHighlight:Hide();
+                            button.RedHighlight:SetShown(LootReserve.Server:HasAlreadyWon(button.Player, frame.Item));
+                            button.GreenHighlight:Hide();
                         else
-                            button.AlreadyWonHighlight:Hide();
-                            button.WinnerHighlight:SetShown(winner);
+                            button.RedHighlight:Hide();
+                            button.GreenHighlight:SetShown(winner);
                         end
                     else
                         button.Roll:Hide();
-                        button.AlreadyWonHighlight:Hide();
-                        button.WinnerHighlight:Hide();
+                        button.RedHighlight:Hide();
+                        button.GreenHighlight:Hide();
                     end
                 end
             end
@@ -203,8 +203,8 @@ function LootReserve.Server:UpdateReserveList(lockdown)
             end
             button.Name:SetText(format("%s%s", LootReserve:ColoredPlayer(player), LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""));
             button.Roll:SetText("");
-            button.AlreadyWonHighlight:Hide();
-            button.WinnerHighlight:Hide();
+            button.RedHighlight:Hide();
+            button.GreenHighlight:Hide();
             button:SetPoint("TOPLEFT", frame.ReservesFrame, "TOPLEFT", 0, 5 - reservesHeight);
             button:SetPoint("TOPRIGHT", frame.ReservesFrame, "TOPRIGHT", 0, 5 - reservesHeight);
             reservesHeight = reservesHeight + button:GetHeight();
@@ -425,16 +425,16 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
                         button.Roll:SetText(rolled and tostring(roll) or passed and "PASS" or deleted and "DEL" or "...");
                         button.Roll:SetTextColor(color.r, color.g, color.b);
                         if not frame.Historical then
-                            button.AlreadyWonHighlight:SetShown(LootReserve.Server:HasAlreadyWon(button.Player, frame.Item));
-                            button.WinnerHighlight:Hide();
+                            button.RedHighlight:SetShown(LootReserve.Server:HasAlreadyWon(button.Player, frame.Item) or not LootReserve.ItemConditions:TestPlayer(button.Player, frame.Item:GetID(), true));
+                            button.GreenHighlight:Hide();
                         else
-                            button.AlreadyWonHighlight:Hide();
-                            button.WinnerHighlight:SetShown(winner);
+                            button.RedHighlight:Hide();
+                            button.GreenHighlight:SetShown(winner);
                         end
                     else
                         button.Roll:Hide();
-                        button.AlreadyWonHighlight:Hide();
-                        button.WinnerHighlight:Hide();
+                        button.RedHighlight:Hide();
+                        button.GreenHighlight:Hide();
                     end
                 end
             end
@@ -601,8 +601,8 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 end
                 button.Name:SetText(format("%s%s", LootReserve:ColoredPlayer(player), historical and "" or LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""));
                 button.Roll:SetText("");
-                button.AlreadyWonHighlight:Hide();
-                button.WinnerHighlight:Hide();
+                button.RedHighlight:Hide();
+                button.GreenHighlight:Hide();
                 button:SetPoint("TOPLEFT", frame.ReservesFrame, "TOPLEFT", 0, 5 - reservesHeight);
                 button:SetPoint("TOPRIGHT", frame.ReservesFrame, "TOPRIGHT", 0, 5 - reservesHeight);
                 reservesHeight = reservesHeight + button:GetHeight();
