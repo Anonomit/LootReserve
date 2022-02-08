@@ -723,9 +723,8 @@ end
 
 function LootReserve:GetItemDescription(itemID)
     local item = LootReserve.ItemSearch:Get(itemID);
-    if not item then return; end
-    local name, link, _, _, _, itemType, itemSubType, _, equipLoc, texture, _, _, _, bindType = item:GetInfo();
-    if not itemType then return; end
+    if not item or not item:GetInfo() then return; end
+    local name, _, _, _, _, itemType, itemSubType, _, equipLoc, _, _, _, _, bindType = item:GetInfo();
     local itemText = "";
     if item:IsUnique() then
         itemText = ITEM_UNIQUE .. " " .. itemText
@@ -752,22 +751,7 @@ function LootReserve:GetItemDescription(itemID)
     elseif itemType == "Trade Goods" then
         itemText = itemText .. "Trade Good";
     elseif itemType == MISCELLANEOUS then
-        local isQuestItem = false;
-        
-        if not LootReserve.TooltipScanner.StartsQuest then
-            LootReserve.TooltipScanner.StartsQuest = format("^(%s)$", ITEM_STARTS_QUEST);
-        end
-        for i = 1, LootReserve.TooltipScanner:NumLines() do
-            local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
-            if line and line:GetText() then
-                if line:GetText():match(LootReserve.TooltipScanner.StartsQuest) then
-                    isQuestItem = true;
-                    break;
-                end
-            end
-        end
-        
-        if isQuestItem then
+        if item:StartsQuest() then
             itemText = itemText .. "Quest";
         else
             if itemSubType == "Junk" or itemSubType == "Other" then

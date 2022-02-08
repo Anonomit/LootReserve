@@ -6,7 +6,7 @@ local itemMeta = {
     __eq    = function(item1, item2) return item1.id == item2.id and item1.suffix == item2.suffix end,
 }
 
-local function NewItem(id, suffix, uniqueID, info, name, link, texture, searchName, classesAllowed, unique)
+local function NewItem(id, suffix, uniqueID, info, searchName, classesAllowed, unique)
     return setmetatable({
         id             = tonumber(id),
         suffix         = tonumber(suffix),
@@ -22,7 +22,7 @@ local function NewItem(id, suffix, uniqueID, info, name, link, texture, searchNa
 end
 
 local function UnpackItem(Item)
-    return Item.id, Item.suffix, Item.uniqueID, Item.info, Item.name, Item.link, Item.texture, Item.searchName, Item.classesAllowed, Item.unique;
+    return Item.id, Item.suffix, Item.uniqueID, Item.info, Item.searchName, Item.classesAllowed, Item.unique;
 end
 
 setmetatable(LootReserve.Item, {
@@ -60,14 +60,12 @@ function LootReserve.Item:GetString()
 end
 
 function LootReserve.Item:GetInfo()
-    if not self.name then
+    if not self.info then
         local info = {GetItemInfo(self:GetString())};
-        self.info = info;
-        local name, link, _, _, _, itemType, itemSubType, _, _, texture = unpack(info);
+        -- local name, link, quality, _, _, itemType, itemSubType, _, equipLoc, texture, _, _, _, bindType = unpack(info);
+        local name = info[1];
         if name then
-            self.name       = name;
-            self.link       = link;
-            self.texture    = texture;
+            self.info       = info;
             self.searchName = LootReserve:TransformSearchText(name);
 
             if not LootReserve.TooltipScanner then
@@ -81,6 +79,9 @@ function LootReserve.Item:GetInfo()
             if not LootReserve.TooltipScanner.Unique then
                 LootReserve.TooltipScanner.Unique = format("^(%s)$", ITEM_UNIQUE);
             end
+            if not LootReserve.TooltipScanner.StartsQuest then
+                LootReserve.TooltipScanner.StartsQuest = format("^(%s)$", ITEM_STARTS_QUEST);
+            end
 
             LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
             LootReserve.TooltipScanner:SetHyperlink("item:" .. self:GetID());
@@ -93,6 +94,8 @@ function LootReserve.Item:GetInfo()
                     elseif line:GetText():match(LootReserve.TooltipScanner.Unique) then
                         self.unique = true;
                     
+                    elseif line:GetText():match(LootReserve.TooltipScanner.StartsQuest) then
+                        self.startsQuest = true;
                     end
                 end
             end
@@ -103,9 +106,12 @@ function LootReserve.Item:GetInfo()
             if not self.unique then
                 self.unique = false;
             end
+            if not self.startsQuest then
+                self.startsQuest = false;
+            end
         end
     end
-    if self.name then
+    if self.info then
         return unpack(self.info);
     end
     return nil;
@@ -126,6 +132,9 @@ end
 function LootReserve.Item:IsUnique()
   return self.unique;
 end
+function LootReserve.Item:StartsQuest()
+  return self.startsQuest;
+end
 
 function LootReserve.Item:GetName()
   return ({self:GetInfo()})[1];
@@ -142,6 +151,25 @@ function LootReserve.Item:GetNameLinkTexture()
   return name, link, texture;
 end
 
+function LootReserve.Item:GetType()
+  return ({self:GetInfo()})[6];
+end
+function LootReserve.Item:GetSubType()
+  return ({self:GetInfo()})[7];
+end
+function LootReserve.Item:GetTypeAndSubType()
+  local _, _, _, _, _, itemType, itemSubType = self:GetInfo();
+  return itemType, itemSubType;
+end
+
 function LootReserve.Item:GetQuality()
   return ({self:GetInfo()})[3];
+end
+
+function LootReserve.Item:GetEquipLocation()
+  return ({self:GetInfo()})[9];
+end
+
+function LootReserve.Item:GetBindType()
+  return ({self:GetInfo()})[14];
 end
