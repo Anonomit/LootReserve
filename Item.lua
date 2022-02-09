@@ -117,7 +117,7 @@ function LootReserve.Item:GetInfo()
     return nil;
 end
 
-function LootReserve.Item:Cache()
+function LootReserve.Item:Loaded()
   return GetItemInfo(self:GetID()) ~= nil;
 end
 

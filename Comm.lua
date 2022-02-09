@@ -553,14 +553,10 @@ LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, resu
             LootReserve:ShowError("Failed to reserve the item:|n%s", text or "Unknown error");
         end
         if forced then
-            LootReserve:RunWhenItemCached(itemID, function()
-                local name, link = GetItemInfo(itemID);
-                if name and link then
-                    LootReserve:PrintError("%s has reserved an item for you: %s", LootReserve:ColoredPlayer(sender), link);
-                    LootReserve:ShowError("%s has reserved an item for you:|n%s", LootReserve:ColoredPlayer(sender), link);
-                else
-                    return true;
-                end
+            LootReserve:RunWhenItemCached(itemID, function(item)
+                local link = item:GetLink();
+                LootReserve:PrintError("%s has reserved an item for you: %s", LootReserve:ColoredPlayer(sender), link);
+                LootReserve:ShowError("%s has reserved an item for you:|n%s", LootReserve:ColoredPlayer(sender), link);
             end);
         end
 
@@ -612,13 +608,8 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, player
         end
         if wasReserver and isReserver and myOldReserves == myNewReserves and oldRolls ~= newRolls then
             PlaySound(oldRolls < newRolls and SOUNDKIT.ALARM_CLOCK_WARNING_3 or SOUNDKIT.ALARM_CLOCK_WARNING_2);
-            LootReserve:RunWhenItemCached(itemID, function()
-                local name, link = GetItemInfo(itemID);
-                if name and link then
-                    LootReserve:PrintMessage(LootReserve:GetReservesStringColored(false, players, LootReserve:Me(), isUpdate, link));
-                else
-                    return true;
-                end
+            LootReserve:RunWhenItemCached(itemID, function(item)
+                LootReserve:PrintMessage(LootReserve:GetReservesStringColored(false, players, LootReserve:Me(), isUpdate, item:GetLink()));
             end);
         end
     end
@@ -657,16 +648,12 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
         LootReserve.Client.RemainingReserves = remainingReserves;
         LootReserve.Client.Locked = locked;
         if result == LootReserve.Constants.CancelReserveResult.Forced then
-            LootReserve:RunWhenItemCached(itemID, function()
-                local name, link = GetItemInfo(itemID);
-                if name and link then
-                    if not quiet then
-                        LootReserve:ShowError("%s removed your reserve for %s%s", LootReserve:ColoredPlayer(sender), link, count > 1 and format(" x%d", count) or "");
-                    end
-                    LootReserve:PrintError("%s removed your reserve for %s%s", LootReserve:ColoredPlayer(sender), link, count > 1 and format(" x%d", count) or "");
-                else
-                    return true;
+            LootReserve:RunWhenItemCached(itemID, function(item)
+                local link = item:GetLink();
+                if not quiet then
+                    LootReserve:ShowError("%s removed your reserve for %s%s", LootReserve:ColoredPlayer(sender), link, count > 1 and format(" x%d", count) or "");
                 end
+                LootReserve:PrintError("%s removed your reserve for %s%s", LootReserve:ColoredPlayer(sender), link, count > 1 and format(" x%d", count) or "");
             end);
         elseif result == LootReserve.Constants.CancelReserveResult.Locked then
             LootReserve.Client.Locked = true;
@@ -738,13 +725,9 @@ LootReserve.Comm.Handlers[Opcodes.DeletedRoll] = function(sender, item, roll, ph
     roll = tonumber(roll);
 
     LootReserve:RunWhenItemCached(item:GetID(), function()
-        local name, link = item:GetInfo();
-        if name and link then
-            LootReserve:ShowError ("Your %sroll%s on %s was deleted", phase and #phase > 0 and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
-            LootReserve:PrintError("Your %sroll%s on %s was deleted", phase and #phase > 0 and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
-        else
-            return true;
-        end
+        local link = item:GetLink();
+        LootReserve:ShowError ("Your %sroll%s on %s was deleted", phase and #phase > 0 and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
+        LootReserve:PrintError("Your %sroll%s on %s was deleted", phase and #phase > 0 and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
     end);
 end
 
@@ -783,42 +766,32 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
         end
         if LootReserve.Client.Settings.RollRequestWinnerReaction and LootReserve:Contains(winners, LootReserve:Me()) then
             LootReserve:RunWhenItemCached(item:GetID(), function()
-                local name, link = item:GetInfo();
-                if name and link then
-                    local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
-                    local soundTable = custom and LootReserve.Constants.Sounds.Congratulate or LootReserve.Constants.Sounds.Cheer;
-                    if race and sex and soundTable[race] and soundTable[race][sex] then
-                        PlaySound(soundTable[race][sex]);
-                    end
-                    PlaySound(LootReserve.Constants.Sounds.LevelUp);
-                    
-                    LootReserve:PrintMessage("Congratulations! %s has awarded you %s%s%s",
-                        LootReserve:ColoredPlayer(sender),
-                        item:GetLink(),
-                        raidRoll and " via raid-roll" or custom and phase and format(" for %s", phase or "") or "",
-                        roll and not raidRoll and format(" with a roll of %d", roll) or ""
-                    );
-                else
-                    return true;
+                local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
+                local soundTable = custom and LootReserve.Constants.Sounds.Congratulate or LootReserve.Constants.Sounds.Cheer;
+                if race and sex and soundTable[race] and soundTable[race][sex] then
+                    PlaySound(soundTable[race][sex]);
                 end
+                PlaySound(LootReserve.Constants.Sounds.LevelUp);
+                
+                LootReserve:PrintMessage("Congratulations! %s has awarded you %s%s%s",
+                    LootReserve:ColoredPlayer(sender),
+                    item:GetLink(),
+                    raidRoll and " via raid-roll" or custom and phase and format(" for %s", phase or "") or "",
+                    roll and not raidRoll and format(" with a roll of %d", roll) or ""
+                );
             end);
         end
         if LootReserve.Client.Settings.RollRequestLoserReaction and LootReserve:Contains(losers, LootReserve:Me()) then
             LootReserve:RunWhenItemCached(item:GetID(), function()
-                local name, link = item:GetInfo();
-                if name and link then
-                    local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
-                    local soundTable = LootReserve.Constants.Sounds.Cry;
-                    if race and sex and soundTable[race] and soundTable[race][sex] then
-                        PlaySound(soundTable[race][sex]);
-                    end
-                    
-                    LootReserve:PrintMessage("You have lost a roll for %s",
-                        item:GetLink()
-                    );
-                else
-                    return true;
+                local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
+                local soundTable = LootReserve.Constants.Sounds.Cry;
+                if race and sex and soundTable[race] and soundTable[race][sex] then
+                    PlaySound(soundTable[race][sex]);
                 end
+                
+                LootReserve:PrintMessage("You have lost a roll for %s",
+                    item:GetLink()
+                );
             end);
         end
     end

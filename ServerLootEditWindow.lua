@@ -111,7 +111,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             local item = LootReserve.ItemSearch:Get(itemID);
             if item and item:GetInfo() then
                 createFrame(item);
-                if not item:Cache() then
+                if not item:Loaded() then
                     missing = true;
                 end
             elseif item or LootReserve.ItemSearch:IsPending(itemID) then
@@ -127,7 +127,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                     if matchesFilter(item, filter) then
                         createFrame(item, "Custom Item");
                         match = true;
-                        if not item:Cache() then
+                        if not item:Loaded() then
                             missing = true;
                         end
                     end
@@ -140,7 +140,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                         if reward and reward:GetInfo() then
                             if matchesFilter(reward, filter) then
                                 createFrame(item, "Custom Item");
-                                if not item:Cache() then
+                                if not item:Loaded() then
                                     missing = true;
                                 end
                                 break;
@@ -204,7 +204,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                 local item = LootReserve.ItemSearch:Get(itemID);
                 if item and item:GetInfo() then
                     createFrame(item);
-                    if not item:Cache() then
+                    if not item:Loaded() then
                         missing = true;
                     end
                 elseif item or LootReserve.ItemSearch:IsPending(itemID) then
@@ -218,7 +218,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                 local item = LootReserve.ItemSearch:Get(itemID);
                 if item and item:GetInfo() then
                     createFrame(item);
-                    if not item:Cache() then
+                    if not item:Loaded() then
                         missing = true;
                     end
                 elseif item or LootReserve.ItemSearch:IsPending(itemID) then

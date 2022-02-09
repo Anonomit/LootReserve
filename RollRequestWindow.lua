@@ -108,7 +108,8 @@ end
 
 function LootReserve.Client:RollRequested(sender, item, ...)
     local args = {...};
-    LootReserve:RunWhenItemCached(item:GetID(), function() if not item:GetInfo() then return true; end return RollRequested(LootReserve.Client, sender, item, unpack(args)) end);
+    LootReserve:RunWhenItemCached(item:GetID(), function()
+        return RollRequested(LootReserve.Client, sender, item, unpack(args)) end);
 end
 
 function LootReserve.Client:RespondToRollRequest(response)

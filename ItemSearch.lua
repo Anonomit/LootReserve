@@ -128,6 +128,7 @@ function LootReserve.ItemSearch:LoadItem(itemID)
     
     if not self.AttemptedIDs[itemID] and itemID ~= 0 then
         self.AttemptedIDs[itemID] = true;
+        print(itemID)
         if C_Item.DoesItemExistByID(itemID) then
             local item = LootReserve.Item(itemID);
             if item:GetInfo() then

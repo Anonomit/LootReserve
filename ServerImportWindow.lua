@@ -124,7 +124,7 @@ function LootReserve.Server.Import:UpdateReservesList()
             end
             button:Show();
             button.Item = LootReserve.ItemSearch:Get(itemID) or LootReserve.Item(itemID);
-            if not button.Item:Cache() then
+            if not button.Item:Loaded() then
                 missing = true;
             end
 

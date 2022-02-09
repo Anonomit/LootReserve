@@ -108,11 +108,12 @@ end
 
 function LootReserve.Client:SetFavorite(itemID, enabled)
     if self:IsFavorite(itemID) == (enabled and true or false) then return; end
+    
+    local item = LootReserve.ItemSearch:Get(itemID);
+    if not item or not item:GetInfo() then return; end
+    local bindType = item:GetBindType();
 
-    local name, _, _, _, _, _, _, _, _, _, _, _, _, bindType = GetItemInfo(itemID);
-    if not name or not bindType then return; end
-
-    local favorites = bindType == 1 and self.CharacterFavorites or self.GlobalFavorites;
+    local favorites = bindType == LE_ITEM_BIND_ON_ACQUIRE and self.CharacterFavorites or self.GlobalFavorites;
     favorites[itemID] = enabled and true or nil;
     self:FlashCategory("Favorites");
 end
