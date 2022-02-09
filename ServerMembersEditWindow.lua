@@ -92,9 +92,6 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
             local item = LootReserve.ItemSearch:Get(itemID);
             if item and item:GetInfo() then
                 table.insert(itemOrder, item);
-                if not item:Loaded() then
-                    missing = true;
-                end
             else
                 missing = true;
             end
