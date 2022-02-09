@@ -58,8 +58,9 @@ LootReserve.Constants.ReservesSorting = {
 LootReserve.Constants.WinnerReservesRemoval = {
     None      = 0,
     Single    = 1,
-    Duplicate = 2,
+    Smart     = 2,
     All       = 3,
+    Duplicate = 4,
 };
 LootReserve.Constants.ChatReservesListLimit = {
     None = -1,
@@ -278,6 +279,7 @@ LootReserve.Constants.WinnerReservesRemovalText =
     [enum.Single]    = "Just one",
     [enum.Duplicate] = "Duplicate",
     [enum.All]       = "All",
+    [enum.Smart]     = "Smart",
 };
 
 local enum = LootReserve.Constants.ChatReservesListLimit;

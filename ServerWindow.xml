@@ -1575,10 +1575,11 @@
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Automation", isTitle = true },
 							{ text = format("Remove winners' reserves: |cFF00FF00%s|r", LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Server.Settings.WinnerReservesRemoval] or "???"), arg1 = "#reservesRemoval", menuList = {
-								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.None], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.None,   "Don't adjust reserves when a reserved item is won.", RefreshWinnerReservesRemoval),
+								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.None], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.None, "Don't adjust reserves when a reserved item is won.", RefreshWinnerReservesRemoval),
 								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.Single], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.Single, "When a reserver wins a reserved item, remove one of the winner's reserves on that item.", RefreshWinnerReservesRemoval),
+								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.Smart], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.Smart, "If Usable is checked, default to Duplicate.|n|nIf Usable is not checked, default to Just One.|n|nUnder certain conditions when Usable is checked, Just One may be used instead. These conditions include winning a non-unique ring or a tradeable raid material.", RefreshWinnerReservesRemoval),
 								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.Duplicate], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.Duplicate, "When a reserver wins a reserved item, remove all of the winner's reserves on that item.", RefreshWinnerReservesRemoval),
-								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.All], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.All, "When a reserver wins a reserved item, remove all of that player's reserves on every item.", RefreshWinnerReservesRemoval),
+								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.All], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.All, "When a reserver wins a reserved item, remove all of the winner's reserves on every item.", RefreshWinnerReservesRemoval),
 							} },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
