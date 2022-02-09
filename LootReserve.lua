@@ -231,7 +231,7 @@ function LootReserve:RunWhenItemCached(itemOrID, func, ...)
             LootReserve.ItemCacheFrame.Items[itemID] = { };
         end
         table.insert(LootReserve.ItemCacheFrame.Items[itemID], {item = item, func = func, args = {...}});
-    else
+    elseif item and item:GetInfo() then
         func(item, ...);
     end
 end
