@@ -1835,7 +1835,7 @@ LootReserve.Data =
         [33102] = 11178,
     },
     
-    -- Items that you must be on a quest to loot
+    -- Items that you must be on a quest to loot and only one is required
     QuestDrops = {
         -- Narain's Scrying Goggles
         [20951] = 8578,

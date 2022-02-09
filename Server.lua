@@ -2538,7 +2538,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                                 -- Players may genuinely want multiple copies of the same ring to equip together.
                                 if reservedItem:GetEquipLocation() == "INVTYPE_FINGER" then
                                     smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
-                                -- Trying to filter to raid mats. Excluding equippable items, tokens, and quest drops.
+                                -- Trying to filter to raid mats. Excluding equippable items, tokens, and "unique" quest drops.
                                 elseif reservedItem:GetEquipLocation() == "" and not LootReserve.Data:IsToken(reservedItem:GetID()) and not LootReserve.Data.QuestDrops[reservedItem:GetID()] then
                                     smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
                                 end
