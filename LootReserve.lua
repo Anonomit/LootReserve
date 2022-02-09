@@ -230,7 +230,7 @@ function LootReserve:RunWhenItemCached(itemID, func, ...)
         error()
     end
     local item = LootReserve.ItemSearch:Get(itemID);
-    if not item or not item:Loaded() and C_Item.DoesItemExistByID(itemID) then
+    if not item or not item:GetInfo() and C_Item.DoesItemExistByID(itemID) then
         self:AddFunctionToQueue(itemID, func, ...);
     else
         func(item, ...);
@@ -239,7 +239,7 @@ end
 
 function LootReserve:RunWhenItemLoaded(itemID, func, ...)
     local item = LootReserve.ItemSearch:Get(itemID);
-    if not item or not item:GetInfo() and C_Item.DoesItemExistByID(itemID) then
+    if not item or not item:Loaded() and C_Item.DoesItemExistByID(itemID) then
         self:AddFunctionToQueue(itemID, func, ...);
     end
 end
