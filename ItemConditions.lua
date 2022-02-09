@@ -214,8 +214,13 @@ local function IsItemUsable(itemID, playerClass, isMe)
         numOwned = GetItemCount(itemID, true) - LootReserve:GetTradeableItemCount(itemID);
     end
     
+    local item = LootReserve.ItemSearch:Get(itemID);
+    if not item or not item:GetID() then
+        return nil;
+    end
+    
     -- If item is Armor or Weapon then fail if class cannot equip it
-    local _, _, _, _, _, itemType, itemSubType = GetItemInfo(itemID);
+    local itemType, itemSubType = item:GetTypeAndSubType();
     if UNUSABLE_EQUIPMENT[playerClass][itemType] then
         if UNUSABLE_EQUIPMENT[playerClass][itemType][itemSubType] then
            return false; 
@@ -223,44 +228,42 @@ local function IsItemUsable(itemID, playerClass, isMe)
     end
     
     -- If item starts a quest, make sure the quest is not completed or in progress
-    local questStartID = LootReserve.Data:GetQuestStarted(itemID);
-    local questDropID  = LootReserve.Data:GetQuestDropRequirement(itemID);
-    if isMe and questStartID or questDropID then
-        if C_QuestLog.IsQuestFlaggedCompleted(questStartID or questDropID) then
-            return false;
-        end
-        local found = false;
-        local collapsedHeaders = { };
-        local i = 1;
-        while GetQuestLogTitle(i) do
-            local name, _, _, isHeader, isCollapsed, _, _, questID = GetQuestLogTitle(i);
-            if isHeader then
-                if isCollapsed then
-                    table.insert(collapsedHeaders, 1, i);
-                    ExpandQuestHeader(i);
-                end
-            elseif questID == questStartID or questID == questDropID then
-                found = true;
-                break;
+    if isMe then
+        local questStartID = LootReserve.Data:GetQuestStarted(itemID);
+        local questDropID  = LootReserve.Data:GetQuestDropRequirement(itemID);
+        if questStartID or questDropID then
+            if C_QuestLog.IsQuestFlaggedCompleted(questStartID or questDropID) then
+                return false;
             end
-            i = i + 1;
-        end
+            local found = false;
+            local collapsedHeaders = { };
+            local i = 1;
+            while GetQuestLogTitle(i) do
+                local name, _, _, isHeader, isCollapsed, _, _, questID = GetQuestLogTitle(i);
+                if isHeader then
+                    if isCollapsed then
+                        table.insert(collapsedHeaders, 1, i);
+                        ExpandQuestHeader(i);
+                    end
+                elseif questID == questStartID or questID == questDropID then
+                    found = true;
+                    break;
+                end
+                i = i + 1;
+            end
 
-        for _, i in ipairs(collapsedHeaders) do
-            CollapseQuestHeader(i);
-        end
-        if (found and questStartID) or (not found and questDropID) then
-            return false;
+            for _, i in ipairs(collapsedHeaders) do
+                CollapseQuestHeader(i);
+            end
+            if (found and questStartID) or (not found and questDropID) then
+                return false;
+            end
         end
     end
     
-    local item = LootReserve.ItemSearch:Get(itemID)
-    if item and item:GetInfo() then
-        local classesAllowed = item:GetClassesAllowed();
-        if classesAllowed ~= true and not classesAllowed:match(LOCALIZED_CLASS_NAMES_MALE[playerClass]) and not classesAllowed:match(LOCALIZED_CLASS_NAMES_FEMALE[playerClass]) then
-            return false;
-        end
-    else
+    local classesAllowed = item:GetClassesAllowed();
+    local unique = item:IsUnique();
+    if classesAllowed ~= true and not classesAllowed:match(LOCALIZED_CLASS_NAMES_MALE[playerClass]) and not classesAllowed:match(LOCALIZED_CLASS_NAMES_FEMALE[playerClass]) then
         return false;
     end
     
