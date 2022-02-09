@@ -677,22 +677,22 @@ function LootReserve.Server:PrepareLootTracking()
         if IsMasterLooter()  then
             return;
         end
-        local looter, itemID, count;
-        itemID, count = text:match(lootSelfMultiple);
-        if itemID and count then
+        local looter, itemLink, count;
+        itemLink, count = text:match(lootSelfMultiple);
+        if itemLink and count then
             looter = LootReserve:Me();
         else
-            itemID = text:match(lootSelf);
-            if itemID then
+            itemLink = text:match(lootSelf);
+            if itemLink then
                 looter = LootReserve:Me();
                 count = 1;
             else
-                looter, itemID, count = text:match(lootMultiple);
-                if looter and itemID and count then
+                looter, itemLink, count = text:match(lootMultiple);
+                if looter and itemLink and count then
                     -- ok
                 else
-                    looter, itemID = text:match(loot);
-                    if looter and itemID then
+                    looter, itemLink = text:match(loot);
+                    if looter and itemLink then
                         count = 1;
                     else
                         return;
@@ -700,9 +700,12 @@ function LootReserve.Server:PrepareLootTracking()
                 end
             end
         end
-        LootReserve:RunWhenItemCached(itemID, function(item)
-            return AddLootToList(looter, item, count)
-        end);
+        local itemID = itemLink and tonumber(itemLink:match("Hitem:(%d+):") or "")
+        if itemID then
+            LootReserve:RunWhenItemCached(itemID, function(item)
+                return AddLootToList(looter, item, count)
+            end);
+        end
     end);
     LootReserve:RegisterEvent("LOOT_READY", function(text)
         if not IsMasterLooter() then
@@ -2293,7 +2296,7 @@ function LootReserve.Server:ResolveRollTie(item)
     if self:IsRolling(item) then
         local roll, winners, losers = self:GetWinningRollAndPlayers();
         if roll and winners and #winners > 1 then
-            LootReserve:RunWhenItemCached(item:GetID(), function()
+            LootReserve:RunWhenItemCached(item, function()
                 local playersText = LootReserve:FormatReservesText(winners);
                 LootReserve:SendChatMessage(format("Tie for %s between players %s. All rolled %d. Please /roll again", item:GetLink(), playersText, roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollTie));
             end);
@@ -2367,7 +2370,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             end
             LootReserve.Comm:BroadcastWinner(item, winners, losers, roll, self.RequestedRoll.Custom, recordPhase, raidroll);
 
-            LootReserve:RunWhenItemCached(item:GetID(), function()
+            LootReserve:RunWhenItemCached(item, function()
                 local link        = item:GetLink();
                 local playersText = LootReserve:FormatPlayersText(winners);
                 LootReserve:SendChatMessage(format(raidroll and "%s won %s%s via raid-roll" or "%s won %s%s with a roll of %d", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or "", roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
@@ -2393,7 +2396,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             LootReserve.Comm:SendWinner(player, item, winners, { });
             
             -- Announce
-            LootReserve:RunWhenItemCached(item:GetID(), function()
+            LootReserve:RunWhenItemCached(item, function()
                 local link = item:GetLink();
                 LootReserve:SendChatMessage(format("%s won %s as the only reserver", player, LootReserve:FixLink(link)), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
                 if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and item:GetQuality() >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
@@ -2844,7 +2847,7 @@ function LootReserve.Server:RequestRoll(item, duration, phases, allowedPlayers)
         local closureItem = self.RequestedRoll.Item;
         
         -- Broadcast roll
-        LootReserve:RunWhenItemCached(item:GetID(), function()
+        LootReserve:RunWhenItemCached(item, function()
             local link = item:GetLink();
 
             local playersText = LootReserve:FormatReservesText(players);
@@ -2926,7 +2929,7 @@ function LootReserve.Server:RequestCustomRoll(item, duration, phases, allowedPla
         local closureItem = self.RequestedRoll.Item;
         
         -- Broadcast roll
-        LootReserve:RunWhenItemCached(item:GetID(), function()
+        LootReserve:RunWhenItemCached(item, function()
             local link = item:GetLink();
 
             if allowedPlayers then
@@ -3016,7 +3019,7 @@ function LootReserve.Server:PassRoll(player, item, chat, isPrivateChannel)
         LootReserve.Comm:SendRequestRoll(player, LootReserve.Item(0), { }, self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll);
 
         -- Whisper player
-        LootReserve:RunWhenItemCached(item:GetID(), function()
+        LootReserve:RunWhenItemCached(item, function()
             if not self.RequestedRoll or self.RequestedRoll.Item ~= item then return; end
 
             local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
@@ -3025,7 +3028,7 @@ function LootReserve.Server:PassRoll(player, item, chat, isPrivateChannel)
     end
     if not chat or isPrivateChannel then
         -- Announce
-        LootReserve:RunWhenItemCached(item:GetID(), function()
+        LootReserve:RunWhenItemCached(item, function()
             if not self.RequestedRoll or self.RequestedRoll.Item ~= item then return; end
             
             local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
@@ -3057,7 +3060,7 @@ function LootReserve.Server:DeleteRoll(player, rollNumber, item)
     LootReserve.Comm:SendDeletedRoll(player, item, oldRoll, phase);
     if (not self.CurrentSession or self.CurrentSession.Settings.ChatFallback) and not self:IsAddonUser(player) then
         -- Whisper player
-        LootReserve:RunWhenItemCached(item:GetID(), function()
+        LootReserve:RunWhenItemCached(item, function()
             LootReserve:SendChatMessage(format("Your %sroll of %d on %s was deleted.", phase and format("%s ", phase) or "", oldRoll, item:GetLink()), "WHISPER", player);
         end);
     end

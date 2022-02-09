@@ -724,7 +724,7 @@ LootReserve.Comm.Handlers[Opcodes.DeletedRoll] = function(sender, item, roll, ph
     item = LootReserve.Item(strsplit(",", item));
     roll = tonumber(roll);
 
-    LootReserve:RunWhenItemCached(item:GetID(), function()
+    LootReserve:RunWhenItemCached(item, function()
         local link = item:GetLink();
         LootReserve:ShowError ("Your %sroll%s on %s was deleted", phase and #phase > 0 and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
         LootReserve:PrintError("Your %sroll%s on %s was deleted", phase and #phase > 0 and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
@@ -765,7 +765,7 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
             losers = { };
         end
         if LootReserve.Client.Settings.RollRequestWinnerReaction and LootReserve:Contains(winners, LootReserve:Me()) then
-            LootReserve:RunWhenItemCached(item:GetID(), function()
+            LootReserve:RunWhenItemCached(item, function()
                 local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
                 local soundTable = custom and LootReserve.Constants.Sounds.Congratulate or LootReserve.Constants.Sounds.Cheer;
                 if race and sex and soundTable[race] and soundTable[race][sex] then
@@ -782,7 +782,7 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
             end);
         end
         if LootReserve.Client.Settings.RollRequestLoserReaction and LootReserve:Contains(losers, LootReserve:Me()) then
-            LootReserve:RunWhenItemCached(item:GetID(), function()
+            LootReserve:RunWhenItemCached(item, function()
                 local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
                 local soundTable = LootReserve.Constants.Sounds.Cry;
                 if race and sex and soundTable[race] and soundTable[race][sex] then

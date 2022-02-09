@@ -200,47 +200,39 @@ function LootReserve:RegisterEvent(...)
     end
 end
 
-function LootReserve:AddFunctionToQueue(itemID, func, ...)
-    local args = {...};
-    if not LootReserve.ItemCacheFrame.Items then
-        LootReserve.ItemCacheFrame.Items = { };
-        LootReserve.ItemCacheFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
-        LootReserve.ItemCacheFrame:SetScript("OnEvent", function(self, event, itemID, success)
-            if not success then return; end
-            local handlers = self.Items[itemID];
-            if handlers then
-                for i = #handlers, 1, -1 do
-                    local item = LootReserve.ItemSearch:Get(itemID);
-                    if item and item:GetInfo() then
-                        handlers[i](item)
-                        table.remove(handlers, i);
+function LootReserve:RunWhenItemCached(itemOrID, func, ...)
+    local item, itemID;
+    if type(itemOrID) == "table" then
+        item   = itemOrID;
+        itemID = item:GetID();
+    else
+        item = LootReserve.ItemSearch:Get(itemOrID);
+        itemID = itemOrID;
+    end
+    if not item or not item:GetInfo() and C_Item.DoesItemExistByID(itemID) then
+        if not LootReserve.ItemCacheFrame.Items then
+            LootReserve.ItemCacheFrame.Items = { };
+            LootReserve.ItemCacheFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
+            LootReserve.ItemCacheFrame:SetScript("OnEvent", function(self, event, itemID, success)
+                if not success then return; end
+                local packages = self.Items[itemID];
+                if packages then
+                    for i = #packages, 1, -1 do
+                        local item = packages[i].item or LootReserve.ItemSearch:Get(itemID);
+                        if item and item:GetInfo() then
+                            packages[i].func(item, unpack(packages[i].args))
+                            table.remove(packages, i);
+                        end
                     end
                 end
-            end
-        end);
-    end
-    if not LootReserve.ItemCacheFrame.Items[itemID] then
-        LootReserve.ItemCacheFrame.Items[itemID] = { };
-    end
-    table.insert(LootReserve.ItemCacheFrame.Items[itemID], function() return func(unpack(args)); end);
-end
-
-function LootReserve:RunWhenItemCached(itemID, func, ...)
-    if type(itemID) == "table" then
-        error()
-    end
-    local item = LootReserve.ItemSearch:Get(itemID);
-    if not item or not item:GetInfo() and C_Item.DoesItemExistByID(itemID) then
-        self:AddFunctionToQueue(itemID, func, ...);
+            end);
+        end
+        if not LootReserve.ItemCacheFrame.Items[itemID] then
+            LootReserve.ItemCacheFrame.Items[itemID] = { };
+        end
+        table.insert(LootReserve.ItemCacheFrame.Items[itemID], {item = item, func = func, args = {...}});
     else
         func(item, ...);
-    end
-end
-
-function LootReserve:RunWhenItemLoaded(itemID, func, ...)
-    local item = LootReserve.ItemSearch:Get(itemID);
-    if not item or not item:Loaded() and C_Item.DoesItemExistByID(itemID) then
-        self:AddFunctionToQueue(itemID, func, ...);
     end
 end
 

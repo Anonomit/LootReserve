@@ -216,9 +216,6 @@ function LootReserve.Client:UpdateLootList()
                 elseif self.SelectedCategory.Reserves == "all" and self:IsItemReserved(itemID) and not self.Blind then
                     createFrame(item);
                 end
-                if not item:Loaded() then
-                    missing = true;
-                end
             elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                 missing = true;
             end
@@ -255,9 +252,6 @@ function LootReserve.Client:UpdateLootList()
                     local item = LootReserve.ItemSearch:Get(itemID);
                     if item and item:GetInfo() then
                         createFrame(item);
-                        if not item:Loaded() then
-                            missing = true;
-                        end
                     elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                         missing = true;
                     end
@@ -314,9 +308,6 @@ function LootReserve.Client:UpdateLootList()
                                         if matchesFilter(item, filter) then
                                             createFrame(item, format("%s > %s", category.Name, child.Name));
                                             match = true;
-                                            if not item:Loaded() then
-                                                missing = true;
-                                            end
                                         end
                                     elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                                         missing = true;
@@ -327,9 +318,6 @@ function LootReserve.Client:UpdateLootList()
                                             if reward and reward:GetInfo() then
                                                 if matchesFilter(reward, filter) then
                                                     createFrame(item, format("%s > %s", category.Name, child.Name));
-                                                    if not item:Loaded() then
-                                                        missing = true;
-                                                    end
                                                     break;
                                                 end
                                             elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
@@ -351,9 +339,6 @@ function LootReserve.Client:UpdateLootList()
                 local item = LootReserve.ItemSearch:Get(itemID);
                 if item and item:GetInfo() then
                     createFrame(item);
-                    if not item:Loaded() then
-                        missing = true;
-                    end
                 elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                     missing = true;
                 end
@@ -365,9 +350,6 @@ function LootReserve.Client:UpdateLootList()
                 local item = LootReserve.ItemSearch:Get(itemID);
                 if item and item:GetInfo() then
                     createFrame(item);
-                    if not item:Loaded() then
-                        missing = true;
-                    end
                 elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                     missing = true;
                 end

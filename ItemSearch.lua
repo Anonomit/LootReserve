@@ -145,7 +145,7 @@ end
 
 function LootReserve.ItemSearch:Get(itemID)
     if not self.Items[itemID] then
-        self:LoadItem(itemID);
+        return self:LoadItem(itemID);
     end
     return self.Items[itemID];
 end

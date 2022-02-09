@@ -332,9 +332,6 @@ function LootReserve.Server:UpdateReserveList(lockdown)
             if not filter or matchesFilter(item, reserve, filter) then
                 createFrame(item, reserve, true);
                 match = true;
-                if not item:Loaded() then
-                    missing = true;
-                end
             end
         elseif item or LootReserve.ItemSearch:IsPending(itemID) then
             missing = true;
@@ -342,12 +339,9 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         if filter and not match and LootReserve.Data:IsToken(itemID) then
             for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                 local reward = LootReserve.ItemSearch:Get(rewardID);
-                if reward and reward:Loaded() then
+                if reward and reward:GetInfo() then
                     if matchesFilter(reward, nil, filter) then
                         createFrame(item, reserve, true);
-                        if not item:Loaded() then
-                            missing = true;
-                        end
                         break;
                     end
                 elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
@@ -731,9 +725,6 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 createFrame(item, roll, true);
                 itemsVisible = itemsVisible + 1;
                 match = true;
-                if not item:Loaded() then
-                    missing = true;
-                end
             end
         elseif item or LootReserve.ItemSearch:IsPending(roll.Item:GetID()) then
             missing = true;
@@ -744,9 +735,6 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 if matchesFilter(token, nil, filter) then
                     createFrame(item, roll, true);
                     match = true;
-                    if not item:Loaded() then
-                        missing = true;
-                    end
                 end
             elseif item or LootReserve.ItemSearch:IsPending(roll.Item:GetID()) then
                 missing = true;
@@ -759,9 +747,6 @@ function LootReserve.Server:UpdateRollList(lockdown)
                     if matchesFilter(reward, nil, filter) then
                         createFrame(item, roll, true);
                         itemsVisible = itemsVisible + 1;
-                        if not item:Loaded() then
-                            missing = true;
-                        end
                         break;
                     end
                 elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
