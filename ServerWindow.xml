@@ -1503,6 +1503,15 @@
 								StaticPopup_Show("LOOTRESERVE_CONFIRM_GLOBAL_PROFILE_DISABLE");
 							end
 						end
+						local function ToggleAcceptAllRollFormats(enabled)
+							if enabled then
+								LootReserve.Server.Settings.AcceptAllRollFormats = false;
+								LootReserve:ReopenMenu(self);
+								StaticPopup_Show("LOOTRESERVE_ACCEPT_ALL_ROLL_FORMATS_ENABLE");
+							else
+								LootReserve.Server.Settings.AcceptAllRollFormats = false;
+							end
+						end
 						local function RefreshWinnerReservesRemoval()
 							LootReserve:ReopenMenu(self, "#reservesRemoval");
 						end
@@ -1570,10 +1579,8 @@
 							} },
 							MakeMenuToggle("Use Unit Frames", "UseUnitFrames", "Make player rows in Reserves and Rolls tabs behave like unit frames, allowing them to be right-clicked for context menu, have items be dropped on them to open trade etc.|n|nOnly works outside of combat.|n|nWhen enabled, this may prevent the host window from being closed and reopened while in combat via minimap button or |cFFFFFFFF/reserve host|r command.", ToggleUseUnitFrames),
 							LootReserve:MakeMenuSeparator(),
-							{ text = "Storage", isTitle = true },
-							MakeMenuToggle("Use Global Profile", "UseGlobalProfile", "By default all the data about the active reserves session is stored per-character. Enable this to share the same session between all characters on your account.|n|nThe session from your current character will be the one propagated to others.", ToggleGlobalProfile),
-							LootReserve:MakeMenuSeparator(),
-							{ text = "Automation", isTitle = true },
+							{ text = "Rolls", isTitle = true },
+							MakeMenuToggle("Accept All Roll Formats", "AcceptAllRollFormats", "If enabled, custom rolls will be honored. If disabled, only 1-100 rolls will be considered and all others will be ignored.", ToggleAcceptAllRollFormats),
 							{ text = format("Remove winners' reserves: |cFF00FF00%s|r", LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Server.Settings.WinnerReservesRemoval] or "???"), arg1 = "#reservesRemoval", menuList = {
 								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.None], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.None, "Don't adjust reserves when a reserved item is won.", RefreshWinnerReservesRemoval),
 								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.Single], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.Single, "When a reserver wins a reserved item, remove one of the winner's reserves on that item.", RefreshWinnerReservesRemoval),
@@ -1581,6 +1588,9 @@
 								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.Duplicate], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.Duplicate, "When a reserver wins a reserved item, remove all of the winner's reserves on that item.", RefreshWinnerReservesRemoval),
 								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.All], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.All, "When a reserver wins a reserved item, remove all of the winner's reserves on every item.", RefreshWinnerReservesRemoval),
 							} },
+							LootReserve:MakeMenuSeparator(),
+							{ text = "Storage", isTitle = true },
+							MakeMenuToggle("Use Global Profile", "UseGlobalProfile", "By default all the data about the active reserves session is stored per-character. Enable this to share the same session between all characters on your account.|n|nThe session from your current character will be the one propagated to others.", ToggleGlobalProfile),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
 						};

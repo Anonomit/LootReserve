@@ -48,6 +48,7 @@ LootReserve.Server =
         RollHistoryDisplayLimit         = 10,
         RollHistoryKeepLimit            = 1000,
         RollMasterLoot                  = true,
+        AcceptAllRollFormats            = false,
         WinnerReservesRemoval           = LootReserve.Constants.WinnerReservesRemoval.Duplicate,
         ItemConditions                  = { },
         CollapsedExpansions             = { },
@@ -156,6 +157,19 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_ROLL_RESERVED_ITEM_AGAIN"] =
         if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[tokenID or self.data.Item:GetID()] then
             LootReserve.Server:RequestRoll(self.data.Item);
         end
+    end,
+};
+
+StaticPopupDialogs["LOOTRESERVE_ACCEPT_ALL_ROLL_FORMATS_ENABLE"] =
+{
+    text         = "Enabling this option will cause LootReserve to accept rolls in any range.|n|nFor example, a player could do|n/roll 100-100|nand LootReserve will honor this roll.|n|nYou can see a player's rolls in the Recent Chat tracker next to where their roll is displayed.|n|nDo you want to enable this option?",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self)
+        LootReserve.Server.Settings.AcceptAllRollFormats = true;
     end,
 };
 
@@ -2613,7 +2627,7 @@ function LootReserve.Server:PrepareRequestRoll()
                     end);
                 end
                 player = player and LootReserve:Player(player);
-                if player and roll and min == "1" and (max == "100" or self.RequestedRoll.RaidRoll and tonumber(max) == LootReserve:GetNumGroupMembers()) and tonumber(roll) and self:CanRoll(player) then
+                if player and roll and (self.Settings.AcceptAllRollFormats or min == "1" and (max == "100" or self.RequestedRoll.RaidRoll and tonumber(max) == LootReserve:GetNumGroupMembers()) and tonumber(roll) and self:CanRoll(player)) then
                     -- Re-roll the raid-roll
                     if self.RequestedRoll.RaidRoll then
                         table.wipe(self.RequestedRoll.Players);
