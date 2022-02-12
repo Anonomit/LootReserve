@@ -291,9 +291,7 @@ end
 
 function LootReserve.Server:HasRelevantRecentChat(chat, player)
     if not chat or not chat[player] then return false; end
-    if #chat[player] > 1 then return true; end
-    local time, type, text = strsplit("|", chat[player][1], 3);
-    return type ~= "SYSTEM";
+    return #chat[player] > 0;
 end
 
 function LootReserve.Server:IsAddonUser(player)
