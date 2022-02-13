@@ -670,18 +670,30 @@ function LootReserve:IsTradeableItem(bag, slot)
     return not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot);
 end
 
+local bagCache = nil;
+local bagCacheHooked = nil;
 function LootReserve:GetTradeableItemCount(item)
-    local count = 0;
-    for bag = 0, 4 do
-        local slots = GetContainerNumSlots(bag);
-        if slots > 0 then
-            for slot = 1, slots do
+    if not bagCacheHooked then
+        bagCacheHooked = true;
+        self:RegisterEvent("BAG_UPDATE", function()
+            bagCache = nil;
+        end);
+    end
+    if not bagCache then
+        bagCache = { };
+        for bag = 0, 4 do
+            for slot = 1, GetContainerNumSlots(bag) do
                 local _, quantity, _, _, _, _, bagItem = GetContainerItemInfo(bag, slot);
-                bagItem = bagItem and LootReserve.Item(bagItem);
-                if bagItem and bagItem == item and self:IsTradeableItem(bag, slot) then
-                    count = count + quantity;
+                if bagItem then
+                    table.insert(bagCache, {bag = bag, slot = slot, item = LootReserve.Item(bagItem), quantity = quantity})
                 end
             end
+        end
+    end
+    local count = 0;
+    for _, itemData in ipairs(bagCache) do
+        if itemData.item == item and self:IsTradeableItem(itemData.bag, itemData.slot) then
+            count = count + itemData.quantity;
         end
     end
     return count;
@@ -699,7 +711,7 @@ function LootReserve:IsItemSoulboundTradeable(bag, slot)
 
     self.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
     self.TooltipScanner:SetBagItem(bag, slot);
-    for i = 50, 1, -1 do
+    for i = LootReserve.TooltipScanner:NumLines(), 1, -1 do
         local line = _G[self.TooltipScanner:GetName() .. "TextLeft" .. i];
         if line and line:GetText() and line:GetText():match(self.TooltipScanner.SoulboundTradeable) then
             self.TooltipScanner:Hide();

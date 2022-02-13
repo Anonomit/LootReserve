@@ -525,17 +525,19 @@ function LootReserve.Server:UpdateRollList(lockdown)
             frame.ItemFrame.Icon:SetTexture(texture);
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
             
-            if frame.Roll.Winners and #frame.Roll.Winners == 1 and not UnitAffectingCombat("player") then
+            local tradeableItemCount = LootReserve:GetTradeableItemCount(item)
+            
+            if frame.Roll.Winners and #frame.Roll.Winners == 1 then
                 local winner = frame.Roll.Winners[1];
                 if LootReserve:IsLootingItem(item) then
                     if LibCustomGlow then
                         LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow)
                     end
-                elseif LootReserve:GetTradeableItemCount(item) > 0 and TradeFrame:IsShown() and LootReserve:Player(UnitName("npc")) == winner and not LootReserve:IsItemBeingTraded(item) then
+                elseif tradeableItemCount > 0 and TradeFrame:IsShown() and LootReserve:Player(UnitName("npc")) == winner and not LootReserve:IsItemBeingTraded(item) then
                     if LibCustomGlow then
                         LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow)
                     end
-                elseif LootReserve:GetTradeableItemCount(item) > 0 and not TradeFrame:IsShown() and winner ~= LootReserve:Me() then
+                elseif tradeableItemCount > 0 and not TradeFrame:IsShown() and winner ~= LootReserve:Me() then
                     if LibCustomGlow then
                         LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow)
                     end
@@ -552,7 +554,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
 
             if historical then
                 frame.ItemFrame.Misc:SetText(roll.StartTime and date(format("%%B%s%%e  %%H:%%M", date("*t", roll.StartTime).day < 10 and "" or " "), roll.StartTime) or "");
-            elseif LootReserve:GetTradeableItemCount(item) < 1 and not LootReserve:IsLootingItem(item) then
+            elseif tradeableItemCount < 1 and not LootReserve:IsLootingItem(item) then
                 frame.ItemFrame.Misc:SetText("|cFFFF0000Cannot distribute|r");
             else
                 local token;
