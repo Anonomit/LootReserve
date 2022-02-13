@@ -383,6 +383,17 @@ function LootReserve:Player(player)
     local name, realm = strsplit("-", player);
     if not realm then
         realm = GetNormalizedRealmName();
+        if not realm then
+            -- it really does happen
+            realm = GetRealmName();
+            if realm then
+                realm = realm:gsub("[%s%-]", "");
+            end
+            if not realm then
+                -- ¯\_(ツ)_/¯
+                return name;
+            end
+        end
     end
     return name .. "-" .. realm;
 end
