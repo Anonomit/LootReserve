@@ -55,7 +55,7 @@ LootReserve.Server =
         MaxRecentLoot                   = 25,
         MinimumLootQuality              = 2,
         RemoveRecentLootAfterRolling    = true,
-        UseUnitFrames                   = true,
+        UseUnitFrames                   = false,
     },
     RequestedRoll       = nil,
     RollHistory         = { },
