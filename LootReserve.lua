@@ -744,9 +744,14 @@ function LootReserve:GetItemDescription(itemID)
     local item = LootReserve.ItemSearch:Get(itemID);
     if not item or not item:GetInfo() then return; end
     local name, _, _, _, _, itemType, itemSubType, _, equipLoc, _, _, _, _, bindType = item:GetInfo();
+    local skillRequired, skillLevelRequired = item:GetSkillRequired();
     local itemText = "";
     if item:IsUnique() then
         itemText = ITEM_UNIQUE .. " " .. itemText
+    end
+    
+    if skillRequired then
+        itemText = itemText .. skillLevelRequired .. " " .. skillRequired .. " "
     end
     
     if LootReserve.Constants.RedundantSubTypes[itemSubType] then
@@ -763,7 +768,7 @@ function LootReserve:GetItemDescription(itemID)
         if itemSubType == "Book" then
             itemText = itemText .. "Skill Book";
         else
-            itemText = itemText .. itemSubType .. " " .. name:match("^[^:]+");
+            itemText = itemText .. name:match("^[^:]+");
         end
     elseif itemType == "Container" then
         itemText = itemText .. (_G[equipLoc] or "");
