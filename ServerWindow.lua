@@ -612,7 +612,6 @@ function LootReserve.Server:UpdateRollList(lockdown)
             end
             
             frame.ItemFrame.Icon:SetScript("OnMouseUp", function(e, btn)
-                if lockdown then return; end
                 if not LootReserve:IsLootingItem(item) and LootReserve:GetTradeableItemCount(item) < 1 then
                     return;
                 end
