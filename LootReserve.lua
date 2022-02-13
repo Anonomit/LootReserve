@@ -662,10 +662,6 @@ function LootReserve:GetNumGroupMembers(func)
     return count;
 end
 
-function LootReserve:IsItemBoP(itemID)
-    return select(14, GetItemInfo(itemID)) == 1;
-end
-
 function LootReserve:IsTradeableItem(bag, slot)
     return not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot);
 end

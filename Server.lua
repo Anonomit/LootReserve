@@ -72,7 +72,6 @@ LootReserve.Server =
 
     ReservableIDs                      = { },
     ReservableRewardIDs                = { },
-    ItemNames                          = { },
     LootTrackingRegistered             = false,
     GuildMemberTrackingRegistered      = false,
     DurationUpdateRegistered           = false,
@@ -82,7 +81,6 @@ LootReserve.Server =
     ChatFallbackRegistered             = false,
     BasicChatListeningRegistered       = false,
     SessionEventsRegistered            = false,
-    AllItemNamesCached                 = false,
     StartupAwaitingAuthority           = false,
     StartupAwaitingAuthorityRegistered = false,
     MasterLootListUpdateRegistered     = false,
@@ -911,8 +909,6 @@ function LootReserve.Server:PrepareSession()
         ShoppingTooltip2        : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
     end
 
-    self.AllItemNamesCached = false; -- If category is changed - other item names might need to be cached
-
     if self.CurrentSession.Settings.ChatFallback and not self.ChatFallbackRegistered then
         self.ChatFallbackRegistered = true;
 
@@ -1307,87 +1303,6 @@ function LootReserve.Server:PrepareSession()
     
     -- Add myself if not in a group
     self:UpdateGroupMembers();
-end
-
-function LootReserve.Server:UpdateItemNameCache()
-    if self.AllItemNamesCached then return self.AllItemNamesCached; end
-
-    self.AllItemNamesCached = true;
-    for itemID, conditions in pairs(self:GetNewSessionItemConditions()) do
-        if itemID ~= 0 and conditions.Custom then
-            local name = GetItemInfo(itemID);
-            if name then
-                self.ItemNames[itemID] = LootReserve:TransformSearchText(name);
-            else
-                self.AllItemNamesCached = false;
-            end
-            if LootReserve.Data:IsToken(itemID) then
-                for _, reward in pairs(LootReserve.Data:GetTokenRewards(itemID)) do
-                    local name = GetItemInfo(reward);
-                    if name then
-                        self.ItemNames[reward] = LootReserve:TransformSearchText(name);
-                    else
-                        self.AllItemNamesCached = false;
-                    end
-                end
-            end
-        end
-    end
-    if self.CurrentSession then
-        for itemID, conditions in pairs(self.CurrentSession.ItemConditions) do
-            if itemID ~= 0 and conditions.Custom then
-                local name = GetItemInfo(itemID);
-                if name then
-                    self.ItemNames[itemID] = LootReserve:TransformSearchText(name);
-                else
-                    self.AllItemNamesCached = false;
-                end
-                if LootReserve.Data:IsToken(itemID) then
-                    for _, reward in pairs(LootReserve.Data:GetTokenRewards(itemID)) do
-                        local name = GetItemInfo(reward);
-                        if name then
-                            self.ItemNames[reward] = LootReserve:TransformSearchText(name);
-                        else
-                            self.AllItemNamesCached = false;
-                        end
-                    end
-                end
-            end
-        end
-    end
-    for id, category in pairs(LootReserve.Data.Categories) do
-        if category.Children and LootReserve.Data:IsCategoryVisible(category) then
-            for _, child in ipairs(category.Children) do
-                if child.Loot then
-                    for _, itemID in ipairs(child.Loot) do
-                        if itemID ~= 0 then
-                            if not self.ItemNames[itemID] then
-                                local name = GetItemInfo(itemID);
-                                if name then
-                                    self.ItemNames[itemID] = LootReserve:TransformSearchText(name);
-                                else
-                                    self.AllItemNamesCached = false;
-                                end
-                            end
-                            if LootReserve.Data:IsToken(itemID) then
-                                for _, reward in pairs(LootReserve.Data:GetTokenRewards(itemID)) do
-                                    if not self.ItemNames[reward] then
-                                        local name = GetItemInfo(reward);
-                                        if name then
-                                            self.ItemNames[reward] = LootReserve:TransformSearchText(name);
-                                        else
-                                            self.AllItemNamesCached = false;
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-    return self.AllItemNamesCached;
 end
 
 function LootReserve.Server:StartSession()
@@ -2152,30 +2067,34 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemLi
         local function WhisperPlayer()
             local list = { };
 
-            local function sortByItemName(_, _, aItem, bItem)
-                local aName = GetItemInfo(aItem);
-                local bName = GetItemInfo(bItem);
-                if not aName then return false; end
-                if not bName then return true; end
-                return aName < bName;
+            local function sortByItemName(_, _, aItemID, bItemID)
+                aItem = LootReserve.ItemSearch:Get(aItemID);
+                bItem = LootReserve.ItemSearch:Get(bItemID);
+                if not aItem or not aItem:GetInfo() then
+                    return false;
+                end
+                if not bItem or not bItem:GetInfo() then
+                    return false;
+                end
+                return aItem:GetName() < bItem:GetName();
             end
 
-            local uncached = false
+            local missing = false
             for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sortByItemName) do
                 if not itemList or itemList[itemID] then
-                    local name, link = GetItemInfo(itemID);
-                    if not name or not link then
-                        uncached = true;
-                    else
+                    local item = LootReserve.ItemSearch:Get(itemID);
+                    if item and item:GetInfo() then
                         local reservesText = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players);
                         local _, myReserves = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players, player);
                         if not onlyRelevant or myReserves > 0 then
                             table.insert(list, format("%s: %s", link, reservesText));
                         end
+                    else
+                        missing = true;
                     end
                 end
             end
-            if uncached then
+            if missing then
                 C_Timer.After(0.1, WhisperPlayer);
                 return;
             end
@@ -3140,7 +3059,7 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
 
     local name, link = item:GetInfo();
     if not name or not link then return; end
-    local quality = select(3, GetItemInfo(item:GetID()))
+    local quality = item:GetQuality()
 
     if not self.Settings.RollMasterLoot then
         -- LootReserve:ShowError("Failed to masterloot %s to %s: masterlooting not enabled in LootReserve settings", link, LootReserve:ColoredPlayer(player));

@@ -529,10 +529,12 @@
 						local menu = { };
 						local missing = false;
 						if itemID and C_Item.DoesItemExistByID(itemID) then
-							local name, link, _, _, _, _, _, _, _, texture = GetItemInfo(itemID);
-							if not name or not link then
-								C_Timer.After(0.1, UpdateText);
-								return;
+							local item = LootReserve.ItemSearch:Get(itemID);
+							local name, link, texture;
+							if item and item:GetInfo() then
+								name, link, texture = item:GetNameLinkTexture();
+							else
+								missing = true;
 							end
 							table.insert(menu,
 							{
@@ -595,10 +597,8 @@
 					if itemID then
 						self.Item = itemID;
 
-						local name, link, quality, _, _, _, _, _, _, texture = GetItemInfo(itemID);
-						self.Link = link;
-
-						if not name or not link then
+						local item = LootReserve.ItemSearch:Get(itemID);
+						if not item or not item:GetInfo() then
 							C_Timer.After(0.1, function()
 								if self.Item == itemID then
 									self:SetItem(itemID);
@@ -606,6 +606,8 @@
 							end);
 							return;
 						end
+						local name, link, quality, _, _, _, _, _, _, texture = item:GetInfo();
+						self.Link = link;
 
 						local reservers = 0;
 						if LootReserve.Server.CurrentSession then

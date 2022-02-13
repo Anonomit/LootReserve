@@ -258,11 +258,14 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         if LootReserve:IsLootingItem(reserve.Item) then
             return "";
         end
-        local name = GetItemInfo(reserve.Item);
-        if not name then
+        local name = ""
+        local item = LootReserve.ItemSearch:Get(reserve.Item);
+        if item and item:GetInfo() then
+            name = item:GetName();
+        else
             missing = true;
         end
-        return (name or ""):upper();
+        return name:upper();
     end
     local function getSortingSource(reserve)
         if LootReserve:IsLootingItem(reserve.Item) then
@@ -324,7 +327,6 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         return a.Item < b.Item;
     end
 
-    local missing = false;
     for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sorter) do
         local match = false;
         local item = LootReserve.ItemSearch:Get(itemID);
