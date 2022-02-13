@@ -1,3 +1,51 @@
+<h2>2022-02-13</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Host</strong></p>
+<ul>
+<li>Renamed Server to Host since it's less ambiguous.</li>
+<li>It's now possible to place a reserve on behalf of another player. Hosts will see the option in their Reserves window.</li>
+<li>Automatic Distribution now works in combat. Click the glowing icons in the Rolls tab to distribute loot automatically.</li>
+<li>Added "smart" mode for removing winners' reserves. This mode removes duplicate reserves if Usable is on, and removes just one reserve otherwise. For some items types (non-unique rings, tradeable raid materials), just one reserve will always be removed. Smart mode is now the default instead of Duplicate.</li>
+<li>Recent Loot list shows the number of players reserving an item.</li>
+<li>Items that have been won in the current session now show what type of roll granted the item. For example: Reserved, Main-Spec, +1.</li>
+<li>Players rolling on unusable items will appear highlighted in red.</li>
+<li>Added option to accept all roll formats. If enabled, rolls in any range (0-1000000) will be honored. This option is disabled by default.</li>
+<li>Recent Chat now always shows up, making it possible to see the roll message.</li>
+<li>Commands received over whispers should be smoother. Tokens can be reserved by attempting to reserve an item that they grant.</li>
+<li>Added an option to limit !reserves command responses to a certain number of items at once. This should help in large groups with many players reserving over whispers. By default, this is enabled and limited to 5 items.</li>
+<li>The chat command  '!reserves'  can now take arguments. Players will be encouraged to try whispering `!reserves ItemLinkOrName` instead if they hit the !reserves response limit.</li>
+<li>Messages starting with only  '!'  and no keyword will not be responded to unless the command is successful. This should help prevent accidental whispers.</li>
+<li>Slightly increased the roll nag delay (the reminder message whispered to players when the host is waiting on them to roll).</li>
+<li>Many performance improvements. The Rolls window tolerates many more items being shown before it becomes laggy.</li>
+<li>Searching for items/players is much faster and no longer causes freezes. All TBC items are now cached and searchable. Item loading is now done asynchronously.</li>
+<li>Session and active roll are no longer deleted after being logged out for an extended time. There is now a prompt to remind the host that a stale session/roll exists.</li>
+<li>Player classes are now remembered through logout/import/export.</li>
+<li>Changed export format. Everything is still compatible.</li>
+<li>Rolling the colored sack of gems off of Onyxia/Nefarion now treats it as if the common quality reservable sack of gems is being rolled. Sack of gems is no longer hidden by default.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Client is much better at at recognizing unusable items. It can now check if the item is unique, part of a quest, requires an unlearned profession, or is an already known skillbook/recipe.</li>
+<li>Unusable items have a red description. They can still be reserved and rolled on.</li>
+<li>Item descriptions on recipes now include the required level.</li>
+<li>Added option to roll automatically on reserved items. This is enabled by default.</li>
+<li>Tailoring, Leatherworking, and Blacksmithing patterns now appear in Hyjal loot.</li>
+<li>Performance improvements. Searching for an item without an active session no longer causes freezes. Item loading is now done asynchronously.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Fixed an issue causing extremely long loading screens while the host window is open.</li>
+<li>SoM realms should no longer be considered connected.</li>
+<li>Fixed the "competition beep" playing sometimes after winning an item under certain host settings.</li>
+<li>Fixed an error when someone who has no reserves tries to cancel a reserve.</li>
+<li>Fixed a possible error when rolling an item with no reason provided.</li>
+<li>Fixed an issue with german locale.</li>
+<li>Minor text fixes.</li>
+</ul>
+<p>&nbsp;</p>
 <h2>2021-12-27</h2>
 <p>&nbsp;FILE CHANGES. UPDATING REQUIRES GAME RESTART</p>
 <p>&nbsp;</p>
