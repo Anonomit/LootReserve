@@ -267,7 +267,7 @@ local function IsItemUsable(itemID, playerClass, isMe)
         return false;
     end
     
-    if isMe then
+    if isMe and item:Loaded() then
         -- If item is class-locked then make sure this class is listed
         -- Also make sure the item is not unique if I already own one
         if not LootReserve.TooltipScanner then
@@ -321,7 +321,27 @@ local function IsItemUsable(itemID, playerClass, isMe)
         LootReserve.TooltipScanner:Hide();
     end
     
-    return true;
+    return true, not item:Loaded();
+end
+
+local usableCache = { };
+local usableCacheHooked = nil;
+local function IsItemUsableByMe(itemID)
+    if not usableCacheHooked then
+        usableCacheHooked = true;
+        LootReserve:RegisterEvent("QUEST_ACCEPTED", "QUEST_TURNED_IN", "BAG_UPDATE", "CHAT_MSG_SKILL", function()
+            usableCache = { };
+        end);
+    end
+    if not usableCache[itemID] then
+        local usable, unloaded = IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), true);
+        if not unloaded then
+            usableCache[itemID] = usable;
+        else
+            return usable, false;
+        end
+    end
+    return usableCache[itemID], true;
 end
 
 
@@ -329,7 +349,7 @@ function LootReserve.ItemConditions:IsItemUsable(itemID, playerClass)
     return IsItemUsable(itemID, playerClass, false);
 end
 function LootReserve.ItemConditions:IsItemUsableByMe(itemID)
-    return IsItemUsable(itemID, select(2, LootReserve:UnitClass(LootReserve:Me())), true);
+    return IsItemUsableByMe(itemID);
 end
 
 function LootReserve.ItemConditions:TestClassMask(classMask, playerClass)
