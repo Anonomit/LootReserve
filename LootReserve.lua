@@ -350,7 +350,7 @@ function LootReserve:GetCurrentExpansion()
 end
 
 function LootReserve:IsCrossRealm()
-    return self:GetCurrentExpansion() == 0;
+    return self:GetCurrentExpansion() == 0 and not C_Seasons.HasActiveSeason();
     -- This doesn't really work, because even in non-connected realms UnitFullName ends up returning your realm name,
     -- and we can't use UnitName either, because that one NEVER returns a realm for "player". WTB good API, 5g.
     --[[
