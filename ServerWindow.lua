@@ -863,9 +863,6 @@ function LootReserve.Server:OnWindowLoad(window)
     self:UpdateServerAuthority();
     self:LoadNewSessionSettings();
 
-    LootReserve:RegisterEvent("PLAYER_ENTERING_WORLD", function()
-        self.Window:Hide();
-    end);
     LootReserve:RegisterEvent("GROUP_JOINED", "GROUP_LEFT", "PARTY_LEADER_CHANGED", "PARTY_LOOT_METHOD_CHANGED", "GROUP_ROSTER_UPDATE", function()
         self:UpdateServerAuthority();
         self:UpdateAddonUsers();
@@ -909,7 +906,13 @@ function LootReserve.Server:OnWindowLoad(window)
         self:UpdateRollList();
     end);
     LootReserve:RegisterEvent("TRADE_SHOW", "TRADE_CLOSED", "TRADE_PLAYER_ITEM_CHANGED", "BAG_UPDATE", function()
-        C_Timer.After(0.1, function() LootReserve.Server:UpdateRollList() end);
+        if not self.PendingRollListUpdate then
+            C_Timer.After(0.1, function()
+                self.PendingRollListUpdate = false;
+                LootReserve.Server:UpdateRollList();
+            end);
+            self.PendingRollListUpdate = true;
+        end
     end);
 end
 
