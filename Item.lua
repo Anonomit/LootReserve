@@ -77,7 +77,7 @@ function LootReserve.Item:GetInfo()
                 LootReserve.TooltipScanner.ClassesAllowed = format("^%s$", ITEM_CLASSES_ALLOWED:gsub("%%s", "(.+)"));
             end
             if not LootReserve.TooltipScanner.ProfessionAllowed then
-                LootReserve.TooltipScanner.ProfessionAllowed = format("^%s$", ITEM_MIN_SKILL:gsub("%%s ", "([%%u%%l%%s]+) "):gsub("%(%%d%)", "%%((%%d+)%%)"));
+                LootReserve.TooltipScanner.ProfessionAllowed = format("^%s$", ITEM_MIN_SKILL:gsub("%d+%$",""):gsub("%%s ", "([%%u%%l%%s]+) "):gsub("%(%%d%)", "%%((%%d+)%%)"));
             end
             if not LootReserve.TooltipScanner.Unique then
                 LootReserve.TooltipScanner.Unique = format("^(%s)$", ITEM_UNIQUE);
