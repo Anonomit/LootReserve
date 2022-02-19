@@ -2465,7 +2465,9 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
             end)
         end
 
-        LootReserve.Comm:BroadcastRequestRoll(LootReserve.Item(0), { }, self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll);
+        if self.RequestedRoll and (self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll) then
+            LootReserve.Comm:BroadcastRequestRoll(LootReserve.Item(0), { }, self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll);
+        end
         self.RequestedRoll = nil;
         self.SaveProfile.RequestedRoll = self.RequestedRoll;
         self:UpdateReserveListRolls();
