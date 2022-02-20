@@ -281,7 +281,7 @@ local function IsItemUsable(itemID, playerClass, isMe)
             LootReserve.TooltipScanner.AlreadyKnown = format("^(%s)$", ITEM_SPELL_KNOWN);
         end
         if not LootReserve.TooltipScanner.ProfessionAllowed then
-            LootReserve.TooltipScanner.ProfessionAllowed = format("^%s$", ITEM_MIN_SKILL:gsub("%%s ", "([%%u%%l%%s]+) "):gsub("%(%%d%)", "%%((%%d+)%%)"));
+            LootReserve.TooltipScanner.ProfessionAllowed = format("^%s$", ITEM_MIN_SKILL:gsub("%d+%$",""):gsub("%%s ", "([%%u%%l%%s]+) "):gsub("%(%%d%)", "%%((%%d+)%%)"));
         end
 
         LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
