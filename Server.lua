@@ -2087,7 +2087,7 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemLi
                         local reservesText = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players);
                         local _, myReserves = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players, player);
                         if not onlyRelevant or myReserves > 0 then
-                            table.insert(list, format("%s: %s", link, reservesText));
+                            table.insert(list, format("%s: %s", item:GetLink(), reservesText));
                         end
                     else
                         missing = true;
