@@ -1447,8 +1447,12 @@ function LootReserve.Server:StartSession()
             self.CurrentSession.Settings.Multireserve > 1 and ", reserving an item multiple times is permitted" or ""
         ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
         LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
-        if self.Settings.ChatReservesList and not self.CurrentSession.Settings.Blind then
-            LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
+        if self.Settings.ChatReservesList then
+            if self.CurrentSession.Settings.Blind then
+                LootReserve:SendChatMessage("To see your reserves, whisper me:  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
+            else
+                LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
+            end
         end
     end
 
@@ -1478,8 +1482,12 @@ function LootReserve.Server:ResumeSession()
             self.CurrentSession.Settings.Lock and " Session is locked. Previous members may not change reserves." or ""
         ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
         LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
-        if self.Settings.ChatReservesList and not self.CurrentSession.Settings.Blind then
-            LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+        if self.Settings.ChatReservesList then
+            if self.CurrentSession.Settings.Blind then
+                LootReserve:SendChatMessage("To see your reserves, whisper me:  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+            else
+                LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+            end
         end
     end
 
@@ -3234,11 +3242,12 @@ function LootReserve.Server:BroadcastInstructions()
     LootReserve:SendChatMessage(format("Loot reserves are currently ongoing%s.",
         categories ~= "" and format(" for %s", categories) or ""
     ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
-    if self.Settings.ChatReservesList and not self.CurrentSession.Settings.Blind then
-        LootReserve:SendChatMessage("To see all reserves made, whisper me:  !reserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
-    end
     LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
-    if self.CurrentSession.Settings.Multireserve > 1 then
-        LootReserve:SendChatMessage("To reserve an item multiple times, whisper me:  !reserve ItemLinkOrName x" .. self.CurrentSession.Settings.Multireserve, self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+    if self.Settings.ChatReservesList then
+        if self.CurrentSession.Settings.Blind then
+            LootReserve:SendChatMessage("To see your reserves, whisper me:  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
+        else
+            LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
+        end
     end
 end
