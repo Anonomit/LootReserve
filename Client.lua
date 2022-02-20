@@ -28,6 +28,7 @@ LootReserve.Client =
         RollRequestShowUnusable     = false,
         RollRequestGlowOnlyReserved = true,
         RollRequestAutoRollReserved = true,
+        RollRequestAutoRollNotified = false,
         RollRequestWinnerReaction   = true,
         RollRequestLoserReaction    = true,
         CollapsedExpansions         = { },
