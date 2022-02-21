@@ -632,6 +632,7 @@
 									MakeReportButton("/raid", "RAID", IsInRaid()),
 									MakeReportButton("/party", "PARTY", IsInGroup()),
 									MakeReportButton("/guild", "GUILD", IsInGuild()),
+									MakeReportButton("/officer", "OFFICER", IsInGuild() and C_GuildInfo.GuildControlGetRankFlags(({GetGuildInfo("player")})[3]+1)[4]),
 									LootReserve:MakeMenuSeparator(),
 									{ text = "Cancel" },
 								};
@@ -704,6 +705,7 @@
 									MakeReportButton("/raid", "RAID", IsInRaid()),
 									MakeReportButton("/party", "PARTY", IsInGroup()),
 									MakeReportButton("/guild", "GUILD", IsInGuild()),
+									MakeReportButton("/officer", "OFFICER", IsInGuild() and C_GuildInfo.GuildControlGetRankFlags(({GetGuildInfo("player")})[3]+1)[4]),
 									LootReserve:MakeMenuSeparator(),
 									{ text = "Cancel" },
 								};
