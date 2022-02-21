@@ -71,8 +71,8 @@ function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
                 message = LibDeflate:DecodeForWoWAddonChannel(message);
                 message = message and LibDeflate:DecompressDeflate(message);
             end
-            C_Timer.After(0, function() self.Handlers[opcode](LootReserve:Me(), strsplit("|", message)) end);
         end
+        C_Timer.After(0, function() self.Handlers[opcode](LootReserve:Me(), strsplit("|", message)) end);
     end
 
     message = opcode .. "|" .. message;
@@ -124,7 +124,7 @@ function LootReserve.Comm:StartListening()
     end
 end
 
-function LootReserve.Comm:CanWhisper(target, opcode)
+function LootReserve.Comm:CanWhisper(target)
     return LootReserve.Enabled and LootReserve:IsPlayerOnline(target);
 end
 
@@ -139,7 +139,7 @@ function LootReserve.Comm:Broadcast(opcode, ...)
     end
 end
 function LootReserve.Comm:Whisper(target, opcode, ...)
-    if not self:CanWhisper(target, opcode) then return; end
+    if not self:CanWhisper(target) then return; end
 
     local message = self:SendCommMessage("WHISPER", target, opcode, ...);
 end
@@ -172,8 +172,9 @@ LootReserve.Comm.Handlers[Opcodes.Version] = function(sender, version, minAllowe
     LootReserve.LatestKnownVersion = version;
 
     if LootReserve.Version < minAllowedVersion then
-        LootReserve:PrintError("You're using an incompatible outdated version of LootReserve. Please update to version |cFFFFD200%s|r or newer to continue using the addon.", version);
-        LootReserve:ShowError("You're using an incompatible outdated version of LootReserve. Please update to version |cFFFFD200%s|r or newer to continue using the addon.", version);
+        PlaySoundFile("Interface\\Addons\\LootReserve\\Assets\\Sounds\\Shutting Down.wav", "SFX")
+        LootReserve:PrintError("You're using an incompatible outdated version of LootReserve. LootReserve will be unable to communicate with other addon users until it is updated. Please update to version |cFFFFD200%s|r or newer to continue using the addon.", version);
+        LootReserve:ShowError("You're using an incompatible outdated version of LootReserve.|n|nLootReserve will be unable to communicate with other addon users until it is updated.|n|nPlease update to version |cFFFFD200%s|r or newer to continue using the addon.", version);
         LootReserve.Comm:BroadcastReportIncompatibleVersion();
         LootReserve.Enabled = false;
         LootReserve.Client:StopSession();
