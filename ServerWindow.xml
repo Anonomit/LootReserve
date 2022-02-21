@@ -2267,7 +2267,7 @@
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 				LootReserve.Server.RollHistoryDisplayLimit = LootReserve.Server.Settings.RollHistoryDisplayLimit;
-				LootReserve:PrintMessage("Host window can be reopened by typing |cFFFFD200/reserve host|r");
+				LootReserve:PrintMessage("Host window can be reopened by typing  |cFFFFD200/reserve host|r");
 			</OnHide>
 		</Scripts>
 	</Frame>
