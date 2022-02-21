@@ -879,15 +879,7 @@ function LootReserve.Server:PrepareSession()
                             if item == LootReserve.Item(roll.Item) then
                                 found = found + 1;
                                 if found == playerCounts[player] then
-                                    local phase = roll.Phase;
-                                    if type(phase) == "number" then
-                                        if phase == LootReserve.Constants.WonRollPhase.Reserve then
-                                            phase = nil;
-                                        elseif phase == LootReserve.Constants.WonRollPhase.RaidRoll then
-                                            phase = "Raid-Roll";
-                                        end
-                                    end
-                                    local text = format("%s%s", LootReserve:ColoredPlayer(player), not roll.Custom and " as a reserve" or phase and format(" for %s", phase or "") or "")
+                                    local text = format("%s%s", LootReserve:ColoredPlayer(player), roll.Phase and format(" %s %s", type(roll.Phase) == "number" and "by" or "for", LootReserve.Constants.WonRollPhaseText[roll.Phase] or roll.Phase) or "")
                                     tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Coin-Up:32:32:0:-4|t Won by " .. text, 1, 1, 1);
                                     break;
                                 end

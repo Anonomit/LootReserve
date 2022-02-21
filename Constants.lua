@@ -288,6 +288,13 @@ LootReserve.Constants.ChatReservesListLimitText =
     [enum.None] = "None",
 };
 
+local enum = LootReserve.Constants.WonRollPhase;
+LootReserve.Constants.WonRollPhaseText =
+{
+    [enum.Reserve]  = "Reserve",
+    [enum.RaidRoll] = "Raid-Roll",
+};
+
 for i = 1, LootReserve:GetNumClasses() do
     local name, file, id = LootReserve:GetClassInfo(i);
     if file and id then
