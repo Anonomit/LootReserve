@@ -11,7 +11,8 @@ LootReserve.ItemSearch =
     AttemptedCount  = { };
     LoadedItems     = 0,
     MaxItems        = 0,
-    Speed           = 10,
+    DefaultSpeed    = 1,
+    Speed           = nil,
     
     IDLists = {
         {min =      1, max =  34900},
@@ -38,6 +39,7 @@ LootReserve.ItemSearch =
 
 function LootReserve.ItemSearch:Load()
     if self.LoadState ~= 0 then return end
+    self.Speed = self.Speed or self.DefaultSpeed
     
     self.LoadState = LootReserve.Constants.LoadState.Started;
     self.MaxItems = 0;
@@ -84,7 +86,7 @@ function LootReserve.ItemSearch:Load()
             end
         end
         self.LoadState = LootReserve.Constants.LoadState.SessionDone;
-        self.Speed = 10;
+        self.Speed = self.DefaultSpeed;
         
         for _, IDList in ipairs(self.IDLists) do
             for itemID = IDList.min, IDList.max do
@@ -110,7 +112,7 @@ function LootReserve.ItemSearch:Load()
         self.LoadState = LootReserve.Constants.LoadState.AllDone;
     end);
 
-    self.LoadingTicker = C_Timer.NewTicker(0.05, function()
+    self.LoadingTicker = C_Timer.NewTicker(0.00, function()
         local success, err = coroutine.resume(self.LoadingThread);
         if not success then
             error(err)
