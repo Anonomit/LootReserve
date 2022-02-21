@@ -2107,7 +2107,7 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemLi
             else
                 LootReserve:SendChatMessage(onlyRelevant and "You currently have no reserves. To reserve an item, whisper me:  !reserve ItemLinkOrName" or "There are currently no reserves", player and "WHISPER" or self:GetChatChannel(), player);
             end
-            self:SendSupportString(player);
+            if player then self:SendSupportString(player); end
         end
         WhisperPlayer();
     end
