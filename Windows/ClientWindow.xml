@@ -1,5 +1,5 @@
 <Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="ClientWindow.lua" />
+	<Script file="Windows/ClientWindow.lua" />
 	<CheckButton name="LootReserveCategoryListButtonTemplate" virtual="true">
 		<Size y="18" />
 		<Layers>
@@ -227,9 +227,9 @@
 						<Anchors>
 							<Anchor point="CENTER" y="-4" />
 						</Anchors>
-						<NormalTexture file="Interface\AddOns\LootReserve\Textures\FavoriteUnset" />
-						<PushedTexture file="Interface\AddOns\LootReserve\Textures\FavoriteUnset" alpha="0.5" />
-						<HighlightTexture file="Interface\AddOns\LootReserve\Textures\FavoriteSet" alphaMode="ADD" alpha="0.25" />
+						<NormalTexture file="Interface\AddOns\LootReserve\Assets\Textures\FavoriteUnset" />
+						<PushedTexture file="Interface\AddOns\LootReserve\Assets\Textures\FavoriteUnset" alpha="0.5" />
+						<HighlightTexture file="Interface\AddOns\LootReserve\Assets\Textures\FavoriteSet" alphaMode="ADD" alpha="0.25" />
 						<Scripts>
 							<OnClick>
 								LootReserve.Client:SetFavorite(self:GetParent():GetParent().Item:GetID(), true);
@@ -251,9 +251,9 @@
 						<Anchors>
 							<Anchor point="CENTER" y="-4" />
 						</Anchors>
-						<NormalTexture file="Interface\AddOns\LootReserve\Textures\FavoriteSet" />
-						<PushedTexture file="Interface\AddOns\LootReserve\Textures\FavoriteSet" alpha="0.75" />
-						<HighlightTexture file="Interface\AddOns\LootReserve\Textures\FavoriteUnset" alphaMode="ADD" alpha="0.5" />
+						<NormalTexture file="Interface\AddOns\LootReserve\Assets\Textures\FavoriteSet" />
+						<PushedTexture file="Interface\AddOns\LootReserve\Assets\Textures\FavoriteSet" alpha="0.75" />
+						<HighlightTexture file="Interface\AddOns\LootReserve\Assets\Textures\FavoriteUnset" alphaMode="ADD" alpha="0.5" />
 						<Scripts>
 							<OnClick>
 								LootReserve.Client:SetFavorite(self:GetParent():GetParent().Item:GetID(), false);

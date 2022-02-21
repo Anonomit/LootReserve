@@ -76,7 +76,7 @@ function LootReserve.Client:Load()
 
     LibStub("LibDBIcon-1.0").RegisterCallback("LootReserve", "LibDBIcon_IconCreated", function(event, button, name)
         if name == "LootReserve" then
-            button.icon:SetTexture("Interface\\AddOns\\LootReserve\\Textures\\Icon");
+            button.icon:SetTexture("Interface\\AddOns\\LootReserve\\Assets\\Textures\\Icon");
         end
     end);
     LibStub("LibDBIcon-1.0"):Register("LootReserve", LibStub("LibDataBroker-1.1"):NewDataObject("LootReserve", {
