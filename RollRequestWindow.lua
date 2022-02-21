@@ -9,6 +9,10 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
 
     self.RollRequest = nil;
     frame:Hide();
+    
+    if item:GetID() == 0 then
+        return;
+    end
 
     local _, myCount = LootReserve:GetReservesData(players, LootReserve:Me());
     
@@ -112,9 +116,13 @@ end
 
 function LootReserve.Client:RollRequested(sender, item, ...)
     local args = {...};
-    LootReserve:RunWhenItemCached(item, function()
-        return RollRequested(LootReserve.Client, sender, item, unpack(args))
-    end);
+    if item:GetID() == 0 then
+        RollRequested(LootReserve.Client, sender, item, ...);
+    else
+        LootReserve:RunWhenItemCached(item, function()
+            return RollRequested(LootReserve.Client, sender, item, unpack(args))
+        end);
+    end
 end
 
 function LootReserve.Client:RespondToRollRequest(response)
