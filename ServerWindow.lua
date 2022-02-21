@@ -970,7 +970,7 @@ function LootReserve.Server:SessionStarted()
     self.Window.PanelSession.ButtonStartSession:Hide();
     self.Window.PanelSession.ButtonStopSession:Show();
     self.Window.PanelSession.ButtonResetSession:Hide();
-    self:OnWindowTabClick(self.StartupAwaitingAuthority and self.Window.TabSession or self.Window.TabReserves);
+    self:OnWindowTabClick(self.Window.TabSession);
     PlaySound(SOUNDKIT.GS_CHARACTER_SELECTION_ENTER_WORLD);
     self:UpdateServerAuthority();
     self:UpdateRollList();

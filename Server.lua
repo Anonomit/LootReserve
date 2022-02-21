@@ -532,10 +532,17 @@ function LootReserve.Server:Load()
 
     -- Warn player if a stale session or roll exists
     if self.CurrentSession and self.CurrentSession.LogoutTime and time() > self.CurrentSession.LogoutTime + 1*15*60 then
-        LootReserve:ShowError("You logged out with an active session.|nYou can reset the session in the host window:|n|cFFFFD200/reserve host|r")
+        if self.CurrentSession.AcceptingReserves then
+            LootReserve:ShowError("You logged out with an active session.|nYou can stop and reset the session in the Host window.")
+        else
+            LootReserve:ShowError("You logged out with an active session.|nYou can reset the session in the Host window.")
+        end
     end
     if self.RequestedRoll and time() > self.RequestedRoll.StartTime + 1*15*60 then
-        LootReserve:ShowError("You logged out with an active roll.|nYou can end the roll in the host window:|n|cFFFFD200/reserve host|r")
+        LootReserve:ShowError("You logged out with an active roll.|nYou can end the roll in the Host window.")
+        self.Window:Show();
+        PanelTemplates_SetTab(self.Window, 3);
+        self:SetWindowTab(3);
     end
 
     -- Verify that all the required fields are present in the session
