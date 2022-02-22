@@ -2422,8 +2422,14 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
             end
         end
         
+        local RequestedRoll = self.RequestedRoll
+
+        LootReserve.Comm:BroadcastRequestRoll(LootReserve.Item(0), { }, self.RequestedRoll and (self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll));
+        self.RequestedRoll = nil;
+        self.SaveProfile.RequestedRoll = self.RequestedRoll;
+        
         -- Remove winners' reserves
-        if self.CurrentSession and not self.RequestedRoll.Custom then
+        if self.CurrentSession and not RequestedRoll.Custom then
             local token;
             if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
                 token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
@@ -2471,10 +2477,6 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                 end
             end)
         end
-
-        LootReserve.Comm:BroadcastRequestRoll(LootReserve.Item(0), { }, self.RequestedRoll and (self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll));
-        self.RequestedRoll = nil;
-        self.SaveProfile.RequestedRoll = self.RequestedRoll;
         self:UpdateReserveListRolls();
         self:UpdateRollList();
     end
