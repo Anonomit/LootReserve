@@ -263,11 +263,11 @@ function LootReserve.Client:UpdateLootList()
         end
     elseif self.SelectedCategory and self.SelectedCategory.Search and filter then
         for itemID, conditions in pairs(self.ItemConditions) do
-            if itemID ~= 0 and conditions.Custom and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+            if itemID ~= 0 and conditions.Custom then
                 local match = false;
                 local item = LootReserve.ItemSearch:Get(itemID);
                 if item and item:GetInfo() then
-                    if matchesFilter(item, filter) then
+                    if matchesFilter(item, filter) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                         createFrame(item, "Custom Item");
                         match = true;
                     end
@@ -298,11 +298,11 @@ function LootReserve.Client:UpdateLootList()
                     for _, child in ipairs(category.Children) do
                         if child.Loot then
                             for _, itemID in ipairs(child.Loot) do
-                                if itemID ~= 0 and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                                if itemID ~= 0 then
                                     local match = false;
                                     local item = LootReserve.ItemSearch:Get(itemID);
                                     if item and item:GetInfo() then
-                                        if matchesFilter(item, filter) then
+                                        if matchesFilter(item, filter) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                                             createFrame(item, format("%s > %s", category.Name, child.Name));
                                             match = true;
                                         end
@@ -332,10 +332,12 @@ function LootReserve.Client:UpdateLootList()
         
     elseif self.SelectedCategory and self.SelectedCategory.Custom then
         for itemID, conditions in pairs(self.ItemConditions) do
-            if itemID ~= 0 and conditions.Custom and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+            if itemID ~= 0 and conditions.Custom then
                 local item = LootReserve.ItemSearch:Get(itemID);
                 if item and item:GetInfo() then
-                    createFrame(item);
+                    if LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                        createFrame(item);
+                    end
                 elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                     missing = true;
                 end
@@ -343,10 +345,12 @@ function LootReserve.Client:UpdateLootList()
         end
     elseif self.SelectedCategory and self.SelectedCategory.Loot then
         for _, itemID in ipairs(self.SelectedCategory.Loot) do
-            if itemID ~= 0 and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+            if itemID ~= 0 then
                 local item = LootReserve.ItemSearch:Get(itemID);
                 if item and item:GetInfo() then
-                    createFrame(item);
+                    if LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                        createFrame(item);
+                    end
                 elseif item or LootReserve.ItemSearch:IsPending(itemID) then
                     missing = true;
                 end
