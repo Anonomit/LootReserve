@@ -1117,7 +1117,7 @@ function LootReserve.Server:PrepareSession()
                             end
                         end
                         
-                        if count1 and count2 or ambiguous then
+                        if (count1 and count2 and count1 ~= count2) or ambiguous then
                             LootReserve:SendChatMessage(format("Can't tell how many items you want to reserve. Please be unambiguous.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
                             return;
                         else
