@@ -90,7 +90,8 @@ LootReserve.Server =
     PendingRollListUpdate     = nil,
     PendingMembersEditUpdate  = nil,
     PendingLootEditUpdate     = nil,
-    PendingInputOptionsUpdate = nil,
+    PendingLootEditTextUpdate = false,
+    PendingInputOptionsUpdate = false,
     PendingReservesListUpdate = nil,
 };
 
@@ -351,10 +352,20 @@ end
 
 function LootReserve.Server:GetNewSessionItemConditions()
     if #self.NewSessionSettings.LootCategories == 1 then
-    return GetSavedItemConditionsSingle(self.NewSessionSettings.LootCategories[1]);
+        return GetSavedItemConditionsSingle(self.NewSessionSettings.LootCategories[1]);
     else
         return GetSavedItemConditions(self.NewSessionSettings.LootCategories);
     end
+end
+
+function LootReserve.Server:GetAllItemConditions()
+    local categories = { };
+    for category in pairs(LootReserve.Data.Categories) do
+        if category > 0 then
+            table.insert(categories, category);
+        end
+    end
+    return GetSavedItemConditions(categories);
 end
 
 function LootReserve.Server:Load()
@@ -512,22 +523,22 @@ function LootReserve.Server:Load()
     
     -- Create Item objects
     for _, roll in ipairs(self.RollHistory) do
-        roll.Item = LootReserve.Item(roll.Item);
+        roll.Item = LootReserve.ItemCache:Item(roll.Item);
     end
     if self.RequestedRoll then
-       self.RequestedRoll.Item = LootReserve.Item(self.RequestedRoll.Item); 
+       self.RequestedRoll.Item = LootReserve.ItemCache:Item(self.RequestedRoll.Item); 
     end
     if self.CurrentSession then
         for _, member in pairs(self.CurrentSession.Members) do
             if member.WonRolls then
                 for i, won in ipairs(member.WonRolls) do
-                    won.Item = LootReserve.Item(won.Item);
+                    won.Item = LootReserve.ItemCache:Item(won.Item);
                 end 
             end
         end
     end
     for i, item in ipairs(self.RecentLoot) do
-        self.RecentLoot[i] = LootReserve.Item(item);
+        self.RecentLoot[i] = LootReserve.ItemCache:Item(item);
     end
 
     -- Warn player if a stale session or roll exists
@@ -719,7 +730,7 @@ function LootReserve.Server:PrepareLootTracking()
         end
         local itemID = itemLink and tonumber(itemLink:match("Hitem:(%d+):") or "")
         if itemID then
-            LootReserve:RunWhenItemCached(itemID, function(item)
+            LootReserve.ItemCache:Item(itemID):OnCache(function(item)
                 return AddLootToList(looter, item, count)
             end);
         end
@@ -741,7 +752,7 @@ function LootReserve.Server:PrepareLootTracking()
             if GetLootSlotType(lootSlot) == 1 then -- loot slot contains item, not currency/empty
                 local itemID = GetLootSlotInfo(lootSlot);
                 if itemID then
-                    local item = LootReserve.Item(GetLootSlotLink(lootSlot));
+                    local item = LootReserve.ItemCache:Item(GetLootSlotLink(lootSlot));
                     local quality = item:GetQuality();
                     if quality >= self.Settings.MinimumLootQuality then
                         LootReserve:TableRemove(self.RecentLoot, item);
@@ -876,14 +887,14 @@ function LootReserve.Server:PrepareSession()
                 if text and string.find(text, " Reserved by ", 1, true) then return; end
                 end
 
-                local item = LootReserve.Item(link);
+                local item = LootReserve.ItemCache:Item(link);
                 if self.CurrentSession.WonItems[item:GetID()] then
                     local playerCounts = { };
                     for _, player in ipairs(self.CurrentSession.WonItems[item:GetID()].Players) do
                         playerCounts[player] = playerCounts[player] and playerCounts[player] + 1 or 1;
                         local found = 0;
                         for _, roll in ipairs(self.CurrentSession.Members[player].WonRolls) do
-                            if item == LootReserve.Item(roll.Item) then
+                            if item == LootReserve.ItemCache:Item(roll.Item) then
                                 found = found + 1;
                                 if found == playerCounts[player] then
                                     local text = format("%s%s", LootReserve:ColoredPlayer(player), roll.Phase and format(" %s %s", type(roll.Phase) == "number" and "by" or "for", LootReserve.Constants.WonRollPhaseText[roll.Phase] or roll.Phase) or "")
@@ -1059,6 +1070,7 @@ function LootReserve.Server:PrepareSession()
                     end
                 else
                     LootReserve:SendChatMessage(format("That item is not reservable in this raid.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
+                    print(itemID)
                 end
             end
 
@@ -1155,37 +1167,41 @@ function LootReserve.Server:PrepareSession()
                     count = 1;
                 end
                 local whitelist = { };
-                text = LootReserve:TransformSearchText(text);
+                text = LootReserve.ItemCache:FormatSearchText(text);
                 local function handleItemCommandByName()
-                    local matches = { };
-                    local missing = false;
+                    local matchIDs = { };
+                    local matches  = { };
+                    local missing  = { };
                     for itemID in pairs(self.ReservableIDs) do
                         local match = false;
-                        local item = LootReserve.ItemSearch:Get(itemID);
-                        if item and item:GetInfo() then
-                            if item:GetSearchName():match(text, 1, true) then
-                                table.insert(matches, itemID);
+                        local item = LootReserve.ItemCache:Item(itemID);
+                        if item:IsCached() then
+                            if item:Matches(text) then
+                                matchIDs[itemID] = item;
                                 match = true;
                             end
-                        elseif item or LootReserve.ItemSearch:IsPending(itemID) then
-                            missing = true;
+                        else
+                            table.insert(missing, item);
                         end
                         if not match and LootReserve.Data:IsToken(itemID) then
                             for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
-                                local reward = LootReserve.ItemSearch:Get(rewardID);
-                                if reward and reward:GetInfo() then
-                                    if reward:GetSearchName():match(text, 1, true) and not LootReserve:Contains(matches, itemID) then
-                                        table.insert(matches, itemID);
+                                local reward = LootReserve.ItemCache:Item(rewardID);
+                                if reward:IsCached() and item:IsCached() then
+                                    if reward:Matches(text) and not matchIDs[itemID] then
+                                        matchIDs[itemID] = reward;
                                         break;
                                     end
-                                elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
-                                    missing = true;
+                                else
+                                    table.insert(missing, reward);
                                 end
                             end
                         end
                     end
+                    for id, item in pairs(matchIDs) do
+                        table.insert(matches, item:GetID());
+                    end
 
-                    if not missing then
+                    if #missing == 0 then
                         if #matches == 0 then
                             if not greedy then
                                 LootReserve:SendChatMessage(format("That item was not found in the current raid, which is %s. Check your spelling, or try using a shorter search term.%s",
@@ -1202,7 +1218,7 @@ function LootReserve.Server:PrepareSession()
                         elseif #matches > 1 then
                             local names = { };
                             for _, itemID in ipairs(matches) do
-                                local item = LootReserve.ItemSearch:Get(itemID);
+                                local item = LootReserve.ItemCache:Item(itemID);
                                 if item and item:GetInfo() then
                                     table.insert(names, item:GetName());
                                 end
@@ -1219,7 +1235,7 @@ function LootReserve.Server:PrepareSession()
                             self:SendSupportString(sender, true);
                         end
                     else
-                        C_Timer.After(0.1, handleItemCommandByName);
+                        LootReserve.ItemCache:OnCache(missing, handleItemCommandByName);
                     end
                     if command == "reserves" and self.Settings.ChatReservesList then
                         local count = 0;
@@ -1813,15 +1829,11 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
     if self.CurrentSession.Settings.ChatFallback then
         if chat or not self:IsAddonUser(player) and LootReserve:IsPlayerOnline(player) then
             -- Whisper player
-            LootReserve:RunWhenItemCached(itemID, function(item)
+            LootReserve.ItemCache:Item(itemID):OnCache(function(item)
                 local reserve = self.CurrentSession.ItemReserves[itemID];
                 if not reserve or #reserve.Players == 0 then return; end
 
                 local link = item:GetLink();
-                if not name or not link then
-                    return true;
-                end
-
                 local _, myReserves = LootReserve:GetReservesData(reserve.Players, player);
                 LootReserve:SendChatMessage(format("You %s %s%s. %s more %s available. To cancel a reserve, whisper me:  !cancel ItemLinkOrName",
                     masquerade and "have had an item added to your reserves:" or "reserved",
@@ -1841,7 +1853,7 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
 
         if self.Settings.ChatUpdates and not self.CurrentSession.Settings.Blind then
             --Whisper others
-            LootReserve:RunWhenItemCached(itemID, function(item)
+            LootReserve.ItemCache:Item(itemID):OnCache(function(item)
                 local reserve = self.CurrentSession.ItemReserves[itemID];
                 if not reserve or #reserve.Players <= 1 then return; end
 
@@ -1978,7 +1990,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
     if self.CurrentSession.Settings.ChatFallback then
         if chat or not self:IsAddonUser(player) and LootReserve:IsPlayerOnline(player) then
             -- Whisper player
-            LootReserve:RunWhenItemCached(itemID, function(item)
+            LootReserve.ItemCache:Item(itemID):OnCache(function(item)
                 local link = item:GetLink();
                 if winner then
                     LootReserve:SendChatMessage(format("Your reserve for %s%s has been automatically removed.", link, count > 1 and format(" x%d", count) or ""), "WHISPER", player);
@@ -1996,7 +2008,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
 
         if self.Settings.ChatUpdates and not self.CurrentSession.Settings.Blind then
             -- Whisper others
-            LootReserve:RunWhenItemCached(itemID, function(item)
+            LootReserve.ItemCache:Item(itemID):OnCache(function(item)
                 local reserve = self.CurrentSession.ItemReserves[itemID];
                 if not reserve or #reserve.Players == 0 then return; end
 
@@ -2015,7 +2027,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
     end
     
     if winner then
-        LootReserve:RunWhenItemCached(itemID, function(item)
+        LootReserve.ItemCache:Item(itemID):OnCache(function(item)
             LootReserve:PrintMessage(format("%s'%s reserve for %s%s has been automatically removed.",
                 LootReserve:ColoredPlayer(player),
                 player:match(".$") == "s" and "" or "s",
@@ -2075,8 +2087,8 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemLi
             local list = { };
 
             local function sortByItemName(_, _, aItemID, bItemID)
-                aItem = LootReserve.ItemSearch:Get(aItemID);
-                bItem = LootReserve.ItemSearch:Get(bItemID);
+                aItem = LootReserve.ItemCache:Item(aItemID);
+                bItem = LootReserve.ItemCache:Item(bItemID);
                 if not aItem or not aItem:GetInfo() then
                     return false;
                 end
@@ -2086,23 +2098,23 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemLi
                 return aItem:GetName() < bItem:GetName();
             end
 
-            local missing = false
+            local missing = { };
             for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sortByItemName) do
                 if not itemList or itemList[itemID] then
-                    local item = LootReserve.ItemSearch:Get(itemID);
-                    if item and item:GetInfo() then
+                    local item = LootReserve.ItemCache:Item(itemID);
+                    if item:IsCached() then
                         local reservesText = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players);
                         local _, myReserves = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players, player);
                         if not onlyRelevant or myReserves > 0 then
                             table.insert(list, format("%s: %s", item:GetLink(), reservesText));
                         end
                     else
-                        missing = true;
+                        table.insert(missing, item);
                     end
                 end
             end
-            if missing then
-                C_Timer.After(0.1, WhisperPlayer);
+            if #missing > 0 then
+                LootReserve.ItemCache:OnCache(missing, WhisperPlayer);
                 return;
             end
 
@@ -2121,11 +2133,7 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemLi
 end
 
 function LootReserve.Server:IsRolling(item)
-    if type(item) == "number" then
-        return self.RequestedRoll and self.RequestedRoll.Item:GetID() == item;
-    else
-        return self.RequestedRoll and self.RequestedRoll.Item == LootReserve.Item(item);
-    end
+    return self.RequestedRoll and self.RequestedRoll.Item == LootReserve.ItemCache:Item(item);
 end
 
 function LootReserve.Server:ExpireRollRequest()
@@ -2234,7 +2242,7 @@ function LootReserve.Server:ResolveRollTie(item)
     if self:IsRolling(item) then
         local roll, winners, losers = self:GetWinningRollAndPlayers();
         if roll and winners and #winners > 1 then
-            LootReserve:RunWhenItemCached(item, function()
+            item:OnCache(function()
                 local playersText = LootReserve:FormatReservesText(winners);
                 LootReserve:SendChatMessage(format("Tie for %s between players %s. All rolled %d. Please /roll again", item:GetLink(), playersText, roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollTie));
             end);
@@ -2266,7 +2274,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
         if self.CurrentSession then
             local token;
             if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
-                token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+                token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
             end
             local member = self.CurrentSession.Members[player];
             if member then
@@ -2308,7 +2316,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             end
             LootReserve.Comm:BroadcastWinner(item, winners, losers, roll, self.RequestedRoll.Custom, recordPhase, raidroll);
 
-            LootReserve:RunWhenItemCached(item, function()
+            item:OnCache(function()
                 local link        = item:GetLink();
                 local playersText = LootReserve:FormatPlayersText(winners);
                 LootReserve:SendChatMessage(format(raidroll and "%s won %s%s via raid-roll" or "%s won %s%s with a roll of %d", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or "", roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
@@ -2334,7 +2342,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             LootReserve.Comm:SendWinner(player, item, winners, { });
             
             -- Announce
-            LootReserve:RunWhenItemCached(item, function()
+            item:OnCache(function()
                 local link = item:GetLink();
                 LootReserve:SendChatMessage(format("%s won %s as the only reserver", player, LootReserve:FixLink(link)), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
                 if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and item:GetQuality() >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
@@ -2402,6 +2410,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
 
         if not noHistory then
             local historicalEntry = LootReserve:Deepcopy(self.RequestedRoll);
+            historicalEntry.Item = LootReserve.ItemCache:Item(historicalEntry.Item);
             historicalEntry.Duration    = nil;
             historicalEntry.MaxDuration = nil;
             if historicalEntry.Phases then
@@ -2424,7 +2433,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
         
         local RequestedRoll = self.RequestedRoll
 
-        LootReserve.Comm:BroadcastRequestRoll(LootReserve.Item(0), { }, self.RequestedRoll and (self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll));
+        LootReserve.Comm:BroadcastRequestRoll(LootReserve.ItemCache:Item(0), { }, self.RequestedRoll and (self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll));
         self.RequestedRoll = nil;
         self.SaveProfile.RequestedRoll = self.RequestedRoll;
         
@@ -2432,10 +2441,10 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
         if self.CurrentSession and not RequestedRoll.Custom then
             local token;
             if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
-                token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+                token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
             end
             local itemID = token and token:GetID() or item:GetID();
-            LootReserve:RunWhenItemCached(itemID, function(reservedItem)
+            LootReserve.ItemCache:Item(itemID):OnCache(function(reservedItem)
                 for player in pairs(uniqueWinners) do
                     if self.CurrentSession.ItemReserves[reservedItem:GetID()] and LootReserve:Contains(self.CurrentSession.ItemReserves[reservedItem:GetID()].Players, player) then
                         local smartOverride;
@@ -2633,11 +2642,7 @@ function LootReserve.Server:PrepareRequestRoll()
                                 if extraRolls == 0 then
                                     return;
                                 end
-                                local name, link = closureItem:GetName(), closureItem:GetLink();
-                                if not name or not link then
-                                    C_Timer.After(0.1, WhisperPlayer);
-                                    return;
-                                end
+                                local name, link = closureItem:GetInfo();
                                 local durationStr = "";
                                 if self.RequestedRoll.Duration then
                                     local time = math.ceil(self.RequestedRoll.Duration);
@@ -2651,7 +2656,7 @@ function LootReserve.Server:PrepareRequestRoll()
                                     durationStr
                                 ), "WHISPER", player);
                             end
-                            self.ExtraRollRequestNag[player] = C_Timer.NewTimer(4, WhisperPlayer);
+                            self.ExtraRollRequestNag[player] = C_Timer.NewTimer(4, function() closureItem:OnCache(WhisperPlayer) end);
                         end
                     end
                 end
@@ -2787,7 +2792,7 @@ function LootReserve.Server:RequestRoll(item, duration, phases, allowedPlayers)
         local closureItem = self.RequestedRoll.Item;
         
         -- Broadcast roll
-        LootReserve:RunWhenItemCached(item, function()
+        item:OnCache(function()
             local link = item:GetLink();
 
             local playersText = LootReserve:FormatReservesText(players);
@@ -2869,7 +2874,7 @@ function LootReserve.Server:RequestCustomRoll(item, duration, phases, allowedPla
         local closureItem = self.RequestedRoll.Item;
         
         -- Broadcast roll
-        LootReserve:RunWhenItemCached(item, function()
+        item:OnCache(function()
             local link = item:GetLink();
 
             if allowedPlayers then
@@ -2956,11 +2961,11 @@ function LootReserve.Server:PassRoll(player, item, chat, isPrivateChannel)
 
     local item = self.RequestedRoll.Item;
     if chat then
-        LootReserve.Comm:SendRequestRoll(player, LootReserve.Item(0), { }, self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll);
+        LootReserve.Comm:SendRequestRoll(player, LootReserve.ItemCache:Item(0), { }, self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll);
 
         -- Whisper player
-        LootReserve:RunWhenItemCached(item, function()
-            if not self.RequestedRoll or self.RequestedRoll.Item ~= item then return; end
+        item:OnCache(function()
+            if not self.RequestedRoll or self.RequestedRoll.Item:IsNot(item) then return; end
 
             local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
             LootReserve:SendChatMessage(format("You have passed on %s%s.", item:GetLink(), phase and format(" for %s", phase) or ""), "WHISPER", player);
@@ -2968,8 +2973,8 @@ function LootReserve.Server:PassRoll(player, item, chat, isPrivateChannel)
     end
     if not chat or isPrivateChannel then
         -- Announce
-        LootReserve:RunWhenItemCached(item, function()
-            if not self.RequestedRoll or self.RequestedRoll.Item ~= item then return; end
+        item:OnCache(function()
+            if not self.RequestedRoll or self.RequestedRoll.Item:IsNot(item) then return; end
             
             local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
             LootReserve:SendChatMessage(format("%s has passed on %s%s.", player, item:GetLink(), phase and format(" for %s", phase or "")), "RAID");
@@ -3000,7 +3005,7 @@ function LootReserve.Server:DeleteRoll(player, rollNumber, item)
     LootReserve.Comm:SendDeletedRoll(player, item, oldRoll, phase);
     if (not self.CurrentSession or self.CurrentSession.Settings.ChatFallback) and not self:IsAddonUser(player) then
         -- Whisper player
-        LootReserve:RunWhenItemCached(item, function()
+        item:OnCache(function()
             LootReserve:SendChatMessage(format("Your %sroll of %d on %s was deleted.", phase and format("%s ", phase) or "", oldRoll, item:GetLink()), "WHISPER", player);
         end);
     end

@@ -47,7 +47,7 @@ LootReserve.Client =
     SessionEventsRegistered  = false,
     CategoryFlashing         = false,
     
-    PendingLootListUpdate    = false,
+    PendingLootListUpdate    = nil,
 
     SelectedCategory = nil,
 };
@@ -99,8 +99,6 @@ function LootReserve.Client:Load()
             tooltip:AddLine(format("Right-Click: Open %s Window", self.Settings.SwapLDBButtons and "Client" or "Host"));
         end,
     }), self.Settings.LibDBIcon);
-    
-    LootReserve.ItemSearch:Load(10);
 end
 
 function LootReserve.Client:IsFavorite(itemID)
@@ -110,7 +108,7 @@ end
 function LootReserve.Client:SetFavorite(itemID, enabled)
     if self:IsFavorite(itemID) == (enabled and true or false) then return; end
     
-    local item = LootReserve.ItemSearch:Get(itemID);
+    local item = LootReserve.ItemCache:Item(itemID);
     if not item or not item:GetInfo() then return; end
     local bindType = item:GetBindType();
 
@@ -208,7 +206,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
                 if text and string.find(text, " Reserved by ", 1, true) then return; end
                 end
 
-                local item = LootReserve.Item(link);
+                local item = LootReserve.ItemCache:Item(link);
                 if #self:GetItemReservers(item:GetID()) > 0 then
                     local reservesText = LootReserve:FormatReservesTextColored(self:GetItemReservers(item:GetID()));
                     tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Dice-Up:32:32:0:-4|t Reserved by " .. reservesText, 1, 1, 1);

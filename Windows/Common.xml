@@ -171,7 +171,7 @@
 						else
 							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 						end
-						GameTooltip:SetHyperlink(LootReserve.Item(self:GetParent():GetParent().Item):GetString());
+						GameTooltip:SetHyperlink(LootReserve.ItemCache:Item(self:GetParent():GetParent().Item):GetString());
 						GameTooltip:Show();
 						if IsShiftKeyDown() then
 							GameTooltip_ShowCompareItem(GameTooltip)

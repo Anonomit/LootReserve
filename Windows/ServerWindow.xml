@@ -177,14 +177,14 @@
 									local player = self:GetParent():GetParent().Player;
 									local won = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members[player] and LootReserve.Server.CurrentSession.Members[player].WonRolls;
 									if won then
-										local missing = false;
+										local missing = { };
 										GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 										GameTooltip:SetText("Won in the Current Session");
 										local width = 0;
 										for i, roll in ipairs(won) do
 											local name, link, texture = roll.Item:GetNameLinkTexture();
 											if not link then
-												missing = true;
+												table.insert(missing, roll.Item);
 											end
 
 											local phaseText;
@@ -217,8 +217,8 @@
 										end
 										GameTooltip:Show();
 
-										if missing then
-											C_Timer.After(0.1, function()
+										if #missing > 0 then
+											LootReserve.ItemCache:OnCache(missing, function()
 												if GameTooltip:IsOwned(self) then
 													self:UpdateTooltip();
 												end
@@ -742,7 +742,7 @@
 							frame:SetItem(nil);
 							local token;
 							if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
-								token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+								token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
 							end
 							if info and info.arg1 and LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
 								LootReserve.Server:RequestRoll(item);
@@ -851,7 +851,7 @@
 						local item, link = self:GetParent().Item, self:GetParent().Link;
 						local token;
 						if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
-							token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+							token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
 						end
 
 						local menu =
@@ -1040,7 +1040,7 @@
 											frame:SetItem(info.arg1);
 											CloseMenus();
 										end
-										local missing = false;
+										local missing = { };
 										local function MakeItem(count, item, texture)
 											if count == 1 then
 												count = nil;
@@ -1049,12 +1049,12 @@
 											if not link or not texture then
 												texture = item:GetTexture();
 												if not link then
-													missing = true;
+													table.insert(missing, item);
 												end
 											end
 					            local token;
 					            if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
-					                token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+					                token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
 					            end
 											return
 											{
@@ -1072,7 +1072,7 @@
 												for slot = 1, slots do
 													local texture, count, _, _, _, _, link = GetContainerItemInfo(bag, slot);
 													if link and (not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot)) then
-														table.insert(bagMenu, MakeItem(count, LootReserve.Item(link), texture));
+														table.insert(bagMenu, MakeItem(count, LootReserve.ItemCache:Item(link), texture));
 													end
 												end
 											end
@@ -1138,7 +1138,7 @@
 											for i = 1, GetNumLootItems() do
 												local itemID = GetLootSlotInfo(i);
 												if itemID then
-													local item = LootReserve.Item(GetLootSlotLink(i));
+													local item = LootReserve.ItemCache:Item(GetLootSlotLink(i));
 													if item then
 														if index == 0 then
 															table.insert(menu, 1, { text = "Current Loot", isTitle = true });
@@ -1153,8 +1153,8 @@
 										end
 										LootReserve:OpenMenu(menu, self:GetParent().Menu, self);
 
-										if missing then
-											C_Timer.After(0.1, function()
+										if #missing > 0 then
+											LootReserve.ItemCache:OnCache(missing, function()
 												if UIDROPDOWNMENU_OPEN_MENU == self:GetParent().Menu and not CursorHasItem() and not frame.Item then
 													CloseMenus();
 													self:DropHandler();
@@ -1255,14 +1255,14 @@
 			<OnLoad inherit="prepend">
 				self.SetItem = function(self, item)
 					if item then
-						item = LootReserve.Item(item);
+						item = LootReserve.ItemCache:Item(item);
 						self.Item = item;
 
 						local name, link, texture = item:GetNameLinkTexture();
 						self.Link = link;
 
 						if not name or not link then
-							C_Timer.After(0.1, function()
+							item:OnCache(function()
 								if self.Item == item then
 									self:SetItem(item);
 								end
@@ -1272,7 +1272,7 @@
 
             local token;
             if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
-                token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+                token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
             end
 						local reservers = 0;
 						if LootReserve.Server.CurrentSession then

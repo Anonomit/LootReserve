@@ -93,7 +93,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
-    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
+    local filter = LootReserve.ItemCache:FormatSearchText(self.Window.Search:GetText());
     if #filter == 0 and not tonumber(filter) then
         filter = nil;
     end
@@ -138,7 +138,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
         frame:Show();
 
-        item = LootReserve.Item(item);
+        item = LootReserve.ItemCache:Item(item);
         frame.Item = item;
 
         local name, link, texture = item:GetNameLinkTexture();
@@ -247,7 +247,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         return false;
     end
 
-    local missing = false;
+    local missing = { };
     local function getSortingTime(reserve)
         if LootReserve:IsLootingItem(reserve.Item) then
             return 0;
@@ -259,11 +259,11 @@ function LootReserve.Server:UpdateReserveList(lockdown)
             return "";
         end
         local name = ""
-        local item = LootReserve.ItemSearch:Get(reserve.Item);
-        if item and item:GetInfo() then
+        local item = LootReserve.ItemCache:Item(reserve.Item);
+        if item:IsCached() then
             name = item:GetName();
         else
-            missing = true;
+            table.insert(missing, item);
         end
         return name:upper();
     end
@@ -329,25 +329,25 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
     for itemID, reserve in LootReserve:Ordered(self.CurrentSession.ItemReserves, sorter) do
         local match = false;
-        local item = LootReserve.ItemSearch:Get(itemID);
-        if item and item:GetInfo() then
+        local item = LootReserve.ItemCache:Item(itemID);
+        if item:IsCached() then
             if not filter or matchesFilter(item, reserve, filter) then
                 createFrame(item, reserve, true);
                 match = true;
             end
-        elseif item or LootReserve.ItemSearch:IsPending(itemID) then
-            missing = true;
+        else
+            table.insert(missing, item);
         end
         if filter and not match and LootReserve.Data:IsToken(itemID) then
             for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
-                local reward = LootReserve.ItemSearch:Get(rewardID);
-                if reward and reward:GetInfo() then
-                    if matchesFilter(reward, nil, filter) then
+                local reward = LootReserve.ItemCache:Item(rewardID);
+                if reward:IsCached() then
+                    if item:IsCached() and matchesFilter(reward, nil, filter) then
                         createFrame(item, reserve, true);
                         break;
                     end
-                elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
-                    missing = true;
+                else
+                    table.insert(missing, reward);
                 end
             end
         end
@@ -361,13 +361,11 @@ function LootReserve.Server:UpdateReserveList(lockdown)
             end
         end
     end
-    if missing then
-        if not self.PendingReserveListUpdate then
-            C_Timer.After(0.1, function()
-                self.PendingReserveListUpdate = false;
+    if #missing > 0 then
+        if not self.PendingReserveListUpdate or self.PendingReserveListUpdate:IsComplete() then
+            self.PendingReserveListUpdate = LootReserve.ItemCache:OnCache(missing, function()
                 self:UpdateReserveList();
             end);
-            self.PendingReserveListUpdate = true;
         end
     end
 
@@ -465,7 +463,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
-    local filter = LootReserve:TransformSearchText(self.Window.Search:GetText());
+    local filter = LootReserve.ItemCache:FormatSearchText(self.Window.Search:GetText());
     if #filter < 3 and not tonumber(filter) then
         filter = nil;
     end
@@ -561,7 +559,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
             else
                 local token;
                 if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
-                    token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(item:GetID())) or LootReserve.Item(LootReserve.Data:GetToken(item:GetID()));
+                    token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
                 end
                 local reservers = 0;
                 if LootReserve.Server.CurrentSession then
@@ -714,46 +712,46 @@ function LootReserve.Server:UpdateRollList(lockdown)
             createFrame(self.RequestedRoll.Item, self.RequestedRoll, false);
         --end
     end
-    local missing = false;
+    local missing = { };
     local itemsVisible = 0;
     for i = #self.RollHistory, 1, -1 do
         if itemsVisible > self.RollHistoryDisplayLimit then
             break;
         end
         local match = false;
-        local roll = self.RollHistory[i]
-        local item = LootReserve.ItemSearch:Get(roll.Item:GetID());
-        if item and item:GetInfo() then
+        local roll = self.RollHistory[i];
+        local item = roll.Item;
+        if item:IsCached() then
             if not filter or matchesFilter(item, roll, filter) then
                 createFrame(item, roll, true);
                 itemsVisible = itemsVisible + 1;
                 match = true;
             end
-        elseif item or LootReserve.ItemSearch:IsPending(roll.Item:GetID()) then
-            missing = true;
+        else
+            table.insert(missing, item);
         end
         if filter and not match and LootReserve.Data:IsTokenReward(roll.Item:GetID()) then
-            local token = LootReserve.ItemSearch:Get(LootReserve.Data:GetToken(roll.Item:GetID()));
-            if token and token:GetInfo() then
-                if matchesFilter(token, nil, filter) then
+            local token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(roll.Item:GetID()));
+            if token:IsCached() then
+                if item:IsCached() and matchesFilter(token, nil, filter) then
                     createFrame(item, roll, true);
                     match = true;
                 end
-            elseif item or LootReserve.ItemSearch:IsPending(roll.Item:GetID()) then
-                missing = true;
+            else
+                table.insert(missing, token);
             end
         end
         if filter and not match and LootReserve.Data:IsToken(roll.Item:GetID()) then
             for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(roll.Item:GetID())) do
-                local reward = LootReserve.ItemSearch:Get(rewardID);
-                if reward and reward:GetInfo() then
-                    if matchesFilter(reward, nil, filter) then
+                local reward = LootReserve.ItemCache:Item(rewardID);
+                if reward:IsCached() then
+                    if item:IsCached() and matchesFilter(reward, nil, filter) then
                         createFrame(item, roll, true);
                         itemsVisible = itemsVisible + 1;
                         break;
                     end
-                elseif reward or LootReserve.ItemSearch:IsPending(rewardID) then
-                    missing = true;
+                else
+                    table.insert(missing, reward);
                 end
             end
         end
@@ -769,13 +767,19 @@ function LootReserve.Server:UpdateRollList(lockdown)
             end
         end
     end
-    if missing then
-        if not self.PendingRollListUpdate then
-            C_Timer.After(0.1, function()
-                self.PendingRollListUpdate = false;
+    if #missing > 0 then
+        if #missing > LootReserve.ItemSearch.BatchCap then
+            for i = LootReserve.ItemSearch.BatchCap + 1, #missing do
+                missing[i] = nil;
+            end
+        end
+        if not self.PendingRollListUpdate or self.PendingRollListUpdate:IsComplete() then
+            self.PendingRollListUpdate = LootReserve.ItemCache:OnCache(missing, function()
                 self:UpdateRollList();
             end);
-            self.PendingRollListUpdate = true;
+        end
+        if #missing == LootReserve.ItemSearch.BatchCap then
+            self.PendingRollListUpdate:SetSpeed(LootReserve.ItemSearch.LeapSpeed);
         end
     end
 
@@ -908,13 +912,7 @@ function LootReserve.Server:OnWindowLoad(window)
         self:UpdateRollList();
     end);
     LootReserve:RegisterEvent("TRADE_SHOW", "TRADE_CLOSED", "TRADE_PLAYER_ITEM_CHANGED", "BAG_UPDATE", function()
-        if not self.PendingRollListUpdate then
-            C_Timer.After(0.1, function()
-                self.PendingRollListUpdate = false;
-                LootReserve.Server:UpdateRollList();
-            end);
-            self.PendingRollListUpdate = true;
-        end
+        LootReserve.Server:UpdateRollList();
     end);
 end
 

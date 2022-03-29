@@ -214,13 +214,13 @@ local function IsItemUsable(itemID, playerClass, isMe)
         numOwned = GetItemCount(itemID, true) - LootReserve:GetTradeableItemCount(itemID);
     end
     
-    local item = LootReserve.ItemSearch:Get(itemID);
-    if not item or not item:GetID() then
-        return nil;
+    local item = LootReserve.ItemCache:Item(itemID);
+    if not item:Cache():IsCached() then
+        return true, true;
     end
     
     -- If item is Armor or Weapon then fail if class cannot equip it
-    local itemType, itemSubType = item:GetTypeAndSubType();
+    local itemType, itemSubType = item:GetTypeSubType();
     if UNUSABLE_EQUIPMENT[playerClass][itemType] then
         if UNUSABLE_EQUIPMENT[playerClass][itemType][itemSubType] then
            return false; 
@@ -261,13 +261,15 @@ local function IsItemUsable(itemID, playerClass, isMe)
         end
     end
     
-    local classesAllowed = item:GetClassesAllowed();
-    local unique = item:IsUnique();
-    if classesAllowed ~= true and not classesAllowed:match(LOCALIZED_CLASS_NAMES_MALE[playerClass]) and not classesAllowed:match(LOCALIZED_CLASS_NAMES_FEMALE[playerClass]) then
-        return false;
+    if not item:IsUsableBy(playerClass) then
+        return false
+    end
+    if isMe and numOwned > 0 and item:IsUnique() then
+        return false
     end
     
-    if isMe and item:Loaded() then
+    local unique = item:IsUnique();
+    if isMe and item:IsLoaded() then
         -- If item is class-locked then make sure this class is listed
         -- Also make sure the item is not unique if I already own one
         if not LootReserve.TooltipScanner then
@@ -298,9 +300,6 @@ local function IsItemUsable(itemID, playerClass, isMe)
                         problem = true;
                     end
                     
-                elseif line:GetText():match(LootReserve.TooltipScanner.Unique) and numOwned > 0 then
-                    problem = true;
-                    
                 elseif line:GetText():match(LootReserve.TooltipScanner.ProfessionAllowed) then
                     if numOwned > 0 then
                         problem = true;
@@ -321,7 +320,7 @@ local function IsItemUsable(itemID, playerClass, isMe)
         LootReserve.TooltipScanner:Hide();
     end
     
-    return true, not item:Loaded();
+    return true, not item:IsLoaded();
 end
 
 local usableCache = { };

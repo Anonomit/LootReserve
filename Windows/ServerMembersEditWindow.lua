@@ -15,7 +15,7 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
         frame:Hide();
     end
 
-    local missing = false;
+    local missing = { };
 
     self.Window.NoSession:SetShown(not LootReserve.Server.CurrentSession and not next(LootReserve.Server.NewSessionSettings.ImportedMembers));
     self.Window.Header.LockedIcon:SetShown(LootReserve.Server.CurrentSession);
@@ -50,11 +50,10 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
         local wonMaxQuality = 0;
         if won then
             for _, roll in ipairs(won) do
-                local quality = C_Item.GetItemQualityByID(roll.Item:GetID());
-                if quality then
-                    wonMaxQuality = math.max(wonMaxQuality, quality);
+                if roll.Item:IsCached() then
+                    wonMaxQuality = math.max(wonMaxQuality, roll.Item:GetQuality());
                 else
-                    missing = true;
+                    table.insert(missing, roll.Item);
                 end
             end
         end
@@ -89,17 +88,16 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
             reservedItems[itemID] = reservedItems[itemID] + 1;
         end
         for itemID, count in pairs(reservedItems) do
-            local item = LootReserve.ItemSearch:Get(itemID);
-            if item and item:GetInfo() then
-                table.insert(itemOrder, item);
-            else
-                missing = true;
+            local item = LootReserve.ItemCache:Item(itemID);
+            table.insert(itemOrder, item);
+            if not item:IsCached() then
+                table.insert(missing, item);
             end
         end
         
         local last = 0;
         local lastCount = 0;
-        for _, item in LootReserve:Ordered(itemOrder, function(a, b) return a:GetName() < b:GetName() end) do
+        for _, item in LootReserve:Ordered(itemOrder, function(a, b) return a < b end) do
             local count = reservedItems[item:GetID()];
             last = last + 1;
             local button = frame.ReservesFrame.Items[last];
@@ -155,13 +153,11 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
 
     list:GetParent():UpdateScrollChildRect();
 
-    if missing then
-        if not self.PendingMembersEditUpdate then
-            C_Timer.After(0.1, function()
-                self.PendingMembersEditUpdate = false;
+    if #missing > 0 then
+        if not self.PendingMembersEditUpdate or self.PendingMembersEditUpdate:IsComplete() then
+            self.PendingMembersEditUpdate = LootReserve.ItemCache:OnCache(missing, function()
                 self:UpdateMembersList();
             end);
-            self.PendingMembersEditUpdate = true;
         end
     end
 end

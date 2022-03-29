@@ -138,14 +138,14 @@
 							local player = self:GetParent().Player;
 							local won = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members[player] and LootReserve.Server.CurrentSession.Members[player].WonRolls;
 							if won then
-								local missing = false;
+								local missing = { };
 								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 								GameTooltip:SetText("Won in the Current Session");
 								local width = 0;
 								for i, roll in ipairs(won) do
 									local name, link, texture = roll.Item:GetNameLinkTexture();
 									if not link then
-										missing = true;
+										table.insert(missing, roll.Item)
 									end
 
 									local phaseText;
@@ -178,8 +178,8 @@
 								end
 								GameTooltip:Show();
 
-								if missing then
-									C_Timer.After(0.1, function()
+								if #missing > 0 then
+									LootReserve.ItemCache:OnCache(missing, function()
 										if GameTooltip:IsOwned(self) then
 											self:UpdateTooltip();
 										end

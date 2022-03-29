@@ -171,7 +171,7 @@ end
 function LootReserve.Item:GetSubType()
     return ({self:GetInfo()})[7];
 end
-function LootReserve.Item:GetTypeAndSubType()
+function LootReserve.Item:GetTypeSubType()
     local _, _, _, _, _, itemType, itemSubType = self:GetInfo();
     return itemType, itemSubType;
 end

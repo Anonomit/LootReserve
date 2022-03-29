@@ -106,7 +106,7 @@ function LootReserve.Server.Import:UpdateReservesList()
         frame.Alt:SetShown(list.LastIndex % 2 == 0);
         frame.Name:SetText(format("%s%s", LootReserve:ColoredPlayer(player, member.Class), LootReserve:IsPlayerOnline(player) == nil and format("|cFF808080 (%s)|r", member.NameMatchResult or "not in raid") or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""));
 
-        local missing = false;
+        local missing = { };
         local last = 0;
         frame.ReservesFrame.Items = frame.ReservesFrame.Items or { };
         for index, itemID in ipairs(member.ReservedItems) do
@@ -123,9 +123,9 @@ function LootReserve.Server.Import:UpdateReservesList()
                 button = frame.ReservesFrame.Items[last];
             end
             button:Show();
-            button.Item = LootReserve.ItemSearch:Get(itemID) or LootReserve.Item(itemID);
-            if not button.Item:GetInfo() then
-                missing = true;
+            button.Item = LootReserve.ItemCache:Item(itemID);
+            if not button.Item:IsCached() then
+                table.insert(missing, button.Item)
             end
 
             local name, link, texture = button.Item:GetNameLinkTexture();
@@ -145,13 +145,11 @@ function LootReserve.Server.Import:UpdateReservesList()
                 button.Icon.Texture:SetVertexColor(1, 1, 1);
             end
         end
-        if missing then
-            if not self.PendingReservesListUpdate then
-                C_Timer.After(0.1, function()
-                    self.PendingReservesListUpdate = false;
+        if #missing > 0 then
+            if not self.PendingReservesListUpdate or self.PendingReservesListUpdate:IsComplete() then
+                self.PendingReservesListUpdate = LootReserve.ItemCache:OnCache(missing, function()
                     self:UpdateReservesList();
                 end);
-                self.PendingReservesListUpdate = true;
             end
         end
         for i = last + 1, #frame.ReservesFrame.Items do
@@ -349,6 +347,29 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 end
             end
         end
+        
+
+        for _, row in ipairs(self.Rows) do
+            for _, itemColumn in ipairs(itemColumns) do
+                local itemID = row[itemColumn];
+                if itemID and itemID ~= 0 and itemID ~= "" then
+                    if type(itemID) == "string" then
+                        if not LootReserve.ItemSearch.FullCache:IsComplete() then
+                            LootReserve.ItemSearch.FullCache:SetSpeed(LootReserve.ItemSearch.ZoomSpeed);
+                            
+                            if not self.PendingInputOptionsUpdate then
+                                self.PendingInputOptionsUpdate = true;
+                                C_Timer.After(0.1, function()
+                                    self.PendingInputOptionsUpdate = false;
+                                    self:InputOptionsUpdated();
+                                end);
+                            end
+                            return format("Creating item name database... (%d%%)|n|nInstall/Update ItemCache to keep database between sessions", LootReserve.ItemSearch.FullCache:GetProgress(0));
+                        end
+                    end
+                end
+            end
+        end
 
 
         local simplifiedRaidNames        = nil;
@@ -452,21 +473,8 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 if itemID and itemID ~= 0 and itemID ~= "" then
                     -- Transform Item Name -> Item ID
                     if type(itemID) == "string" then
-                        if select(2, LootReserve.ItemSearch:GetProgress()) < LootReserve.Constants.LoadState.SessionDone then
-                            LootReserve.ItemSearch:SetSpeed(250);
-                            
-                            if not self.PendingInputOptionsUpdate then
-                                C_Timer.After(0.1, function()
-                                    self.PendingInputOptionsUpdate = false;
-                                    self:InputOptionsUpdated();
-                                end);
-                                self.PendingInputOptionsUpdate = true;
-                            end
-                            return "Loading item names, please wait...";
-                        end
-                        
-
-                        local results = LootReserve.ItemSearch:Search(LootReserve:TransformSearchText(itemID))
+                        local query = LootReserve.ItemCache:FormatSearchText(itemID);
+                        local results = LootReserve.ItemCache:Filter(function(item) return item:Matches(query) end)
                         if #results == 1 then
                             itemID = results[1]:GetID();
                         end

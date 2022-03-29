@@ -119,7 +119,7 @@ function LootReserve.Client:RollRequested(sender, item, ...)
     if item:GetID() == 0 then
         RollRequested(LootReserve.Client, sender, item, ...);
     else
-        LootReserve:RunWhenItemCached(item, function()
+        item:OnCache(function()
             return RollRequested(LootReserve.Client, sender, item, unpack(args))
         end);
     end

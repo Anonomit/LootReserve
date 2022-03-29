@@ -554,7 +554,7 @@ LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, resu
             LootReserve:ShowError("Failed to reserve the item:|n%s", text or "Unknown error");
         end
         if forced then
-            LootReserve:RunWhenItemCached(itemID, function(item)
+            LootReserve.ItemCache:Item(itemID):OnCache(function(item)
                 local link = item:GetLink();
                 LootReserve:PrintError("%s has reserved an item for you: %s", LootReserve:ColoredPlayer(sender), link);
                 LootReserve:ShowError("%s has reserved an item for you:|n%s", LootReserve:ColoredPlayer(sender), link);
@@ -609,7 +609,7 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, player
         end
         if wasReserver and isReserver and myOldReserves == myNewReserves and oldRolls ~= newRolls then
             PlaySound(oldRolls < newRolls and SOUNDKIT.ALARM_CLOCK_WARNING_3 or SOUNDKIT.ALARM_CLOCK_WARNING_2);
-            LootReserve:RunWhenItemCached(itemID, function(item)
+            LootReserve.ItemCache:Item(itemID):OnCache(function(item)
                 LootReserve:PrintMessage(LootReserve:GetReservesStringColored(false, players, LootReserve:Me(), isUpdate, item:GetLink()));
             end);
         end
@@ -649,7 +649,7 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
         LootReserve.Client.RemainingReserves = remainingReserves;
         LootReserve.Client.Locked = locked;
         if result == LootReserve.Constants.CancelReserveResult.Forced then
-            LootReserve:RunWhenItemCached(itemID, function(item)
+            LootReserve.ItemCache:Item(itemID):OnCache(function(item)
                 local link = item:GetLink();
                 if not quiet then
                     LootReserve:ShowError("%s removed your reserve for %s%s", LootReserve:ColoredPlayer(sender), link, count > 1 and format(" x%d", count) or "");
@@ -680,7 +680,7 @@ function LootReserve.Comm:BroadcastRequestRoll(item, players, custom, duration, 
 end
 function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duration, maxDuration, phase)
     LootReserve.Comm:Send(target, Opcodes.RequestRoll,
-        strjoin(",", item:GetStringData()),
+        format("%d,%s", item:GetID(), item:GetSuffix() or 0),
         strjoin(",", unpack(players)),
         custom == true,
         format("%.2f", duration or 0),
@@ -688,7 +688,7 @@ function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duratio
         phase or "");
 end
 LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phase)
-    item = LootReserve.Item(strsplit(",", item));
+    item = LootReserve.ItemCache:Item(strsplit(",", item));
     custom = tonumber(custom) == 1;
     duration = tonumber(duration);
     maxDuration = tonumber(maxDuration);
@@ -706,10 +706,10 @@ end
 
 -- PassRoll
 function LootReserve.Comm:SendPassRoll(item)
-    LootReserve.Comm:Whisper(LootReserve.Client.RollRequest.Sender, Opcodes.PassRoll, strjoin(",", item:GetStringData()));
+    LootReserve.Comm:Whisper(LootReserve.Client.RollRequest.Sender, Opcodes.PassRoll, format("%d,%s", item:GetID(), item:GetSuffix() or 0));
 end
 LootReserve.Comm.Handlers[Opcodes.PassRoll] = function(sender, item)
-    item = LootReserve.Item(strsplit(",", item));
+    item = LootReserve.ItemCache:Item(strsplit(",", item));
 
     if true--[[LootReserve.Server.CurrentSession]] then
         LootReserve.Server:PassRoll(sender, item);
@@ -719,13 +719,13 @@ end
 -- DeletedRoll
 function LootReserve.Comm:SendDeletedRoll(player, item, roll, phase)
     LootReserve.Comm:Whisper(player, Opcodes.DeletedRoll,
-        strjoin(",", item:GetStringData()), roll, phase);
+        format("%d,%s", item:GetID(), item:GetSuffix() or 0), roll, phase);
 end
 LootReserve.Comm.Handlers[Opcodes.DeletedRoll] = function(sender, item, roll, phase)
-    item = LootReserve.Item(strsplit(",", item));
+    item = LootReserve.ItemCache:Item(strsplit(",", item));
     roll = tonumber(roll);
 
-    LootReserve:RunWhenItemCached(item, function()
+    item:OnCache(function()
         local link = item:GetLink();
         LootReserve:ShowError ("Your %sroll%s on %s was deleted", phase and #phase > 0 and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
         LootReserve:PrintError("Your %sroll%s on %s was deleted", phase and #phase > 0 and format("%s ", phase) or "", roll and format(" of %d", roll) or "", link);
@@ -739,7 +739,7 @@ function LootReserve.Comm:BroadcastWinner(...)
 end
 function LootReserve.Comm:SendWinner(target, item, winners, losers, roll, custom, phase, raidRoll)
     LootReserve.Comm:Send(target, Opcodes.SendWinner,
-        strjoin(",", item:GetStringData()),
+        format("%d,%s", item:GetID(), item:GetSuffix() or 0),
         strjoin(",", unpack(winners)),
         strjoin(",", unpack(losers)),
         roll or "",
@@ -748,7 +748,7 @@ function LootReserve.Comm:SendWinner(target, item, winners, losers, roll, custom
         raidRoll == true);
 end
 LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, losers, roll, custom, phase, raidRoll)
-    item     = LootReserve.Item(strsplit(",", item));
+    item     = LootReserve.ItemCache:Item(strsplit(",", item));
     roll     = tonumber(roll);
     custom   = tonumber(custom) == 1;
     phase    = phase and #phase > 0 and phase or nil;
@@ -766,7 +766,7 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
             losers = { };
         end
         if LootReserve.Client.Settings.RollRequestWinnerReaction and LootReserve:Contains(winners, LootReserve:Me()) then
-            LootReserve:RunWhenItemCached(item, function()
+            item:OnCache(function()
                 local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
                 local soundTable = custom and LootReserve.Constants.Sounds.Congratulate or LootReserve.Constants.Sounds.Cheer;
                 if race and sex and soundTable[race] and soundTable[race][sex] then
@@ -783,7 +783,7 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
             end);
         end
         if LootReserve.Client.Settings.RollRequestLoserReaction and LootReserve:Contains(losers, LootReserve:Me()) then
-            LootReserve:RunWhenItemCached(item, function()
+            item:OnCache(function()
                 local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
                 local soundTable = LootReserve.Constants.Sounds.Cry;
                 if race and sex and soundTable[race] and soundTable[race][sex] then

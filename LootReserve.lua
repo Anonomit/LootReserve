@@ -11,10 +11,7 @@ LootReserve.EventFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
 LootReserve.EventFrame:SetSize(0, 0);
 LootReserve.EventFrame:Show();
 
-LootReserve.ItemCacheFrame = CreateFrame("Frame", nil, UIParent);
-LootReserve.ItemCacheFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
-LootReserve.ItemCacheFrame:SetSize(0, 0);
-LootReserve.ItemCacheFrame:Show();
+LootReserve.ItemCache = LibStub("ItemCache");
 
 LootReserveCharacterSave =
 {
@@ -107,6 +104,7 @@ end
 function LootReserve:OnInitialize()
     LootReserve.Client:Load();
     LootReserve.Server:Load();
+    LootReserve.ItemSearch:Load();
 end
 
 function LootReserve:OnEnable()
@@ -197,42 +195,6 @@ function LootReserve:RegisterEvent(...)
         else
             error("LootReserve:RegisterEvent: All but the last passed parameters must be event names");
         end
-    end
-end
-
-function LootReserve:RunWhenItemCached(itemOrID, func, ...)
-    local item, itemID;
-    if type(itemOrID) == "table" then
-        item   = itemOrID;
-        itemID = item:GetID();
-    else
-        item = LootReserve.ItemSearch:Get(itemOrID);
-        itemID = itemOrID;
-    end
-    if not item or not item:GetInfo() and C_Item.DoesItemExistByID(itemID) then
-        if not LootReserve.ItemCacheFrame.Items then
-            LootReserve.ItemCacheFrame.Items = { };
-            LootReserve.ItemCacheFrame:RegisterEvent("GET_ITEM_INFO_RECEIVED");
-            LootReserve.ItemCacheFrame:SetScript("OnEvent", function(self, event, itemID, success)
-                if not success then return; end
-                local packages = self.Items[itemID];
-                if packages then
-                    for i = #packages, 1, -1 do
-                        local item = packages[i].item or LootReserve.ItemSearch:Get(itemID);
-                        if item and item:GetInfo() then
-                            packages[i].func(item, unpack(packages[i].args))
-                            table.remove(packages, i);
-                        end
-                    end
-                end
-            end);
-        end
-        if not LootReserve.ItemCacheFrame.Items[itemID] then
-            LootReserve.ItemCacheFrame.Items[itemID] = { };
-        end
-        table.insert(LootReserve.ItemCacheFrame.Items[itemID], {item = item, func = func, args = {...}});
-    elseif item and item:GetInfo() then
-        func(item, ...);
     end
 end
 
@@ -692,7 +654,7 @@ function LootReserve:GetTradeableItemCount(item)
             for slot = 1, GetContainerNumSlots(bag) do
                 local _, quantity, _, _, _, _, bagItem = GetContainerItemInfo(bag, slot);
                 if bagItem then
-                    table.insert(bagCache, {bag = bag, slot = slot, item = LootReserve.Item(bagItem), quantity = quantity})
+                    table.insert(bagCache, {bag = bag, slot = slot, item = LootReserve.ItemCache:Item(bagItem), quantity = quantity})
                 end
             end
         end
@@ -732,8 +694,8 @@ end
 function LootReserve:IsItemBeingTraded(item)
     for i = 1, 6 do
         local link = GetTradePlayerItemLink(i);
-        local tradeItem = LootReserve.Item(link);
-        if tradeItem:GetID() and tradeItem == item then
+        local tradeItem = LootReserve.ItemCache:Item(link);
+        if tradeItem == item then
             return true;
         end
     end
@@ -752,7 +714,7 @@ function LootReserve:PutItemInTrade(bag, slot)
 end
 
 function LootReserve:GetItemDescription(itemID)
-    local item = LootReserve.ItemSearch:Get(itemID);
+    local item = LootReserve.ItemCache:Item(itemID);
     if not item or not item:GetInfo() then return; end
     local name, _, _, _, _, itemType, itemSubType, _, equipLoc, _, _, _, _, bindType = item:GetInfo();
     local skillRequired, skillLevelRequired = item:GetSkillRequired();
@@ -811,11 +773,12 @@ function LootReserve:GetItemDescription(itemID)
 end
 
 function LootReserve:IsLootingItem(item)
+    item = LootReserve.ItemCache:Item(item);
     for i = 1, GetNumLootItems() do
         local itemID = GetLootSlotInfo(i);
         if itemID then
-            local lootItem = LootReserve.Item(GetLootSlotLink(i));
-            if lootItem and (type(item) == "table" and lootItem or lootItem:GetID()) == item then
+            local lootItem = LootReserve.ItemCache:Item(GetLootSlotLink(i));
+            if lootItem and lootItem == item then
                 return i;
             end
         end
@@ -854,9 +817,9 @@ function LootReserve:Deepcopy(orig)
     end
 end
 
-function LootReserve:TableRemove(tbl, item)
+function LootReserve:TableRemove(tbl, val)
     for index, i in ipairs(tbl) do
-        if i == item then
+        if i == val then
             table.remove(tbl, index);
             return true;
         end
@@ -864,17 +827,17 @@ function LootReserve:TableRemove(tbl, item)
     return false;
 end
 
-function LootReserve:Contains(table, item)
-    for _, i in ipairs(table) do
-        if i == item then
+function LootReserve:Contains(tbl, val)
+    for _, i in ipairs(tbl) do
+        if i == val then
             return true;
         end
     end
     return false;
 end
 
-local __orderedIndex = { };
 function LootReserve:Ordered(tbl, sorter)
+    local __orderedIndex;
     local function __genOrderedIndex(t)
         local orderedIndex = { };
         for key in pairs(t) do
@@ -893,12 +856,12 @@ function LootReserve:Ordered(tbl, sorter)
     local function orderedNext(t, state)
         local key;
         if state == nil then
-            __orderedIndex[t] = __genOrderedIndex(t)
-            key = __orderedIndex[t][1];
+            __orderedIndex = __genOrderedIndex(t)
+            key = __orderedIndex[1];
         else
-            for i = 1, table.getn(__orderedIndex[t]) do
-                if __orderedIndex[t][i] == state then
-                    key = __orderedIndex[t][i + 1];
+            for i = 1, table.getn(__orderedIndex) do
+                if __orderedIndex[i] == state then
+                    key = __orderedIndex[i + 1];
                 end
             end
         end

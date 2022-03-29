@@ -355,7 +355,7 @@
 							{ text = "Show For Unusable Items", checked = LootReserve.Client.Settings.RollRequestShowUnusable, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShowUnusable = checked; end },
 							{ text = "Glow Only For Reserved Items", checked = LootReserve.Client.Settings.RollRequestGlowOnlyReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestGlowOnlyReserved = checked; end },
 							{ text = "Auto Roll Reserved Items", checked = LootReserve.Client.Settings.RollRequestAutoRollReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestAutoRollReserved = checked; end },
-							{ text = "Open Example Popup", func = function() LootReserve.Client:RollRequested(LootReserve:Me(), LootReserve.Item(18582), { LootReserve:Me() }, true, 30, 30, "Swag-Spec", true); end },
+							{ text = "Open Example Popup", func = function() LootReserve.Client:RollRequested(LootReserve:Me(), LootReserve.ItemCache:Item(18582), { LootReserve:Me() }, true, 30, 30, "Swag-Spec", true); end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Roll Reactions", isTitle = true },
 							{ text = "React When Winning", tooltipText = "Enable to make your character cheer or congratulate you when you win an item.|n|nOnly you can hear the reaction.", checked = LootReserve.Client.Settings.RollRequestWinnerReaction, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestWinnerReaction = checked; end },

@@ -524,17 +524,17 @@
 							CloseMenus();
 							return;
 						end
-						local text = LootReserve:TransformSearchText(editbox:GetText());
+						local text = LootReserve.ItemCache:FormatSearchText(editbox:GetText());
 						local itemID = tonumber(text);
 						local menu = { };
-						local missing = false;
-						if itemID and C_Item.DoesItemExistByID(itemID) then
-							local item = LootReserve.ItemSearch:Get(itemID);
+						local missing = { };
+						if itemID and LootReserve.ItemCache:DoesItemExistByID(itemID) then
+							local item = LootReserve.ItemCache:Item(itemID);
 							local name, link, texture;
-							if item and item:GetInfo() then
+							if item:IsCached() then
 								name, link, texture = item:GetNameLinkTexture();
 							else
-								missing = true;
+								table.insert(missing, item);
 							end
 							table.insert(menu,
 							{
@@ -543,9 +543,8 @@
 								func = SelectItem,
 							});
 						elseif not itemID and #text >= 3 then
-							local progress, loadState = LootReserve.ItemSearch:GetProgress();
-							if loadState == LootReserve.Constants.LoadState.AllDone then
-								local results = LootReserve.ItemSearch:Search(text);
+							if LootReserve.ItemSearch.FullCache:IsComplete() then
+								local results = LootReserve.ItemCache:Filter(function(item) return item:Matches(text) end);
 								for i, item in ipairs(results) do
 									if i > 10 then
 										table.insert(menu,
@@ -556,9 +555,6 @@
 										break;
 									else
 										local name, link, texture = item:GetNameLinkTexture();
-										if not link then
-											missing = true;
-										end
 										table.insert(menu,
 										{
 											text = format("|T%d:0|t %s", texture, (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", "")),
@@ -568,16 +564,21 @@
 									end
 								end
 							else
-								LootReserve.ItemSearch:SetSpeed(250);
+								LootReserve.ItemSearch.FullCache:SetSpeed(LootReserve.ItemSearch.ZoomSpeed);
 								table.insert(menu,
 								{
-									text = format("Loading search database... (%d%%)", progress),
+									text = format("Creating item name database... (%d%%)", LootReserve.ItemSearch.FullCache:GetProgress()),
 									disabled = true,
 								});
-								if not self.LoadingSearch then
-									self.LoadingSearch = true;
+								table.insert(menu,
+								{
+									text = "Install/Update ItemCache to keep database between sessions",
+									disabled = true,
+								});
+								if not LootReserve.Server.PendingLootTextEdit then
+									LootReserve.Server.PendingLootTextEdit = true;
 									C_Timer.After(0.1, function()
-										self.LoadingSearch = nil;
+										LootReserve.Server.PendingLootTextEdit = false;
 										UpdateText();
 									end);
 								end
@@ -587,8 +588,8 @@
 						if #menu > 0 then
 							LootReserve:OpenMenu(menu, self.ItemFrame.Menu, self.ItemFrame.Scroll);
 						end
-						if missing then
-							C_Timer.After(0.1, UpdateText);
+						if #missing > 0 then
+							LootReserve.ItemCache:OnCache(missing, UpdateText);
 						end
 					end
 					UpdateText();
@@ -597,9 +598,9 @@
 					if itemID then
 						self.Item = itemID;
 
-						local item = LootReserve.ItemSearch:Get(itemID);
-						if not item or not item:GetInfo() then
-							C_Timer.After(0.1, function()
+						local item = LootReserve.ItemCache:Item(itemID);
+						if not item:IsCached() then
+							item:OnCache(function()
 								if self.Item == itemID then
 									self:SetItem(itemID);
 								end
