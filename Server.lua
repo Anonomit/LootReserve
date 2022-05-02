@@ -2965,7 +2965,7 @@ function LootReserve.Server:PassRoll(player, item, chat, isPrivateChannel)
 
         -- Whisper player
         item:OnCache(function()
-            if not self.RequestedRoll or self.RequestedRoll.Item:IsNot(item) then return; end
+            if not self.RequestedRoll or self.RequestedRoll.Item ~= item then return; end
 
             local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
             LootReserve:SendChatMessage(format("You have passed on %s%s.", item:GetLink(), phase and format(" for %s", phase) or ""), "WHISPER", player);
@@ -2974,7 +2974,7 @@ function LootReserve.Server:PassRoll(player, item, chat, isPrivateChannel)
     if not chat or isPrivateChannel then
         -- Announce
         item:OnCache(function()
-            if not self.RequestedRoll or self.RequestedRoll.Item:IsNot(item) then return; end
+            if not self.RequestedRoll or self.RequestedRoll.Item ~= item then return; end
             
             local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
             LootReserve:SendChatMessage(format("%s has passed on %s%s.", player, item:GetLink(), phase and format(" for %s", phase or "")), "RAID");

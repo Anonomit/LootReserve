@@ -5,7 +5,6 @@ LootReserve.ItemSearch =
     DefaultSpeed    = 1,
     LeapSpeed       = 10,
     ZoomSpeed       = 250,
-    Speed           = nil,
     
     IDLists = {
         {min =      1, max =  34900},

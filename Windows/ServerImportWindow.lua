@@ -364,7 +364,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                                     self:InputOptionsUpdated();
                                 end);
                             end
-                            return format("Creating item name database... (%d%%)|n|nInstall/Update ItemCache to keep database between sessions", LootReserve.ItemSearch.FullCache:GetProgress(0));
+                            return format("Creating item name database... (%d%%)|n|nInstall/Update ItemCache to remember database between sessions", LootReserve.ItemSearch.FullCache:GetProgress(0));
                         end
                     end
                 end

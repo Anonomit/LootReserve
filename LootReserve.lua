@@ -636,7 +636,8 @@ function LootReserve:GetNumGroupMembers(func)
 end
 
 function LootReserve:IsTradeableItem(bag, slot)
-    return not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot);
+    -- can't use C_Item.IsBound because it sometimes bugs and gives a usage error despite correctly receiving an ItemLocation
+    return not LootReserve:IsItemSoulboundTradeable(bag, slot) or LootReserve:IsItemSoulboundTradeable(bag, slot);
 end
 
 local bagCache = nil;
@@ -666,6 +667,25 @@ function LootReserve:GetTradeableItemCount(item)
         end
     end
     return count;
+end
+
+function LootReserve:IsItemSoulbound(bag, slot)
+    if not self.TooltipScanner then
+        self.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
+        self.TooltipScanner:Hide();
+    end
+
+    self.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
+    self.TooltipScanner:SetBagItem(bag, slot);
+    for i = LootReserve.TooltipScanner:NumLines(), 1, -1 do
+        local line = _G[self.TooltipScanner:GetName() .. "TextLeft" .. i];
+        if line and line:GetText() and line:GetText() == ITEM_SOULBOUND then
+            self.TooltipScanner:Hide();
+            return true;
+        end
+    end
+    self.TooltipScanner:Hide();
+    return false;
 end
 
 function LootReserve:IsItemSoulboundTradeable(bag, slot)
@@ -775,10 +795,10 @@ end
 function LootReserve:IsLootingItem(item)
     item = LootReserve.ItemCache:Item(item);
     for i = 1, GetNumLootItems() do
-        local itemID = GetLootSlotInfo(i);
-        if itemID then
-            local lootItem = LootReserve.ItemCache:Item(GetLootSlotLink(i));
-            if lootItem and lootItem == item then
+        local itemLink = GetLootSlotLink(i);
+        if itemLink then
+            local lootItem = LootReserve.ItemCache:Item(itemLink);
+            if lootItem and lootItem:GetID() == item:GetID() then
                 return i;
             end
         end

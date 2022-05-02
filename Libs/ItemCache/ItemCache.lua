@@ -560,7 +560,7 @@ local function MakeCallbackController(_, items, retrieveMode, callback, ...)
     callback       = callback,
     itemsRemaining = #queue,
     max            = #queue,
-    speed          = 0,
+    speed          = 1,
     suspended      = false,
     cancelled      = false,
   })
@@ -655,6 +655,7 @@ local function MakeItem(id, suffix)
     item = {id = id, suffix = suffix}
   end
   setPrivate(facade, item)
+  setPrivate(item, _G.Item:CreateFromItemID(id))
   return setmetatable(facade, itemMeta)
 end
 
@@ -704,7 +705,7 @@ function ItemCache:Item(arg, suffix)
     return arg
   else
     local id, suffix = InterpretItem(arg, suffix)
-    assert(id, "Bad Item format.")
+    assert(id, format("Bad Item format: %s", arg and tostring(arg) or "nil"))
     return ItemDB:Get(id, suffix)
   end
   return nil
@@ -893,6 +894,7 @@ function ItemDB:InitItemInfoListener()
   self.ItemInfoListenerFrame:Show()
   
   self.ItemInfoListenerFrame:RegisterEvent"GET_ITEM_INFO_RECEIVED"
+  self.ItemInfoListenerFrame:RegisterEvent"ITEM_DATA_LOAD_RESULT"
   self.ItemInfoListenerFrame:SetScript("OnEvent", function(_, event, id, success)
     self:Get(id)
     for suffix in pairs(self.cache[id]) do
@@ -1079,7 +1081,7 @@ local function Items_OnCacheOrLoad(items, self, retrieveMode, func, ...)
   local IsRetrieved = retrieveModes[retrieveMode].IsRetrieved
   for _, item in pairs(items) do
     local id, suffix = InterpretItem(item)
-    assert(id, "Bad Item format.")
+    assert(id, format("Bad Item format: %s", item and tostring(item) or "nil"))
     local loadItem = true
     if not ItemCache:DoesItemExistByID(id) then
       loadItem = false
@@ -1160,10 +1162,10 @@ function Item:Exists()
   return ItemCache:DoesItemExistByID(self:GetID())
 end
 function Item:IsLoaded()
-  return GetItemInfo(self:GetID()) ~= nil
+  return private(private(self)):IsItemDataCached()
 end
 function Item:Load()
-  self:IsLoaded()
+  C_Item.RequestLoadItemDataByID(self:GetID())
 end
 
 function Item:IsCached()
@@ -1179,14 +1181,15 @@ end
 function Item:GetInfo()
   if self:Exists() then
     if not private(self).info then
-      local info = ItemDB:GetItemInfoPacked(self:GetString())
-      if #info == 0 then
+      if not self:IsLoaded() then
+        self:Load()
         return
       end
+      local info = ItemDB:GetItemInfoPacked(self:GetString())
       private(self).dne = nil
       info[2] = strgsub(info[2], "(item:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:)([^:]*):", "%1:")
       private(self).info = info
-      -- local name, link, quality, _, _, itemType, itemSubType, _, equipLoc, texture, sellPrice, _, _, bindType = unpack(info)
+      -- local name, link, quality, level, minLevel, itemType, itemSubType, maxStackSize, equipLoc, texture, sellPrice, classID, subclassID, bindType = unpack(info)
       private(self).searchName = ItemCache:FormatSearchText(info[1])
       
       ItemDB.tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")
@@ -1328,21 +1331,23 @@ function Item:GetNameLink()
   return name, link
 end
 function Item:GetTexture()
-  return self:GetInfoPacked()[10]
+  return ({GetItemInfoInstant(self:GetString())})[5]
 end
+Item.GetIcon = Item.GetTexture
 function Item:GetNameLinkTexture()
   local name, link, _, _, _, _, _, _, _, texture = self:GetInfo()
   return name, link, texture
 end
+Item.GetNameLinkIcon = Item.GetNameLinkTexture
 
 function Item:GetType()
-  return self:GetInfoPacked()[6]
+  return ({GetItemInfoInstant(self:GetString())})[2]
 end
 function Item:GetSubType()
-  return self:GetInfoPacked()[7]
+  return ({GetItemInfoInstant(self:GetString())})[3]
 end
 function Item:GetTypeSubType()
-  local _, _, _, _, _, itemType, itemSubType = self:GetInfo()
+  local _, itemType, itemSubType = GetItemInfoInstant(self:GetString())
   return itemType, itemSubType
 end
 
@@ -1372,7 +1377,7 @@ Item.IsBoU = Item.IsBindOnUse
 
 
 function Item:GetEquipLocation()
-  return self:GetInfoPacked()[9]
+  return ({GetItemInfoInstant(self:GetString())})[4]
 end
 function Item:IsEquippable()     return self:GetEquipLocation() ~= ""                       and self:GetEquipLocation() ~= "INVTYPE_NON_EQUIP" end
 function Item:IsHelm()           return self:GetEquipLocation() == "INVTYPE_HEAD"           end

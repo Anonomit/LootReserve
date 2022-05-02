@@ -632,7 +632,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                     for b = 0, NUM_BAG_SLOTS do
                         for s = 1, GetContainerNumSlots(b) do
                             local itemLink = select(7, GetContainerItemInfo(b, s));
-                            if itemLink and itemLink == link and LootReserve:IsTradeableItem(b, s) then
+                            if itemLink and LootReserve.ItemCache:Item(itemLink) == item and LootReserve:IsTradeableItem(b, s) then
                                 bag, slot = b, s;
                                 break;
                             end
