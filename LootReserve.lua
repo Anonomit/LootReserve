@@ -637,7 +637,7 @@ end
 
 function LootReserve:IsTradeableItem(bag, slot)
     -- can't use C_Item.IsBound because it sometimes bugs and gives a usage error despite correctly receiving an ItemLocation
-    return not LootReserve:IsItemSoulboundTradeable(bag, slot) or LootReserve:IsItemSoulboundTradeable(bag, slot);
+    return not LootReserve:IsItemSoulbound(bag, slot) or LootReserve:IsItemSoulboundTradeable(bag, slot);
 end
 
 local bagCache = nil;
@@ -714,9 +714,11 @@ end
 function LootReserve:IsItemBeingTraded(item)
     for i = 1, 6 do
         local link = GetTradePlayerItemLink(i);
-        local tradeItem = LootReserve.ItemCache:Item(link);
-        if tradeItem == item then
-            return true;
+        if link then
+            local tradeItem = LootReserve.ItemCache:Item(link);
+            if tradeItem == item then
+                return true;
+            end
         end
     end
     return false;
@@ -796,7 +798,7 @@ function LootReserve:IsLootingItem(item)
     item = LootReserve.ItemCache:Item(item);
     for i = 1, GetNumLootItems() do
         local itemLink = GetLootSlotLink(i);
-        if itemLink then
+        if itemLink and itemLink:find"item:%d" then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
             local lootItem = LootReserve.ItemCache:Item(itemLink);
             if lootItem and lootItem:GetID() == item:GetID() then
                 return i;

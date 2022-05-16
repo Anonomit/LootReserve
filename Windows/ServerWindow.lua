@@ -533,7 +533,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                     if LibCustomGlow then
                         LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow)
                     end
-                elseif tradeableItemCount > 0 and TradeFrame:IsShown() and LootReserve:Player(UnitName("npc")) == winner and not LootReserve:IsItemBeingTraded(item) then
+                elseif tradeableItemCount > 0 and TradeFrame:IsShown() and LootReserve:Player(UnitName("npc")) == winner --[[and not LootReserve:IsItemBeingTraded(item)--]] then
                     if LibCustomGlow then
                         LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow)
                     end
