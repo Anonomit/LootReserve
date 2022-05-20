@@ -858,7 +858,7 @@ function LootReserve:Contains(tbl, val)
     return false;
 end
 
-function LootReserve:Ordered(tbl, sorter)
+function LootReserve:Ordered_old(tbl, sorter)
     local __orderedIndex;
     local function __genOrderedIndex(t)
         local orderedIndex = { };
@@ -892,8 +892,30 @@ function LootReserve:Ordered(tbl, sorter)
             return key, t[key];
         end
 
-        __orderedIndex[t] = nil;
+        __orderedIndex = nil;
         return
+    end
+
+    return orderedNext, tbl, nil;
+end
+
+function LootReserve:Ordered(tbl, sorter)
+    local __orderedIndex = { };
+    for key in pairs(tbl) do
+        table.insert(__orderedIndex, key);
+    end
+    if sorter then
+        table.sort(__orderedIndex, function(a, b)
+            return sorter(tbl[a], tbl[b], a, b);
+        end);
+    else
+        table.sort(__orderedIndex);
+    end
+
+    local i = 0;
+    local function orderedNext(t)
+        i = i + 1;
+        return __orderedIndex[i], t[__orderedIndex[i]];
     end
 
     return orderedNext, tbl, nil;
