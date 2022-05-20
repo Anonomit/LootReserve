@@ -1343,9 +1343,16 @@
 								arg1 = limit,
 								func = function(info, limit)
 									LootReserve.Server.Settings.RollHistoryKeepLimit = limit;
-									while #LootReserve.Server.RollHistory > limit do
-										table.remove(LootReserve.Server.RollHistory, 1);
-									end
+									
+			            if #LootReserve.Server.RollHistory > LootReserve.Server.Settings.RollHistoryKeepLimit then
+		                local delta = #LootReserve.Server.RollHistory - LootReserve.Server.Settings.RollHistoryKeepLimit;
+		                for i = 1, LootReserve.Server.Settings.RollHistoryKeepLimit do
+		                  LootReserve.Server.RollHistory[i] = LootReserve.Server.RollHistory[i+1];
+		                end
+		                for i = #LootReserve.Server.RollHistory + 1, LootReserve.Server.Settings.RollHistoryKeepLimit, -1 do
+		                  LootReserve.Server.RollHistory[i] = nil;
+		                end
+			            end
 									LootReserve.Server:UpdateRollList();
 									LootReserve:ReopenMenu(self);
 								end,

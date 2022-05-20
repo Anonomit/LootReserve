@@ -2417,8 +2417,14 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                 historicalEntry.Phases = {historicalEntry.Phases[1]};
             end
             table.insert(self.RollHistory, historicalEntry);
-            while #self.RollHistory > self.Settings.RollHistoryKeepLimit do
-               table.remove(self.RollHistory, 1); 
+            if #self.RollHistory > self.Settings.RollHistoryKeepLimit then
+                local delta = #self.RollHistory - self.Settings.RollHistoryKeepLimit;
+                for i = 1, self.Settings.RollHistoryKeepLimit do
+                    self.RollHistory[i] = self.RollHistory[i+1];
+                end
+                for i = #self.RollHistory + 1, self.Settings.RollHistoryKeepLimit, -1 do
+                    self.RollHistory[i] = nil;
+                end
             end
 
             if LootReserve:GetTradeableItemCount(item) <= 1 then
