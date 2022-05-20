@@ -1,6 +1,6 @@
 ﻿LootReserve.Server.Import.Separator = ",";
 LootReserve.Server.Import.UseHeaders = false;
-LootReserve.Server.Import.MatchNames = false;
+LootReserve.Server.Import.MatchNames = true;
 LootReserve.Server.Import.SkipNotInRaid = false;
 LootReserve.Server.Import.Columns = { };
 
@@ -593,5 +593,6 @@ function LootReserve.Server.Import:OnWindowLoad(window)
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetText("LootReserve Host - Import");
     self.Window:SetMinResize(LootReserve:IsCrossRealm() and 490 or 390, 440);
+    self.Window.InputOptions.Input.MatchNames:SetChecked(self.MatchNames);
     self:InputUpdated();
 end
