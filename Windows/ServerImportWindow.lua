@@ -354,6 +354,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 local itemID = row[itemColumn];
                 if itemID and itemID ~= 0 and itemID ~= "" then
                     if type(itemID) == "string" then
+                        LootReserve.ItemSearch:Load();
                         if not LootReserve.ItemSearch.FullCache:IsComplete() then
                             LootReserve.ItemSearch.FullCache:SetSpeed(LootReserve.ItemSearch.ZoomSpeed);
                             

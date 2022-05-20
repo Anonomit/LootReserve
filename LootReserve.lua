@@ -104,7 +104,9 @@ end
 function LootReserve:OnInitialize()
     LootReserve.Client:Load();
     LootReserve.Server:Load();
-    LootReserve.ItemSearch:Load();
+    if LootReserve.Client.Settings.AllowPreCache then
+        LootReserve.ItemSearch:Load();
+    end
 end
 
 function LootReserve:OnEnable()

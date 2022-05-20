@@ -35,6 +35,7 @@ LootReserve.Client =
         CollapsedCategories         = { },
         SwapLDBButtons              = false,
         LibDBIcon                   = { },
+        AllowPreCache               = false,
     },
     CharacterFavorites = { },
     GlobalFavorites    = { },
