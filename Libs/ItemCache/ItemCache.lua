@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 0
+local MAJOR, MINOR = ADDON_NAME, 1
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -1365,6 +1365,10 @@ end
 
 function Item:GetDetailedLevelInfo()
   return GetDetailedItemLevelInfo(self:GetString())
+end
+
+function Item:GetStackSize()
+  return (select(8, self:GetInfo()))
 end
 
 function Item:GetSellPrice()
