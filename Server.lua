@@ -731,7 +731,9 @@ function LootReserve.Server:PrepareLootTracking()
         local itemID = itemLink and tonumber(itemLink:match("Hitem:(%d+):") or "")
         if itemID then
             LootReserve.ItemCache:Item(itemID):OnCache(function(item)
-                return AddLootToList(looter, item, count)
+                if item:GetStackSize() == 1 or not item:IsBindOnPickup() then -- don't add stackable BoP items
+                    return AddLootToList(looter, item, count);
+                end
             end);
         end
     end);
