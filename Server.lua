@@ -521,6 +521,15 @@ function LootReserve.Server:Load()
         end
     end
     
+    -- 2021-08-28: Convert active session LootCategory to LootCategories
+    -- Date is late because the check was added late
+    if versionSave < "2022-05-21" then
+        if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings.LootCategory then
+            LootReserve.Server.CurrentSession.Settings.LootCategories = {LootReserve.Server.CurrentSession.Settings.LootCategory};
+            LootReserve.Server.NewSessionSettings.LootCategories = {LootReserve.Server.CurrentSession.Settings.LootCategory};
+        end
+    end
+    
     -- Create Item objects
     for _, roll in ipairs(self.RollHistory) do
         roll.Item = LootReserve.ItemCache:Item(roll.Item);
