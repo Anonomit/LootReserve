@@ -664,7 +664,7 @@ function LootReserve:GetTradeableItemCount(item)
     end
     local count = 0;
     for _, itemData in ipairs(bagCache) do
-        if itemData.item == item and self:IsTradeableItem(itemData.bag, itemData.slot) then
+        if (type(item) == "number" and itemData.item:GetID() == item or itemData.item == item) and self:IsTradeableItem(itemData.bag, itemData.slot) then
             count = count + itemData.quantity;
         end
     end
