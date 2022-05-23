@@ -26,6 +26,7 @@ LootReserve.ItemSearch =
         {min = 187435, max = 187435},
         {min = 187714, max = 187815},
         {min = 190179, max = 190325},
+        {min = 191060, max = 191061},
     },
 };
 
