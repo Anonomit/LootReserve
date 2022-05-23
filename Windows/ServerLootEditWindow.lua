@@ -211,9 +211,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                 self:UpdateLootList();
             end);
         end
-        if #missing == LootReserve.ItemSearch.BatchCap then
-            self.PendingLootEditUpdate:SetSpeed(LootReserve.ItemSearch.LeapSpeed);
-        end
+        self.PendingLootEditUpdate:SetSpeed(math.ceil(#missing/LootReserve.ItemSearch.BatchFrames));
     end
 
     if self.SelectedCategory.Edited and list.LastIndex > 0 then

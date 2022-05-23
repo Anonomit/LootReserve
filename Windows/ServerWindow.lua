@@ -778,9 +778,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 self:UpdateRollList();
             end);
         end
-        if #missing == LootReserve.ItemSearch.BatchCap then
-            self.PendingRollListUpdate:SetSpeed(LootReserve.ItemSearch.LeapSpeed);
-        end
+        self.PendingRollListUpdate:SetSpeed(math.ceil(#missing/LootReserve.ItemSearch.BatchFrames));
     end
 
     list:GetParent():UpdateScrollChildRect();

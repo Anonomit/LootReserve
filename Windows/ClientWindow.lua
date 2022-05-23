@@ -367,9 +367,7 @@ function LootReserve.Client:UpdateLootList()
                 self:UpdateLootList();
             end);
         end
-        if #missing == LootReserve.ItemSearch.BatchCap then
-            self.PendingLootListUpdate:SetSpeed(LootReserve.ItemSearch.LeapSpeed);
-        end
+        self.PendingLootListUpdate:SetSpeed(math.ceil(#missing/LootReserve.ItemSearch.BatchFrames));
     elseif #missingLoad > 0 then
         if #missingLoad > LootReserve.ItemSearch.BatchCap then
             for i = LootReserve.ItemSearch.BatchCap + 1, #missingLoad do
@@ -381,9 +379,7 @@ function LootReserve.Client:UpdateLootList()
                 self:UpdateLootList();
             end);
         end
-        if #missingLoad == LootReserve.ItemSearch.BatchCap then
-            self.PendingLootListUpdate:SetSpeed(LootReserve.ItemSearch.LeapSpeed);
-        end
+        self.PendingLootListUpdate:SetSpeed(math.ceil(#missingLoad/LootReserve.ItemSearch.BatchFrames));
     end
     for i = list.LastIndex + 1, #list.Frames do
         list.Frames[i]:Hide();

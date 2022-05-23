@@ -1,10 +1,10 @@
 LootReserve = LootReserve or { };
 LootReserve.ItemSearch =
 {
-    BatchCap        = 100,
+    BatchCap        = 100, -- max number of items to query in between UI updates
+    BatchFrames     = 10, -- UI updates should happen in about this many frames (plus the delay of ITEM_DATA_LOAD_RESULT)
     DefaultSpeed    = 1,
-    LeapSpeed       = 10,
-    ZoomSpeed       = 250,
+    ZoomSpeed       = 250, -- used when every single item must be cached
     
     IDLists = {
         {min =      1, max =  34900},
