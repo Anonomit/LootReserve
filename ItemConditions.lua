@@ -227,7 +227,8 @@ local function IsItemUsable(itemID, playerClass, isMe)
         end
     end
     
-    -- If item starts a quest, make sure the quest is not completed or in progress
+    -- If item starts a quest, make sure the quest is not completed and I do not already own the item
+    -- If item requires a quest to loot, make sure the quest is not completed, I am on it, and I do not already own the item
     if isMe then
         local questStartID = LootReserve.Data:GetQuestStarted(itemID);
         local questDropID  = LootReserve.Data:GetQuestDropRequirement(itemID);
@@ -235,6 +236,10 @@ local function IsItemUsable(itemID, playerClass, isMe)
             if C_QuestLog.IsQuestFlaggedCompleted(questStartID or questDropID) then
                 return false;
             end
+            if numOwned > 0 then
+                return false;
+            end
+        if questDropID then
             local found = false;
             local collapsedHeaders = { };
             local i = 1;
@@ -255,7 +260,7 @@ local function IsItemUsable(itemID, playerClass, isMe)
             for _, i in ipairs(collapsedHeaders) do
                 CollapseQuestHeader(i);
             end
-            if (found and questStartID) or (not found and questDropID) then
+            if found then
                 return false;
             end
         end
