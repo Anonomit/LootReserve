@@ -2619,7 +2619,7 @@ function LootReserve.Server:PrepareRequestRoll()
                         player = raid[tonumber(roll)];
                     elseif not self.RequestedRoll.RaidRoll then
                         self.RequestedRoll.Chat = self.RequestedRoll.Chat or { };
-                        self.RequestedRoll.Chat[player] = self.RequestedRoll.Chat[player] or { };
+                        self.RequestedRoll.Chat[player] = self.RequestedRoll.Chat[player] or { Class = select(3, LootReserve:UnitClass(player)) };
                         if #self.RequestedRoll.Chat[player] < LootReserve.Constants.MAX_CHAT_STORAGE then
                             table.insert(self.RequestedRoll.Chat[player], format("%d|%s|%s", time(), "SYSTEM", text));
                         end
@@ -2751,7 +2751,7 @@ function LootReserve.Server:PrepareRequestRoll()
                 if self.RequestedRoll then
                     local player = LootReserve:Player(sender);
                     self.RequestedRoll.Chat = self.RequestedRoll.Chat or { };
-                    self.RequestedRoll.Chat[player] = self.RequestedRoll.Chat[player] or { };
+                    self.RequestedRoll.Chat[player] = self.RequestedRoll.Chat[player] or { Class = select(3, LootReserve:UnitClass(player)) };
                     if #self.RequestedRoll.Chat[player] < LootReserve.Constants.MAX_CHAT_STORAGE then
                         table.insert(self.RequestedRoll.Chat[player], format("%d|%s|%s", time(), savedType, text));
                         self:UpdateReserveListButtons();

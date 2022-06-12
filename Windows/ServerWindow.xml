@@ -245,16 +245,24 @@
 									GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 									GameTooltip:SetText("Recent Chat");
 									local width = 0;
+									local expectedRolls = #frame.Roll.Players[player];
+									local actualRolls = 0;
 									for i, data in ipairs(frame.Roll.Chat[player]) do
 										local time, type, text = strsplit("|", data, 3);
 										time = format("|cFF808080[%s]|r", date("%X", tonumber(time)));
 										local info = ChatTypeInfo[type or ""] or ChatTypeInfo["SYSTEM"];
 										if type == "SYSTEM" then
 											text = format("%s %s", time, text);
+											if text:find("%(%d+%-%d+%)") then
+												actualRolls = actualRolls + 1;
+											  if actualRolls > expectedRolls or not text:find("%(1%-100%)") then
+												  info = ChatTypeInfo["RESTRICTED"]
+												end
+											end
 										elseif type == "EMOTE" then
 											text = format("%s %s %s", time, player, text);
 										else
-											text = format("%s [%s]: %s", time, LootReserve:ColoredPlayer(player), text);
+											text = format("%s [%s]: %s", time, LootReserve:ColoredPlayer(player, frame.Roll.Chat[player].Class), text);
 										end
 										GameTooltip:AddLine(text, info.r, info.g, info.b, 1, 1);
 										local line = _G[GameTooltip:GetName() .. "TextLeft" .. (i + 1)];
