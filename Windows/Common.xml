@@ -159,7 +159,7 @@
 					</OnLoad>
 					<OnClick>
 						if button == "LeftButton" then
-							HandleModifiedItemClick(self:GetParent():GetParent().Link);
+							HandleModifiedItemClick(self:GetParent():GetParent().Item:GetLink());
 						end
 					</OnClick>
 					<OnEnter>
