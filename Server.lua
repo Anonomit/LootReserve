@@ -2293,7 +2293,7 @@ function LootReserve.Server:ResolveRollTie(item)
     end
 end
 
-function LootReserve.Server:FinishRollRequest(item, soleReserver)
+function LootReserve.Server:FinishRollRequest(item, soleReserver, silent)
     local function RecordRollWinner(player, item, phase)
         if self.CurrentSession then
             local token;
@@ -2338,21 +2338,24 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             for _, player in ipairs(winners) do
                 RecordRollWinner(player, item, recordPhase);
             end
-            LootReserve.Comm:BroadcastWinner(item, winners, losers, roll, self.RequestedRoll.Custom, recordPhase, raidroll);
-
-            item:OnCache(function()
-                local link        = item:GetLink();
-                local playersText = LootReserve:FormatPlayersText(winners);
-                LootReserve:SendChatMessage(format(raidroll and "%s won %s%s via raid-roll" or "%s won %s%s with a roll of %d", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or "", roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
-                if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and item:GetQuality() >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
-                    for _, player in ipairs(winners) do
-                        if LootReserve:Contains(self.GuildMembers, player) then
-                            LootReserve:SendChatMessage(format("%s won %s%s", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or ""), "GUILD");
-                            break;
+            if not silent then
+                LootReserve.Comm:BroadcastWinner(item, winners, losers, roll, self.RequestedRoll.Custom, recordPhase, raidroll);
+                
+                -- Announce winner
+                item:OnCache(function()
+                    local link        = item:GetLink();
+                    local playersText = LootReserve:FormatPlayersText(winners);
+                    LootReserve:SendChatMessage(format(raidroll and "%s won %s%s via raid-roll" or "%s won %s%s with a roll of %d", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or "", roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
+                    if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and item:GetQuality() >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
+                        for _, player in ipairs(winners) do
+                            if LootReserve:Contains(self.GuildMembers, player) then
+                                LootReserve:SendChatMessage(format("%s won %s%s", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or ""), "GUILD");
+                                break;
+                            end
                         end
                     end
-                end
-            end);
+                end);
+            end
 
             if self.Settings.RollMasterLoot then
                 self:MasterLootItem(item, winners[1], #winners > 1);
@@ -2362,19 +2365,21 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver)
             winners = { player };
             RecordRollWinner(player, item, LootReserve.Constants.WonRollPhase.Reserve);
             
-            -- Send packets
-            LootReserve.Comm:SendWinner(player, item, winners, { });
-            
-            -- Announce
-            item:OnCache(function()
-                local link = item:GetLink();
-                LootReserve:SendChatMessage(format("%s won %s as the only reserver", player, LootReserve:FixLink(link)), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
-                if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and item:GetQuality() >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
-                    if LootReserve:Contains(self.GuildMembers, player) then
-                        LootReserve:SendChatMessage(format("%s won %s", player, LootReserve:FixLink(link)), "GUILD");
+            if not silent then
+                -- Send packets
+                LootReserve.Comm:SendWinner(player, item, winners, { });
+                
+                -- Announce
+                item:OnCache(function()
+                    local link = item:GetLink();
+                    LootReserve:SendChatMessage(format("%s won %s as the only reserver", player, LootReserve:FixLink(link)), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
+                    if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and item:GetQuality() >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
+                        if LootReserve:Contains(self.GuildMembers, player) then
+                            LootReserve:SendChatMessage(format("%s won %s", player, LootReserve:FixLink(link)), "GUILD");
+                        end
                     end
-                end
-            end);
+                end);
+            end
 
             if self.Settings.RollMasterLoot then
                 self:MasterLootItem(item, player);

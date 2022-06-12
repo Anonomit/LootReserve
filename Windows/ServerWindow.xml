@@ -380,7 +380,7 @@
 							{
 								{ text = "End Roll", isTitle = true },
 								{ text = players and format("Announce Winner%s (%s)", #players > 1 and "s" or "", strjoin(", ", unpack(players))) or "Announce Winner", disabled = not players or #players == 0, func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item); end },
-								{ text = "End Silently", func = function() LootReserve.Server:CancelRollRequest(self:GetParent().Item); end },
+								{ text = "End Silently", func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, true); end },
 								{ text = "Cancel Roll", func = function() LootReserve.Server:CancelRollRequest(self:GetParent().Item, nil, true); end },
 								LootReserve:MakeMenuSeparator(),
 								{ text = "Cancel" },
