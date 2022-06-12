@@ -1362,12 +1362,11 @@
 							LootReserve:MakeMenuSeparator(),
 							{ text = "History Limit", isTitle = true },
 							LootReserve:MakeMenuSeparator(),
+							{ text = "Export History", func = function()
+								LootReserve.Server.Export.Window:SetShown(not LootReserve.Server.Export.Window:IsShown());
+							end },
 							{ text = "Clear History", func = function()
 								StaticPopup_Show("LOOTRESERVE_CONFIRM_CLEAR_HISTORY", #LootReserve.Server.RollHistory, #LootReserve.Server.RollHistory == 1 and "" or "s");
-							end },
-							LootReserve:MakeMenuSeparator(),
-							{ text = "Export", func = function()
-								LootReserve.Server.Export.Window:SetShown(not LootReserve.Server.Export.Window:IsShown());
 							end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
