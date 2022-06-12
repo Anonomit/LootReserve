@@ -303,9 +303,17 @@ function LootReserve.Server:GetChatChannel(announcement)
     end
 end
 
-function LootReserve.Server:HasRelevantRecentChat(chat, player)
+function LootReserve.Server:HasRelevantRecentChat(chat, player, rollCount)
     if not chat or not chat[player] then return false; end
-    return #chat[player] > 0;
+    local chatRollCount = 0;
+    for _, str in ipairs(chat[player]) do
+        local time, channel, text = strsplit("|", str, 3);
+        if channel ~= "SYSTEM" or not text:match("%(1%-100%)") then
+            return true;
+        end
+        chatRollCount = chatRollCount + 1;
+    end
+    return rollCount < chatRollCount;
 end
 
 function LootReserve.Server:IsAddonUser(player)
@@ -2581,10 +2589,13 @@ function LootReserve.Server:PrepareRequestRoll()
                         end
                     end);
                 end
+                local valid = false;
                 player = player and LootReserve:Player(player);
-                if player and roll and (self.Settings.AcceptAllRollFormats or min == "1" and (max == "100" or self.RequestedRoll.RaidRoll and tonumber(max) == LootReserve:GetNumGroupMembers()) and tonumber(roll) and self:CanRoll(player)) then
+                if player and roll then
+                    valid = self.Settings.AcceptAllRollFormats or min == "1" and (max == "100" or self.RequestedRoll.RaidRoll and tonumber(max) == LootReserve:GetNumGroupMembers()) and tonumber(roll) and self:CanRoll(player);
+                    
                     -- Re-roll the raid-roll
-                    if self.RequestedRoll.RaidRoll then
+                    if valid and self.RequestedRoll.RaidRoll then
                         table.wipe(self.RequestedRoll.Players);
 
                         local subgroups = { };
@@ -2606,75 +2617,79 @@ function LootReserve.Server:PrepareRequestRoll()
                         if tonumber(max) ~= #raid or #raid ~= LootReserve:GetNumGroupMembers() then return; end
 
                         player = raid[tonumber(roll)];
-                    else
+                    elseif not self.RequestedRoll.RaidRoll then
                         self.RequestedRoll.Chat = self.RequestedRoll.Chat or { };
                         self.RequestedRoll.Chat[player] = self.RequestedRoll.Chat[player] or { };
                         if #self.RequestedRoll.Chat[player] < LootReserve.Constants.MAX_CHAT_STORAGE then
                             table.insert(self.RequestedRoll.Chat[player], format("%d|%s|%s", time(), "SYSTEM", text));
                         end
                     end
-
-                    local rollSubmitted = false;
-                    local extraRolls    = false;
-                    if not self.RequestedRoll.Players[player] then
-                       self.RequestedRoll.Players[player] = { LootReserve.Constants.RollType.NotRolled }; -- Should only even happen for custom rolls, non-custom ones should fail in LootReserve.Server:CanRoll
-                    end
-                    for i, oldRoll in ipairs(self.RequestedRoll.Players[player]) do
-                        if oldRoll == LootReserve.Constants.RollType.NotRolled then
-                            if not rollSubmitted then
-                                self.RequestedRoll.Players[player][i] = tonumber(roll);
-                                rollSubmitted = true;
-                            else
-                                extraRolls = true;
+                    
+                    if valid then
+                        local rollSubmitted = false;
+                        local extraRolls    = false;
+                        if not self.RequestedRoll.Players[player] then
+                           self.RequestedRoll.Players[player] = { LootReserve.Constants.RollType.NotRolled }; -- Should only even happen for custom rolls, non-custom ones should fail in LootReserve.Server:CanRoll
+                        end
+                        for i, oldRoll in ipairs(self.RequestedRoll.Players[player]) do
+                            if oldRoll == LootReserve.Constants.RollType.NotRolled then
+                                if not rollSubmitted then
+                                    self.RequestedRoll.Players[player][i] = tonumber(roll);
+                                    rollSubmitted = true;
+                                else
+                                    extraRolls = true;
+                                end
                             end
                         end
                     end
 
                     self:UpdateReserveListRolls();
                     self:UpdateRollList();
+                    
+                    if valid then
+                        if self.ExtraRollRequestNag[player] then
+                            self.ExtraRollRequestNag[player]:Cancel();
+                            self.ExtraRollRequestNag[player] = nil;
+                        end
 
-                    if self.ExtraRollRequestNag[player] then
-                        self.ExtraRollRequestNag[player]:Cancel();
-                        self.ExtraRollRequestNag[player] = nil;
-                    end
+                        if not self:TryFinishRoll() then
+                            if extraRolls then
+                                -- RollRequestWindow will currently just trigger /roll multiple times, uncomment to send roll request after roll request until the player exhausts all their roll slots
+                                -- LootReserve.Comm:SendRequestRoll(player, self.RequestedRoll.Item, {player}, self.RequestedRoll.Custom, self.RequestedRoll.Duration, self.RequestedRoll.MaxDuration, self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or "");
 
-                    if not self:TryFinishRoll() then
-                        if extraRolls then
-                            -- RollRequestWindow will currently just trigger /roll multiple times, uncomment to send roll request after roll request until the player exhausts all their roll slots
-                            -- LootReserve.Comm:SendRequestRoll(player, self.RequestedRoll.Item, {player}, self.RequestedRoll.Custom, self.RequestedRoll.Duration, self.RequestedRoll.MaxDuration, self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or "");
+                                local closureRoll = self.RequestedRoll;
+                                local closureItem = self.RequestedRoll.Item;
 
-                            local closureRoll = self.RequestedRoll;
-                            local closureItem = self.RequestedRoll.Item;
-
-                            -- whisper player
-                            local function WhisperPlayer()
-                                if not self.RequestedRoll or self.RequestedRoll ~= closureRoll or self.RequestedRoll.Item ~= closureItem then return; end
-                                local rollsCount = 0;
-                                local extraRolls = 0;
-                                for _, roll in ipairs(self.RequestedRoll.Players[player]) do
-                                    if roll == LootReserve.Constants.RollType.NotRolled then
-                                        extraRolls = extraRolls + 1;
+                                -- whisper player
+                                local function WhisperPlayer()
+                                    if not self.RequestedRoll or self.RequestedRoll ~= closureRoll or self.RequestedRoll.Item ~= closureItem then return; end
+                                    local rollsCount = 0;
+                                    local extraRolls = 0;
+                                    for _, roll in ipairs(self.RequestedRoll.Players[player]) do
+                                        if roll == LootReserve.Constants.RollType.NotRolled then
+                                            extraRolls = extraRolls + 1;
+                                        end
+                                        rollsCount = rollsCount + 1;
                                     end
-                                    rollsCount = rollsCount + 1;
+                                    if extraRolls == 0 then
+                                        return;
+                                    end
+                                    local name, link = closureItem:GetInfo();
+                                    local durationStr = "";
+                                    if self.RequestedRoll.Duration then
+                                        local time = math.ceil(self.RequestedRoll.Duration);
+                                        durationStr = time < 60      and format(" (%d %s)", time,      time ==  1 and "sec" or "secs")
+                                                   or time % 60 == 0 and format(" (%d %s)", time / 60, time == 60 and "min" or "mins")
+                                                   or                    format(" (%d:%02d mins)", math.floor(time / 60), time % 60);
+                                    end
+                                    LootReserve:SendChatMessage(format("Please /roll again on %s you reserved%s.%s",
+                                        link,
+                                        rollsCount > 1 and format(" (%d/%d)", rollsCount - extraRolls + 1, rollsCount) or "",
+                                        durationStr
+                                    ), "WHISPER", player);
                                 end
-                                if extraRolls == 0 then
-                                    return;
-                                end
-                                local name, link = closureItem:GetInfo();
-                                local durationStr = "";
-                                if self.RequestedRoll.Duration then
-                                    local time = math.ceil(self.RequestedRoll.Duration);
-                                    durationStr = time < 60      and format(" (%d %s)", time,      time ==  1 and "sec" or "secs")
-                                               or time % 60 == 0 and format(" (%d %s)", time / 60, time == 60 and "min" or "mins")
-                                               or                    format(" (%d:%02d mins)", math.floor(time / 60), time % 60);
-                                end
-                                LootReserve:SendChatMessage(format("Please /roll again on %s you reserved%s.%s",
-                                    link,
-                                    rollsCount > 1 and format(" (%d/%d)", rollsCount - extraRolls + 1, rollsCount) or "",
-                                    durationStr
-                                ), "WHISPER", player);
+                                self.ExtraRollRequestNag[player] = C_Timer.NewTimer(4, function() closureItem:OnCache(WhisperPlayer) end);
                             end
-                            self.ExtraRollRequestNag[player] = C_Timer.NewTimer(4, function() closureItem:OnCache(WhisperPlayer) end);
                         end
                     end
                 end
