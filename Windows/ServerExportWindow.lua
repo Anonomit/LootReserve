@@ -33,9 +33,31 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
         for _, roll in ipairs(LootReserve.Server.RollHistory) do
             if roll.StartTime >= minTime then
                 if roll.Item:IsCached() then
-                    if #missing == 0 and roll.Winners then
-                        for _, winner in ipairs(roll.Winners) do
-                            text = text .. format("\n%d,%d,%s,%s", roll.StartTime, roll.Item:GetID(), roll.Item:GetName(), winner);
+                    if #missing == 0 then
+                        if roll.Winners then
+                            for _, winner in ipairs(roll.Winners) do
+                                text = text .. format("\n%d,%d,%s,%s", roll.StartTime, roll.Item:GetID(), roll.Item:GetName(), winner);
+                            end
+                        else
+                            -- this can happen with older rolls, or on a reserved item when nobody rolled
+                            local max = 0;
+                            local winners = { };
+                            for player, rolls in pairs(roll.Players) do
+                                for _, rollNumber in ipairs(rolls) do
+                                    if rollNumber >= max then
+                                        if rollNumber > max then
+                                            wipe(winners);
+                                            max = rollNumber;
+                                        end
+                                        winners[player] = true;
+                                    end
+                                end
+                            end
+                            if max > 0 then
+                                for winner in pairs(winners) do
+                                    text = text .. format("\n%d,%d,%s,%s", roll.StartTime, roll.Item:GetID(), roll.Item:GetName(), winner);
+                                end
+                            end
                         end
                     end
                 else
