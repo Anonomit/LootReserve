@@ -47,6 +47,7 @@ LootReserve.Server =
         RollSkipNotContested            = true,
         RollHistoryDisplayLimit         = 10,
         RollHistoryKeepLimit            = 1000,
+        RollHistoryHideEmpty            = true,
         RollMasterLoot                  = true,
         AcceptAllRollFormats            = false,
         WinnerReservesRemoval           = LootReserve.Constants.WinnerReservesRemoval.Smart,

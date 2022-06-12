@@ -1326,6 +1326,18 @@
 					<OnClick>
 						local menu =
 						{
+							{
+								text = "Hide Empty Rolls",
+								func = function(info)
+									LootReserve.Server.Settings.RollHistoryHideEmpty = not LootReserve.Server.Settings.RollHistoryHideEmpty;
+									LootReserve.Server:UpdateRollList();
+								end,
+								checked = function(info)
+									return LootReserve.Server.Settings.RollHistoryHideEmpty;
+								end,
+								tooltipText = "Items without rolls will be hidden from view. They will still be kept in the history.",
+							},
+							LootReserve:MakeMenuSeparator(),
 							{ text = "Display Limit", isTitle = true },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "History Limit", isTitle = true },
@@ -1337,7 +1349,7 @@
 							{ text = "Close" },
 						};
 						for i, limit in ipairs({ 100, 250, 500, 1000, 10000 }) do
-							table.insert(menu, 3 + i,
+							table.insert(menu, 5 + i,
 							{
 								text = format("%d |4roll:rolls;", limit),
 								arg1 = limit,
@@ -1360,7 +1372,7 @@
 							});
 						end
 						for i, limit in ipairs({ 5, 10, 25, 50, 100 }) do
-							table.insert(menu, 1 + i,
+							table.insert(menu, 3 + i,
 							{
 								text = format("%d |4roll:rolls;", limit),
 								arg1 = limit,
