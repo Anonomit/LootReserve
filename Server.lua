@@ -67,7 +67,9 @@ LootReserve.Server =
     LootEdit            = { },
     MembersEdit         = { },
     Import              = { },
-    Export              = { },
+    Export              = {
+        PendingRollsExportTextUpdate = nil,
+    },
     PendingMasterLoot   = nil,
     ExtraRollRequestNag = { },
 

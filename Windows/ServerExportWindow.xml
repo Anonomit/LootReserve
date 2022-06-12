@@ -1,27 +1,58 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Script file="Windows/ServerExportWindow.lua" />
 	<Frame name="LootReserveServerExportWindow" parent="UIParent" inherits="BasicFrameTemplateWithInset" toplevel="true" movable="true" resizable="true" enableMouse="true" clampedToScreen="true" hidden="true">
-		<Size x="300" y="150" />
+		<Size x="400" y="150" />
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
 		<Frames>
 			<Button inherits="LootReserveCommonFrameMovingHeaderTemplate" />
 			<Button inherits="LootReserveCommonFrameSizeGrabberTemplate" />
-			<Button parentKey="OutputButton" inherits="UIPanelButtonTemplate" text="Export">
-				<Size x="80" y="23" />
+			<Button parentKey="OutputReservesButton" inherits="UIPanelButtonTemplate" text="Reserves">
+				<Size x="90" y="23" />
+				<Anchors>
+					<Anchor point="TOPLEFT" x="8" y="-30" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if LootReserve.Server.Export.PendingRollsExportTextUpdate then
+						  LootReserve.Server.Export.PendingRollsExportTextUpdate:Cancel();
+						end
+						LootReserve.Server.Export:UpdateReservesExportText();
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button parentKey="OutputSessionRollsButton" inherits="UIPanelButtonTemplate" text="Session Rolls">
+				<Size x="90" y="23" />
 				<Anchors>
 					<Anchor point="TOP" y="-30" />
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						LootReserve.Server.Export:UpdateExportText();
+						if LootReserve.Server.Export.PendingRollsExportTextUpdate then
+						  LootReserve.Server.Export.PendingRollsExportTextUpdate:Cancel();
+						end
+						LootReserve.Server.Export:UpdateRollsExportText(true);
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button parentKey="OutputAllRollsButton" inherits="UIPanelButtonTemplate" text="All Rolls">
+				<Size x="90" y="23" />
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-8" y="-30" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if LootReserve.Server.Export.PendingRollsExportTextUpdate then
+						  LootReserve.Server.Export.PendingRollsExportTextUpdate:Cancel();
+						end
+						LootReserve.Server.Export:UpdateRollsExportText();
 					</OnClick>
 				</Scripts>
 			</Button>
 			<Frame parentKey="Output">
 				<Anchors>
-					<Anchor point="TOP" relativeKey="$parent.OutputButton" relativePoint="BOTTOM" y="-4" />
+					<Anchor point="TOP" relativeKey="$parent.OutputReservesButton" relativePoint="BOTTOM" y="-4" />
 					<Anchor point="LEFT" x="8" />
 					<Anchor point="RIGHT" x="-10" />
 					<Anchor point="BOTTOM" y="7" />

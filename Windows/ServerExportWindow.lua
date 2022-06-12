@@ -1,4 +1,6 @@
-function LootReserve.Server.Export:UpdateExportText()
+
+
+function LootReserve.Server.Export:UpdateReservesExportText()
     local members = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members or LootReserve.Server.NewSessionSettings.ImportedMembers;
     local text = "";
     if members and next(members) then
@@ -12,6 +14,60 @@ function LootReserve.Server.Export:UpdateExportText()
         end
         text = format("Player,Class,Delta%s", string.rep(",Item", maxItems)) .. text;
     end
+    self:SetText(text);
+end
+
+function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
+    local minTime = 0;
+    if onlySession then
+        if LootReserve.Server.CurrentSession then
+            minTime = LootReserve.Server.CurrentSession.StartTime;
+        else
+            minTime = -1
+        end
+    end
+    local text = "";
+    local missing = { };
+    
+    if minTime >= 0 then
+        for _, roll in ipairs(LootReserve.Server.RollHistory) do
+            if roll.StartTime >= minTime then
+                if roll.Item:IsCached() then
+                    if #missing == 0 and roll.Winners then
+                        for _, winner in ipairs(roll.Winners) do
+                            text = text .. format("\n%d,%d,%s,%s", roll.StartTime, roll.Item:GetID(), roll.Item:GetName(), winner);
+                        end
+                    end
+                else
+                    table.insert(missing, roll.Item);
+                end
+            end
+        end
+        if #missing > 0 then
+            text = format("Loading item names...\nRemaining: %d\n\nInstall/Update ItemCache to remember database between sessions...", #missing);
+        elseif text ~= "" then
+            text = "Time,Item ID,Item Name,Winner" .. text;
+        end
+    end
+    
+    self:SetText(text);
+    
+    if #missing > 0 then
+        if #missing > LootReserve.ItemSearch.BatchCap then
+            for i = LootReserve.ItemSearch.BatchCap + 1, #missing do
+                missing[i] = nil;
+            end
+        end
+        if not self.PendingRollsExportTextUpdate or self.PendingRollsExportTextUpdate:IsComplete() then
+            self.PendingRollsExportTextUpdate = LootReserve.ItemCache:OnCache(missing, function()
+                self:UpdateRollsExportText();
+            end);
+        end
+        self.PendingRollsExportTextUpdate:SetSpeed(math.ceil(#missing/LootReserve.ItemSearch.BatchFrames));
+    end
+end
+
+function LootReserve.Server.Export:SetText(text)
     self.Window.Output.Scroll.EditBox:SetText(text);
     self.Window.Output.Scroll.EditBox:SetFocus();
     self.Window.Output.Scroll.EditBox:HighlightText();
@@ -22,6 +78,5 @@ function LootReserve.Server.Export:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetText("LootReserve Host - Export");
-    self.Window:SetMinResize(250, 130);
-    self:UpdateExportText();
+    self.Window:SetMinResize(300, 130);
 end

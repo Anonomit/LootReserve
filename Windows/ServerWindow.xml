@@ -1366,6 +1366,10 @@
 								StaticPopup_Show("LOOTRESERVE_CONFIRM_CLEAR_HISTORY", #LootReserve.Server.RollHistory, #LootReserve.Server.RollHistory == 1 and "" or "s");
 							end },
 							LootReserve:MakeMenuSeparator(),
+							{ text = "Export", func = function()
+								LootReserve.Server.Export.Window:SetShown(not LootReserve.Server.Export.Window:IsShown());
+							end },
+							LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
 						};
 						for i, limit in ipairs({ 100, 250, 500, 1000, 10000 }) do
