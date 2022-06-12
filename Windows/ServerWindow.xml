@@ -698,8 +698,8 @@
 										func = function(info)
 											local frame = self:GetParent():GetParent();
 
-											local reservesText = LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[frame.Item].Players);
 											LootReserve:SendChatMessage(format("Reserves for %s: %s", frame.Link, reservesText), info.arg1);
+											local reservesText = LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[frame.Item:GetID()].Players);
 										end,
 									};
 								end
