@@ -522,8 +522,10 @@ end
 LootReserve.Comm.Handlers[Opcodes.ReserveItem] = function(sender, itemID)
     itemID = tonumber(itemID);
 
-    if LootReserve.Server.CurrentSession then
-        LootReserve.Server:Reserve(sender, itemID);
+    if LootReserve.Server.CurrentSession and itemID then
+        LootReserve.ItemCache:OnCache(itemID, function()
+            LootReserve.Server:Reserve(sender, itemID);
+        end);
     end
 end
 
