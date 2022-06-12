@@ -480,7 +480,7 @@ function LootReserve.Server:Load()
     -- 2021-08-28: Convert active session LootCategory to LootCategories
     -- Date is late because the check was added late
     if versionSave < "2022-05-21" then
-        if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings.LootCategory then
+        if LootReserve.Server.CurrentSession and not LootReserve.Server.CurrentSession.Settings.LootCategories then
             LootReserve.Server.CurrentSession.Settings.LootCategories = {LootReserve.Server.CurrentSession.Settings.LootCategory};
             LootReserve.Server.NewSessionSettings.LootCategories = {LootReserve.Server.CurrentSession.Settings.LootCategory};
         end
