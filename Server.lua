@@ -1082,7 +1082,7 @@ function LootReserve.Server:PrepareSession()
                 end
                 if self.ReservableIDs[itemID] then
                     if command == "reserve" then
-                        LootReserve.ItemCache:OnCache(itemID, function()
+                        LootReserve.ItemCache(itemID):OnCache(function()
                             self:Reserve(sender, itemID, count, true);
                         end);
                     elseif command == "cancel" then
