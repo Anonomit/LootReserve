@@ -594,6 +594,11 @@
 										func = function(info)
 											local frame = self:GetParent():GetParent();
 											if not frame.Roll then return; end
+											local recipient = UnitIsPlayer("target") and UnitIsConnected("target") and UnitName("target");
+											if info.arg1 == "WHISPER" and not recipient then
+												LootReserve:PrintError("Target is not a valid player to whisper.")
+											  return;
+											end
 
 											local totalRolls = 0;
 											for player, rolls in pairs(frame.Roll.Players) do
@@ -612,19 +617,19 @@
 												frame.Link,
 												frame.Roll.Phases and format(" for %s", frame.Roll.Phases[1] or "") or "",
 												frame.Historical and format(" on %s", (frame.ItemFrame.Misc:GetText() or ""):gsub("%s%s", " at ")) or ""
-											), info.arg1);
+											), info.arg1, recipient);
 											local i = 1;
 											for player, roll, rollNumber in LootReserve.Server:GetOrderedPlayerRolls(frame.Roll.Players) do
 												if roll > LootReserve.Constants.RollType.NotRolled and (not self.Lines or self.Lines == 0 or self.Lines >= i) then
-													LootReserve:SendChatMessage(format("  %d by %s", roll, player), info.arg1);
+													LootReserve:SendChatMessage(format("  %d by %s", roll, player), info.arg1, recipient);
 													i = i + 1;
 												end
 											end
 											if i == 1 then
 												if frame.Roll.Winners then
-													LootReserve:SendChatMessage(format("  Reserved by %s", frame.Roll.Winners[1]), info.arg1);
+													LootReserve:SendChatMessage(format("  Reserved by %s", frame.Roll.Winners[1]), info.arg1, recipient);
 												else
-													LootReserve:SendChatMessage("  No Rolls", info.arg1);
+													LootReserve:SendChatMessage("  No Rolls", info.arg1, recipient);
 												end
 											end
 										end,
@@ -641,6 +646,7 @@
 									MakeReportButton("/party", "PARTY", IsInGroup()),
 									MakeReportButton("/guild", "GUILD", IsInGuild()),
 									MakeReportButton("/officer", "OFFICER", IsInGuild() and C_GuildInfo.GuildControlGetRankFlags(({GetGuildInfo("player")})[3]+1)[4]),
+									MakeReportButton("/whisper [target]", "WHISPER", true),
 									LootReserve:MakeMenuSeparator(),
 									{ text = "Cancel" },
 								};
@@ -697,9 +703,14 @@
 										disabled = not condition,
 										func = function(info)
 											local frame = self:GetParent():GetParent();
+											local recipient = UnitIsPlayer("target") and UnitIsConnected("target") and UnitName("target");
+											if info.arg1 == "WHISPER" and not recipient then
+												LootReserve:PrintError("Target is not a valid player to whisper.")
+											  return;
+											end
 
-											LootReserve:SendChatMessage(format("Reserves for %s: %s", frame.Link, reservesText), info.arg1);
 											local reservesText = LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[frame.Item:GetID()].Players);
+											LootReserve:SendChatMessage(format("Reserves for %s: %s", frame.Link, reservesText), info.arg1, recipient);
 										end,
 									};
 								end
@@ -714,6 +725,7 @@
 									MakeReportButton("/party", "PARTY", IsInGroup()),
 									MakeReportButton("/guild", "GUILD", IsInGuild()),
 									MakeReportButton("/officer", "OFFICER", IsInGuild() and C_GuildInfo.GuildControlGetRankFlags(({GetGuildInfo("player")})[3]+1)[4]),
+									MakeReportButton("/whisper [target]", "WHISPER", true),
 									LootReserve:MakeMenuSeparator(),
 									{ text = "Cancel" },
 								};
