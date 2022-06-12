@@ -910,7 +910,8 @@ function LootReserve.Server:OnWindowLoad(window)
         self:UpdateRollList();
     end);
     LootReserve:RegisterEvent("TRADE_SHOW", "TRADE_CLOSED", "TRADE_PLAYER_ITEM_CHANGED", "BAG_UPDATE", function()
-        LootReserve.Server:UpdateRollList();
+        -- sleep for a frame so the bag cache updates
+        C_Timer.After(0, function() LootReserve.Server:UpdateRollList(); end);
     end);
 end
 
