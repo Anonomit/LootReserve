@@ -239,6 +239,7 @@ local function IsItemUsable(itemID, playerClass, isMe)
             if numOwned > 0 then
                 return false;
             end
+        end
         if questDropID then
             local found = false;
             local collapsedHeaders = { };
