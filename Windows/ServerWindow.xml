@@ -2066,7 +2066,7 @@
 						<KeyValues>
 							<KeyValue key="text" value="Usable" type="string" />
 							<KeyValue key="tooltipText" value="Usable mode" type="string" />
-							<KeyValue key="tooltipSubtext" value="Players will not be able to reserve items that their class is unable to use.|n|nDisabling this option will allow players to reserve items which they are unable to use." type="string" />
+							<KeyValue key="tooltipSubtext" value="Players will not be able to reserve items that their class is unable to use, even if the item is not Bind on Pickup (BoP).|n|nYou may override the settings for each item by customizing them in the Loot List Edit window." type="string" />
 						</KeyValues>
 						<Anchors>
 							<Anchor point="BOTTOM" relativeKey="$parent.CheckButtonBlind" relativePoint="TOP" y="-2" />
