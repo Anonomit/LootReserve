@@ -1832,9 +1832,9 @@
 				</Layers>
 				<Frames>
 					<Frame name="LootReserveServerDropDownRaid" parentKey="DropDownRaid" inherits="UIDropDownMenuTemplate">
-						<Size x="140" y="32" />
+						<Size x="120" y="32" />
 						<Anchors>
-							<Anchor point="TOP" relativeKey="$parent.LabelRaid" relativePoint="BOTTOM" x="-20" />
+							<Anchor point="TOP" relativeKey="$parent.LabelRaid" relativePoint="BOTTOM" x="-30" />
 						</Anchors>
 						<Scripts>
 							<OnLoad>
@@ -1903,8 +1903,8 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					<Button name="LootReserveServerButtonLootEdit" parentKey="ButtonLootEdit" inherits="LootReserveGlowingButtonTemplate" text="Edit">
-						<Size x="40" y="24" />
+					<Button name="LootReserveServerButtonLootEdit" parentKey="ButtonLootEdit" inherits="LootReserveGlowingButtonTemplate" text="Edit Loot">
+						<Size x="60" y="24" />
 						<Anchors>
 							<Anchor point="LEFT" relativeKey="$parent.DropDownRaid" relativePoint="RIGHT" x="-16" y="2" />
 						</Anchors>
