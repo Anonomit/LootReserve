@@ -441,8 +441,8 @@
 					</OnMouseUp>
 					<OnEnter>
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-						GameTooltip:SetText("Opt Out");
-						GameTooltip:AddLine("This indicates that you have completed reserving, and do not intend to make any more reserves.|n|nYou will no longer be notified to complete your reserves.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						GameTooltip:SetText("Reserver");
+						GameTooltip:AddLine("You may use this dropdown to make reserves on behalf of another player.|n|nSelect the player here, and then reserve items as normal.|n|nOther players will be informed of reserves made for them.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
 						GameTooltip:Show();
 					</OnEnter>
 					<OnLeave function="GameTooltip_Hide" />
