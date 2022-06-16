@@ -1625,7 +1625,7 @@ function LootReserve.Server:ResetSession()
     return true;
 end
 
-function LootReserve.Server:IncrementReservesDelta(player, amount, winner)
+function LootReserve.Server:IncrementReservesDelta(player, amount, automatic, winner)
     local function Failure(result, ...)
         LootReserve:ShowError(LootReserve.Constants.ReserveDeltaResultText[result]);
         return false;
@@ -1674,7 +1674,7 @@ function LootReserve.Server:IncrementReservesDelta(player, amount, winner)
 
     -- Send chat messages
     if self.CurrentSession.Settings.ChatFallback then
-        if not self:IsAddonUser(player) then
+        if not self:IsAddonUser(player) and not automatic then
             LootReserve:SendChatMessage(format("Your reserve limit has been %screased to %d. You have %d reserve%s remaining.",
                 amount > 0 and "in" or "de",
                 self.CurrentSession.Settings.MaxReservesPerPlayer + member.ReservesDelta,
@@ -2048,7 +2048,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
             LootReserve.ItemCache:Item(itemID):OnCache(function(item)
                 local link = item:GetLink();
                 if winner then
-                    LootReserve:SendChatMessage(format("Your reserve for %s%s has been automatically removed.", link, count > 1 and format(" x%d", count) or ""), "WHISPER", player);
+                    LootReserve:SendChatMessage(format("Your reserve for %s%s has been automatically removed due to winning an item.", link, count > 1 and format(" x%d", count) or ""), "WHISPER", player);
                 else
                     LootReserve:SendChatMessage(format((forced or masquerade) and "Your reserve for %s%s has been removed. %d more %s available.%s" or "You cancelled your reserve for %s%s. %d more %s available.%s",
                         link,
@@ -2539,7 +2539,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                         
                         if self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Single or smartOverride == LootReserve.Constants.WinnerReservesRemoval.Single then
                             self:CancelReserve(player, reservedItem:GetID(), 1, false, true, true, true);
-                            self:IncrementReservesDelta(player, -1);
+                            self:IncrementReservesDelta(player, -1, true);
                         elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Duplicate or smartOverride == LootReserve.Constants.WinnerReservesRemoval.Duplicate then
                             local count = 0;
                             for i, id in ipairs(self.CurrentSession.Members[player].ReservedItems) do
@@ -2548,9 +2548,9 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                                 end
                             end
                             self:CancelReserve(player, reservedItem:GetID(), count, false, true, true, true);
-                            self:IncrementReservesDelta(player, 0 - count);
+                            self:IncrementReservesDelta(player, 0 - count, true);
                         elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.All then
-                            self:IncrementReservesDelta(player, 0 - self.CurrentSession.Members[player].ReservesLeft - #self.CurrentSession.Members[player].ReservedItems, true);
+                            self:IncrementReservesDelta(player, 0 - self.CurrentSession.Members[player].ReservesLeft - #self.CurrentSession.Members[player].ReservedItems, true, true);
                         end
                     end
                 end
