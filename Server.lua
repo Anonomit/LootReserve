@@ -2268,7 +2268,10 @@ function LootReserve.Server:ResolveRollTie(item)
         if roll and winners and #winners > 1 then
             item:OnCache(function()
                 local playersText = LootReserve:FormatReservesText(winners);
-                LootReserve:SendChatMessage(format("Tie for %s between players %s. All rolled %d. Please /roll again", item:GetLink(), playersText, roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollTie));
+                
+                local msg = format("Tie for %s between players %s. All rolled %d. Please /roll again", item:GetLink(), playersText, roll);
+                self.LastChat = msg;
+                LootReserve:SendChatMessage(msg, self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollTie));
             end);
 
             
