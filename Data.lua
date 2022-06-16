@@ -1,6 +1,3 @@
-local classicAlliance = LootReserve:GetCurrentExpansion() == 0 and "Alliance" or nil;
-local classicHorde = LootReserve:GetCurrentExpansion() == 0 and "Horde" or nil
-
 --[[
 ClassMask id
 1  - 1    - Warrior
@@ -16,6 +13,14 @@ ClassMask id
 11 - 1024 - Druid
 12 - 2048 - Demon Hunter
 --]]
+
+local hidden = { Hidden = true };
+
+-- Faction restrictions on equipment should only apply in classic
+local classicAlliance = LootReserve:GetCurrentExpansion() == 0 and "Alliance" or nil;
+local classicHorde    = LootReserve:GetCurrentExpansion() == 0 and "Horde"    or nil
+local factionAlliance = classicAlliance and { Faction = classicAlliance }     or nil;
+local factionHorde    = classicHorde    and { Faction = classicHorde }        or nil;
 
 LootReserve.Data =
 {
@@ -1654,154 +1659,9 @@ LootReserve.Data =
             },
         },
     },
-    ItemConditions =
-    {
-        -- Molten Core trash
-        [11382] = { Hidden = true },
-        [17010] = { Hidden = true },
-        [17011] = { Hidden = true },
-        [17012] = { Hidden = true },
-        [20951] = { Hidden = true },
-
-        -- Thunderfury items
-        [18563] = { Hidden = true },
-        [18564] = { Hidden = true },
-        [18562] = { Hidden = true },
-
-        -- Hand of Rag items
-        [17204] = { ClassMask = 1091, Hidden = true },
-        [17203] = { ClassMask = 1091, Hidden = true },
-
-        -- Scale of Onyxia
-        [15410] = { Hidden = true },
-
-        -- Head of Onyxia
-        [18422] = { Faction = "Horde" },
-        [18423] = { Faction = "Alliance" },
-
-        -- Head of Nefarian
-        [19002] = { Faction = "Horde" },
-        [19003] = { Faction = "Alliance" },
-
-        -- Red Scepter Shard
-        [21138] = { Hidden = true },
-
-        -- ZG Coins
-        [19698] = { Hidden = true },
-        [19699] = { Hidden = true },
-        [19700] = { Hidden = true },
-        [19701] = { Hidden = true },
-        [19702] = { Hidden = true },
-        [19703] = { Hidden = true },
-        [19704] = { Hidden = true },
-        [19705] = { Hidden = true },
-        [19706] = { Hidden = true },
-
-        -- ZG Bijous
-        [19707] = { Hidden = true },
-        [19708] = { Hidden = true },
-        [19709] = { Hidden = true },
-        [19710] = { Hidden = true },
-        [19711] = { Hidden = true },
-        [19712] = { Hidden = true },
-        [19713] = { Hidden = true },
-        [19714] = { Hidden = true },
-        [19715] = { Hidden = true },
-
-        --AQ20 idols
-        [20866] = { Hidden = true },
-        [20867] = { Hidden = true },
-        [20868] = { Hidden = true },
-        [20869] = { Hidden = true },
-        [20870] = { Hidden = true },
-        [20871] = { Hidden = true },
-        [20872] = { Hidden = true },
-        [20873] = { Hidden = true },
-
-        -- AQ40 idols
-        [20874] = { Hidden = true },
-        [20875] = { Hidden = true },
-        [20876] = { Hidden = true },
-        [20877] = { Hidden = true },
-        [20878] = { Hidden = true },
-        [20879] = { Hidden = true },
-        [20881] = { Hidden = true },
-        [20882] = { Hidden = true },
-
-        -- AQ scarabs
-        [20858] = { Hidden = true },
-        [20859] = { Hidden = true },
-        [20860] = { Hidden = true },
-        [20861] = { Hidden = true },
-        [20862] = { Hidden = true },
-        [20863] = { Hidden = true },
-        [20864] = { Hidden = true },
-        [20865] = { Hidden = true },
-
-        -- AQ scarab coffer items
-        [21156] = { Hidden = true },
-        [21761] = { Hidden = true },
-        [21762] = { Hidden = true },
-
-        -- AQ trash
-        [22202] = { Hidden = true },
-        [22203] = { Hidden = true },
-
-        -- Naxxramas scraps
-        [22376] = { Hidden = true },
-        [22373] = { Hidden = true },
-        [22374] = { Hidden = true },
-        [22375] = { Hidden = true },
-
-        -- Naxxramas runes
-        [23055] = { Hidden = true },
-        [22682] = { Hidden = true },
-
-        -- Atiesh splinters should have a class mask since they cannot be traded
-        [22726] = { ClassMask = 1424, Hidden = true },
-
-        -- Karazhan trash
-        [23857] = { Hidden = true },
-        [23864] = { Hidden = true },
-        [23862] = { Hidden = true },
-        [23865] = { Hidden = true },
-        [21882] = { Hidden = true },
-
-        -- Magtheridon's gem bag
-        -- [34846] = { Hidden = true },
-
-        -- Ashes of A'lar
-        [32458] = { Hidden = true },
-        
-        -- Trade items
-        [32897] = { Hidden = true },
-        [32428] = { Hidden = true },
-        [34664] = { Hidden = true },
-
-        -- Warglaives of Azzinoth
-        [32837] = { Hidden = true },
-        [32838] = { Hidden = true },
-
-        -- Trash gems
-        [32228] = { Hidden = true },
-        [32231] = { Hidden = true },
-        [32229] = { Hidden = true },
-        [32249] = { Hidden = true },
-        [32230] = { Hidden = true },
-        [32227] = { Hidden = true },
-
-        -- Zul'Aman trash
-        [33865] = { Hidden = true },
-        [33930] = { Hidden = true },
-        [33932] = { Hidden = true },
-        [33931] = { Hidden = true },
-        [33933] = { Hidden = true },
-        [33993] = { Hidden = true },
-
-        -- Thoridal
-        [34334] = { Hidden = true },
-    },
-    -- Items that start a quest which can only be completed one time
+    ItemConditions = { },
+    
+    -- Items which start a quest that can only be completed one time
     QuestStarters = {
         -- Ancient Petrified Leaf
         [18703] = 7632,
@@ -1837,7 +1697,7 @@ LootReserve.Data =
         [33102] = 11178,
     },
     
-    -- Items that you must be on a quest to loot and only one is required
+    -- Items that require an active quest to loot and duplicates are not useful
     QuestDrops = {
         -- Narain's Scrying Goggles
         [20951] = 8578,
@@ -1856,6 +1716,282 @@ LootReserve.Data =
         Rewards = { },
     },
 };
+
+
+local function HideItem(itemID)
+    if LootReserve.Data.ItemConditions[itemID] then
+        LootReserve.Data.ItemConditions[itemID] = LootReserve:Deepcopy(LootReserve.Data.ItemConditions[itemID]);
+        LootReserve.Data.ItemConditions[itemID]["Hidden"] = true;
+    else
+        LootReserve.Data.ItemConditions[itemID] = hidden;
+    end
+end
+
+local function ApplyClassRestriction(itemID, classMask)
+    if LootReserve.Data.ItemConditions[itemID] then
+        LootReserve.Data.ItemConditions[itemID] = LootReserve:Deepcopy(LootReserve.Data.ItemConditions[itemID]);
+        LootReserve.Data.ItemConditions[itemID]["ClassMask"] = classMask;
+    else
+        LootReserve.Data.ItemConditions[itemID] = { ClassMask = classMask };
+    end
+end
+
+-- Faction restrictions on equipment should only apply in classic
+local function ApplyFactionRestriction(itemID, faction)
+    if LootReserve.Data.ItemConditions[itemID] then
+        LootReserve.Data.ItemConditions[itemID] = LootReserve:Deepcopy(LootReserve.Data.ItemConditions[itemID]);
+        LootReserve.Data.ItemConditions[itemID]["Faction"] = faction == "Alliance" and classicAlliance or classicHorde;
+    else
+        LootReserve.Data.ItemConditions[itemID] = faction == "Alliance" and factionAlliance or factionHorde;
+    end
+end
+
+
+-- Hidden Items
+
+-- Molten Core trash
+HideItem(11382);
+HideItem(17010);
+HideItem(17011);
+HideItem(17012);
+HideItem(20951);
+
+-- Thunderfury items
+HideItem(18563);
+HideItem(18564);
+HideItem(18562);
+
+-- Hand of Rag items
+HideItem(17204);
+HideItem(17203);
+
+-- Scale of Onyxia
+HideItem(15410);
+
+-- Red Scepter Shard
+HideItem(21138);
+
+-- ZG Coins
+HideItem(19698);
+HideItem(19699);
+HideItem(19700);
+HideItem(19701);
+HideItem(19702);
+HideItem(19703);
+HideItem(19704);
+HideItem(19705);
+HideItem(19706);
+
+-- ZG Bijous
+HideItem(19707);
+HideItem(19708);
+HideItem(19709);
+HideItem(19710);
+HideItem(19711);
+HideItem(19712);
+HideItem(19713);
+HideItem(19714);
+HideItem(19715);
+
+--AQ20 idols
+HideItem(20866);
+HideItem(20867);
+HideItem(20868);
+HideItem(20869);
+HideItem(20870);
+HideItem(20871);
+HideItem(20872);
+HideItem(20873);
+
+-- AQ40 idols
+HideItem(20874);
+HideItem(20875);
+HideItem(20876);
+HideItem(20877);
+HideItem(20878);
+HideItem(20879);
+HideItem(20881);
+HideItem(20882);
+
+-- AQ scarabs
+HideItem(20858);
+HideItem(20859);
+HideItem(20860);
+HideItem(20861);
+HideItem(20862);
+HideItem(20863);
+HideItem(20864);
+HideItem(20865);
+
+-- AQ scarab coffer items
+HideItem(21156);
+HideItem(21761);
+HideItem(21762);
+
+-- AQ trash
+HideItem(22202);
+HideItem(22203);
+
+-- Naxxramas scraps
+HideItem(22376);
+HideItem(22373);
+HideItem(22374);
+HideItem(22375);
+
+-- Naxxramas runes
+HideItem(23055);
+HideItem(22682);
+
+-- Atiesh splinters
+HideItem(22726);
+
+-- Karazhan trash
+HideItem(23857);
+HideItem(23864);
+HideItem(23862);
+HideItem(23865);
+HideItem(21882);
+
+-- Magtheridon's gem bag
+-- HideItem(34846);
+
+-- Ashes of A'lar
+HideItem(32458);
+
+-- Trade items
+HideItem(32897);
+HideItem(32428);
+HideItem(34664);
+
+-- Warglaives of Azzinoth
+HideItem(32837);
+HideItem(32838);
+
+-- Trash gems
+HideItem(32228);
+HideItem(32231);
+HideItem(32229);
+HideItem(32249);
+HideItem(32230);
+HideItem(32227);
+
+-- Zul'Aman trash
+HideItem(33865);
+HideItem(33930);
+HideItem(33932);
+HideItem(33931);
+HideItem(33933);
+HideItem(33993);
+
+-- Thoridal
+HideItem(34334);
+
+
+
+-- Class Restricted Items
+
+-- Atiesh splinters should have a class mask since they cannot be traded
+ApplyClassRestriction(22726, 1424);
+
+-- Hand of Rag items
+ApplyClassRestriction(17204, 1091);
+ApplyClassRestriction(17203, 1091);
+
+
+
+-- Faction Restricted Items
+
+-- Head of Onyxia
+ApplyFactionRestriction(18422, "Horde");
+ApplyFactionRestriction(18423, "Alliance");
+
+-- Head of Nefarian
+ApplyFactionRestriction(19002, "Horde");
+ApplyFactionRestriction(19003, "Alliance");
+
+
+-- Classic only restrictions
+-- Don't actually need to check expansion level here, but it is slightly faster
+if LootReserve:GetCurrentExpansion() == 0 then
+    -- T1
+    ApplyFactionRestriction(16837, "Horde");
+    ApplyFactionRestriction(16838, "Horde");
+    ApplyFactionRestriction(16839, "Horde");
+    ApplyFactionRestriction(16840, "Horde");
+    ApplyFactionRestriction(16841, "Horde");
+    ApplyFactionRestriction(16842, "Horde");
+    ApplyFactionRestriction(16843, "Horde");
+    ApplyFactionRestriction(16844, "Horde");
+    ApplyFactionRestriction(16853, "Alliance");
+    ApplyFactionRestriction(16854, "Alliance");
+    ApplyFactionRestriction(16855, "Alliance");
+    ApplyFactionRestriction(16856, "Alliance");
+    ApplyFactionRestriction(16857, "Alliance");
+    ApplyFactionRestriction(16858, "Alliance");
+    ApplyFactionRestriction(16859, "Alliance");
+    ApplyFactionRestriction(16860, "Alliance");
+        
+    -- T2
+    ApplyFactionRestriction(16943, "Horde");
+    ApplyFactionRestriction(16944, "Horde");
+    ApplyFactionRestriction(16945, "Horde");
+    ApplyFactionRestriction(16946, "Horde");
+    ApplyFactionRestriction(16947, "Horde");
+    ApplyFactionRestriction(16948, "Horde");
+    ApplyFactionRestriction(16949, "Horde");
+    ApplyFactionRestriction(16950, "Horde");
+    ApplyFactionRestriction(16951, "Alliance");
+    ApplyFactionRestriction(16952, "Alliance");
+    ApplyFactionRestriction(16953, "Alliance");
+    ApplyFactionRestriction(16954, "Alliance");
+    ApplyFactionRestriction(16955, "Alliance");
+    ApplyFactionRestriction(16956, "Alliance");
+    ApplyFactionRestriction(16957, "Alliance");
+    ApplyFactionRestriction(16958, "Alliance");
+        
+    -- BWL trinkets
+    ApplyFactionRestriction(19343, "Alliance");
+    ApplyFactionRestriction(19344, "Horde");
+        
+    -- ZG gloves
+    ApplyFactionRestriction(20264, "Alliance");
+    ApplyFactionRestriction(20257, "Horde");
+        
+    -- AQ20 books
+    ApplyFactionRestriction(21288, "Alliance");
+    ApplyFactionRestriction(21289, "Alliance");
+    ApplyFactionRestriction(21290, "Alliance");
+    ApplyFactionRestriction(21291, "Horde");
+    ApplyFactionRestriction(21292, "Horde");
+    ApplyFactionRestriction(21293, "Horde");
+        
+    -- AQ20 equipment
+    ApplyFactionRestriction(21453, "Alliance");
+    ApplyFactionRestriction(21454, "Horde");
+    ApplyFactionRestriction(21486, "Alliance");
+    ApplyFactionRestriction(21487, "Horde");
+    ApplyFactionRestriction(21803, "Alliance");
+    ApplyFactionRestriction(21804, "Horde");
+    
+    -- AQ40 boots
+    ApplyFactionRestriction(21704, "Alliance");
+    ApplyFactionRestriction(21705, "Horde");
+    
+    -- AQ40 trash paladin gloves
+    ApplyFactionRestriction(21889, "Alliance");
+        
+    -- Naxx rings
+    ApplyFactionRestriction(23065, "Horde");
+    ApplyFactionRestriction(23066, "Alliance");
+        
+    -- Naxx trash drops
+    ApplyFactionRestriction(23664, "Horde");
+    ApplyFactionRestriction(23665, "Horde");
+    ApplyFactionRestriction(23666, "Alliance");
+    ApplyFactionRestriction(23667, "Alliance");
+    ApplyFactionRestriction(23668, "Alliance");
+end
+
 
 local tokenMap = {
     -- MC
@@ -2163,86 +2299,6 @@ for token, rewards in pairs(tokenMap) do
     end
 end
 
--- Faction restrictions on equipment should only apply in classic
-if LootReserve:GetCurrentExpansion() == 1 then
-    -- T1
-    LootReserve.Data.ItemConditions[16837] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16838] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16839] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16840] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16841] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16842] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16843] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16844] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16853] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16854] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16855] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16856] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16857] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16858] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16859] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16860] = { Faction = classicAlliance };
-        
-    -- T2
-    LootReserve.Data.ItemConditions[16943] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16944] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16945] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16946] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16947] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16948] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16949] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16950] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[16951] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16952] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16953] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16954] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16955] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16956] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16957] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[16958] = { Faction = classicAlliance };
-        
-    -- BWL trinkets
-    LootReserve.Data.ItemConditions[19343] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[19344] = { Faction = classicHorde };
-        
-    -- ZG gloves
-    LootReserve.Data.ItemConditions[20264] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[20257] = { Faction = classicHorde };
-        
-    -- AQ20 books
-    LootReserve.Data.ItemConditions[21288] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[21289] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[21290] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[21291] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[21292] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[21293] = { Faction = classicHorde };
-        
-    -- AQ20 equipment
-    LootReserve.Data.ItemConditions[21453] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[21454] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[21486] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[21487] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[21803] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[21804] = { Faction = classicHorde };
-    
-    -- AQ40 boots
-    LootReserve.Data.ItemConditions[21704] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[21705] = { Faction = classicHorde };
-    
-    -- AQ40 trash paladin gloves
-    LootReserve.Data.ItemConditions[21889] = { Faction = classicAlliance };
-        
-    -- Naxx rings
-    LootReserve.Data.ItemConditions[23065] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[23066] = { Faction = classicAlliance };
-        
-    -- Naxx trash drops
-    LootReserve.Data.ItemConditions[23664] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[23665] = { Faction = classicHorde };
-    LootReserve.Data.ItemConditions[23666] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[23667] = { Faction = classicAlliance };
-    LootReserve.Data.ItemConditions[23668] = { Faction = classicAlliance };
-end
 
 function LootReserve.Data:IsItemInCategories(itemID, categories)
     for _, category in ipairs(categories) do
