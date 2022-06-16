@@ -542,6 +542,37 @@ function LootReserve.Server:Load()
         end
     end
     
+    -- 2022-06-16: Delete irrelevant chat
+    if versionSave < "2022-06-16" then
+        for _, roll in ipairs(self.RollHistory) do
+            local toRemove = { };
+            if roll.Chat then
+                for player, chat in pairs(roll.Chat) do
+                    if self:HasRelevantRecentChat(roll.Chat, roll.Players, player) then
+                        local text = chat[1]
+                        if text:match("Tie for |cff%x%x%x%x%x%x|Hitem:%d+[:%d%-]+|h%[.+%]|h|r between players .+%. All rolled %d+%. Please /roll again") then
+                            table.remove(chat, 1);
+                        end
+                        text = chat[1]
+                        if text:match(".+ %- roll on reserved |cff%x%x%x%x%x%x|Hitem:%d+[:%d%-]+|h%[.+%]|h|r")
+                        or text:match("Roll.* on |cff%x%x%x%x%x%x|Hitem:%d+[:%d%-]+|h%[.+%]|h|r") then
+                            table.remove(chat, 1);
+                        end
+                    end
+                    if not self:HasRelevantRecentChat(roll.Chat, roll.Players, player) then
+                        table.insert(toRemove, player);
+                    end
+                end
+                for _, player in ipairs(toRemove) do
+                    roll.Chat[player] = nil;
+                end
+                if not next(roll.Chat) then
+                    roll.Chat = nil;
+                end
+            end
+        end
+    end
+    
     -- Create Item objects
     for _, roll in ipairs(self.RollHistory) do
         roll.Item = LootReserve.ItemCache:Item(roll.Item);
