@@ -40,6 +40,7 @@ function LootReserve.Client:UpdateReserveStatus()
         self.Window.OptIn:SetShown(self.OptedOut);
     end
     self.Window.Masquerade:SetShown(self.SessionServer and LootReserve:IsMe(self.SessionServer));
+    self.Window.Masquerade.LeftText:SetText("Reserving as:")
     self.Window.Masquerade.Text:SetText(LootReserve:ColoredPlayer(self.Masquerade or LootReserve:Me()))
 
     self.Window.OptOut:SetEnabled(not self:IsOptPending());
