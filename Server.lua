@@ -712,26 +712,22 @@ function LootReserve.Server:PrepareLootTracking()
     if self.LootTrackingRegistered then return; end
     self.LootTrackingRegistered = true;
 
-    local function AddLootToList(looter, item, count)
-        local quality;
-        looter = LootReserve:Player(looter);
-        if item then
-            local name, link, q = item:GetInfo();
-            if not name or not link then
-                return true;
-            end
-            if q >= self.Settings.MinimumLootQuality then
-                quality = q;
+    local function AddRecentLoot(item)
+        if item:GetQuality() >= self.Settings.MinimumLootQuality then
+            LootReserve:TableRemove(self.RecentLoot, item);
+            table.insert(self.RecentLoot, item);
+            while #self.RecentLoot > self.Settings.MaxRecentLoot do
+                table.remove(self.RecentLoot, 1);
             end
         end
+    end
+    
+    local function AddLootToTrackingList(looter, item, count)
+        looter = LootReserve:Player(looter);
         count = tonumber(count);
-        if looter and item and quality and count then
+        if looter and item and count then
             if LootReserve:IsMe(looter) then
-                LootReserve:TableRemove(self.RecentLoot, item);
-                table.insert(self.RecentLoot, item);
-                while #self.RecentLoot > self.Settings.MaxRecentLoot do
-                    table.remove(self.RecentLoot, 1);
-                end
+                AddRecentLoot(item);
             end
 
             if self.CurrentSession and self.ReservableIDs[item:GetID()] then
@@ -784,7 +780,7 @@ function LootReserve.Server:PrepareLootTracking()
         if itemID then
             LootReserve.ItemCache:Item(itemLink):OnCache(function(item)
                 if item:GetStackSize() == 1 or not item:IsBindOnPickup() then -- don't add stackable BoP items
-                    return AddLootToList(looter, item, count);
+                    return AddLootToTrackingList(looter, item, count);
                 end
             end);
         end
@@ -807,14 +803,7 @@ function LootReserve.Server:PrepareLootTracking()
                 local itemID = GetLootSlotInfo(lootSlot);
                 if itemID then
                     local item = LootReserve.ItemCache:Item(GetLootSlotLink(lootSlot));
-                    local quality = item:GetQuality();
-                    if quality >= self.Settings.MinimumLootQuality then
-                        LootReserve:TableRemove(self.RecentLoot, item);
-                        table.insert(self.RecentLoot, item);
-                        while #self.RecentLoot > self.Settings.MaxRecentLoot do
-                            table.remove(self.RecentLoot, 1);
-                        end
-                    end
+                    AddRecentLoot(item);
                 end
             end
         end

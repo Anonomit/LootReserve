@@ -1057,8 +1057,13 @@
 										CloseMenus();
 									else
 										local function SelectItem(info)
-											frame:SetItem(info.arg1);
-											CloseMenus();
+											if IsShiftKeyDown() then
+											  LootReserve:TableRemove(LootReserve.Server.RecentLoot, info.arg1);
+											  return self:DropHandler();
+											else
+												frame:SetItem(info.arg1);
+												CloseMenus();
+											end
 										end
 										local missing = { };
 										local function MakeItem(count, item, texture)
