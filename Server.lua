@@ -1094,7 +1094,6 @@ function LootReserve.Server:PrepareSession()
                     end
                 else
                     LootReserve:SendChatMessage(format("That item is not reservable in this raid.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
-                    print(itemID)
                 end
             end
 
