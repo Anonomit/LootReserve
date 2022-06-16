@@ -1105,6 +1105,9 @@
 										local menu =
 										{
 											{ text = "Recent Loot", isTitle = true },
+											LootReserve:MakeMenuSeparator(),
+											{ text = "Bags", isTitle = true },
+											LootReserve:MakeMenuSeparator(),
 											{ text = "Settings", arg1 = "#recentSettings", menuList = {
 												{ text = format("Max Items: |cFF00FF00%d|r", LootReserve.Server.Settings.MaxRecentLoot), arg1 = "#max", menuList = {
 													{ text =  "0", checked = LootReserve.Server.Settings.MaxRecentLoot ==  0, func = function() LootReserve.Server.Settings.MaxRecentLoot =  0; LootReserve:ReopenMenu(self, "#recentSettings", "#max"); end },
@@ -1134,13 +1137,10 @@
 													func = function(_, _, _, checked) LootReserve.Server.Settings.RemoveRecentLootAfterRolling = checked; end,
 												},
 											} },
-											LootReserve:MakeMenuSeparator(),
-											{ text = "Bags", isTitle = true },
-											LootReserve:MakeMenuSeparator(),
 											{ text = "Cancel" },
 										};
 										for bag, bagMenu in ipairs(bagMenus) do
-											table.insert(menu, 4 + bag,
+											table.insert(menu, 3 + bag,
 											{
 												text = bag == 1 and "Backpack" or format("Bag %d", bag - 1),
 												menuList = bagMenu,
