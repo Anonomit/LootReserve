@@ -305,8 +305,9 @@ function LootReserve.Server:GetChatChannel(announcement)
     end
 end
 
-function LootReserve.Server:HasRelevantRecentChat(chat, player, rollCount)
-    if not chat or not chat[player] then return false; end
+function LootReserve.Server:HasRelevantRecentChat(chat, players, player)
+    if not chat    or not chat[player]    then return false; end
+    if not players or not players[player] then return false; end
     local chatRollCount = 0;
     for _, str in ipairs(chat[player]) do
         local time, channel, text = strsplit("|", str, 3);
@@ -315,7 +316,7 @@ function LootReserve.Server:HasRelevantRecentChat(chat, player, rollCount)
         end
         chatRollCount = chatRollCount + 1;
     end
-    return rollCount < chatRollCount;
+    return #players[player] < chatRollCount;
 end
 
 function LootReserve.Server:IsAddonUser(player)
@@ -2418,7 +2419,8 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
         if self.RequestedRoll.Chat then
             local toRemove = { };
             for player in pairs(self.RequestedRoll.Chat) do
-                if not self.RequestedRoll.Players[player] then
+                if not self:HasRelevantRecentChat(self.RequestedRoll.Chat, self.RequestedRoll.Players, player) then
+                -- if not self.RequestedRoll.Players[player] then
                     table.insert(toRemove, player);
                 end
             end

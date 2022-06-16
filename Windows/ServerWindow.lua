@@ -81,7 +81,7 @@ function LootReserve.Server:UpdateReserveListButtons(lockdown)
             for _, button in ipairs(frame.ReservesFrame.Players) do
                 if button:IsShown() then
                     button.Name.WonRolls:SetShown(self.CurrentSession and self.CurrentSession.Members[button.Player] and self.CurrentSession.Members[button.Player].WonRolls);
-                    button.Name.RecentChat:SetShown(frame.Roll and self:HasRelevantRecentChat(frame.Roll.Chat, button.Player, #frame.Roll.Players[button.Player]));
+                    button.Name.RecentChat:SetShown(frame.Roll and self:HasRelevantRecentChat(frame.Roll.Chat, frame.Roll.Players, button.Player));
                 end
             end
         end
@@ -451,7 +451,7 @@ function LootReserve.Server:UpdateRollListButtons(lockdown)
             for _, button in ipairs(frame.ReservesFrame.Players) do
                 if button:IsShown() then
                     button.Name.WonRolls:SetShown(self.CurrentSession and self.CurrentSession.Members[button.Player] and self.CurrentSession.Members[button.Player].WonRolls);
-                    button.Name.RecentChat:SetShown(frame.Roll and self:HasRelevantRecentChat(frame.Roll.Chat, button.Player, #frame.Roll.Players[button.Player]));
+                    button.Name.RecentChat:SetShown(frame.Roll and self:HasRelevantRecentChat(frame.Roll.Chat, frame.Roll.Players, button.Player));
                 end
             end
         end
