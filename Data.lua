@@ -1579,7 +1579,7 @@ LootReserve.Data =
                     Loot =
                     {
                         34848, 34851, 34852, 0,
-                        34386, 34170, 34169, 34384, 34168, 34167, 34382, 0,
+                        34170, 34169, 34168, 34167, 0,
                         34166, 0,
                         34165, 34164, 0,
                     },
@@ -1589,7 +1589,7 @@ LootReserve.Data =
                     Loot =
                     {
                         34853, 34854, 34855, 0,
-                        34181, 34180, 34381, 0,
+                        34181, 34180, 0,
                         34177, 34178, 0,
                         34179, 34176, 0,
                     },
@@ -1599,7 +1599,7 @@ LootReserve.Data =
                     Loot =
                     {
                         34856, 34857, 34858, 0,
-                        34188, 34385, 34186, 34383, 34352, 0,
+                        34188, 34186, 34352, 0,
                         34184, 0,
                         34182, 34185, 0,
                     },
@@ -1608,7 +1608,7 @@ LootReserve.Data =
                     Name = "Eredar Twins",
                     Loot =
                     {
-                        34210, 34393, 34202, 34391, 34209, 34392, 34195, 34390, 34208, 34194, 34193, 34388, 34389, 34192, 0,
+                        34210, 34202, 34209, 34195, 34208, 34194, 34193, 34192, 0,
                         35290, 34204, 35291, 34205, 34189, 35292, 34190, 0,
                         34206, 34199, 34198, 34197, 34203, 34196, 0,
                     },
@@ -1617,7 +1617,7 @@ LootReserve.Data =
                     Name = "M'uru",
                     Loot =
                     {
-                        34232, 34399, 34233, 34398, 34212, 34211, 34397, 34234, 34408, 34396, 34229, 34228, 34395, 34240, 34215, 34216, 34394, 0,
+                        34232, 34233, 34212, 34211, 34234, 34229, 34228, 34240, 34215, 34216, 0,
                         34230, 35282, 34429, 34430, 35283, 35284, 34427, 34428, 34213, 0,
                         34231, 34214, 0,
                     },
@@ -1627,7 +1627,7 @@ LootReserve.Data =
                     Loot =
                     {
                         34334, 0,
-                        34405, 34340, 34406, 34344, 34339, 34342, 34403, 34245, 34404, 34244, 34332, 34402, 34333, 34343, 34243, 34345, 34341, 34401, 34400, 0,
+                        34340, 34344, 34339, 34342, 34245, 34244, 34332, 34333, 34343, 34243, 34345, 34341, 0,
                         34242, 34241, 0,
                         34336, 34335, 34337, 34329, 34247, 34331, 0,
                     },
@@ -1637,7 +1637,7 @@ LootReserve.Data =
                     Name = "Trash",
                     Loot =
                     {
-                        34407, 34351, 34409, 34350, 0,
+                        34351, 34350, 0,
                         35733, 0,
                         34347, 34348, 34349, 34183, 34346, 0,
                         35273, 0,
@@ -2290,6 +2290,41 @@ local tokenMap = {
     -- Boots of the Forgotten Vanquisher
     [34858] = {34575, 34574, 34571, 34572, 34573},
     
+    -- Cloth Sunmote Exchanges
+    [34339] = {34405}, -- Helm of Arcane Purity
+    [34202] = {34393}, -- Shoulderpads of Knowledge's Pursuit
+    [34233] = {34399}, -- Robes of Ghostly Hatred
+    [34342] = {34406}, -- Gloves of Tyri's Power
+    [34170] = {34386}, -- Pantaloons of Growing Strife
+    
+    -- Leather Sunmote Exchanges
+    [34245] = {34403}, -- Cover of Ursoc the Mighty
+    [34209] = {34391}, -- Spaulders of Devastation
+    [34212] = {34398}, -- Utopian Tunic of Elune
+    [34351] = {34407}, -- Tranquil Moonlight Wraps
+    [34169] = {34384}, -- Breeches of Natural Splendor
+    [34244] = {34404}, -- Mask of the Fury Hunter
+    [34211] = {34397}, -- Bladed Chaos Tunic
+    [34195] = {34392}, -- Demontooth Shoulderpads
+    [34234] = {34408}, -- Gloves of the Forest Drifter
+    [34188] = {34385}, -- Leggings of the Immortal Beast
+    
+    -- Mail Sunmote Exchanges
+    [34332] = {34402}, -- Shroud of Chieftain Ner'zhul
+    [34229] = {34396}, -- Garments of Crashing Shores
+    [34208] = {34390}, -- Erupting Epaulets
+    [34350] = {34409}, -- Gauntlets of the Ancient Frostwolf
+    [34186] = {34383}, -- Kilt of Spiritual Reconstruction
+    
+    -- Plate Sunmote Exchanges
+    [34243] = {34401}, -- Helm of Uther's Resolve
+    [34193] = {34389}, -- Spaulders of the Thalassian Defender
+    [34216] = {34395}, -- Noble Judicator's Chestguard
+    [34167] = {34382}, -- Judicator's Legguards
+    [34345] = {34400}, -- Crown of Dath'Remar
+    [34192] = {34388}, -- Pauldrons of Berserking
+    [34215] = {34394}, -- Breastplate of Agony's Aversion
+    [34180] = {34381}, -- Felstrength Legplates
 };
 
 for token, rewards in pairs(tokenMap) do
