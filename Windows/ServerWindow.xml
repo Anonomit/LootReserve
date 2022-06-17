@@ -1525,9 +1525,8 @@
 						local function RefreshChatReservesLimit()
 							LootReserve:ReopenMenu(self, "#chatReservesLimit");
 						end
-						local function RefreshReservesAndRolls()
-							LootReserve.Server:UpdateReserveList();
-							LootReserve.Server:UpdateRollsList();
+						local function RefreshRolls()
+							LootReserve.Server:UpdateRollList();
 						end
 						local function ToggleUseUnitFrames(enabled)
 							if enabled then
@@ -1628,6 +1627,7 @@
 							} },
 							MakeMenuToggle("Use Unit Frames", "UseUnitFrames", "Make player rows in Reserves and Rolls tabs behave like unit frames, allowing them to be right-clicked for context menu, have items be dropped on them to open trade etc.|n|nOnly works outside of combat.|n|nWhen enabled, this may prevent the host window from being closed and reopened while in combat via minimap button or |cFFFFFFFF/reserve host|r command.", ToggleUseUnitFrames),
 							MakeMenuToggle("Show Reopen Hint", "ShowReopenHint", "Shows a hint in chat when this window is closed, telling you how to reopen it."),
+							MakeMenuToggle("24 Hour Clock", "Use24HourTime", "Shows and broadcasts times using a 24 hour format. Disable for 12 hour formatting.", RefreshRolls),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Rolls", isTitle = true },
 							MakeMenuToggle("Accept All Roll Formats", "AcceptAllRollFormats", "If enabled, custom rolls will be honored. If disabled, only 1-100 rolls will be considered and all others will be ignored.", ToggleAcceptAllRollFormats),

@@ -553,7 +553,15 @@ function LootReserve.Server:UpdateRollList(lockdown)
             end
 
             if historical then
-                frame.ItemFrame.Misc:SetText(roll.StartTime and date(format("%%B%s%%e  %%H:%%M", date("*t", roll.StartTime).day < 10 and "" or " "), roll.StartTime) or "");
+                if not roll.StartTime then
+                    frame.ItemFrame.Misc:SetText("");
+                elseif self.Settings.Use24HourTime then
+                    frame.ItemFrame.Misc:SetText(date(format("%%B%s%%e  %%H:%%M", date("*t", roll.StartTime).day < 10 and "" or " "), roll.StartTime));
+                else
+                    local hour = date("%I", roll.StartTime);
+                    hour = hour:match("^0(%d)$") or hour;
+                    frame.ItemFrame.Misc:SetText(date(format("%%B%s%%e  %s:%%M %%p", date("*t", roll.StartTime).day < 10 and "" or " ", hour), roll.StartTime));
+                end
             elseif tradeableItemCount < 1 and not LootReserve:IsLootingItem(item) then
                 frame.ItemFrame.Misc:SetText("|cFFFF0000Cannot distribute|r");
             else

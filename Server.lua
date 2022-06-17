@@ -57,6 +57,7 @@ LootReserve.Server =
         MinimumLootQuality              = 2,
         RemoveRecentLootAfterRolling    = true,
         UseUnitFrames                   = false,
+        Use24HourTime                   = true,
         ShowReopenHint                  = true,
     },
     RequestedRoll       = nil,
