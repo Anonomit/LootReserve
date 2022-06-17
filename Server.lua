@@ -932,14 +932,16 @@ function LootReserve.Server:PrepareSession()
                 if text and string.find(text, " Reserved by ", 1, true) then return; end
                 end
 
-                local item = LootReserve.ItemCache:Item(link);
-                if self.CurrentSession.WonItems[item:GetID()] then
+                local itemID = LootReserve.ItemCache:Item(link):GetID();
+                local tokenID = LootReserve.Data:GetToken(itemID);
+                
+                if self.CurrentSession.WonItems[itemID] then
                     local playerCounts = { };
-                    for _, player in ipairs(self.CurrentSession.WonItems[item:GetID()].Players) do
+                    for _, player in ipairs(self.CurrentSession.WonItems[tokenID or itemID].Players) do
                         playerCounts[player] = playerCounts[player] and playerCounts[player] + 1 or 1;
                         local found = 0;
                         for _, roll in ipairs(self.CurrentSession.Members[player].WonRolls) do
-                            if item == LootReserve.ItemCache:Item(roll.Item) then
+                            if (tokenID or itemID) == LootReserve.ItemCache:Item(roll.Item):GetID() then
                                 found = found + 1;
                                 if found == playerCounts[player] then
                                     local text = format("%s%s", LootReserve:ColoredPlayer(player), roll.Phase and format(" %s %s", type(roll.Phase) == "number" and "by" or "for", LootReserve.Constants.WonRollPhaseText[roll.Phase] or roll.Phase) or "")
@@ -950,8 +952,8 @@ function LootReserve.Server:PrepareSession()
                         end
                     end
                 end
-                if self.CurrentSession.ItemReserves[item:GetID()] then
-                    local reservesText = LootReserve:FormatReservesTextColored(self.CurrentSession.ItemReserves[item:GetID()].Players);
+                if self.CurrentSession.ItemReserves[tokenID or itemID] then
+                    local reservesText = LootReserve:FormatReservesTextColored(self.CurrentSession.ItemReserves[tokenID or itemID].Players);
                     tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Dice-Up:32:32:0:-4|t Reserved by " .. reservesText, 1, 1, 1);
                 end
             end

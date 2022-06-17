@@ -209,9 +209,10 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
                 if text and string.find(text, " Reserved by ", 1, true) then return; end
                 end
 
-                local item = LootReserve.ItemCache:Item(link);
-                if #self:GetItemReservers(item:GetID()) > 0 then
-                    local reservesText = LootReserve:FormatReservesTextColored(self:GetItemReservers(item:GetID()));
+                local itemID = LootReserve.ItemCache:Item(link):GetID();
+                local tokenID = LootReserve.Data:GetToken(itemID);
+                if #self:GetItemReservers(tokenID or itemID) > 0 then
+                    local reservesText = LootReserve:FormatReservesTextColored(self:GetItemReservers(tokenID or itemID));
                     tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Dice-Up:32:32:0:-4|t Reserved by " .. reservesText, 1, 1, 1);
                 end
             end
