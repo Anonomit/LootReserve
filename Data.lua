@@ -180,7 +180,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Quest Rewards",
+                    Name = " + Quest Rewards",
                     Loot =
                     {
                         17182, 0,
@@ -210,7 +210,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Quest Rewards",
+                    Name = " + Quest Rewards",
                     Loot =
                     {
                         18404, 18403, 18406, 0,
@@ -324,7 +324,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Quest Rewards",
+                    Name = " + Quest Rewards",
                     Loot =
                     {
                         19383, 19384, 19366, 0,
@@ -480,7 +480,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "ZG Set Pieces",
+                    Name = " + Set Pieces",
                     Loot =
                     {
                         19826, 19832, 19845, 0,
@@ -495,7 +495,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Quest Rewards",
+                    Name = " + Quest Rewards",
                     Loot =
                     {
                         19950, 19949, 19948, 0,
@@ -600,7 +600,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Quest Rewards",
+                    Name = " + Quest Rewards",
                     Loot =
                     {
                         21504, 21507, 21505, 21506, 0,
@@ -771,7 +771,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Quest Rewards",
+                    Name = " + Quest Rewards",
                     Loot =
                     {
                         21712, 21710, 21709, 0,
@@ -780,7 +780,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Tier 2.5 Pieces",
+                    Name = " + Tier 2.5 Pieces",
                     Loot =
                     {
                         21331, 21389, 21370, 21364, 21374, 0,
@@ -975,14 +975,14 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Quest Rewards",
+                    Name = " + Quest Rewards",
                     Loot =
                     {
                         23207, 23206, 0,
                     },
                 },
                 {
-                    Name = "Tier 3 Pieces",
+                    Name = " + Tier 3 Pieces",
                     Loot =
                     {
                         22519, 22503, 22511, 0,
@@ -1191,7 +1191,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Tier 4 Pieces",
+                    Name = " + Tier 4 Pieces",
                     Loot =
                     {
                         29065, 29067, 29072, 29048, 29032, 29034, 29039, 0,
@@ -1203,7 +1203,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Season 1 Pieces",
+                    Name = " + Season 1 Pieces",
                     Loot =
                     {
                         31614, 27703, 27880, 25834, 27470, 31397, 26000, 0,
@@ -1244,7 +1244,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Tier 4 Pieces",
+                    Name = " + Tier 4 Pieces",
                     Loot =
                     {
                         29064, 29070, 29075, 29047, 29037, 29031, 29043, 0,
@@ -1256,7 +1256,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Season 1 Pieces",
+                    Name = " + Season 1 Pieces",
                     Loot =
                     {
                         31619, 27706, 27883, 25832, 27473, 31407, 25999, 0,
@@ -1290,14 +1290,14 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Quest Rewards",
+                    Name = " + Quest Rewards",
                     Loot =
                     {
                         28791, 28790, 28793, 28792, 0,
                     },
                 },
                 {
-                    Name = "Tier 4 Pieces",
+                    Name = " + Tier 4 Pieces",
                     Loot =
                     {
                         29071, 29066, 29062, 29045, 29038, 29033, 29029, 0,
@@ -1306,7 +1306,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Season 1 Pieces",
+                    Name = " + Season 1 Pieces",
                     Loot =
                     {
                         31613, 27702, 27879, 25831, 27469, 31396, 25997, 0,
@@ -1406,7 +1406,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Tier 5 Pieces",
+                    Name = " + Tier 5 Pieces",
                     Loot =
                     {
                         30130, 30135, 30124, 30145, 30189, 30165, 30170, 0,
@@ -1421,7 +1421,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Season 2 Pieces",
+                    Name = " + Season 2 Pieces",
                     Loot =
                     {
                         32021, 31993, 32040, 31998, 32010, 32030, 32005, 0,
@@ -1506,14 +1506,14 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Quest Rewards",
+                    Name = " + Quest Rewards",
                     Loot =
                     {
                         30018, 30017, 30007, 30015, 0,
                     },
                 },
                 {
-                    Name = "Tier 5 Pieces",
+                    Name = " + Tier 5 Pieces",
                     Loot =
                     {
                         30127, 30133, 30138, 30149, 30168, 30173, 30194, 0,
@@ -1525,7 +1525,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Season 2 Pieces",
+                    Name = " + Season 2 Pieces",
                     Loot =
                     {
                         32024, 31996, 32043, 32001, 32013, 32033, 32008, 0,
@@ -1611,7 +1611,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Tier 6 Pieces",
+                    Name = " + Tier 6 Pieces",
                     Loot =
                     {
                         30982, 30983, 30985, 31060, 31061, 31050, 0,
@@ -1623,7 +1623,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Season 3 Pieces",
+                    Name = " + Season 3 Pieces",
                     Loot =
                     {
                         33723, 33696, 33750, 33717, 33744, 33676, 33684, 0,
@@ -1748,7 +1748,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Tier 6 Pieces",
+                    Name = " + Tier 6 Pieces",
                     Loot =
                     {
                         30996, 30997, 30998, 31069, 31070, 31054, 0,
@@ -1763,7 +1763,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Season 3 Pieces",
+                    Name = " + Season 3 Pieces",
                     Loot =
                     {
                         33726, 33699, 33753, 33720, 33747, 33679, 33682, 0,
@@ -1976,7 +1976,7 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = "Tier 6 Pieces",
+                    Name = " + Tier 6 Pieces",
                     Loot =
                     {
                         34431, 34432, 34433, 34434, 34435, 34436, 0,
@@ -1991,7 +1991,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Sunmote Exchanges",
+                    Name = " + Sunmote Exchanges",
                     Loot =
                     {
                         34405, 34393, 34399, 34406, 34386, 0,
