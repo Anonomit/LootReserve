@@ -1627,6 +1627,7 @@
 								MakeMenuRadio(LootReserve.Constants.ReservesSortingText[LootReserve.Constants.ReservesSorting.ByLooter], "ReservesSorting", LootReserve.Constants.ReservesSorting.ByLooter, "Sort reserves by the name of one of the players that looted this item in the current session.|n|nFade out items not looted by anyone.|cFF808080 (applies only after some items have been looted in the raid)|r", RefreshReservesSorting),
 							} },
 							MakeMenuToggle("Use Unit Frames", "UseUnitFrames", "Make player rows in Reserves and Rolls tabs behave like unit frames, allowing them to be right-clicked for context menu, have items be dropped on them to open trade etc.|n|nOnly works outside of combat.|n|nWhen enabled, this may prevent the host window from being closed and reopened while in combat via minimap button or |cFFFFFFFF/reserve host|r command.", ToggleUseUnitFrames),
+							MakeMenuToggle("Show Reopen Hint", "ShowReopenHint", "Shows a hint in chat when this window is closed, telling you how to reopen it with a chat command."),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Rolls", isTitle = true },
 							MakeMenuToggle("Accept All Roll Formats", "AcceptAllRollFormats", "If enabled, custom rolls will be honored. If disabled, only 1-100 rolls will be considered and all others will be ignored.", ToggleAcceptAllRollFormats),
@@ -1641,6 +1642,9 @@
 							{ text = "Storage", isTitle = true },
 							MakeMenuToggle("Use Global Profile", "UseGlobalProfile", "By default all the data about the active reserves session is stored per-character. Enable this to share the same session between all characters on your account.|n|nThe session from your current character will be the one propagated to others.", ToggleGlobalProfile),
 							LootReserve:MakeMenuSeparator(),
+							{ text = "idk", isTitle = true },
+							MakeMenuToggle("ugh", "ShowReopenHint", ""),
+								LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
 						};
 						LootReserve:OpenMenu(menu, self.Menu, self);
@@ -2314,7 +2318,9 @@
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 				LootReserve.Server.RollHistoryDisplayLimit = LootReserve.Server.Settings.RollHistoryDisplayLimit;
-				LootReserve:PrintMessage("Host window can be reopened by typing  |cFFFFD200/reserve host|r");
+				if LootReserve.Server.Settings.ShowReopenHint then
+					LootReserve:PrintMessage("Host window can be reopened by typing  |cFFFFD200/reserve host|r");
+				end
 			</OnHide>
 		</Scripts>
 	</Frame>

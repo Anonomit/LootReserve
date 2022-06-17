@@ -37,6 +37,7 @@ LootReserve.Client =
         SwapLDBButtons              = false,
         LibDBIcon                   = { },
         AllowPreCache               = false,
+        ShowReopenHint              = true,
     },
     CharacterFavorites = { },
     GlobalFavorites    = { },
