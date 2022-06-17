@@ -321,6 +321,13 @@ function LootReserve.Client:SetOptPending(pending)
     self.PendingOpt = pending or nil;
 end
 
+function LootReserve.Client:IsOptedOut()
+    return self.OptedOut or false;
+end
+function LootReserve.Client:IsOptedIn()
+    return not self:IsOptedOut();
+end
+
 function LootReserve.Client:OptOut()
     if not self.SessionServer then return; end
     if not self.AcceptingReserves then return; end
