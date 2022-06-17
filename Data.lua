@@ -17,10 +17,8 @@ ClassMask id
 local hidden = { Hidden = true };
 
 -- Faction restrictions on equipment should only apply in classic
-local classicAlliance = LootReserve:GetCurrentExpansion() == 0 and "Alliance" or nil;
-local classicHorde    = LootReserve:GetCurrentExpansion() == 0 and "Horde"    or nil
-local factionAlliance = classicAlliance and { Faction = classicAlliance }     or nil;
-local factionHorde    = classicHorde    and { Faction = classicHorde }        or nil;
+local factionAlliance = { Faction = "Alliance" };
+local factionHorde    = { Faction = "Horde" };
 
 LootReserve.Data =
 {
@@ -1740,7 +1738,7 @@ end
 local function ApplyFactionRestriction(itemID, faction)
     if LootReserve.Data.ItemConditions[itemID] then
         LootReserve.Data.ItemConditions[itemID] = LootReserve:Deepcopy(LootReserve.Data.ItemConditions[itemID]);
-        LootReserve.Data.ItemConditions[itemID]["Faction"] = faction == "Alliance" and classicAlliance or classicHorde;
+        LootReserve.Data.ItemConditions[itemID]["Faction"] = faction;
     else
         LootReserve.Data.ItemConditions[itemID] = faction == "Alliance" and factionAlliance or factionHorde;
     end
@@ -1911,7 +1909,6 @@ ApplyFactionRestriction(19003, "Alliance");
 
 
 -- Classic only restrictions
--- Don't actually need to check expansion level here, but it is slightly faster
 if LootReserve:GetCurrentExpansion() == 0 then
     -- T1
     ApplyFactionRestriction(16837, "Horde");
