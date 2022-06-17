@@ -1641,9 +1641,6 @@
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Storage", isTitle = true },
 							MakeMenuToggle("Use Global Profile", "UseGlobalProfile", "By default all the data about the active reserves session is stored per-character. Enable this to share the same session between all characters on your account.|n|nThe session from your current character will be the one propagated to others.", ToggleGlobalProfile),
-							LootReserve:MakeMenuSeparator(),
-							{ text = "idk", isTitle = true },
-							MakeMenuToggle("ugh", "ShowReopenHint", ""),
 								LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
 						};
