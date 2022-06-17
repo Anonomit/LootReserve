@@ -365,7 +365,7 @@
 							{ text = "Display", isTitle = true },
 							{ text = "Show Minimap Icon", checked = not LootReserve.Client.Settings.LibDBIcon.hide, func = function(_, _, _, checked) LootReserve.Client.Settings.LibDBIcon.hide = not checked; if LootReserve.Client.Settings.LibDBIcon.hide then LibStub("LibDBIcon-1.0"):Hide("LootReserve"); else LibStub("LibDBIcon-1.0"):Show("LootReserve") end end },
 							{ text = "Swap Minimap Icon Buttons", tooltipText = "Enable to make left-clicking the LDB/minimap icon open the host window instead.", checked = LootReserve.Client.Settings.SwapLDBButtons, func = function(_, _, _, checked) LootReserve.Client.Settings.SwapLDBButtons = checked; end },
-							{ text = "Show Reopen Hint", tooltipText = "Shows a hint in chat when this window is closed, telling you how to reopen it with a chat command.", checked = LootReserve.Client.Settings.ShowReopenHint, func = function(_, _, _, checked) LootReserve.Client.Settings.ShowReopenHint = checked; end },
+							{ text = "Show Reopen Hint", tooltipText = "Shows a hint in chat when this window is closed, telling you how to reopen it.", checked = LootReserve.Client.Settings.ShowReopenHint, func = function(_, _, _, checked) LootReserve.Client.Settings.ShowReopenHint = checked; end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Cache", isTitle = true },
 							{ text = "Allow Precaching", tooltipText = "Cache items in advance to speed up search functions.|n|nIn some cases, other addons may misbehave while the cache is being built.|n|nInstall/Update ItemCache to remember database between sessions.|n|n|cFFFF2020Takes effect on next UI Reload|r", checked = LootReserve.Client.Settings.AllowPreCache, func = function(_, _, _, checked) LootReserve.Client.Settings.AllowPreCache = checked; end },
@@ -586,7 +586,7 @@
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 				if LootReserve.Client.Settings.ShowReopenHint then
-					LootReserve:PrintMessage("Window can be reopened by typing  |cFFFFD200/reserve|r");
+					LootReserve:PrintMessage("Window can be reopened through the minimap icon or by typing  |cFFFFD200/reserve|r");
 				end
 			</OnHide>
 		</Scripts>
