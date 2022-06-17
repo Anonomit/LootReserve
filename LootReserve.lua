@@ -737,12 +737,22 @@ function LootReserve:PutItemInTrade(bag, slot)
     return false;
 end
 
-function LootReserve:GetItemDescription(itemID)
+function LootReserve:GetItemDescription(itemID, noTokenRedirect)
     local item = LootReserve.ItemCache:Item(itemID);
-    if not item or not item:GetInfo() then return; end
+    if not item:Cache():IsCached() then return; end
     local name, _, _, _, _, itemType, itemSubType, _, equipLoc, _, _, _, _, bindType = item:GetInfo();
     local skillRequired, skillLevelRequired = item:GetSkillRequired();
     local itemText = "";
+    
+    if not noTokenRedirect then
+        local tokenID = LootReserve.Data:GetToken(itemID);
+        if tokenID then
+            local token = LootReserve.ItemCache:Item(tokenID);
+            if not token:Cache():IsCached() then return; end
+            return "From: " .. token:GetName();
+        end
+    end
+    
     if item:IsUnique() then
         itemText = ITEM_UNIQUE .. " " .. itemText
     end

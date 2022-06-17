@@ -155,7 +155,7 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_ROLL_RESERVED_ITEM_AGAIN"] =
             self.data.Frame:SetItem(nil);
         end
         local tokenID;
-        if not LootReserve.Server.ReservableIDs[self.data.Item:GetID()] and LootReserve.Server.ReservableRewardIDs[self.data.Item:GetID()] then
+        if LootReserve.Server.ReservableRewardIDs[self.data.Item:GetID()] then
             tokenID = LootReserve.Data:GetToken(self.data.Item:GetID());
         end
         if LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[tokenID or self.data.Item:GetID()] then
@@ -1102,7 +1102,7 @@ function LootReserve.Server:PrepareSession()
 
             local function handleItemCommand(itemID, command, count)
                 count = count or 1;
-                if not self.ReservableIDs[itemID] and self.ReservableRewardIDs[itemID] then
+                if self.ReservableRewardIDs[itemID] then
                     itemID = LootReserve.Data:GetToken(itemID);
                 end
                 if self.ReservableIDs[itemID] then
@@ -1219,17 +1219,15 @@ function LootReserve.Server:PrepareSession()
                     local matches  = { };
                     local missing  = { };
                     for itemID in pairs(self.ReservableIDs) do
-                        local match = false;
                         local item = LootReserve.ItemCache:Item(itemID);
                         if item:IsCached() then
                             if item:Matches(text) then
                                 matchIDs[itemID] = item;
-                                match = true;
                             end
                         else
                             table.insert(missing, item);
                         end
-                        if not match and LootReserve.Data:IsToken(itemID) then
+                        if LootReserve.Data:IsToken(itemID) then
                             for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                                 local reward = LootReserve.ItemCache:Item(rewardID);
                                 if reward:IsCached() and item:IsCached() then
@@ -1346,7 +1344,9 @@ function LootReserve.Server:PrepareSession()
                     for _, itemID in ipairs(child.Loot) do
                         if itemID ~= 0 then
                             if LootReserve.ItemConditions:TestServer(itemID) then
-                                self.ReservableIDs[itemID] = true;
+                                if not LootReserve.Data:IsTokenReward(itemID) then
+                                    self.ReservableIDs[itemID] = true;
+                                end
                                 if LootReserve.Data:IsToken(itemID) then
                                     for _, reward in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                                         if LootReserve.ItemConditions:TestServer(reward) then
@@ -1469,9 +1469,7 @@ function LootReserve.Server:StartSession()
         };
         self.CurrentSession.Members[player] = member;
         for _, itemID in ipairs(importedMember.ReservedItems) do
-            if not self.ReservableIDs[itemID] then
-                itemID = LootReserve.Data:GetToken(itemID);
-            end
+            itemID = LootReserve.Data:GetToken(itemID) or itemID;
             if self.ReservableIDs[itemID] and member.ReservesLeft > 0 then
                 member.ReservesLeft = member.ReservesLeft - 1;
                 table.insert(member.ReservedItems, itemID);
@@ -2322,7 +2320,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent)
     local function RecordRollWinner(player, item, phase)
         if self.CurrentSession then
             local token;
-            if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
+            if self.ReservableRewardIDs[item:GetID()] then
                 token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
             end
             local member = self.CurrentSession.Members[player];
@@ -2501,7 +2499,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
         -- Remove winners' reserves
         if self.CurrentSession and not RequestedRoll.Custom then
             local token;
-            if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
+            if self.ReservableRewardIDs[item:GetID()] then
                 token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
             end
             local itemID = token and token:GetID() or item:GetID();
@@ -2812,7 +2810,7 @@ function LootReserve.Server:RequestRoll(item, duration, phases, allowedPlayers)
     end
 
     local reserve = self.CurrentSession.ItemReserves[item:GetID()];
-    if not reserve and not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
+    if not reserve and self.ReservableRewardIDs[item:GetID()] then
         reserve = self.CurrentSession.ItemReserves[LootReserve.Data:GetToken(item:GetID())];
     end
     if not reserve then

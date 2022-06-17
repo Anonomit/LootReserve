@@ -563,6 +563,9 @@ LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, resu
             end);
         end
 
+        for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID) or {}) do
+            LootReserve.Client:SetItemPending(rewardID, false);
+        end
         LootReserve.Client:SetItemPending(itemID, false);
         LootReserve.Client:UpdateReserveStatus();
     end
@@ -607,7 +610,7 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, player
         local isReserver = LootReserve.Client:IsItemReservedByMe(itemID, true);
         if wasReserver or isReserver then
             local isViewingMyReserves = LootReserve.Client.SelectedCategory and LootReserve.Client.SelectedCategory.Reserves == "my";
-            LootReserve.Client:FlashCategory("Reserves", "my", wasReserver == isReserver and not isViewingMyReserves);
+            LootReserve.Client:FlashCategory("Reserves", "my", wasReserver and isReserver and myOldReserves == myNewReserves and oldRolls ~= newRolls and not isViewingMyReserves);
         end
         if wasReserver and isReserver and myOldReserves == myNewReserves and oldRolls ~= newRolls then
             PlaySound(oldRolls < newRolls and SOUNDKIT.ALARM_CLOCK_WARNING_3 or SOUNDKIT.ALARM_CLOCK_WARNING_2);
@@ -669,6 +672,9 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
             LootReserve:ShowError("Failed to cancel reserve of the item:|n%s", text or "Unknown error");
         end
 
+        for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID) or {}) do
+            LootReserve.Client:SetItemPending(rewardID, false);
+        end
         LootReserve.Client:SetItemPending(itemID, false);
         if LootReserve.Client.SelectedCategory and LootReserve.Client.SelectedCategory.Reserves then
             LootReserve.Client:UpdateLootList();

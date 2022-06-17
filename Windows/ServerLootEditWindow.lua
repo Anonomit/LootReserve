@@ -77,7 +77,8 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
             frame.ItemFrame.Misc:SetText(source or description);
 
-            local conditions = LootReserve.ItemConditions:Get(itemID, true);
+            local tokenID = LootReserve.Data:GetToken(itemID);
+            local conditions = LootReserve.ItemConditions:Get(tokenID or itemID, true);
             frame.ItemFrame:SetAlpha(conditions and (conditions.Hidden or conditions.Faction and not LootReserve.ItemConditions:TestFaction(conditions.Faction)) and 0.25 or 1);
             frame.ConditionsFrame.ClassMask:Update();
             frame.ConditionsFrame.State:Update();

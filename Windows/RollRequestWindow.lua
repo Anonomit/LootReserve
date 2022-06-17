@@ -47,7 +47,7 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     };
     local roll = self.RollRequest;
 
-    local description = LootReserve:GetItemDescription(item:GetID());
+    local description = LootReserve:GetItemDescription(item:GetID(), true);
     local name, link, texture = item:GetNameLinkTexture();
 
     frame.Sender = sender;

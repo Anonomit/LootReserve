@@ -263,10 +263,10 @@ function LootReserve.Client:GetMaxReserves()
 end
 
 function LootReserve.Client:IsItemReserved(itemID)
-    return #self:GetItemReservers(itemID) > 0;
+    return #self:GetItemReservers(LootReserve.Data:GetToken(itemID) or itemID) > 0;
 end
 function LootReserve.Client:IsItemReservedByMe(itemID, bypassMasquerade)
-    for _, player in ipairs(self:GetItemReservers(itemID)) do
+    for _, player in ipairs(self:GetItemReservers(LootReserve.Data:GetToken(itemID) or itemID)) do
         if LootReserve:IsSamePlayer(not bypassMasquerade and LootReserve.Client.Masquerade or LootReserve:Me(), player) then
             return true;
         end
@@ -275,7 +275,7 @@ function LootReserve.Client:IsItemReservedByMe(itemID, bypassMasquerade)
 end
 function LootReserve.Client:GetItemReservers(itemID)
     if not self.SessionServer then return { }; end
-    return self.ItemReserves[itemID] or { };
+    return self.ItemReserves[LootReserve.Data:GetToken(itemID) or itemID] or { };
 end
 
 function LootReserve.Client:IsItemPending(itemID)
@@ -288,17 +288,29 @@ end
 function LootReserve.Client:Reserve(itemID)
     if not self.SessionServer then return; end
     if not self.AcceptingReserves then return; end
+    
+    local tokenID = LootReserve.Data:GetToken(itemID);
+    if tokenID then
+        LootReserve.Client:SetItemPending(tokenID, true);
+    end
     LootReserve.Client:SetItemPending(itemID, true);
+    
     LootReserve.Client:UpdateReserveStatus();
-    LootReserve.Comm:SendReserveItem(itemID);
+    LootReserve.Comm:SendReserveItem(tokenID or itemID);
 end
 
 function LootReserve.Client:CancelReserve(itemID)
     if not self.SessionServer then return; end
     if not self.AcceptingReserves then return; end
+    
+    local tokenID = LootReserve.Data:GetToken(itemID);
+    if tokenID then
+        LootReserve.Client:SetItemPending(tokenID, true);
+    end
     LootReserve.Client:SetItemPending(itemID, true);
+    
     LootReserve.Client:UpdateReserveStatus();
-    LootReserve.Comm:SendCancelReserve(itemID);
+    LootReserve.Comm:SendCancelReserve(tokenID or itemID);
 end
 
 function LootReserve.Client:IsOptPending()

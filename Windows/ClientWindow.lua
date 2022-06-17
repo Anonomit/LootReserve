@@ -52,6 +52,10 @@ function LootReserve.Client:UpdateReserveStatus()
 
     for i, frame in ipairs(list.Frames) do
         local item = frame.Item;
+        local tokenID = LootReserve.Data:GetToken(item:GetID());
+        if tokenID then
+            item = LootReserve.ItemCache:Item(tokenID);
+        end
         if item:GetID() ~= 0 then
             local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(self:GetItemReservers(item:GetID()), self.Masquerade or LootReserve:Me());
             local canReserve = self.SessionServer and self:HasRemainingReserves() and LootReserve.ItemConditions:IsItemReservableOnClient(item:GetID()) and (not self.Multireserve or myReserves < self.Multireserve);
@@ -164,7 +168,8 @@ function LootReserve.Client:UpdateLootList()
             local name, link, texture = item:GetNameLinkTexture();
             frame.Link = link;
 
-            local conditions = self.ItemConditions[item:GetID()];
+            local tokenID = LootReserve.Data:GetToken(item:GetID());
+            local conditions = self.ItemConditions[tokenID or item:GetID()];
             if conditions and conditions.Limit and conditions.Limit ~= 0 then
                 source = format("|cFFFF0000(Max %d |4reserve:reserves;) |r%s", conditions.Limit, source or description or "");
             end
@@ -323,6 +328,12 @@ function LootReserve.Client:UpdateLootList()
                                         end
                                     end
                                 end
+                                if LootReserve.Data:IsTokenReward(itemID) then
+                                    local token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(itemID));
+                                    if not token:IsCached() then
+                                        table.insert(missing, token);
+                                    end
+                                end
                             end
                         end
                     end
@@ -351,6 +362,12 @@ function LootReserve.Client:UpdateLootList()
                 end
                 if not item:IsCached() then
                     table.insert(missing, item);
+                end
+                if LootReserve.Data:IsTokenReward(itemID) then
+                    local token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(itemID));
+                    if not token:IsCached() then
+                        table.insert(missing, token);
+                    end
                 end
             elseif itemID == 0 then
                 createFrame(LootReserve.ItemCache:Item(0));

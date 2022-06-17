@@ -27,7 +27,8 @@
 							<OnLoad inherit="prepend">
 								self.Update = function(self)
 									local itemID = self:GetParent():GetParent().Item;
-									local conditions = LootReserve.ItemConditions:Get(itemID, true);
+									local tokenID = LootReserve.Data:GetToken(itemID);
+									local conditions = LootReserve.ItemConditions:Get(tokenID or itemID, true);
 									if conditions and conditions.ClassMask then
 										local text = "";
 										for i = 1, LootReserve:GetNumClasses() do
@@ -56,7 +57,8 @@
 									return;
 								end
 								local itemID = self:GetParent():GetParent().Item;
-								local conditions = LootReserve.ItemConditions:Get(itemID, true);
+								local tokenID = LootReserve.Data:GetToken(itemID);
+								local conditions = LootReserve.ItemConditions:Get(tokenID or itemID, true);
 								local menu =
 								{
 									LootReserve:MakeMenuSeparator(),
@@ -73,9 +75,9 @@
 											checked = conditions and LootReserve.ItemConditions:TestClassMask(conditions.ClassMask, id) or false,
 											arg1 = id,
 											func = function(_, id, _, checked)
-												local conditions = LootReserve.ItemConditions:Make(itemID, true);
+												local conditions = LootReserve.ItemConditions:Make(tokenID or itemID, true);
 												conditions.ClassMask = checked and bit.bor(conditions.ClassMask or 0, bit.lshift(1, id - 1)) or bit.band(conditions.ClassMask or 0, bit.bnot(bit.lshift(1, id - 1)));
-												LootReserve.ItemConditions:Save(itemID, true);
+												LootReserve.ItemConditions:Save(tokenID or itemID, true);
 											end
 										});
 									end
@@ -99,7 +101,8 @@
 							<OnLoad>
 								self.Update = function(self)
 									local itemID = self:GetParent():GetParent().Item;
-									local conditions = LootReserve.ItemConditions:Get(itemID, true);
+									local tokenID = LootReserve.Data:GetToken(itemID);
+									local conditions = LootReserve.ItemConditions:Get(tokenID or itemID, true);
 									self.shown = false;
 									self.disabled = false;
 									if not conditions then
@@ -131,12 +134,13 @@
 									return;
 								end
 								local itemID = self:GetParent():GetParent().Item;
-								local conditions = LootReserve.ItemConditions:Make(itemID, true);
+								local tokenID = LootReserve.Data:GetToken(itemID);
+								local conditions = LootReserve.ItemConditions:Make(tokenID or itemID, true);
 								if conditions.Custom then
-									LootReserve.ItemConditions:Delete(itemID, true);
+									LootReserve.ItemConditions:Delete(tokenID or itemID, true);
 								else
 									conditions.Hidden = not conditions.Hidden;
-									LootReserve.ItemConditions:Save(itemID, true);
+									LootReserve.ItemConditions:Save(tokenID or itemID, true);
 								end
 							</OnClick>
 						</Scripts>
@@ -170,13 +174,14 @@
 										end
 										self:GetParent().EditBox:ClearFocus();
 										local itemID = self:GetParent():GetParent():GetParent().Item;
-										local conditions = LootReserve.ItemConditions:Make(itemID, true);
+										local tokenID = LootReserve.Data:GetToken(itemID);
+										local conditions = LootReserve.ItemConditions:Make(tokenID or itemID, true);
 										if conditions.Limit and conditions.Limit > 1 then
 											conditions.Limit = conditions.Limit - 1;
 										else
 											conditions.Limit = nil;
 										end
-										LootReserve.ItemConditions:Save(itemID, true);
+										LootReserve.ItemConditions:Save(tokenID or itemID, true);
 									</OnClick>
 								</Scripts>
 							</Button>
@@ -193,9 +198,10 @@
 										end
 										self:GetParent().EditBox:ClearFocus();
 										local itemID = self:GetParent():GetParent():GetParent().Item;
-										local conditions = LootReserve.ItemConditions:Make(itemID, true);
+										local tokenID = LootReserve.Data:GetToken(itemID);
+										local conditions = LootReserve.ItemConditions:Make(tokenID or itemID, true);
 										conditions.Limit = math.min(LootReserve.Constants.MAX_RESERVES_PER_ITEM, (conditions.Limit or 0) + 1);
-										LootReserve.ItemConditions:Save(itemID, true);
+										LootReserve.ItemConditions:Save(tokenID or itemID, true);
 									</OnClick>
 								</Scripts>
 							</Button>
@@ -208,7 +214,8 @@
 								<Scripts>
 									<OnTextChanged>
 										if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
-											local conditions = LootReserve.ItemConditions:Get(itemID, true);
+											local tokenID = LootReserve.Data:GetToken(itemID);
+											local conditions = LootReserve.ItemConditions:Get(tokenID or itemID, true);
 											local text = conditions and conditions.Limit and conditions.Limit > 0 and tostring(conditions.Limit) or "";
 											if self:GetText() ~= text then
 												self:SetText(text);
@@ -216,9 +223,10 @@
 											return;
 										end
 										local itemID = self:GetParent():GetParent():GetParent().Item;
-										local conditions = LootReserve.ItemConditions:Make(itemID, true);
+										local tokenID = LootReserve.Data:GetToken(itemID);
+										local conditions = LootReserve.ItemConditions:Make(tokenID or itemID, true);
 										conditions.Limit = tonumber(self:GetText()) and math.min(LootReserve.Constants.MAX_RESERVES_PER_ITEM, tonumber(self:GetText()));
-										LootReserve.ItemConditions:Save(itemID, true);
+										LootReserve.ItemConditions:Save(tokenID or itemID, true);
 									</OnTextChanged>
 									<OnEnterPressed function="EditBox_ClearFocus" />
 									<OnEditFocusGained inherit="prepend">
@@ -239,7 +247,8 @@
 								self.EditBox.Left:SetPoint("LEFT", self.EditBox, "LEFT", 0, 0);
 								self.Update = function(self)
 									local itemID = self:GetParent():GetParent().Item;
-									local conditions = LootReserve.ItemConditions:Get(itemID, true);
+									local tokenID = LootReserve.Data:GetToken(itemID);
+									local conditions = LootReserve.ItemConditions:Get(tokenID or itemID, true);
 
 									self.Decrement:SetEnabled(conditions and conditions.Limit and conditions.Limit > 0);
 									self.Increment:SetEnabled(not conditions or not conditions.Limit or conditions.Limit &lt; LootReserve.Constants.MAX_RESERVES_PER_ITEM);
@@ -276,7 +285,8 @@
 							<OnLoad>
 								self.Update = function(self)
 									local itemID = self:GetParent():GetParent().Item;
-									local conditions = LootReserve.ItemConditions:Get(itemID, true);
+									local tokenID = LootReserve.Data:GetToken(itemID);
+									local conditions = LootReserve.ItemConditions:Get(tokenID or itemID, true);
 									if conditions and conditions.Limit and conditions.Limit > 0 and not conditions.Hidden then
 										self.Label:SetText(format("Max %d", conditions.Limit));
 										self:SetWidth(self.Label:GetStringWidth());
@@ -462,9 +472,14 @@
 								end
 								local frame = self:GetParent():GetParent();
 								if frame.Item then
-									local conditions = LootReserve.ItemConditions:Make(frame.Item, true);
+									local tokenID = LootReserve.Data:GetToken(itemID);
+									local token;
+									if tokenID then
+										token = LootReserve.ItemCache:Item(tokenID);
+									end
+									local conditions = LootReserve.ItemConditions:Make(token or frame.Item, true);
 									conditions.Custom = true;
-									LootReserve.ItemConditions:Save(frame.Item, true);
+									LootReserve.ItemConditions:Save(token or frame.Item, true);
 									frame:SetItem(nil);
 								end
 							</OnClick>
