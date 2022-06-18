@@ -361,15 +361,99 @@
 				<Scripts>
 					<OnLoad>
 						self.UpdateTooltip = function(self)
-							local rollingThisItem = LootReserve.Server:IsRolling(self:GetParent().Item);
 							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-							GameTooltip:SetText(rollingThisItem and "End Roll" or "Request Roll");
-							GameTooltip:AddLine(rollingThisItem and "Stop accepting rolls for this item." or "Ask all players who reserved this item to /roll on it.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+							if self:GetParent().Historical then
+								local winners = self:GetParent().Roll.Winners;
+								GameTooltip:SetText("Continue Roll");
+								if self:GetParent().Roll.Custom then
+									GameTooltip:AddLine(format("Continue this roll%s.", winners and format(", removing the %d |4winner:winners;", #winners) or ""), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								else
+									GameTooltip:AddLine(format("Continue this roll%s.", winners and format(", removing the %d |4winning roll:winning rolls;|n|nAdditional rolls by the winner%s will be kept if the winner has any reserves remaining on the item.|n|nConfigure automatic removal of reserves for winning players in the Host settings", #winners, #winners == 1 and "" or "s") or ""), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								end
+							else
+								local rollingThisItem = LootReserve.Server:IsRolling(self:GetParent().Item);
+								GameTooltip:SetText(rollingThisItem and "End Roll" or "Request Roll");
+								GameTooltip:AddLine(rollingThisItem and "Stop accepting rolls for this item." or "Ask all players who reserved this item to /roll on it.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+							end
 							GameTooltip:Show();
 						end
 					</OnLoad>
 					<OnClick>
-						if LootReserve.Server:IsRolling(self:GetParent().Item) then
+						if not LootReserve.Server.RequestedRoll and self:GetParent().Historical then
+							-- Copy historical roll into RequestedRoll
+							local Roll = LootReserve:Deepcopy(self:GetParent().Roll);
+							Roll.Item = self:GetParent().Item;
+							
+							-- Discard deleted and passed rolls
+							local toRemove = { };
+							for player, rolls in pairs(Roll.Players) do
+								for i = #rolls, 1, -1 do
+									if rolls[i] &lt; 0 then
+									  table.remove(rolls, i);
+									end
+								end
+								if #rolls == 0 then
+								  table.insert(toRemove, player);
+								end
+							end
+							for _, player in ipairs(toRemove) do
+							  Roll.Players[player] = nil;
+							end
+							
+							LootReserve.Server.RequestedRoll = Roll;
+							if Roll.Custom then
+								for _, winner in ipairs(Roll.Winners or {}) do
+									Roll.Players[winner] = nil;
+								end
+								if not next(Roll.Players) then
+									LootReserve.Server.RequestedRoll = nil;
+									local phases = Roll.Phases;
+									if phases and #phases > 1 then
+										table.remove(phases, 1);
+										LootReserve.Server:RequestCustomRoll(Roll.Item, LootReserve.Server.Settings.RollLimitDuration and LootReserve.Server.Settings.RollDuration or nil, phases);
+									end
+								end
+							elseif Roll.Winners then
+								for _, winner in ipairs(Roll.Winners) do
+									local maxI, maxRoll = 1, Roll.Players[winner][1];
+									for i, roll in ipairs(Roll.Players[winner]) do
+										if roll > maxRoll then
+											maxI, maxRoll= i, roll;
+										end
+									end
+									table.remove(Roll.Players[winner], maxI);
+									local reserve = LootReserve.Server.CurrentSession.ItemReserves[Roll.Item:GetID()];
+									if not reserve or not LootReserve:Contains(reserve.Players, winner) then
+										Roll.Players[winner] = nil;
+									end
+								end
+								if not next(Roll.Players) then
+									LootReserve.Server.RequestedRoll = nil;
+								end
+							end
+							Roll.Winners = nil;
+							
+							-- Fill the item frame with the previously reserved item
+							if not LootReserve.Server.RequestedRoll then
+								for _, panelRolls in ipairs({LootReserve.Server.Window.PanelRollsLockdown, LootReserve.Server.Window.PanelRolls}) do
+									local frames = panelRolls.Scroll.Container.Frames;
+									if frames and frames[1] and frames[1]:IsShown() then
+										frames[1]:SetItem(Roll.Item);
+									end
+								end
+								LootReserve.Server.RequestedRoll = nil;
+							else
+								-- Clear dropdown item selection
+								for _, panelRolls in ipairs({LootReserve.Server.Window.PanelRollsLockdown, LootReserve.Server.Window.PanelRolls}) do
+									local frames = panelRolls.Scroll.Container.Frames;
+									if frames and frames[1] and frames[1]:IsShown() then
+										frames[1]:SetItem();
+									end
+								end
+							end
+							
+							LootReserve.Server:UpdateRollList();
+						elseif LootReserve.Server:IsRolling(self:GetParent().Item) then
 							local roll, players = LootReserve.Server:GetWinningRollAndPlayers();
 							if players then
 								for i = 1, #players do
@@ -379,7 +463,7 @@
 							local menu =
 							{
 								{ text = "End Roll", isTitle = true },
-								{ text = players and format("Announce Winner%s (%s)", #players > 1 and "s" or "", strjoin(", ", unpack(players))) or "Announce Winner", disabled = not players or #players == 0, func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item); end },
+								{ text = players and format("Announce %d |4Winner:Winners; (%s)", #players, strjoin(", ", unpack(players))) or "Announce Winner", disabled = not players or #players == 0, func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item); end },
 								{ text = "End Silently", func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, true); end },
 								{ text = "Cancel Roll", func = function() LootReserve.Server:CancelRollRequest(self:GetParent().Item, nil, true); end },
 								LootReserve:MakeMenuSeparator(),

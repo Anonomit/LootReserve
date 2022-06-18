@@ -2471,9 +2471,6 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
             historicalEntry.Item = LootReserve.ItemCache:Item(historicalEntry.Item);
             historicalEntry.Duration    = nil;
             historicalEntry.MaxDuration = nil;
-            if historicalEntry.Phases then
-                historicalEntry.Phases = {historicalEntry.Phases[1]};
-            end
             table.insert(self.RollHistory, historicalEntry);
             if #self.RollHistory > self.Settings.RollHistoryKeepLimit then
                 local delta = #self.RollHistory - self.Settings.RollHistoryKeepLimit;
@@ -2524,7 +2521,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                                 -- Players may genuinely want multiple copies of the same ring to equip together.
                                 if reservedItem:GetEquipLocation() == "INVTYPE_FINGER" then
                                     smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
-                                -- Trying to filter to raid mats. Excluding equippable items, tokens, and "unique" quest drops.
+                                -- Trying to filter to raid mats. Excluding equippable items, tokens, and quest drops.
                                 elseif reservedItem:GetEquipLocation() == "" and not LootReserve.Data:IsToken(reservedItem:GetID()) and not LootReserve.Data.QuestDrops[reservedItem:GetID()] then
                                     smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
                                 end
