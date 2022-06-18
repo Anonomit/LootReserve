@@ -377,7 +377,7 @@
 				</Scripts>
 			</Button>
 			<Button parentKey="Masquerade" inherits="UIMenuButtonStretchTemplate" frameLevel="100" hidden="true">
-				<Size x="120" y="20" />
+				<Size x="100" y="20" />
 				<Anchors>
 					<Anchor point="TOPLEFT" x="100" y="-1" />
 				</Anchors>
@@ -388,9 +388,16 @@
 							<Anchor point="CENTER" />
 						</Anchors>
 						</FontString>
+						<Texture parentKey="Arrow" file="Interface\BUTTONS\UI-SortArrow">
+							<Size x="8" y="8" />
+							<Anchors>
+								<Anchor point="RIGHT" x="-8" />
+							</Anchors>
+							<TexCoords left="0" right="0.5" top="0" bottom="1" />
+						</Texture>
 					</Layer>
 					<Layer>
-						<FontString parentKey="LeftText" inherits="GameFontNormal" justifyH="LEFT" wordwrap="false">
+						<FontString parentKey="LeftText" inherits="GameFontNormal" justifyH="LEFT" text="Reserving as:" wordwrap="false">
 						<Anchors>
 							<Anchor point="Left" x="-75"/>
 						</Anchors>
