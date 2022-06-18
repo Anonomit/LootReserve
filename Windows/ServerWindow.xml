@@ -2123,7 +2123,7 @@
 									LootReserve.Server.CurrentSession.Settings.Blind = self:GetChecked();
 									LootReserve.Comm:BroadcastSessionInfo();
 									if LootReserve.Server.CurrentSession.Settings.ChatFallback then
-										LootReserve:SendChatMessage(LootReserve.Server.CurrentSession.Settings.Blind and "Blind reserves enabled, you can no longer see what other players have reserved" or "Blind reserves disabled, to see what other players reserved - whisper me:  !reserves", LootReserve.Server:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionBlindToggle));
+										LootReserve:SendChatMessage(LootReserve.Server.CurrentSession.Settings.Blind and "Blind reserves enabled, you can no longer see what other players have reserved" or "Blind reserves disabled, to see what other players reserved - whisper me: !reserves", LootReserve.Server:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionBlindToggle));
 									end
 								end
 							</OnClick>
