@@ -928,7 +928,8 @@ end
 local activeSessionChanges =
 {
     ButtonStartSession  = "Hide",
-    ButtonStopSession   = "Show",
+    ButtonStartReserves = "Show",
+    ButtonStopReserves  = "Show",
     ButtonResetSession  = "Hide",
     LabelRaid           = "Label",
     DropDownRaid        = "DropDown",
@@ -975,7 +976,8 @@ function LootReserve.Server:SessionStarted()
     self.Window.PanelSession.CheckButtonLock:SetChecked(self.CurrentSession.Settings.Lock);
     self.Window.PanelSession.Duration:SetShown(self.CurrentSession.Settings.Duration ~= 0);
     self.Window.PanelSession.ButtonStartSession:Hide();
-    self.Window.PanelSession.ButtonStopSession:Show();
+    self.Window.PanelSession.ButtonStartReserves:Hide();
+    self.Window.PanelSession.ButtonStopReserves:Show();
     self.Window.PanelSession.ButtonResetSession:Hide();
     self:OnWindowTabClick(self.Window.TabSession);
     PlaySound(SOUNDKIT.GS_CHARACTER_SELECTION_ENTER_WORLD);
@@ -992,8 +994,9 @@ function LootReserve.Server:SessionStopped()
     self.Window.PanelSession.CheckButtonBlind:SetChecked(self.CurrentSession.Settings.Blind);
     self.Window.PanelSession.CheckButtonLock:SetChecked(self.CurrentSession.Settings.Lock);
     self.Window.PanelSession.Duration:SetShown(self.CurrentSession.Settings.Duration ~= 0);
-    self.Window.PanelSession.ButtonStartSession:Show();
-    self.Window.PanelSession.ButtonStopSession:Hide();
+    self.Window.PanelSession.ButtonStartSession:Hide();
+    self.Window.PanelSession.ButtonStartReserves:Show();
+    self.Window.PanelSession.ButtonStopReserves:Hide();
     self.Window.PanelSession.ButtonResetSession:Show();
     self:RefreshWindowTab();
     self:UpdateServerAuthority();
@@ -1008,7 +1011,8 @@ function LootReserve.Server:SessionReset()
     self.Window.PanelSession.CheckButtonLock:SetChecked(self.NewSessionSettings.Lock);
     self.Window.PanelSession.Duration:Hide();
     self.Window.PanelSession.ButtonStartSession:Show();
-    self.Window.PanelSession.ButtonStopSession:Hide();
+    self.Window.PanelSession.ButtonStartReserves:Hide();
+    self.Window.PanelSession.ButtonStopReserves:Hide();
     self.Window.PanelSession.ButtonResetSession:Hide();
     self:UpdateServerAuthority();
     self:UpdateRollList();

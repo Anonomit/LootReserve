@@ -2192,7 +2192,7 @@
 							</OnClick>
 						</Scripts>
 					</Button>
-					<Button parentKey="ButtonStartSession" inherits="UIPanelButtonTemplate" text="Start Accepting Reserves">
+					<Button parentKey="ButtonStartSession" inherits="UIPanelButtonTemplate" text="Start Session">
 						<Size x="180" y="23" />
 						<Anchors>
 							<Anchor point="BOTTOM" relativeKey="$parent.ButtonResetSession" relativePoint="TOP" y="5" />
@@ -2207,7 +2207,22 @@
 							</OnClick>
 						</Scripts>
 					</Button>
-					<Button parentKey="ButtonStopSession" inherits="UIPanelButtonTemplate" text="Stop Accepting Reserves" hidden="true">
+					<Button parentKey="ButtonStartReserves" inherits="UIPanelButtonTemplate" text="Start Accepting Reserves" hidden="true">
+						<Size x="180" y="23" />
+						<Anchors>
+							<Anchor point="BOTTOM" relativeKey="$parent.ButtonResetSession" relativePoint="TOP" y="5" />
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								if not LootReserve.Server.CurrentSession then
+									LootReserve.Server:StartSession();
+								elseif not LootReserve.Server.CurrentSession.AcceptingReserves then
+									LootReserve.Server:ResumeSession();
+								end
+							</OnClick>
+						</Scripts>
+					</Button>
+					<Button parentKey="ButtonStopReserves" inherits="UIPanelButtonTemplate" text="Stop Accepting Reserves" hidden="true">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.ButtonStartSession" x="1" />
 							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.ButtonStartSession" x="-1" />

@@ -297,7 +297,7 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
     LootReserve.Comm:Send(realTarget, Opcodes.SessionInfo,
         starting == true,
         session.StartTime or 0,
-        session.AcceptingReserves,
+        session.AcceptingReserves and true or false, -- In case it's nil
         membersInfo,
         lootCategories,
         format("%.2f", session.Duration),

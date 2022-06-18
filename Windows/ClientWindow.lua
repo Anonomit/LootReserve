@@ -10,7 +10,7 @@ function LootReserve.Client:UpdateReserveStatus()
         self.Window.OptOut:SetShown(false);
         self.Window.OptIn:SetShown(false);
     elseif not self.AcceptingReserves then
-        self.Window.RemainingText:SetText("|cFF808080Loot reserves are no longer being accepted|r");
+        self.Window.RemainingText:SetText("|cFF808080Loot reserves are not currently being accepted|r");
         --self.Window.RemainingTextGlow:SetVertexColor(1, 0, 0, 0.15);
         -- animated in LootReserve.Client:OnWindowLoad instead
         self.Window.OptOut:SetShown(false);

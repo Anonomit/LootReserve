@@ -228,6 +228,8 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
     if starting then
         self.Masquerade = nil;
         PlaySound(SOUNDKIT.GS_CHARACTER_SELECTION_ENTER_WORLD);
+        local lootCategoriesText = LootReserve:GetCategoriesText(self.LootCategories, true);
+        LootReserve:PrintMessage("Session started%s%s.", lootCategoriesText ~= "" and " for ", lootCategoriesText);
     end
 end
 

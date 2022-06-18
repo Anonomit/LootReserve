@@ -618,7 +618,7 @@ function LootReserve.Server:Load()
             end
         end
 
-        local fields = { "AcceptingReserves", "Settings", "StartTime", "Duration", "DurationEndTimestamp", "Members", "WonItems", "ItemReserves", "LootTracking" };
+        local fields = { "Settings", "StartTime", "Duration", "DurationEndTimestamp", "Members", "WonItems", "ItemReserves", "LootTracking" };
         for _, field in ipairs(fields) do
             verifySessionField(field);
         end
@@ -1055,7 +1055,7 @@ function LootReserve.Server:PrepareSession()
             if not command then return; end
 
             if not self.CurrentSession.AcceptingReserves and (command == "reserve" or command == "cancel") and not greedy then
-                LootReserve:SendChatMessage("Loot reserves are no longer being accepted.", "WHISPER", sender);
+                LootReserve:SendChatMessage("Loot reserves are not currently being accepted.", "WHISPER", sender);
                 return;
             end
 
@@ -1386,7 +1386,7 @@ function LootReserve.Server:StartSession()
 
     self.CurrentSession =
     {
-        AcceptingReserves    = true,
+        AcceptingReserves    = nil,
         Settings             = LootReserve:Deepcopy(self.NewSessionSettings),
         ItemConditions       = LootReserve:Deepcopy(self:GetNewSessionItemConditions()),
         StartTime            = time(),
@@ -1495,32 +1495,11 @@ function LootReserve.Server:StartSession()
 
     LootReserve.Comm:BroadcastVersion();
     LootReserve.Comm:BroadcastSessionInfo(true);
-    if self.CurrentSession.Settings.ChatFallback then
-        local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
-        local duration = self.CurrentSession.Settings.Duration
-        local count = self.CurrentSession.Settings.MaxReservesPerPlayer;
-        LootReserve:SendChatMessage(format("Loot reserves are now started%s%s%s. %d reserve%s per player%s.",
-            categories ~= "" and format(" for %s", categories) or "",
-            self.CurrentSession.Settings.Blind and " (blind)" or "",
-            duration ~= 0 and format(" and will last for %d:%02d minutes", math.floor(duration / 60), duration % 60) or "",
-            count,
-            count == 1 and "" or "s",
-            self.CurrentSession.Settings.Multireserve > 1 and ", reserving an item multiple times is permitted" or ""
-        ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
-        LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
-        if self.Settings.ChatReservesList then
-            if self.CurrentSession.Settings.Blind then
-                LootReserve:SendChatMessage("To see your reserves, whisper me:  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
-            else
-                LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
-            end
-        end
-    end
 
     self:UpdateReserveList();
     self.MembersEdit:UpdateMembersList();
 
-    self:SessionStarted();
+    self:SessionStopped();
     return true;
 end
 
@@ -1530,24 +1509,50 @@ function LootReserve.Server:ResumeSession()
         return;
     end
 
+    local previouslyStarted = self.CurrentSession.AcceptingReserves ~= nil;
+    
     self.CurrentSession.AcceptingReserves = true;
     self.CurrentSession.DurationEndTimestamp = time() + math.floor(self.CurrentSession.Duration);
 
     LootReserve.Comm:BroadcastSessionInfo();
-
-    if self.CurrentSession.Settings.ChatFallback then
-        local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
-        
-        LootReserve:SendChatMessage(format("Accepting loot reserves again%s.%s",
-            categories ~= "" and format(" for %s", categories) or "",
-            self.CurrentSession.Settings.Lock and " Session is locked. Previous members may not change reserves." or ""
-        ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
-        LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
-        if self.Settings.ChatReservesList then
-            if self.CurrentSession.Settings.Blind then
-                LootReserve:SendChatMessage("To see your reserves, whisper me:  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
-            else
-                LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+    
+    if previouslyStarted then
+        if self.CurrentSession.Settings.ChatFallback then
+            local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
+            
+            LootReserve:SendChatMessage(format("Accepting loot reserves again%s.%s",
+                categories ~= "" and format(" for %s", categories) or "",
+                self.CurrentSession.Settings.Lock and " Session is locked. Previous members may not change reserves." or ""
+            ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+            LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+            if self.Settings.ChatReservesList then
+                if self.CurrentSession.Settings.Blind then
+                    LootReserve:SendChatMessage("To see your reserves, whisper me:  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+                else
+                    LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+                end
+            end
+        end
+    else
+        if self.CurrentSession.Settings.ChatFallback then
+            local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
+            local duration = self.CurrentSession.Settings.Duration
+            local count = self.CurrentSession.Settings.MaxReservesPerPlayer;
+            LootReserve:SendChatMessage(format("Loot reserves are now started%s%s%s. %d reserve%s per player%s.",
+                categories ~= "" and format(" for %s", categories) or "",
+                self.CurrentSession.Settings.Blind and " (blind)" or "",
+                duration ~= 0 and format(" and will last for %d:%02d minutes", math.floor(duration / 60), duration % 60) or "",
+                count,
+                count == 1 and "" or "s",
+                self.CurrentSession.Settings.Multireserve > 1 and ", reserving an item multiple times is permitted" or ""
+            ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
+            LootReserve:SendChatMessage("To reserve an item, whisper me:  !reserve ItemLinkOrName", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+            if self.Settings.ChatReservesList then
+                if self.CurrentSession.Settings.Blind then
+                    LootReserve:SendChatMessage("To see your reserves, whisper me:  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
+                else
+                    LootReserve:SendChatMessage("To see reserves made, whisper me:  !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
+                end
             end
         end
     end
