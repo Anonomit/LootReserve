@@ -2170,12 +2170,12 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemLi
             end
 
             if #list > 0 then
-                LootReserve:SendChatMessage(format("%seserved items:", onlyRelevant and "Your r" or "R"), player and "WHISPER" or self:GetChatChannel(), player);
+                LootReserve:SendChatMessage(format("%seserved items:", onlyRelevant and "Your r" or "R"), player and "WHISPER" or self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions), player);
                 for _, line in ipairs(list) do
-                    LootReserve:SendChatMessage(line, player and "WHISPER" or self:GetChatChannel(), player);
+                    LootReserve:SendChatMessage(line, player and "WHISPER" or self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions), player);
                 end
             else
-                LootReserve:SendChatMessage(onlyRelevant and "You currently have no reserves. To reserve an item, whisper me: !reserve ItemLinkOrName" or "There are currently no reserves", player and "WHISPER" or self:GetChatChannel(), player);
+                LootReserve:SendChatMessage(onlyRelevant and "You currently have no reserves. To reserve an item, whisper me: !reserve ItemLinkOrName" or "There are currently no reserves", player and "WHISPER" or self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions), player);
             end
             if player then self:SendSupportString(player); end
         end
