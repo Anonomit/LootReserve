@@ -3273,10 +3273,7 @@ function LootReserve.Server:WhisperPlayerWithoutReserves(player)
             member.ReservesLeft,
             member.ReservesLeft == 1 and "" or "s"
         );
-        local msg2 = format("You can opt out of using your remaining %d %s by whispering: !opt out",
-            member.ReservesLeft,
-            member.ReservesLeft == 1 and "reserve" or "reserves"
-        );
+        local msg2 = "If you are done reserving, whisper: !opt out";
         local combined = format("%s. %s", msg1, msg2);
         if #combined <= 250 then
             LootReserve:SendChatMessage(combined, "WHISPER", player);
@@ -3292,8 +3289,12 @@ function LootReserve.Server:WhisperAllWithoutReserves()
     if not self.CurrentSession then return; end
     if not self.CurrentSession.AcceptingReserves then return; end
 
+    local i = 0;
     for player, member in pairs(self.CurrentSession.Members) do
-        self:WhisperPlayerWithoutReserves(player);
+        if member.ReservesLeft > 0 and not member.OptedOut and LootReserve:IsPlayerOnline(player) then
+            C_Timer.After(i, function() self:WhisperPlayerWithoutReserves(player) end);
+            i = i + 2;
+        end
     end
 end
 
