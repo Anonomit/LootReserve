@@ -2279,6 +2279,9 @@ function LootReserve.Server:GetWinningRollAndPlayers()
             end
         end
         if highestRoll > LootReserve.Constants.RollType.NotRolled then
+            for _, winner in ipairs(highestPlayers) do
+                LootReserve:TableRemove(losers, winner);
+            end
             return highestRoll, highestPlayers, losers;
         end
     end
