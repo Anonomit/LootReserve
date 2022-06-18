@@ -1831,8 +1831,8 @@
 						local menu =
 						{
 							{ text = "Players Missing Reserves", isTitle = true },
-							{ text = "Whisper All", disabled = #menuWhisperPlayers == 0, func = function() LootReserve.Server:WhisperAllWithoutReserves(); end },
-							{ text = "Whisper...", arg1 = "#whisper", menuList = menuWhisperPlayers, disabled = #menuWhisperPlayers == 0 },
+							{ text = "Remind All", disabled = #menuWhisperPlayers == 0, func = function() LootReserve.Server:WhisperAllWithoutReserves(); end },
+							{ text = "Remind...", arg1 = "#whisper", menuList = menuWhisperPlayers, disabled = #menuWhisperPlayers == 0 },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Misc", isTitle = true },
 							{ text = "Announce Instructions", disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.AcceptingReserves, func = function() LootReserve.Server:BroadcastInstructions(); end },
