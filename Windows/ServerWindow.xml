@@ -655,55 +655,7 @@
 						else
 							LootReserve.Server:MasterLootItem(item, UnitName(self.unit));
 						end
-						<!-- local frame = self:GetParent();
-						local item = frame.Item;
-						if not LootReserve:IsLootingItem(item) and LootReserve:GetTradeableItemCount(item) &lt; 1 then
-						  return;
-						end
-						if not frame.Roll.Winners or #frame.Roll.Winners > 1 then return; end
-						local player = frame.Roll.Winners[1];
-						local unit = LootReserve:GetGroupUnitID(player);
-						if not unit then return; end
-						
-						if LootReserve:IsLootingItem(item) then
-							LootReserve.Server:MasterLootItem(item, player);
-						else
-							local bag, slot;
-							for b = 0, NUM_BAG_SLOTS do
-								for s = 1, GetContainerNumSlots(b) do
-									local itemLink = select(7, GetContainerItemInfo(b, s));
-									if itemLink and LootReserve.ItemCache:Item(itemLink) == item and LootReserve:IsTradeableItem(b, s) then
-										bag, slot = b, s;
-										break;
-									end
-								end
-								if bag or slot then break; end
-							end
-							if bag and slot then
-								if TradeFrame:IsShown() and UnitIsUnit(unit, "npc") then
-									if LootReserve:IsItemBeingTraded(item) then
-										AcceptTrade();
-									else
-										LootReserve:PutItemInTrade(bag, slot);
-									end
-								elseif not UnitIsUnit(unit, "player") and CheckInteractDistance(unit, 2) then
-									if TradeFrame:IsShown() then
-										TradeFrame:Hide();
-									end
-									PickupContainerItem(bag, slot);
-									DropItemOnUnit(unit);
-									C_Timer.After(1, ClearCursor);
-								end
-							end
-						end -->
 					</OnClick>
-					<!-- <OnEnter>
-						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-						GameTooltip:SetText("TODO tooltip");
-						GameTooltip:AddLine("TODO tooltip", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
-						GameTooltip:Show();
-					</OnEnter>
-					<OnLeave function="GameTooltip_Hide" /> -->
 		  	</Scripts>
 			</Button>
 			<Frame parentKey="ReservesFrame">

@@ -580,14 +580,19 @@ function LootReserve.Server:UpdateRollList(lockdown)
                                             frame.DistributeButton.trade = true;
                                             if TradeFrame:IsShown() then
                                                 if UnitIsUnit("npc", unit) then
-                                                    if not self.TradeAcceptState[1] then
-                                                        if LibCustomGlow then
-                                                            LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow)
+                                                    if LootReserve:IsItemBeingTraded(item) then
+                                                        if not self.TradeAcceptState[1] then
+                                                            if LibCustomGlow then
+                                                                LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow)
+                                                            end
+                                                            frame.DistributeButton.Text:SetText("Accept Trade");
+                                                            success = true;
+                                                        else
+                                                            frame.DistributeButton.Text:SetText("Wait");
                                                         end
-                                                        frame.DistributeButton.Text:SetText("Accept Trade");
-                                                        success = true;
                                                     else
-                                                        frame.DistributeButton.Text:SetText("Wait");
+                                                        frame.DistributeButton.Text:SetText("Insert Item");
+                                                        success = true;
                                                     end
                                                 else
                                                     frame.DistributeButton.Text:SetText("Wrong trader");
