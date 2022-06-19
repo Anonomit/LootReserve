@@ -353,7 +353,7 @@
 					<Anchor point="TOPRIGHT" x="-6" y="-6" />
 				</Anchors>
 			</Button>
-			<Button parentKey="RequestRollButton">
+			<Button parentKey="RequestRollButton" frameLevel="101">
 				<Size x="32" y="32" />
 				<Anchors>
 					<Anchor point="TOP" relativeKey="$parent.ItemFrame.Name" relativePoint="BOTTOM" />
