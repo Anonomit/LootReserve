@@ -351,13 +351,13 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" x="6" y="-6" />
 					<Anchor point="TOPRIGHT" x="-6" y="-6" />
-					<!-- <Anchor point="TOPRIGHT" relativeKey="$parent.RequestRollButton" relativePoint="TOPLEFT" x="-5" /> -->
 				</Anchors>
 			</Button>
 			<Button parentKey="RequestRollButton">
 				<Size x="32" y="32" />
 				<Anchors>
-					<Anchor point="TOPRIGHT" x="-6" y="-30" />
+					<Anchor point="TOP" relativeKey="$parent.ItemFrame.Name" relativePoint="BOTTOM" />
+					<Anchor point="RIGHT" x="-6" />
 				</Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
@@ -678,8 +678,8 @@
 			</Button>
 			<Frame parentKey="ReservesFrame">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" y="-24" />
-					<!-- <Anchor point="BOTTOMRIGHT" x="-6" y="6" /> -->
+					<Anchor point="TOP" relativeKey="$parent.ItemFrame" relativePoint="BOTTOM" y="-24" />
+					<Anchor point="LEFT" x="6" y="-24" />
 					<Anchor point="BOTTOM" y="6" />
 					<Anchor point="RIGHT" x="-6" />
 				</Anchors>
@@ -1160,7 +1160,6 @@
 				<Size y="32" />
 				<Anchors>
 					<Anchor point="TOPLEFT" x="6" y="-6" />
-					<!-- <Anchor point="TOPRIGHT" x="-6" y="-6" /> -->
 					<Anchor point="TOPRIGHT" relativeKey="$parent.RequestRollButton" relativePoint="TOPLEFT" x="-5" />
 				</Anchors>
 				<Frames>
