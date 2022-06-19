@@ -657,7 +657,7 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
             LootReserve.ItemCache:Item(itemID):OnCache(function(item)
                 local link = item:GetLink();
                 if quiet then
-                    LootReserve:PrintError("%s removed your reserve for %s%s due to winning an item", LootReserve:ColoredPlayer(sender), link, count > 1 and format(" x%d", count) or "");
+                    LootReserve:PrintError("%s removed your reserve for %s%s due to winning an item.", LootReserve:ColoredPlayer(sender), link, count > 1 and format(" x%d", count) or "");
                 else
                     LootReserve:ShowError("%s removed your reserve for %s%s", LootReserve:ColoredPlayer(sender), link, count > 1 and format(" x%d", count) or "");
                     LootReserve:PrintError("%s removed your reserve for %s%s", LootReserve:ColoredPlayer(sender), link, count > 1 and format(" x%d", count) or "");
