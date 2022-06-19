@@ -343,10 +343,21 @@
 			<BorderColor r="1" g="1" b="1" a="1" />
 		</Backdrop>
 		<Frames>
+			<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
+			<Button parentKey="ItemFrame" inherits="LootReserveItemButtonTemplate" frameLevel="100">
+				<KeyValues>
+					<KeyValue key="tooltipRight" value="true" type="boolean" />
+				</KeyValues>
+				<Anchors>
+					<Anchor point="TOPLEFT" x="6" y="-6" />
+					<Anchor point="TOPRIGHT" x="-6" y="-6" />
+					<!-- <Anchor point="TOPRIGHT" relativeKey="$parent.RequestRollButton" relativePoint="TOPLEFT" x="-5" /> -->
+				</Anchors>
+			</Button>
 			<Button parentKey="RequestRollButton">
 				<Size x="32" y="32" />
 				<Anchors>
-					<Anchor point="TOPRIGHT" x="-6" y="-6" />
+					<Anchor point="TOPRIGHT" x="-6" y="-30" />
 				</Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
@@ -576,21 +587,11 @@
 				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD" />
 				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down" />
 			</Button>
-			<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
-			<Button parentKey="ItemFrame" inherits="LootReserveItemButtonTemplate">
-				<KeyValues>
-					<KeyValue key="tooltipRight" value="true" type="boolean" />
-				</KeyValues>
-				<Anchors>
-					<Anchor point="TOPLEFT" x="6" y="-6" />
-					<Anchor point="TOPRIGHT" relativeKey="$parent.RequestRollButton" relativePoint="TOPLEFT" x="-5" />
-				</Anchors>
-			</Button>
 			<Frame parentKey="DurationFrame">
 				<Size y="12" />
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" />
-					<Anchor point="RIGHT" x="-6" />
+					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" y="-3" />
+					<Anchor point="RIGHT" relativeKey="$parent.RequestRollButton" relativePoint="LEFT" x="-6" />
 				</Anchors>
 				<Frames>
 					<StatusBar parentKey="Duration" inherits="LootReserveDurationStatusBar">
@@ -606,10 +607,111 @@
 					</StatusBar>
 				</Frames>
 			</Frame>
+			<Button parentKey="DistributeButton" inherits="LootReserveGlowingButtonTemplate" frameLevel="100" hidden="true" text="Distribute">
+				<Size x="100" y="20" />
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" y="-2" />
+				</Anchors>
+				<KeyValues>
+					<KeyValue key="unit" value="nil" type="string" />
+					<KeyValue key="trade" value="false" type="boolean" />
+				</KeyValues>
+				<Scripts>
+					<OnLoad>
+						self.Text:SetPoint("CENTER", 0, 0); -- Fix the inherited offset of y=-1
+					</OnLoad>
+					<OnClick>
+						local frame = self:GetParent();
+						local item = frame.Item;
+						if not self.unit then return; end
+						if self.trade then
+							local bag, slot;
+							for b = 0, NUM_BAG_SLOTS do
+								for s = 1, GetContainerNumSlots(b) do
+									local itemLink = select(7, GetContainerItemInfo(b, s));
+									if itemLink and LootReserve.ItemCache:Item(itemLink) == item and LootReserve:IsTradeableItem(b, s) then
+										bag, slot = b, s;
+										break;
+									end
+								end
+								if bag or slot then break; end
+							end
+							if bag and slot then
+								if TradeFrame:IsShown() and UnitIsUnit(self.unit, "npc") then
+									if LootReserve:IsItemBeingTraded(item) then
+										AcceptTrade();
+									else
+										LootReserve:PutItemInTrade(bag, slot);
+									end
+								elseif CheckInteractDistance(self.unit, 2) then
+									if TradeFrame:IsShown() then
+										TradeFrame:Hide();
+									end
+									PickupContainerItem(bag, slot);
+									DropItemOnUnit(self.unit);
+									C_Timer.After(1, ClearCursor);
+								end
+							end
+						else
+							LootReserve.Server:MasterLootItem(item, UnitName(self.unit));
+						end
+						<!-- local frame = self:GetParent();
+						local item = frame.Item;
+						if not LootReserve:IsLootingItem(item) and LootReserve:GetTradeableItemCount(item) &lt; 1 then
+						  return;
+						end
+						if not frame.Roll.Winners or #frame.Roll.Winners > 1 then return; end
+						local player = frame.Roll.Winners[1];
+						local unit = LootReserve:GetGroupUnitID(player);
+						if not unit then return; end
+						
+						if LootReserve:IsLootingItem(item) then
+							LootReserve.Server:MasterLootItem(item, player);
+						else
+							local bag, slot;
+							for b = 0, NUM_BAG_SLOTS do
+								for s = 1, GetContainerNumSlots(b) do
+									local itemLink = select(7, GetContainerItemInfo(b, s));
+									if itemLink and LootReserve.ItemCache:Item(itemLink) == item and LootReserve:IsTradeableItem(b, s) then
+										bag, slot = b, s;
+										break;
+									end
+								end
+								if bag or slot then break; end
+							end
+							if bag and slot then
+								if TradeFrame:IsShown() and UnitIsUnit(unit, "npc") then
+									if LootReserve:IsItemBeingTraded(item) then
+										AcceptTrade();
+									else
+										LootReserve:PutItemInTrade(bag, slot);
+									end
+								elseif not UnitIsUnit(unit, "player") and CheckInteractDistance(unit, 2) then
+									if TradeFrame:IsShown() then
+										TradeFrame:Hide();
+									end
+									PickupContainerItem(bag, slot);
+									DropItemOnUnit(unit);
+									C_Timer.After(1, ClearCursor);
+								end
+							end
+						end -->
+					</OnClick>
+					<!-- <OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText("TODO tooltip");
+						GameTooltip:AddLine("TODO tooltip", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" /> -->
+		  	</Scripts>
+			</Button>
 			<Frame parentKey="ReservesFrame">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.DurationFrame" relativePoint="BOTTOMLEFT" y="-5" />
-					<Anchor point="BOTTOMRIGHT" x="-6" y="6" />
+					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" y="-24" />
+					<!-- <Anchor point="BOTTOMRIGHT" x="-6" y="6" /> -->
+					<Anchor point="BOTTOM" y="6" />
+					<Anchor point="RIGHT" x="-6" />
 				</Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
@@ -1088,6 +1190,7 @@
 				<Size y="32" />
 				<Anchors>
 					<Anchor point="TOPLEFT" x="6" y="-6" />
+					<!-- <Anchor point="TOPRIGHT" x="-6" y="-6" /> -->
 					<Anchor point="TOPRIGHT" relativeKey="$parent.RequestRollButton" relativePoint="TOPLEFT" x="-5" />
 				</Anchors>
 				<Frames>
@@ -1395,9 +1498,10 @@
 						--self.ItemFrame.Icon.CancelIcon:SetShown(GameTooltip:IsOwned(self.ItemFrame.Icon)); -- Looks better without it
 						self.ItemFrame.Icon.Arrow:Hide();
 						self.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
+            self.ItemFrame.Name:SetFontObject("GameFontNormalSmall");
 						self.ItemFrame.Misc:SetText(LootReserve:GetTradeableItemCount(item) &lt; 1 and not LootReserve:IsLootingItem(item) and "|cFFFF0000Cannot distribute|r" or reservers > 0 and format("Reserved by %d |4player:players;", reservers) or "Not reserved");
 						self.RequestRollButton:Show();
-						self.RequestRollButton:SetWidth(32);
+						self.RequestRollButton:SetHeight(32);
 					else
 						self.Item = nil;
 						self.Link = nil;
@@ -1405,9 +1509,10 @@
 						self.ItemFrame.Icon.CancelIcon:Hide();
 						self.ItemFrame.Icon.Arrow:SetShown(self.ItemFrame.Icon:IsMouseOver());
 						self.ItemFrame.Name:SetText("|cFF808080Drop an Item|r");
+            self.ItemFrame.Name:SetFontObject("GameFontNormalLarge");
 						self.ItemFrame.Misc:SetText("or click to select");
 						self.RequestRollButton:Hide();
-						self.RequestRollButton:SetWidth(0.00001);
+						self.RequestRollButton:SetHeight(0.00001);
 					end
 				end
 				self:SetItem(nil);

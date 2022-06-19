@@ -56,6 +56,7 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     frame.LabelSender:SetText(format(custom and "%s offers for you to roll%s:" or "%s asks you to roll%s on a reserved item:", LootReserve:ColoredPlayer(sender), phase and format(" for |cFF00FF00%s|r", phase) or ""));
     frame.ItemFrame.Icon:SetTexture(texture);
     frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
+    frame.ItemFrame.Name:SetFontObject("GameFontNormal");
     frame.ItemFrame.Misc:SetText(description);
     frame.ButtonRoll:Disable();
     frame.ButtonRoll:SetAlpha(0.25);

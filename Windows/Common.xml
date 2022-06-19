@@ -203,7 +203,8 @@
 					<Size y="12" />
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" />
-						<Anchor point="BOTTOMRIGHT" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="RIGHT" />
 					</Anchors>
 				</FontString>
 			</Layer>
