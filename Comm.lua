@@ -690,7 +690,7 @@ function LootReserve.Comm:BroadcastRequestRoll(item, players, custom, duration, 
 end
 function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duration, maxDuration, phase)
     LootReserve.Comm:Send(target, Opcodes.RequestRoll,
-        format("%d,%s", item:GetID(), item:GetSuffix() or 0),
+        format("%d,%d", item:GetID(), item:GetSuffix() or 0),
         strjoin(",", unpack(players)),
         custom == true,
         format("%.2f", duration or 0),
@@ -698,7 +698,8 @@ function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duratio
         phase or "");
 end
 LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phase)
-    item = LootReserve.ItemCache:Item(strsplit(",", item));
+    local id, suffix = strsplit(",", item);
+    item = LootReserve.ItemCache:Item(tonumber(id), tonumber(suffix));
     custom = tonumber(custom) == 1;
     duration = tonumber(duration);
     maxDuration = tonumber(maxDuration);
