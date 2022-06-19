@@ -608,7 +608,7 @@
 				</Frames>
 			</Frame>
 			<Button parentKey="DistributeButton" inherits="LootReserveGlowingButtonTemplate" frameLevel="100" hidden="true" text="Distribute">
-				<Size x="100" y="20" />
+				<Size x="120" y="20" />
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" y="-2" />
 				</Anchors>
@@ -1350,15 +1350,18 @@
 											for i = 1, GetNumLootItems() do
 												local itemID = GetLootSlotInfo(i);
 												if itemID then
-													local item = LootReserve.ItemCache:Item(GetLootSlotLink(i));
-													if item then
-														if index == 0 then
-															table.insert(menu, 1, { text = "Current Loot", isTitle = true });
-															table.insert(menu, 2, LootReserve:MakeMenuSeparator());
+			                    local itemLink = GetLootSlotLink(i);
+			                    if itemLink and itemLink:find("item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
+														local item = LootReserve.ItemCache:Item(itemLink);
+														if item then
+															if index == 0 then
+																table.insert(menu, 1, { text = "Current Loot", isTitle = true });
+																table.insert(menu, 2, LootReserve:MakeMenuSeparator());
+															end
+															local texture, name, count = GetLootSlotInfo(i);
+															table.insert(menu, 2 + index, MakeItem(count, item, texture));
+															index = index + 1;
 														end
-														local texture, name, count = GetLootSlotInfo(i);
-														table.insert(menu, 2 + index, MakeItem(count, item, texture));
-														index = index + 1;
 													end
 												end
 											end

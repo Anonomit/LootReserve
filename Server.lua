@@ -713,7 +713,89 @@ end
 function LootReserve.Server:PrepareLootTracking()
     if self.LootTrackingRegistered then return; end
     self.LootTrackingRegistered = true;
-
+    
+    local aDay = 60 * 60 * 24;
+    local function MarkDistributed(item, player)
+        local aDayAgo = time() - aDay;
+        local recentStart = 1;
+        for i = #self.RollHistory, 1, -1 do
+            local startTime = self.RollHistory[i].StartTime;
+            if not StartTime or StartTime < aDayAgo then
+                recentStart = i;
+                break;
+            end
+        end
+        for i = 1, #self.RollHistory do
+            local roll = self.RollHistory[i];
+            if roll.Owed and roll.Item == item then
+                roll.Owed = nil;
+                return;
+            end
+        end
+    end
+    
+    local RecentLootAttempt = nil;
+    hooksecurefunc("GiveMasterLoot", function(lootSlot, playerSlot)
+        local itemLink = GetLootSlotLink(lootSlot);
+        if not itemLink or not itemLink:find("item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
+            return;
+        end
+        local item = LootReserve.ItemCache:Item(itemLink);
+        local candidate = GetMasterLootCandidate(lootSlot, playerSlot);
+        if not candidate then return; end
+        RecentLootAttempt = { lootSlot = lootSlot, item = item, player = candidate };
+        LootReserve:debug(format("Added Recently Attempted Loot: %s to %s in slot %d", item:GetLink(), candidate, lootSlot))
+    end);
+    LootReserve:RegisterEvent("LOOT_CLOSED", function(lootSlot)
+        RecentLootAttempt = nil;
+        LootReserve:debug("Deleted Recently Attempted Loot");
+    end);
+    LootReserve:RegisterEvent("LOOT_SLOT_CLEARED", function(lootSlot)
+        if not RecentLootAttempt then return; end
+        if RecentLootAttempt.lootSlot == lootSlot then
+            LootReserve:debug(format("%s was successfully looted to %s", RecentLootAttempt.item:GetLink(), RecentLootAttempt.player));
+            MarkDistributed(RecentLootAttempt.item, RecentLootAttempt.player);
+        end
+    end);
+    
+    local RecentTradeAttempt = nil;
+    self.TradeAcceptState = { false, false };
+    LootReserve:RegisterEvent("TRADE_PLAYER_ITEM_CHANGED", "TRADE_TARGET_ITEM_CHANGED", "TRADE_SHOW", "ITEM_LOCKED", function()
+        if not TradeFrame:IsShown() then
+            RecentTradeAttempt = nil;
+            self.TradeAcceptState   = { false, false };
+            LootReserve:debug("Trade deleted");
+            return;
+        end
+        RecentTradeAttempt = { target = UnitName("npc") };
+        for i = 1, 6 do
+            local name, texture, quantity, quality, isUsable, enchant = GetTradePlayerItemInfo(i);
+            local link = GetTradePlayerItemLink(i);
+            if link and link:find("item:%d") then -- Just in case
+                RecentTradeAttempt[i] = {item = LootReserve.ItemCache:Item(link), quantity = quantity};
+            end
+        end
+        
+        LootReserve:debug("Trade updated");
+    end);
+    LootReserve:RegisterEvent("TRADE_ACCEPT_UPDATE", function(player, target)
+        self.TradeAcceptState = { player == 1, target == 1 };
+    end);
+    LootReserve:RegisterEvent("UI_INFO_MESSAGE", function(e, msg)
+        if msg == ERR_TRADE_COMPLETE then
+            if RecentTradeAttempt then
+                for i = 1, 6 do
+                    if RecentTradeAttempt[i] then
+                        for j = 1, RecentTradeAttempt[i].quantity do
+                            MarkDistributed(RecentTradeAttempt[i].item, RecentTradeAttempt.player);
+                        end
+                    end
+                end
+            end
+            LootReserve:debug("Trade complete");
+        end
+    end);
+    
     local function AddRecentLoot(item)
         if item:GetQuality() >= self.Settings.MinimumLootQuality then
             LootReserve:TableRemove(self.RecentLoot, item);
@@ -804,8 +886,11 @@ function LootReserve.Server:PrepareLootTracking()
             if GetLootSlotType(lootSlot) == 1 then -- loot slot contains item, not currency/empty
                 local itemID = GetLootSlotInfo(lootSlot);
                 if itemID then
-                    local item = LootReserve.ItemCache:Item(GetLootSlotLink(lootSlot));
-                    AddRecentLoot(item);
+                    local itemLink = GetLootSlotLink(lootSlot);
+                    if itemLink and itemLink:find("item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
+                        local item = LootReserve.ItemCache:Item(itemLink);
+                        AddRecentLoot(item);
+                    end
                 end
             end
         end
@@ -2355,6 +2440,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent)
     end
 
     if self:IsRolling(item) then
+        local masterloot = nil;
         local roll, winners, losers = self:GetWinningRollAndPlayers();
         if roll and winners then
             local raidroll = self.RequestedRoll.RaidRoll;
@@ -2391,7 +2477,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent)
             end
 
             if self.Settings.RollMasterLoot then
-                self:MasterLootItem(item, winners[1], #winners > 1);
+                masterLoot = function() self:MasterLootItem(item, winners[1], #winners > 1); end;
             end
         elseif soleReserver and not self.RequestedRoll.Custom and next(self.RequestedRoll.Players) then
             local player = next(self.RequestedRoll.Players);
@@ -2415,11 +2501,14 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent)
             end
 
             if self.Settings.RollMasterLoot then
-                self:MasterLootItem(item, player);
+                masterLoot = function() self:MasterLootItem(item, player); end;
             end
         end
 
         self:CancelRollRequest(item, winners);
+        if masterLoot then
+            masterLoot();
+        end
     end
 
     self:UpdateReserveListRolls();
@@ -2476,6 +2565,9 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
             historicalEntry.Item = LootReserve.ItemCache:Item(historicalEntry.Item);
             historicalEntry.Duration    = nil;
             historicalEntry.MaxDuration = nil;
+            if winners and #winners == 1 then
+                historicalEntry.Owed = true;
+            end
             table.insert(self.RollHistory, historicalEntry);
             if #self.RollHistory > self.Settings.RollHistoryKeepLimit then
                 local delta = #self.RollHistory - self.Settings.RollHistoryKeepLimit;
@@ -2825,7 +2917,38 @@ function LootReserve.Server:RequestRoll(item, duration, phases, allowedPlayers)
         return;
     end
 
-    local players = allowedPlayers or reserve.Players
+    local players = allowedPlayers or reserve.Players;
+    
+    -- Give the item a suffix if it doesn't have one. Source it from loot and inventory
+    if not item:HasSuffix() then
+        if LootFrame:IsShown() then
+            for lootSlot = 1, GetNumLootItems() do
+                if GetLootSlotType(lootSlot) == 1 then -- loot slot contains item, not currency/empty
+                    local itemID = GetLootSlotInfo(lootSlot);
+                    if itemID and itemID == item:GetID() then
+                        local itemLink = GetLootSlotLink(lootSlot);
+                        if itemLink and itemLink:find("item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
+                            local suffixItem = LootReserve.ItemCache:Item(itemLink);
+                            if suffixItem:HasSuffix() then
+                                item = LootReserve.ItemCache:Item(itemLink);
+                                break;
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        if LootReserve.bagCache then
+            for _, slotData in ipairs(LootReserve.bagCache) do
+                if slotData.item:GetID() == item:GetID() then
+                    if LootReserve:GetTradeableItemCount(slotData.item) > 0 then
+                        item = slotData.item;
+                        break;
+                    end
+                end
+            end
+        end
+    end
 
     self.RequestedRoll =
     {

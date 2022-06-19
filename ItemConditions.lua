@@ -334,7 +334,7 @@ local usableCacheHooked = nil;
 local function IsItemUsableByMe(itemID)
     if not usableCacheHooked then
         usableCacheHooked = true;
-        LootReserve:RegisterEvent("QUEST_ACCEPTED", "QUEST_TURNED_IN", "BAG_UPDATE", "CHAT_MSG_SKILL", function()
+        LootReserve:RegisterEvent("QUEST_ACCEPTED", "QUEST_TURNED_IN", "BAG_UPDATE_DELAYED", "CHAT_MSG_SKILL", function()
             usableCache = { };
         end);
     end

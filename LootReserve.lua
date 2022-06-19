@@ -642,29 +642,28 @@ function LootReserve:IsTradeableItem(bag, slot)
     return not LootReserve:IsItemSoulbound(bag, slot) or LootReserve:IsItemSoulboundTradeable(bag, slot);
 end
 
-local bagCache = nil;
 local bagCacheHooked = nil;
-function LootReserve:GetTradeableItemCount(item)
+function LootReserve:GetTradeableItemCount(itemOrID)
     if not bagCacheHooked then
         bagCacheHooked = true;
-        self:RegisterEvent("BAG_UPDATE", function()
-            bagCache = nil;
+        self:RegisterEvent("BAG_UPDATE_DELAYED", function()
+            self.bagCache = nil;
         end);
     end
-    if not bagCache then
-        bagCache = { };
+    if not self.bagCache then
+        self.bagCache = { };
         for bag = 0, 4 do
             for slot = 1, GetContainerNumSlots(bag) do
-                local _, quantity, _, _, _, _, bagItem = GetContainerItemInfo(bag, slot);
-                if bagItem then
-                    table.insert(bagCache, {bag = bag, slot = slot, item = LootReserve.ItemCache:Item(bagItem), quantity = quantity})
+                local _, quantity, _, _, _, _, link, _, _, id, isBound = GetContainerItemInfo(bag, slot);
+                if link then
+                    table.insert(self.bagCache, {bag = bag, slot = slot, item = LootReserve.ItemCache:Item(link), quantity = quantity})
                 end
             end
         end
     end
     local count = 0;
-    for _, itemData in ipairs(bagCache) do
-        if (type(item) == "number" and itemData.item:GetID() == item or itemData.item == item) and self:IsTradeableItem(itemData.bag, itemData.slot) then
+    for _, itemData in ipairs(self.bagCache) do
+        if (type(itemOrID) == "number" and itemData.item:GetID() == itemOrID or itemData.item == itemOrID) and self:IsTradeableItem(itemData.bag, itemData.slot) then
             count = count + itemData.quantity;
         end
     end
