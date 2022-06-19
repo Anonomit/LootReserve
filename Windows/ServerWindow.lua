@@ -526,7 +526,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
             frame.Roll = roll;
 
             frame:SetBackdropBorderColor(historical and 0.25 or 1, historical and 0.25 or 1, historical and 0.25 or 1);
-            frame.RequestRollButton:SetShown(not historical or (roll.Custom or self.CurrentSession) and not self.RequestedRoll);
+            frame.RequestRollButton:SetShown(not historical or not self.RequestedRoll);
             frame.ItemFrame.Icon:SetTexture(texture);
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
             frame.ItemFrame.Name:SetFontObject("GameFontNormalSmall");

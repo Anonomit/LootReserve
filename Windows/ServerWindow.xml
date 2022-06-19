@@ -375,11 +375,25 @@
 							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 							if self:GetParent().Historical then
 								local winners = self:GetParent().Roll.Winners;
-								GameTooltip:SetText("Continue Roll");
 								if self:GetParent().Roll.Custom then
-									GameTooltip:AddLine(format("Continue this roll%s.", winners and format(", removing the %d |4winner:winners;", #winners) or ""), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
-								else
+									if next(self:GetParent().Roll.Players, next(self:GetParent().Roll.Players)) then
+										GameTooltip:SetText("Continue Roll");
+										GameTooltip:AddLine(format("Continue this roll%s.", winners and format(", removing the %d |4winner:winners;", #winners) or ""), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+									else
+										if self:GetParent().Roll.Phases and #self:GetParent().Roll.Phases > 1 then
+											GameTooltip:SetText("Continue Roll");
+											GameTooltip:AddLine(format("Continue this roll%s. The item will roll for %s.", winners and format(", removing the %d |4winner:winners;", #winners) or "", self:GetParent().Roll.Phases[2]), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+										else
+											GameTooltip:SetText("Roll Item");
+											GameTooltip:AddLine("Prepare a roll for this item.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+										end
+									end
+								elseif LootReserve.Server.CurrentSession then
+									GameTooltip:SetText("Continue Roll");
 									GameTooltip:AddLine(format("Continue this roll%s.", winners and format(", removing the %d |4winning roll:winning rolls;|n|nAdditional rolls by the winner%s will be kept if the winner has any reserves remaining on the item.|n|nConfigure automatic removal of reserves for winning players in the Host settings", #winners, #winners == 1 and "" or "s") or ""), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								else
+									GameTooltip:SetText("Roll Item");
+									GameTooltip:AddLine("Prepare a roll for this item.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
 								end
 							else
 								local rollingThisItem = LootReserve.Server:IsRolling(self:GetParent().Item);
@@ -425,20 +439,24 @@
 									end
 								end
 							elseif Roll.Winners then
-								for _, winner in ipairs(Roll.Winners) do
-									local maxI, maxRoll = 1, Roll.Players[winner][1];
-									for i, roll in ipairs(Roll.Players[winner]) do
-										if roll > maxRoll then
-											maxI, maxRoll= i, roll;
+								if LootReserve.Server.CurrentSession then
+									for _, winner in ipairs(Roll.Winners) do
+										local maxI, maxRoll = 1, Roll.Players[winner][1];
+										for i, roll in ipairs(Roll.Players[winner]) do
+											if roll > maxRoll then
+												maxI, maxRoll= i, roll;
+											end
+										end
+										table.remove(Roll.Players[winner], maxI);
+										local reserve = LootReserve.Server.CurrentSession.ItemReserves[Roll.Item:GetID()];
+										if not reserve or not LootReserve:Contains(reserve.Players, winner) then
+											Roll.Players[winner] = nil;
 										end
 									end
-									table.remove(Roll.Players[winner], maxI);
-									local reserve = LootReserve.Server.CurrentSession.ItemReserves[Roll.Item:GetID()];
-									if not reserve or not LootReserve:Contains(reserve.Players, winner) then
-										Roll.Players[winner] = nil;
+									if not next(Roll.Players) then
+										LootReserve.Server.RequestedRoll = nil;
 									end
-								end
-								if not next(Roll.Players) then
+								else
 									LootReserve.Server.RequestedRoll = nil;
 								end
 							end
