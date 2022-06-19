@@ -441,6 +441,7 @@
 							elseif Roll.Winners then
 								if LootReserve.Server.CurrentSession then
 									for _, winner in ipairs(Roll.Winners) do
+										-- Remove winning roll
 										local maxI, maxRoll = 1, Roll.Players[winner][1];
 										for i, roll in ipairs(Roll.Players[winner]) do
 											if roll > maxRoll then
@@ -448,6 +449,10 @@
 											end
 										end
 										table.remove(Roll.Players[winner], maxI);
+										
+										if #Roll.Players[winner] == 0 then
+											Roll.Players[winner] = nil;
+										end
 										local reserve = LootReserve.Server.CurrentSession.ItemReserves[Roll.Item:GetID()];
 										if not reserve or not LootReserve:Contains(reserve.Players, winner) then
 											Roll.Players[winner] = nil;
