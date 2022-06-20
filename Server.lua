@@ -2884,7 +2884,7 @@ function LootReserve.Server:PrepareRequestRoll()
                     local player = LootReserve:Player(sender);
                     
                     -- Filter out roll announcement
-                    if LootReserve:IsMe(player) and text == self.LastChat:gsub("\1", " ") then
+                    if LootReserve:IsMe(player) and self.LastChat and text == self.LastChat:gsub("\1", " ") then
                         self.LastChat = nil;
                         return;
                     end
