@@ -78,8 +78,8 @@ LootReserve.Constants.ChatAnnouncement = {
     SessionBlindToggle  = 10,
 };
 LootReserve.Constants.DefaultPhases = {
-    "Main-Spec",
-    "Off-Spec",
+    "MainSpec",
+    "OffSpec",
     "Learning",
     "Quest",
     "Reputation",
