@@ -176,6 +176,7 @@ function LootReserve.Client:UpdateLootList()
             end
 
             frame.ItemFrame.Icon:SetTexture(texture);
+            frame.ItemFrame.Name:SetMaxLines(1);
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
             frame.ItemFrame.Misc:SetText(source or description);
             frame.Favorite:SetPoint("LEFT", frame.ItemFrame.Name, "LEFT", math.min(frame.ItemFrame:GetWidth() - 57, frame.ItemFrame.Name:GetStringWidth()), 0);
