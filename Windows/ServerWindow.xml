@@ -798,6 +798,20 @@
 						end
 					</OnClick>
 		  	</Scripts>
+		  	<Frames>
+					<Button parentKey="ClearOwedButton" inherits="LootReserveGlowingButtonTemplate" frameLevel="100" text="Clear">
+						<Size x="60" y="20" />
+						<Anchors>
+							<Anchor point="LEFT" relativeKey="$parent" relativePoint="RIGHT" />
+						</Anchors>
+						<Scripts>
+							<OnClick>
+								self:GetParent():GetParent().Roll.Owed = false;
+								LootReserve.Server:UpdateRollList();
+							</OnClick>
+				  	</Scripts>
+					</Button>
+		  	</Frames>
 			</Button>
 			<Frame parentKey="ReservesFrame">
 				<Anchors>
