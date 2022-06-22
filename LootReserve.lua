@@ -822,7 +822,7 @@ function LootReserve:IsLootingItem(item)
 end
 
 function LootReserve:CanUseLocator()
-    return DBM and DBM.ReleaseRevision > 20220618000000;
+    return (DBM and DBM.ReleaseRevision > 20220618000000 and UnitPosition("player")) and true or false;
 end
 
 function LootReserve:TransformSearchText(text)
