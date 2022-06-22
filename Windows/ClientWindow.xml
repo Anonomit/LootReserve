@@ -319,6 +319,14 @@
 			<Anchor point="CENTER" />
 		</Anchors>
 		<Layers>
+			<Layer level="OVERLAY">
+				<FontString parentKey="MasqueradeHelperText" inherits="GameFontNormal" justifyH="LEFT" text="Reserving as:" hidden="true">
+					<Size y="20" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="22" y="-1" />
+					</Anchors>
+				</FontString>
+			</Layer>
 			<Layer level="ARTWORK">
 				<Texture parentKey="RemainingTextGlow" alpha="0.25" file="Interface\CHATFRAME\ChatFrameTab-NewMessage" alphaMode="ADD">
 					<Anchors>
@@ -379,16 +387,11 @@
 			<Button parentKey="Masquerade" inherits="UIMenuButtonStretchTemplate" frameLevel="100" hidden="true">
 				<Size x="100" y="20" />
 				<Anchors>
-					<Anchor point="TOPLEFT" x="100" y="-1" />
+					<Anchor point="LEFT" relativeKey="$parent.MasqueradeHelperText" relativePoint="RIGHT" />
 				</Anchors>
 				<Layers>
 					<Layer>
-						<FontString parentKey="Text" inherits="GameFontNormal" justifyH="LEFT" wordwrap="false">
-						<Anchors>
-							<Anchor point="CENTER" />
-						</Anchors>
-						</FontString>
-						<Texture parentKey="Arrow" file="Interface\BUTTONS\UI-SortArrow">
+						<Texture parentKey="Icon" file="Interface\BUTTONS\UI-SortArrow">
 							<Size x="8" y="8" />
 							<Anchors>
 								<Anchor point="RIGHT" x="-8" />
@@ -396,18 +399,10 @@
 							<TexCoords left="0" right="0.5" top="0" bottom="1" />
 						</Texture>
 					</Layer>
-					<Layer>
-						<FontString parentKey="LeftText" inherits="GameFontNormal" justifyH="LEFT" text="Reserving as:" wordwrap="false">
-						<Anchors>
-							<Anchor point="Left" x="-75"/>
-						</Anchors>
-						</FontString>
-					</Layer>
 				</Layers>
 				<Frames>
 					<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
 				</Frames>
-				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
 				<Scripts>
 					<OnClick>
 						local menu = {
@@ -446,14 +441,9 @@
 						end
 					</OnClick>
 					<OnLoad>
-						self:SetPushedTextOffset(1, -1);
-					</OnLoad>
-					<OnMouseDown>
-						self.Text:SetPoint("CENTER", self:GetPushedTextOffset());
-					</OnMouseDown>
-					<OnMouseUp>
 						self.Text:SetPoint("CENTER");
-					</OnMouseUp>
+						-- self:SetPushedTextOffset(1, -1);
+					</OnLoad>
 					<OnEnter>
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 						GameTooltip:SetText("Reserver");
