@@ -104,14 +104,15 @@ function LootReserve:ToggleServerWindow(state, rolls)
 end
 
 function LootReserve:OnInitialize()
+end
+
+function LootReserve:OnEnable()
     LootReserve.Client:Load();
     LootReserve.Server:Load();
     if LootReserve.Client.Settings.AllowPreCache then
         LootReserve.ItemSearch:Load();
     end
-end
-
-function LootReserve:OnEnable()
+    
     LootReserve.Comm:StartListening();
 
     local function Startup()
