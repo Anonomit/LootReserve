@@ -744,16 +744,13 @@ function LootReserve.Server:PrepareLootTracking()
         local candidate = GetMasterLootCandidate(lootSlot, playerSlot);
         if not candidate then return; end
         RecentLootAttempt = { lootSlot = lootSlot, item = item, player = candidate };
-        LootReserve:debug(format("Added Recently Attempted Loot: %s to %s in slot %d", item:GetLink(), candidate, lootSlot))
     end);
     LootReserve:RegisterEvent("LOOT_CLOSED", function(lootSlot)
         RecentLootAttempt = nil;
-        LootReserve:debug("Deleted Recently Attempted Loot");
     end);
     LootReserve:RegisterEvent("LOOT_SLOT_CLEARED", function(lootSlot)
         if not RecentLootAttempt then return; end
         if RecentLootAttempt.lootSlot == lootSlot then
-            LootReserve:debug(format("%s was successfully looted to %s", RecentLootAttempt.item:GetLink(), RecentLootAttempt.player));
             MarkDistributed(RecentLootAttempt.item, RecentLootAttempt.player);
         end
     end);
@@ -764,7 +761,6 @@ function LootReserve.Server:PrepareLootTracking()
         if not TradeFrame:IsShown() then
             RecentTradeAttempt = nil;
             self.TradeAcceptState   = { false, false };
-            LootReserve:debug("Trade deleted");
             return;
         end
         RecentTradeAttempt = { target = UnitName("npc") };
@@ -775,8 +771,6 @@ function LootReserve.Server:PrepareLootTracking()
                 RecentTradeAttempt[i] = {item = LootReserve.ItemCache:Item(link), quantity = quantity};
             end
         end
-        
-        LootReserve:debug("Trade updated");
     end);
     LootReserve:RegisterEvent("TRADE_ACCEPT_UPDATE", function(player, target)
         self.TradeAcceptState = { player == 1, target == 1 };
@@ -792,7 +786,6 @@ function LootReserve.Server:PrepareLootTracking()
                     end
                 end
             end
-            LootReserve:debug("Trade complete");
         end
     end);
     
@@ -2938,8 +2931,8 @@ function LootReserve.Server:RequestRoll(item, duration, phases, allowedPlayers)
                 end
             end
         end
-        if LootReserve.bagCache then
-            for _, slotData in ipairs(LootReserve.bagCache) do
+        if LootReserve.BagCache then
+            for _, slotData in ipairs(LootReserve.BagCache) do
                 if slotData.item:GetID() == item:GetID() then
                     if LootReserve:GetTradeableItemCount(slotData.item) > 0 then
                         item = slotData.item;

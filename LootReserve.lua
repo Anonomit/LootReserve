@@ -42,6 +42,8 @@ LootReserveGlobalSave =
     },
 };
 
+LootReserve.BagCache = nil;
+
 StaticPopupDialogs["LOOTRESERVE_GENERIC_ERROR"] =
 {
     text         = "%s",
@@ -539,14 +541,15 @@ function LootReserve:ForEachRaider(func)
     if not IsInGroup() then
         local className, classFilename = UnitClass("player");
         local raceName,  raceFilename  = UnitRace("player");
-        return func(self:Me(), 0, 1, UnitLevel("player"), className, classFilename, nil, true, UnitIsDead("player"), nil, nil, nil, "player");
+        return func(self:Me(), 0, 1, UnitLevel("player"), className, classFilename, nil, true, UnitIsDead("player"), nil, nil, nil, "player", nil);
     end
 
     for i = 1, MAX_RAID_MEMBERS do
         local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i);
         if name then
-            local index = UnitInRaid("player") and ("raid" .. i) or ("party" .. i)
-            local result, a, b = func(self:Player(name), rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole, index);
+            local name = self:Player(name);
+            local unitID = self:IsMe(name) and "player" or UnitInRaid("player") and ("raid" .. i) or ("party" .. i);
+            local result, a, b = func(name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole, unitID, i);
             if result ~= nil then
                 return result, a, b;
             end
@@ -647,22 +650,22 @@ function LootReserve:GetTradeableItemCount(itemOrID)
     if not bagCacheHooked then
         bagCacheHooked = true;
         self:RegisterEvent("BAG_UPDATE_DELAYED", function()
-            self.bagCache = nil;
+            self.BagCache = nil;
         end);
     end
-    if not self.bagCache then
-        self.bagCache = { };
+    if not self.BagCache then
+        self.BagCache = { };
         for bag = 0, 4 do
             for slot = 1, GetContainerNumSlots(bag) do
                 local _, quantity, _, _, _, _, link, _, _, id, isBound = GetContainerItemInfo(bag, slot);
                 if link then
-                    table.insert(self.bagCache, {bag = bag, slot = slot, item = LootReserve.ItemCache:Item(link), quantity = quantity})
+                    table.insert(self.BagCache, {bag = bag, slot = slot, item = LootReserve.ItemCache:Item(link), quantity = quantity})
                 end
             end
         end
     end
     local count = 0;
-    for _, itemData in ipairs(self.bagCache) do
+    for _, itemData in ipairs(self.BagCache) do
         if (type(itemOrID) == "number" and itemData.item:GetID() == itemOrID or itemData.item == itemOrID) and self:IsTradeableItem(itemData.bag, itemData.slot) then
             count = count + itemData.quantity;
         end
@@ -816,6 +819,10 @@ function LootReserve:IsLootingItem(item)
             end
         end
     end
+end
+
+function LootReserve:CanUseLocator()
+    return DBM and DBM.ReleaseRevision > 20220618000000;
 end
 
 function LootReserve:TransformSearchText(text)

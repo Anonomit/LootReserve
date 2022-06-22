@@ -635,19 +635,122 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" y="-2" />
 				</Anchors>
-				<KeyValues>
-					<KeyValue key="unit" value="nil" type="string" />
-					<KeyValue key="trade" value="false" type="boolean" />
-				</KeyValues>
 				<Scripts>
 					<OnLoad>
 						self.Text:SetPoint("CENTER", 0, 0); -- Fix the inherited offset of y=-1
+						
+						self.SetState = function(self, text, enable, glow)
+							if self:GetText() ~= text then
+								self:SetText(text);
+							end
+							if enable ~= self:IsEnabled() then
+								self:SetEnabled(enable);
+							end
+							if self.LibCustomGlow then
+								if glow then
+									self.LibCustomGlow.ButtonGlow_Start(self.Glow)
+								else
+									self.LibCustomGlow.ButtonGlow_Stop(self.Glow)
+								end
+							end
+						end
+						
+						self.Locator = { };
+						self.Locate = function(self, unit)
+							local _, playerClass = LootReserve:UnitClass("player");
+							local _, targetClass = LootReserve:UnitClass(unit);
+							local color1 = RAID_CLASS_COLORS[playerClass];
+							local color2 = RAID_CLASS_COLORS[targetClass];
+							
+							if self.Locator.active then
+								-- No seriously, free m2 first. Otherwise there's a single wrong frame.
+								-- Something to do with how DBM recycles frames I assume.
+								self.Locator.m1:Free(true);
+								self.Locator.m2:Free(true);
+								self.Locator.edge:Free(true);
+								self.Locator.Timer:Cancel();
+							end
+							
+							self.Locator.m1 = DBM.HudMap:RegisterRangeMarkerOnPartyMember(87654, "party", LootReserve:Me(), 0.5, nil, color1.r, color1.g, color1.b, 1, nil, false);
+							self.Locator.m2 = DBM.HudMap:RegisterRangeMarkerOnPartyMember(87654, "party", UnitName(unit), 0.75, nil, color2.r, color2.g, color2.b, 1, nil, false);
+							self.Locator.edge = self.Locator.m2:EdgeTo(self.Locator.m1, nil, nil, 0, 1, 0, 1);
+							
+							-- Play appearing animation
+							if not self.Locator.active then
+								self.Locator.m1:Appear();
+								self.Locator.m2:Appear();
+							end
+							
+							self.Locator.m1:Update();
+							self.Locator.m2:Update();
+							self.Locator.edge:Update();
+							
+							self.Locator.Timer = C_Timer.NewTicker(5, function() self.Locator.m1:Free() self.Locator.m2:Free() self.active = nil end, 1);
+							self.Locator.active = true;
+						end
 					</OnLoad>
+					<OnUpdate>
+						local unit = self.Unit;
+						
+						-- figure out what to do if the winner is me
+						
+						if not unit or not UnitExists(unit) then
+							return self:SetState(format("Can't find winner: %s", unit)), false, false;
+						end
+						
+						if not UnitIsConnected(unit) then
+							return self:SetState("Winner is offline"), false, false;
+						end
+						
+						if self.Lootable then
+							if C_Map.GetBestMapForUnit(unit) ~= myZone then
+								return self:SetState("Winner not found"), false, false;
+							end
+							
+							return self:SetState("Master loot", true, true);
+							
+						elseif self.Tradeable then
+							if UnitIsDeadOrGhost(unit) then
+								return self:SetState("Winner is dead"), false, false;
+							end
+							
+							if not UnitIsVisible(unit) then
+								return self:SetState("Way out of range", false, true);
+							end
+							
+							if not CheckInteractDistance(unit, 2) then
+								if LootReserve:CanUseLocator() then
+									return self:SetState("Locate", true, true);
+								else
+									return self:SetState("Out of range", false, true);
+								end
+							end
+							
+							if not TradeFrame:IsShown() then
+								return self:SetState("Open trade", true, true);
+							end
+							if not UnitIsUnit("npc", unit) then
+								return self:SetState("Wrong trader"), false, false;
+							end
+							if not LootReserve:IsItemBeingTraded(self:GetParent().Item) then
+								return self:SetState("Insert item", true, true);
+							end
+							if LootReserve.Server.TradeAcceptState[1] then
+								return self:SetState("Wait"), false, false;
+							end
+							
+							return self:SetState("Accept trade", true, false);
+						else
+							return self:SetState("Can't find item", false, false)
+						end
+					</OnUpdate>
 					<OnClick>
 						local frame = self:GetParent();
 						local item = frame.Item;
-						if not self.unit then return; end
-						if self.trade then
+						local unit = self.Unit
+						
+						if not unit then return; end
+						if self.Tradeable then
 							local bag, slot;
 							for b = 0, NUM_BAG_SLOTS do
 								for s = 1, GetContainerNumSlots(b) do
@@ -660,23 +763,24 @@
 								if bag or slot then break; end
 							end
 							if bag and slot then
-								if TradeFrame:IsShown() and UnitIsUnit(self.unit, "npc") then
-									if LootReserve:IsItemBeingTraded(item) then
-										AcceptTrade();
-									else
-										LootReserve:PutItemInTrade(bag, slot);
+								if TradeFrame:IsShown() then
+									if UnitIsUnit(unit, "npc") then
+										if LootReserve:IsItemBeingTraded(item) then
+											AcceptTrade();
+										else
+											LootReserve:PutItemInTrade(bag, slot);
+										end
 									end
-								elseif CheckInteractDistance(self.unit, 2) then
-									if TradeFrame:IsShown() then
-										TradeFrame:Hide();
-									end
+								elseif CheckInteractDistance(unit, 2) then
 									PickupContainerItem(bag, slot);
-									DropItemOnUnit(self.unit);
+									DropItemOnUnit(unit);
 									C_Timer.After(1, ClearCursor);
+								elseif LootReserve:CanUseLocator() then
+									self:Locate(unit);
 								end
 							end
 						else
-							LootReserve.Server:MasterLootItem(item, UnitName(self.unit));
+							LootReserve.Server:MasterLootItem(item, UnitName(unit));
 						end
 					</OnClick>
 		  	</Scripts>
@@ -1165,7 +1269,7 @@
 				<Size y="32" />
 				<Anchors>
 					<Anchor point="TOPLEFT" x="6" y="-6" />
-					<Anchor point="TOPRIGHT" relativeKey="$parent.RequestRollButton" relativePoint="TOPLEFT" x="-5" />
+					<Anchor point="RIGHT" x="-43" />
 				</Anchors>
 				<Frames>
 					<Button parentKey="Icon" enableMouse="true">
