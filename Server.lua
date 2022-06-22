@@ -710,22 +710,25 @@ function LootReserve.Server:HasAlreadyWon(player, item)
     return false;
 end
 
+function LootReserve.Server:GetOldestRollHistoryWithin(duration)
+    local timestamp = time() - duration;
+    for i = #self.RollHistory, 1, -1 do
+        local startTime = self.RollHistory[i].StartTime;
+        if not startTime or startTime < timestamp then
+            return i;
+        end
+    end
+    return 1;
+end
+
 function LootReserve.Server:PrepareLootTracking()
     if self.LootTrackingRegistered then return; end
     self.LootTrackingRegistered = true;
     
     local aDay = 60 * 60 * 24;
     local function MarkDistributed(item, player)
-        local aDayAgo = time() - aDay;
-        local recentStart = 1;
-        for i = #self.RollHistory, 1, -1 do
-            local startTime = self.RollHistory[i].StartTime;
-            if not StartTime or StartTime < aDayAgo then
-                recentStart = i;
-                break;
-            end
-        end
-        for i = 1, #self.RollHistory do
+        local recentStart = self:GetOldestRollHistoryWithin(aDay);
+        for i = recentStart, #self.RollHistory do
             local roll = self.RollHistory[i];
             if roll.Owed and roll.Item == item then
                 roll.Owed = nil;
@@ -757,20 +760,52 @@ function LootReserve.Server:PrepareLootTracking()
     
     local RecentTradeAttempt = nil;
     self.TradeAcceptState = { false, false };
-    LootReserve:RegisterEvent("TRADE_PLAYER_ITEM_CHANGED", "TRADE_TARGET_ITEM_CHANGED", "TRADE_SHOW", "ITEM_LOCKED", function()
+    LootReserve:RegisterEvent("TRADE_PLAYER_ITEM_CHANGED", "TRADE_TARGET_ITEM_CHANGED", "TRADE_SHOW", "TRADE_CLOSED", "ITEM_LOCKED", function()
         if not TradeFrame:IsShown() then
             RecentTradeAttempt = nil;
             self.TradeAcceptState   = { false, false };
+            LootReserveTradeFrameAutoButton:Hide();
             return;
         end
-        RecentTradeAttempt = { target = UnitName("npc") };
+        
+        
+        local target = LootReserve:Player(UnitName("npc"));
+        local itemsToInsert = { };
+        local slotsFree = 6;
+        local aDay = 60 * 60 * 24;
+        local recentStart = self:GetOldestRollHistoryWithin(aDay);
+        for i = recentStart, #self.RollHistory do
+            if self.RollHistory[i].Owed and self.RollHistory[i].Winners[1] == target then
+                table.insert(itemsToInsert, self.RollHistory[i].Item);
+            end
+        end
+        RecentTradeAttempt = { target = target };
         for i = 1, 6 do
             local name, texture, quantity, quality, isUsable, enchant = GetTradePlayerItemInfo(i);
             local link = GetTradePlayerItemLink(i);
-            if link and link:find("item:%d") then -- Just in case
-                RecentTradeAttempt[i] = {item = LootReserve.ItemCache:Item(link), quantity = quantity};
+            if link then
+                local item = LootReserve.ItemCache:Item(link);
+                RecentTradeAttempt[i] = {item = item, quantity = quantity};
+                
+                LootReserve:TableRemove(itemsToInsert, item);
+                slotsFree = slotsFree - 1;
             end
+            
         end
+        
+        if #itemsToInsert > 0 then
+            LootReserveTradeFrameAutoButton:Show();
+            LootReserveTradeFrameAutoButton:SetEnabled(slotsFree ~= 0);
+            if #itemsToInsert <= slotsFree then
+                LootReserveTradeFrameAutoButton:SetText(format("Insert %d |4item:items;", #itemsToInsert));
+            else
+                LootReserveTradeFrameAutoButton:SetText(format("Insert %d / %d |4item:items;", slotsFree, #itemsToInsert));
+            end
+            LootReserveTradeFrameAutoButton.ItemsToInsert = itemsToInsert;
+        else
+            LootReserveTradeFrameAutoButton:Hide();
+        end
+        
     end);
     LootReserve:RegisterEvent("TRADE_ACCEPT_UPDATE", function(player, target)
         self.TradeAcceptState = { player == 1, target == 1 };

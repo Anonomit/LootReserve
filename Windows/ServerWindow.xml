@@ -708,30 +708,30 @@
 						end
 						
 						if not UnitIsConnected(unit) then
-							return self:SetState("Winner is offline"), false, false;
+							return self:SetState("Winner is offline", false, false);
 						end
 						
 						if self.Lootable then
 							if C_Map.GetBestMapForUnit(unit) ~= myZone then
-								return self:SetState("Winner not found"), false, false;
+								return self:SetState("Winner not found", false, false);
 							end
 							
 							return self:SetState("Master loot", true, true);
 							
 						elseif self.Tradeable then
 							if UnitIsDeadOrGhost(unit) then
-								return self:SetState("Winner is dead"), false, false;
+								return self:SetState("Winner is dead", false, false);
 							end
 							
 							if not UnitIsVisible(unit) then
-								return self:SetState("Way out of range", false, true);
+								return self:SetState("Way out of range", false, false);
 							end
 							
 							if not CheckInteractDistance(unit, 2) then
 								if LootReserve:CanUseLocator() then
 									return self:SetState("Locate", true, true);
 								else
-									return self:SetState("Out of range", false, true);
+									return self:SetState("Out of range", false, false);
 								end
 							end
 							
@@ -739,18 +739,23 @@
 								return self:SetState("Open trade", true, true);
 							end
 							if not UnitIsUnit("npc", unit) then
-								return self:SetState("Wrong trader"), false, false;
+								return self:SetState("Wrong trader", false, false);
 							end
 							if not LootReserve:IsItemBeingTraded(self:GetParent().Item) then
-								return self:SetState("Insert item", true, true);
+								for i = 1, 6 do
+									if not GetTradePlayerItemInfo(i) then
+										return self:SetState("Insert item", true, true);
+									end
+								end
+								return self:SetState("Finish trading", false, false);
 							end
 							if LootReserve.Server.TradeAcceptState[1] then
 								return self:SetState("Wait"), false, false;
 							end
 							
-							return self:SetState("Accept trade", true, false);
+							return self:SetState("Accept trade", true, not (LootReserveTradeFrameAutoButton:IsShown() and LootReserveTradeFrameAutoButton:IsEnabled()));
 						else
-							return self:SetState("Can't find item", false, false)
+							return self:SetState("Can't find item", false, false);
 						end
 					</OnUpdate>
 					<OnClick>
@@ -1011,6 +1016,42 @@
 			</Frame>
 		</Frames>
 	</Frame>
+	<Button name="LootReserveTradeFrameAutoButton" inherits="UIPanelButtonTemplate" text="Trade" frameLevel="2" hidden="false">
+		<Size x="80" y="16.5" />
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="TradeFrameTradeButton" relativePoint="TOPLEFT" y="-22" />
+			<Anchor point="BOTTOMRIGHT" relativeTo="TradeFrameCancelButton" relativePoint="BOTTOMRIGHT" y="-22" />
+			<!-- <Anchor point="RIGHT" relativeTo="TradeFrameTradeButton" relativePoint="LEFT" y="-50" /> -->
+		</Anchors>
+		<ButtonText parentKey="Text">
+			<Size x="0" y="10" />
+			<Anchors>
+				<Anchor point="CENTER" x="0" y="2" />
+			</Anchors>
+		</ButtonText>
+		<NormalFont style="GameFontNormalSmall" />
+		<HighlightFont style="GameFontHighlightSmall" />
+		<DisabledFont style="GameFontHighlightSmall" />
+		<Scripts>
+			<OnClick>
+				local i = 1;
+				for _, item in ipairs(self.ItemsToInsert) do
+					while GetTradePlayerItemInfo(i) do
+						i = i + 1;
+					end
+					if i > 6 then
+						return;
+					end
+					local bag, slot = LootReserve:GetBagSlot(item);
+					if bag and slot then
+						PickupContainerItem(bag, slot);
+						ClickTradeButton(i);
+						i = i + 1;
+					end
+				end
+			</OnClick>
+		</Scripts>
+	</Button>
 	<Frame name="LootReserveRollPlaceholderTemplate" virtual="true" enableMouse="true" inherits="LootReserveBackdropTemplate">
 		<KeyValues>
 			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />

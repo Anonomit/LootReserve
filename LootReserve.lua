@@ -645,32 +645,77 @@ function LootReserve:IsTradeableItem(bag, slot)
     return not LootReserve:IsItemSoulbound(bag, slot) or LootReserve:IsItemSoulboundTradeable(bag, slot);
 end
 
+local function CacheBagSlot(self, bag, slot, i)
+    local _, quantity, locked, _, _, _, link, _, _, id, isBound = GetContainerItemInfo(bag, slot);
+    if link then
+        if i then
+            table.insert(self.BagCache, i, {bag = bag, slot = slot, item = self.ItemCache:Item(link), quantity = quantity, locked = locked});
+        else
+            table.insert(self.BagCache, {bag = bag, slot = slot, item = self.ItemCache:Item(link), quantity = quantity, locked = locked});
+        end
+    end
+end
+
 local bagCacheHooked = nil;
-function LootReserve:GetTradeableItemCount(itemOrID)
+local function CheckBagCache(self)
     if not bagCacheHooked then
         bagCacheHooked = true;
         self:RegisterEvent("BAG_UPDATE_DELAYED", function()
             self.BagCache = nil;
         end);
+        self:RegisterEvent("ITEM_LOCK_CHANGED", function(bag, slot)
+            if not slot then return; end
+            if self.BagCache then
+                for i, slotData in ipairs(self.BagCache) do
+                    if slotData.slot == slot and slotData.bag == bag then
+                        table.remove(self.BagCache, i);
+                        CacheBagSlot(self, bag, slot, i);
+                    end
+                end
+            end
+        end);
     end
     if not self.BagCache then
         self.BagCache = { };
-        for bag = 0, 4 do
+        for bag = 0, NUM_BAG_SLOTS do
             for slot = 1, GetContainerNumSlots(bag) do
-                local _, quantity, _, _, _, _, link, _, _, id, isBound = GetContainerItemInfo(bag, slot);
-                if link then
-                    table.insert(self.BagCache, {bag = bag, slot = slot, item = LootReserve.ItemCache:Item(link), quantity = quantity})
-                end
+                CacheBagSlot(self, bag, slot);
             end
         end
     end
+end
+
+local function match(item, itemOrID)
+    if type(itemOrID) == "number" then
+        return item:GetID() == itemOrID;
+    else
+        return item == itemOrID;
+    end
+end
+
+function LootReserve:GetTradeableItemCount(itemOrID)
+    CheckBagCache(self);
     local count = 0;
-    for _, itemData in ipairs(self.BagCache) do
-        if (type(itemOrID) == "number" and itemData.item:GetID() == itemOrID or itemData.item == itemOrID) and self:IsTradeableItem(itemData.bag, itemData.slot) then
-            count = count + itemData.quantity;
+    for _, slotData in ipairs(self.BagCache) do
+        if match(slotData.item, itemOrID) and self:IsTradeableItem(slotData.bag, slotData.slot) then
+            count = count + slotData.quantity;
         end
     end
     return count;
+end
+    
+function LootReserve:GetBagSlot(itemOrID, permitLocked, skipCount)
+    CheckBagCache(self);
+    skipCount = skipCount or 0;
+    for _, slotData in ipairs(self.BagCache) do
+        if match(slotData.item, itemOrID) and (permitLocked or not slotData.locked) then
+            skipCount = skipCount - 1;
+            if skipCount < 0 then
+                return slotData.bag, slotData.slot;
+            end
+        end
+    end
+    return nil;
 end
 
 function LootReserve:IsItemSoulbound(bag, slot)
