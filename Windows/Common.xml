@@ -192,19 +192,24 @@
 		</Frames>
 		<Layers>
 			<Layer>
-				<FontString parentKey="Name" inherits="GameFontNormalLarge" justifyH="LEFT" wordwrap="false">
+				<FontString parentKey="Name" inherits="GameFontNormalLarge" justifyH="LEFT" wordwrap="true" maxLines="0" mixin="AutoScalingFontStringMixin">
+					<KeyValues>
+						<KeyValue key="minLineHeight" value="10" type="number"/>
+					</KeyValues>
 					<Size y="20" />
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" x="5" />
 						<Anchor point="TOPRIGHT" />
 					</Anchors>
 				</FontString>
-				<FontString parentKey="Misc" inherits="GameFontNormalGraySmall" justifyH="LEFT" wordwrap="false">
+				<FontString parentKey="Misc" inherits="GameFontNormalGraySmall" justifyH="LEFT" wordwrap="false" mixin="AutoScalingFontStringMixin">
 					<Size y="12" />
+					<KeyValues>
+						<KeyValue key="minLineHeight" value="8" type="number"/>
+					</KeyValues>
 					<Anchors>
 						<Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" />
-						<Anchor point="BOTTOM" />
-						<Anchor point="RIGHT" />
+						<Anchor point="BOTTOMRIGHT" />
 					</Anchors>
 				</FontString>
 			</Layer>
@@ -220,6 +225,10 @@
 					HandleModifiedItemClick(self:GetParent().Link);
 				end
 			</OnClick>
+			<OnSizeChanged>
+				self.Name:ScaleTextToFit();
+				self.Misc:ScaleTextToFit();
+			</OnSizeChanged>
 		</Scripts>
 	</Button>
 	<ScrollFrame name="LootReserveScrollTemplate" inherits="UIPanelScrollFrameTemplate" virtual="true">

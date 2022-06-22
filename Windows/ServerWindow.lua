@@ -148,7 +148,6 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
         frame.ItemFrame.Icon:SetTexture(texture);
         frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
-        frame.ItemFrame.Name:SetFontObject("GameFontNormalSmall");
         local tracking = self.CurrentSession.LootTracking[item:GetID()];
         local fade = false;
         if LootReserve:IsLootingItem(item) then
@@ -177,10 +176,8 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         frame:SetAlpha(fade and 0.25 or 1);
 
         frame.DurationFrame:SetShown(self:IsRolling(frame.Item) and self.RequestedRoll.MaxDuration and not self.RequestedRoll.Custom);
-        frame.DurationFrame:SetHeight(frame.DurationFrame:IsShown() and 12 or 0.00001);
-        
-        frame.ReservesFrame:SetPoint("TOPLEFT", frame.ItemFrame, "BOTTOMLEFT", 0, -5);
-        frame.ReservesFrame:SetPoint("RIGHT", frame.RequestRollButton, "LEFT");
+        local durationHeight = frame.DurationFrame:IsShown() and 12 or 0;
+        frame.DurationFrame:SetHeight(math.max(durationHeight, 0.00001));
 
         local reservesHeight = 5 + 12 + 2;
         local last = 0;
@@ -221,8 +218,8 @@ function LootReserve.Server:UpdateReserveList(lockdown)
             end
         end
 
-        frame.RequestRollButton:SetPoint("TOP", frame.ItemFrame, "BOTTOM");
-        frame:SetHeight(6 + frame.ItemFrame:GetHeight() + 5 + reservesHeight);
+        frame.ReservesFrame:SetPoint("TOP", frame.ItemFrame, "BOTTOM", 0, -5);
+        frame:SetHeight(6 + 32 + 5 + reservesHeight - 1);
         frame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
         frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
         list.ContentHeight = list.ContentHeight + frame:GetHeight();
@@ -526,9 +523,9 @@ function LootReserve.Server:UpdateRollList(lockdown)
 
             frame:SetBackdropBorderColor(historical and 0.25 or 1, historical and 0.25 or 1, historical and 0.25 or 1);
             frame.RequestRollButton:SetShown(not historical or not self.RequestedRoll);
+            frame.RequestRollButton:SetWidth(frame.RequestRollButton:IsShown() and 32 or 0.00001);
             frame.ItemFrame.Icon:SetTexture(texture);
             frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
-            frame.ItemFrame.Name:SetFontObject("GameFontNormalSmall");
             
             local tradeableItemCount = LootReserve:GetTradeableItemCount(item);
             frame.DistributeButton:SetShown(historical);
@@ -588,7 +585,8 @@ function LootReserve.Server:UpdateRollList(lockdown)
             end
 
             frame.DurationFrame:SetShown(not historical and self:IsRolling(frame.Item) and self.RequestedRoll.MaxDuration);
-            frame.DurationFrame:SetHeight(frame.DurationFrame:IsShown() and 12 or 0.00001);
+            local durationHeight = frame.DurationFrame:IsShown() and 12 or 0;
+            frame.DurationFrame:SetHeight(math.max(durationHeight, 0.00001));
 
             local reservesHeight = 5 + 12 + 2;
             local last = 0;
@@ -632,31 +630,15 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 reservesHeight = reservesHeight + 16;
             end
             
-            local barHeight = (frame.DurationFrame:IsShown() or frame.DistributeButton:IsShown()) and 18 or 0;
-            local diceHeight = 0;
-            if frame.RequestRollButton:IsShown() then
-                local availX = frame:GetWidth() - frame.RequestRollButton:GetWidth();
-                local longName = availX < (6 + 32 + 5 + frame.ItemFrame.Name:GetUnboundedStringWidth() + 6);
-                local longMisc = availX < (6 + 32 + 5 + frame.ItemFrame.Misc:GetUnboundedStringWidth() + 6);
-                
-                if longMisc then
-                    frame.RequestRollButton:SetPoint("TOP", 0, -38);
-                    diceHeight = 32;
-                elseif longName then
-                    frame.RequestRollButton:SetPoint("TOP", 0, -26);
-                    diceHeight = 20;
-                else
-                    frame.RequestRollButton:SetPoint("TOP", 0, -6);
-                    diceHeight = 0;
-                end
-            end
-            
-            if barHeight > 0 or diceHeight == 0 then
-                frame:SetHeight(6 + 32 + barHeight + 6 + reservesHeight);
-                frame.ReservesFrame:SetPoint("TOP", frame.ItemFrame, "BOTTOM", 0, -6 -barHeight);
+            if frame.DistributeButton:IsShown() then
+                frame:SetHeight(6 + 32 + 2 + 20 + 5 + reservesHeight - 1);
+                frame.ReservesFrame:SetPoint("TOP", frame.DistributeButton, "BOTTOM", 0, -5);
+            elseif frame.DurationFrame:IsShown() then
+                frame:SetHeight(6 + 32 + 3 + 12 + 5 + reservesHeight - 1);
+                frame.ReservesFrame:SetPoint("TOP", frame.DurationFrame, "BOTTOM", 0, -5);
             else
-                frame:SetHeight(6 + 32 + diceHeight + reservesHeight);
-                frame.ReservesFrame:SetPoint("TOP", frame.RequestRollButton, "BOTTOM", 0, 0);
+                frame:SetHeight(6 + 32 + 5 + reservesHeight - 1);
+                frame.ReservesFrame:SetPoint("TOP", frame.ItemFrame, "BOTTOM", 0, -5);
             end
         else
             frame:SetShown(not self.RequestedRoll);

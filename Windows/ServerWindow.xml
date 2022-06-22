@@ -344,20 +344,10 @@
 		</Backdrop>
 		<Frames>
 			<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
-			<Button parentKey="ItemFrame" inherits="LootReserveItemButtonTemplate" frameLevel="100">
-				<KeyValues>
-					<KeyValue key="tooltipRight" value="true" type="boolean" />
-				</KeyValues>
-				<Anchors>
-					<Anchor point="TOPLEFT" x="6" y="-6" />
-					<Anchor point="TOPRIGHT" x="-6" y="-6" />
-				</Anchors>
-			</Button>
 			<Button parentKey="RequestRollButton" frameLevel="101">
 				<Size x="32" y="32" />
 				<Anchors>
-					<Anchor point="TOP" relativeKey="$parent.ItemFrame.Name" relativePoint="BOTTOM" />
-					<Anchor point="RIGHT" x="-6" />
+					<Anchor point="TOPRIGHT" x="-6" y="-6" />
 				</Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
@@ -610,11 +600,20 @@
 				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD" />
 				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down" />
 			</Button>
+			<Button parentKey="ItemFrame" inherits="LootReserveItemButtonTemplate" frameLevel="100">
+				<KeyValues>
+					<KeyValue key="tooltipRight" value="true" type="boolean" />
+				</KeyValues>
+				<Anchors>
+					<Anchor point="TOPLEFT" x="6" y="-6" />
+					<Anchor point="RIGHT" relativeKey="$parent.RequestRollButton" relativePoint="LEFT" x="-5" />
+				</Anchors>
+			</Button>
 			<Frame parentKey="DurationFrame">
 				<Size y="12" />
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" y="-3" />
-					<Anchor point="RIGHT" relativeKey="$parent.RequestRollButton" relativePoint="LEFT" x="-6" />
+					<Anchor point="RIGHT" x="-6" />
 				</Anchors>
 				<Frames>
 					<StatusBar parentKey="Duration" inherits="LootReserveDurationStatusBar">
@@ -787,10 +786,8 @@
 			</Button>
 			<Frame parentKey="ReservesFrame">
 				<Anchors>
-					<Anchor point="TOP" relativeKey="$parent.ItemFrame" relativePoint="BOTTOM" y="-24" />
-					<Anchor point="LEFT" x="6" y="-24" />
-					<Anchor point="BOTTOM" y="6" />
-					<Anchor point="RIGHT" x="-6" />
+					<Anchor point="LEFT" x="6" />
+					<Anchor point="BOTTOMRIGHT" x="-6" y="6" />
 				</Anchors>
 				<Layers>
 					<Layer level="OVERLAY">
@@ -1269,7 +1266,7 @@
 				<Size y="32" />
 				<Anchors>
 					<Anchor point="TOPLEFT" x="6" y="-6" />
-					<Anchor point="RIGHT" x="-43" />
+					<Anchor point="TOPRIGHT" relativeKey="$parent.RequestRollButton" relativePoint="TOPLEFT" x="-5" />
 				</Anchors>
 				<Frames>
 					<Button parentKey="Icon" enableMouse="true">
@@ -1502,14 +1499,20 @@
 				</Frames>
 				<Layers>
 					<Layer>
-						<FontString parentKey="Name" inherits="GameFontNormalLarge" justifyH="LEFT" wordwrap="false">
+						<FontString parentKey="Name" inherits="GameFontNormalLarge" justifyH="LEFT" wordwrap="true" maxLines="0" mixin="AutoScalingFontStringMixin">
+							<KeyValues>
+								<KeyValue key="minLineHeight" value="10" type="number"/>
+							</KeyValues>
 							<Size y="20" />
 							<Anchors>
 								<Anchor point="TOPLEFT" relativeKey="$parent.Icon" relativePoint="TOPRIGHT" x="5" />
 								<Anchor point="TOPRIGHT" />
 							</Anchors>
 						</FontString>
-						<FontString parentKey="Misc" inherits="GameFontNormalGraySmall" justifyH="LEFT" wordwrap="false">
+						<FontString parentKey="Misc" inherits="GameFontNormalGraySmall" justifyH="LEFT" wordwrap="false" mixin="AutoScalingFontStringMixin">
+							<KeyValues>
+								<KeyValue key="minLineHeight" value="8" type="number"/>
+							</KeyValues>
 							<Size y="12" />
 							<Anchors>
 								<Anchor point="TOPLEFT" relativeKey="$parent.Name" relativePoint="BOTTOMLEFT" />
@@ -1529,6 +1532,10 @@
 							HandleModifiedItemClick(self:GetParent().Link);
 						end
 					</OnClick>
+					<OnSizeChanged>
+						self.Name:ScaleTextToFit();
+						self.Misc:ScaleTextToFit();
+					</OnSizeChanged>
 				</Scripts>
 			</Button>
 			<Frame name="LootReserveRollFakeMasterLoot" hidden="true">
@@ -1579,10 +1586,9 @@
 						--self.ItemFrame.Icon.CancelIcon:SetShown(GameTooltip:IsOwned(self.ItemFrame.Icon)); -- Looks better without it
 						self.ItemFrame.Icon.Arrow:Hide();
 						self.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
-            self.ItemFrame.Name:SetFontObject("GameFontNormalSmall");
 						self.ItemFrame.Misc:SetText(LootReserve:GetTradeableItemCount(item) &lt; 1 and not LootReserve:IsLootingItem(item) and "|cFFFF0000Cannot distribute|r" or reservers > 0 and format("Reserved by %d |4player:players;", reservers) or "Not reserved");
 						self.RequestRollButton:Show();
-						self.RequestRollButton:SetHeight(32);
+						self.RequestRollButton:SetWidth(32);
 					else
 						self.Item = nil;
 						self.Link = nil;
@@ -1590,10 +1596,9 @@
 						self.ItemFrame.Icon.CancelIcon:Hide();
 						self.ItemFrame.Icon.Arrow:SetShown(self.ItemFrame.Icon:IsMouseOver());
 						self.ItemFrame.Name:SetText("|cFF808080Drop an Item|r");
-            self.ItemFrame.Name:SetFontObject("GameFontNormalLarge");
 						self.ItemFrame.Misc:SetText("or click to select");
 						self.RequestRollButton:Hide();
-						self.RequestRollButton:SetHeight(0.00001);
+						self.RequestRollButton:SetWidth(0.00001);
 					end
 				end
 				self:SetItem(nil);
