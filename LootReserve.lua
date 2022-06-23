@@ -867,8 +867,17 @@ function LootReserve:IsLootingItem(item)
     end
 end
 
-function LootReserve:CanUseLocator()
+function LootReserve:CanUseDBMLocator(unitID)
     return (DBM and DBM.ReleaseRevision > 20220618000000 and UnitPosition("player")) and true or false;
+end
+
+function LootReserve:Locate(unitID)
+    local x1, y1, _, instance1 = UnitPosition("player");
+    if not x1 then return false; end
+    local x2, y2, _, instance2 = UnitPosition(unitID);
+    if not x2 then return false; end
+    if instance1 ~= instance2 then return false; end
+    return x1, y1, x2, y2;
 end
 
 function LootReserve:TransformSearchText(text)

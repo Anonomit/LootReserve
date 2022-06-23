@@ -634,6 +634,16 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" y="-2" />
 				</Anchors>
+				<Layers>
+					<Layer layer="OVERLAY">
+						<Texture parentKey="Arrow" file="Interface\Minimap\MinimapArrow">
+							<Size x="24" y="24" />
+							<Anchors>
+								<Anchor point="CENTER" relativeKey="$parent.Text" relativePoint="RIGHT" x="-8" />
+							</Anchors>
+						</Texture>
+					</Layer>
+				</Layers>
 				<Scripts>
 					<OnLoad inherit="prepend">
 						self.Text:SetPoint("CENTER", 0, 0); -- Fix the inherited offset of y=-1
@@ -688,6 +698,7 @@
 						end
 					</OnLoad>
 					<OnUpdate>
+						self.Arrow:Hide();
 						local unit = self.Unit;
 						
 						-- figure out what to do if the winner is me
@@ -717,8 +728,15 @@
 							end
 							
 							if not CheckInteractDistance(unit, 2) then
-								if LootReserve:CanUseLocator() then
-									return self:SetState("Locate", true, true);
+								local x1, y1, x2, y2 = LootReserve:Locate(unit);
+								if x1 then
+									local dx    = x2 - x1;
+									local dy    = y2 - y1;
+									local dist  = math.sqrt(dx * dx + dy * dy);
+									local angle = math.atan2(dy, dx) - GetPlayerFacing();
+									self.Arrow:Show();
+									self.Arrow:SetRotation(angle);
+									return self:SetState(format("Approach: %.0f yds |TInterface\\Common\\Spacer:16|t", dist), true, true);
 								else
 									return self:SetState("Out of range", false, false);
 								end
@@ -778,8 +796,11 @@
 									PickupContainerItem(bag, slot);
 									DropItemOnUnit(unit);
 									C_Timer.After(1, ClearCursor);
-								elseif LootReserve:CanUseLocator() then
-									self:Locate(unit);
+								elseif LootReserve:CanUseDBMLocator() then
+									local x1, y1, x2, y2 = LootReserve:Locate(unit);
+									if x1 then
+										self:Locate(unit);
+									end
 								end
 							end
 						else
