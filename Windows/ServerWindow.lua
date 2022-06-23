@@ -176,8 +176,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         frame:SetAlpha(fade and 0.25 or 1);
 
         frame.DurationFrame:SetShown(self:IsRolling(frame.Item) and self.RequestedRoll.MaxDuration and not self.RequestedRoll.Custom);
-        local durationHeight = frame.DurationFrame:IsShown() and 12 or 0;
-        frame.DurationFrame:SetHeight(math.max(durationHeight, 0.00001));
+        frame.DurationFrame:SetHeight(frame.DurationFrame:IsShown() and 12 or 0.00001);
 
         local reservesHeight = 5 + 12 + 2;
         local last = 0;
@@ -585,8 +584,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
             end
 
             frame.DurationFrame:SetShown(not historical and self:IsRolling(frame.Item) and self.RequestedRoll.MaxDuration);
-            local durationHeight = frame.DurationFrame:IsShown() and 12 or 0;
-            frame.DurationFrame:SetHeight(math.max(durationHeight, 0.00001));
+            frame.DurationFrame:SetHeight(frame.DurationFrame:IsShown() and 12 or 0.00001);
 
             local reservesHeight = 5 + 12 + 2;
             local last = 0;
@@ -634,7 +632,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 frame:SetHeight(6 + 32 + 2 + 20 + 5 + reservesHeight - 1);
                 frame.ReservesFrame:SetPoint("TOP", frame.DistributeButton, "BOTTOM", 0, -5);
             elseif frame.DurationFrame:IsShown() then
-                frame:SetHeight(6 + 32 + 3 + 12 + 5 + reservesHeight - 1);
+                frame:SetHeight(6 + 32 + 12 + 5 + reservesHeight - 1);
                 frame.ReservesFrame:SetPoint("TOP", frame.DurationFrame, "BOTTOM", 0, -5);
             else
                 frame:SetHeight(6 + 32 + 5 + reservesHeight - 1);

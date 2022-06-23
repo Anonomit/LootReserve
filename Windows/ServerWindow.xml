@@ -612,7 +612,7 @@
 			<Frame parentKey="DurationFrame">
 				<Size y="12" />
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" y="-3" />
+					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" />
 					<Anchor point="RIGHT" x="-6" />
 				</Anchors>
 				<Frames>
@@ -635,18 +635,7 @@
 					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" y="-2" />
 				</Anchors>
 				<Scripts>
-					<OnLoad>
-						self.GlowLeft:SetDesaturated(true);
-						self.GlowRight:SetDesaturated(true);
-						self.GlowLeft2:SetDesaturated(true);
-						self.GlowRight2:SetDesaturated(true);
-						self.SetGlow = function(self, glow)
-							self.GlowLeft:SetShown(glow);
-							self.GlowRight:SetShown(glow);
-							self.GlowLeft2:SetShown(glow);
-							self.GlowRight2:SetShown(glow);
-						end
-						
+					<OnLoad inherit="prepend">
 						self.Text:SetPoint("CENTER", 0, 0); -- Fix the inherited offset of y=-1
 						
 						self.SetState = function(self, text, enable, glow)
@@ -1030,22 +1019,13 @@
 			</Frame>
 		</Frames>
 	</Frame>
-	<Button name="LootReserveTradeFrameAutoButton" inherits="UIPanelButtonTemplate" text="Trade" frameLevel="2" hidden="false">
-		<Size x="80" y="16.5" />
+	<Button name="LootReserveTradeFrameAutoButton" inherits="UIPanelButtonTemplate" parent="TradeFrame" text="Trade" hidden="false">
+		<Size x="168" />
 		<Anchors>
-			<Anchor point="TOPLEFT" relativeTo="TradeFrameTradeButton" relativePoint="TOPLEFT" y="-22" />
-			<Anchor point="BOTTOMRIGHT" relativeTo="TradeFrameCancelButton" relativePoint="BOTTOMRIGHT" y="-22" />
-			<!-- <Anchor point="RIGHT" relativeTo="TradeFrameTradeButton" relativePoint="LEFT" y="-50" /> -->
+			<Anchor point="TOP" relativeTo="TradeFrameTradeButton" relativePoint="TOP" />
+			<Anchor point="BOTTOM" relativeTo="TradeFrameTradeButton" relativePoint="BOTTOM" />
+			<Anchor point="RIGHT" relativeTo="TradeFrameTradeButton" relativePoint="LEFT" x="-3" />
 		</Anchors>
-		<ButtonText parentKey="Text">
-			<Size x="0" y="10" />
-			<Anchors>
-				<Anchor point="CENTER" x="0" y="2" />
-			</Anchors>
-		</ButtonText>
-		<NormalFont style="GameFontNormalSmall" />
-		<HighlightFont style="GameFontHighlightSmall" />
-		<DisabledFont style="GameFontHighlightSmall" />
 		<Scripts>
 			<OnClick>
 				local i = 1;

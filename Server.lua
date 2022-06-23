@@ -37,7 +37,7 @@ LootReserve.Server =
         UseGlobalProfile                = false,
         Phases                          = LootReserve:Deepcopy(LootReserve.Constants.DefaultPhases),
         RollUsePhases                   = false,
-        RollPhases                      = {"Main-Spec", "Off-Spec"},
+        RollPhases                      = {"MainSpec", "OffSpec"},
         RollAdvanceOnExpire             = true,
         RollLimitDuration               = false,
         RollDuration                    = 30,
@@ -768,7 +768,6 @@ function LootReserve.Server:PrepareLootTracking()
             return;
         end
         
-        
         local target = LootReserve:Player(UnitName("npc"));
         local itemsToInsert = { };
         local slotsFree = 6;
@@ -796,11 +795,7 @@ function LootReserve.Server:PrepareLootTracking()
         if #itemsToInsert > 0 then
             LootReserveTradeFrameAutoButton:Show();
             LootReserveTradeFrameAutoButton:SetEnabled(slotsFree ~= 0);
-            if #itemsToInsert <= slotsFree then
-                LootReserveTradeFrameAutoButton:SetText(format("Insert %d |4item:items;", #itemsToInsert));
-            else
-                LootReserveTradeFrameAutoButton:SetText(format("Insert %d / %d |4item:items;", slotsFree, #itemsToInsert));
-            end
+            LootReserveTradeFrameAutoButton:SetText(format("|TInterface\\AddOns\\LootReserve\\Assets\\Textures\\IconDice:16:16:0:0|t Insert %s%d |4item:items;", #itemsToInsert > slotsFree and format("%d / ", slotsFree) or "", #itemsToInsert));
             LootReserveTradeFrameAutoButton.ItemsToInsert = itemsToInsert;
         else
             LootReserveTradeFrameAutoButton:Hide();
