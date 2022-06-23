@@ -574,7 +574,7 @@
 										table.insert(menu,
 										{
 											text = format("|T%d:0|t %s", texture, (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", "")),
-											arg1 = itemID,
+											arg1 = item:GetID(),
 											func = SelectItem,
 										});
 									end
