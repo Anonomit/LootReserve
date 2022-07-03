@@ -662,7 +662,7 @@ local function CheckBagCache(self)
     if not bagCacheHooked then
         bagCacheHooked = true;
         self:RegisterEvent("BAG_UPDATE_DELAYED", function()
-            self.BagCache = nil;
+            LootReserve:WipeBagCache();
         end);
         self:RegisterEvent("ITEM_LOCK_CHANGED", function(bag, slot)
             if not slot then return; end
@@ -692,6 +692,10 @@ local function match(item, itemOrID)
     else
         return item == itemOrID;
     end
+end
+
+function LootReserve:WipeBagCache()
+    self.BagCache = nil;
 end
 
 function LootReserve:GetTradeableItemCount(itemOrID)

@@ -459,6 +459,7 @@ function LootReserve.Server:UpdateRollListButtons(lockdown)
 end
 
 function LootReserve.Server:UpdateRollList(lockdown)
+    self:UpdateTradeFrameAutoButton();
     if not self.Window:IsShown() then return; end
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
@@ -485,7 +486,6 @@ function LootReserve.Server:UpdateRollList(lockdown)
     end
     list.HistoryShowMore:Hide();
     
-    local myZone = C_Map.GetBestMapForUnit("player")
     local function createFrame(item, roll, historical)
         if historical then
             historicalDisplayed = historicalDisplayed + 1;
@@ -531,9 +531,6 @@ function LootReserve.Server:UpdateRollList(lockdown)
             local lootable = LootReserve:IsLootingItem(item);
             local tradeable = tradeableItemCount > 0;
             
-            if roll.Owed and roll.Winners[1] == LootReserve:Me() and tradeable then
-                roll.Owed = nil;
-            end
             if roll.Owed then
                 local player = roll.Winners[1];
                 frame.DistributeButton:SetShown(true);
@@ -885,7 +882,7 @@ function LootReserve.Server:OnWindowLoad(window)
         self:UpdateRollList();
     end);
     LootReserve:RegisterEvent("TRADE_SHOW", "TRADE_CLOSED", "TRADE_PLAYER_ITEM_CHANGED", "TRADE_ACCEPT_UPDATE", "BAG_UPDATE_DELAYED", "PLAYER_TARGET_CHANGED", function()
-        LootReserve.BagCache = nil;
+        LootReserve:WipeBagCache();
         LootReserve.Server:UpdateRollList();
     end);
 end

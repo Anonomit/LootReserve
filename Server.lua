@@ -73,6 +73,8 @@ LootReserve.Server =
         PendingRollsExportTextUpdate = nil,
     },
     PendingMasterLoot   = nil,
+    RecentTradeAttempt  = nil,
+    TradeAcceptState    = { false, false };
     ExtraRollRequestNag = { },
 
     ReservableIDs                      = { },
@@ -715,10 +717,67 @@ function LootReserve.Server:GetOldestRollHistoryWithin(duration)
     for i = #self.RollHistory, 1, -1 do
         local startTime = self.RollHistory[i].StartTime;
         if not startTime or startTime < timestamp then
-            return i;
+            return i + 1;
         end
     end
     return 1;
+end
+
+function LootReserve.Server:UpdateTradeFrameAutoButton()
+    if not TradeFrame:IsShown() then
+        return;
+    end
+    
+    local target        = LootReserve:Player(UnitName("npc"));
+    local itemsToInsert = { };
+    local slotsFree     = 6;
+    local aDay          = 60 * 60 * 24;
+    local recentStart   = self:GetOldestRollHistoryWithin(aDay);
+    -- Add all "recent" owed items to the list
+    for i = recentStart, #self.RollHistory do
+        if self.RollHistory[i].Owed and self.RollHistory[i].Winners[1] == target then
+            table.insert(itemsToInsert, self.RollHistory[i].Item);
+        end
+    end
+    -- Remove items which are currently being traded
+    local offsets = { };
+    self.RecentTradeAttempt = { target = target };
+    for i = 1, 6 do
+        local name, texture, quantity, quality, isUsable, enchant = GetTradePlayerItemInfo(i);
+        local link = GetTradePlayerItemLink(i);
+        if link then
+            local item = LootReserve.ItemCache:Item(link);
+            if not offsets[item] then
+                offsets[item] = -1;
+            end
+            offsets[item] = offsets[item] + 1;
+            self.RecentTradeAttempt[i] = {item = item, quantity = quantity};
+            
+            LootReserve:TableRemove(itemsToInsert, item);
+            slotsFree = slotsFree - 1;
+        end
+    end
+    
+    -- Remove items which aren't found in bags
+    for i = #itemsToInsert, 1, -1 do
+        local item = itemsToInsert[i]
+        if not offsets[item] then
+            offsets[item] = -1;
+        end
+        offsets[item] = offsets[item] + 1;
+        if LootReserve:GetTradeableItemCount(item) - offsets[item] < 1 then
+            table.remove(itemsToInsert, i);
+        end
+    end
+    
+    if #itemsToInsert > 0 then
+        LootReserveTradeFrameAutoButton:Show();
+        LootReserveTradeFrameAutoButton:SetEnabled(slotsFree ~= 0);
+        LootReserveTradeFrameAutoButton:SetText(format("|TInterface\\AddOns\\LootReserve\\Assets\\Textures\\IconDice:16:16:0:0|t Insert %s%d |4item:items;", #itemsToInsert > slotsFree and format("%d / ", slotsFree) or "", #itemsToInsert));
+        LootReserveTradeFrameAutoButton.ItemsToInsert = itemsToInsert;
+    else
+        LootReserveTradeFrameAutoButton:Hide();
+    end
 end
 
 function LootReserve.Server:PrepareLootTracking()
@@ -757,61 +816,16 @@ function LootReserve.Server:PrepareLootTracking()
             MarkDistributed(RecentLootAttempt.item, RecentLootAttempt.player);
         end
     end);
-    
-    local RecentTradeAttempt = nil;
-    self.TradeAcceptState = { false, false };
-    LootReserve:RegisterEvent("TRADE_PLAYER_ITEM_CHANGED", "TRADE_TARGET_ITEM_CHANGED", "TRADE_SHOW", "TRADE_CLOSED", "ITEM_LOCKED", function()
-        if not TradeFrame:IsShown() then
-            RecentTradeAttempt = nil;
-            self.TradeAcceptState   = { false, false };
-            LootReserveTradeFrameAutoButton:Hide();
-            return;
-        end
-        
-        local target = LootReserve:Player(UnitName("npc"));
-        local itemsToInsert = { };
-        local slotsFree = 6;
-        local aDay = 60 * 60 * 24;
-        local recentStart = self:GetOldestRollHistoryWithin(aDay);
-        for i = recentStart, #self.RollHistory do
-            if self.RollHistory[i].Owed and self.RollHistory[i].Winners[1] == target then
-                table.insert(itemsToInsert, self.RollHistory[i].Item);
-            end
-        end
-        RecentTradeAttempt = { target = target };
-        for i = 1, 6 do
-            local name, texture, quantity, quality, isUsable, enchant = GetTradePlayerItemInfo(i);
-            local link = GetTradePlayerItemLink(i);
-            if link then
-                local item = LootReserve.ItemCache:Item(link);
-                RecentTradeAttempt[i] = {item = item, quantity = quantity};
-                
-                LootReserve:TableRemove(itemsToInsert, item);
-                slotsFree = slotsFree - 1;
-            end
-            
-        end
-        
-        if #itemsToInsert > 0 then
-            LootReserveTradeFrameAutoButton:Show();
-            LootReserveTradeFrameAutoButton:SetEnabled(slotsFree ~= 0);
-            LootReserveTradeFrameAutoButton:SetText(format("|TInterface\\AddOns\\LootReserve\\Assets\\Textures\\IconDice:16:16:0:0|t Insert %s%d |4item:items;", #itemsToInsert > slotsFree and format("%d / ", slotsFree) or "", #itemsToInsert));
-            LootReserveTradeFrameAutoButton.ItemsToInsert = itemsToInsert;
-        else
-            LootReserveTradeFrameAutoButton:Hide();
-        end
-        
-    end);
     LootReserve:RegisterEvent("TRADE_ACCEPT_UPDATE", function(player, target)
         self.TradeAcceptState = { player == 1, target == 1 };
     end);
     LootReserve:RegisterEvent("UI_INFO_MESSAGE", function(e, msg)
         if msg == ERR_TRADE_COMPLETE then
-            if RecentTradeAttempt then
+            if self.RecentTradeAttempt then
                 for i = 1, 6 do
-                    if RecentTradeAttempt[i] then
-                        for j = 1, RecentTradeAttempt[i].quantity do
-                            MarkDistributed(RecentTradeAttempt[i].item, RecentTradeAttempt.player);
+                    if self.RecentTradeAttempt[i] then
+                        for j = 1, self.RecentTradeAttempt[i].quantity do
+                            MarkDistributed(self.RecentTradeAttempt[i].item, self.RecentTradeAttempt.player);
                         end
                     end
                 end
@@ -2588,7 +2602,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
             historicalEntry.Item = LootReserve.ItemCache:Item(historicalEntry.Item);
             historicalEntry.Duration    = nil;
             historicalEntry.MaxDuration = nil;
-            if winners and #winners == 1 then
+            if winners and #winners == 1 and (LootReserve:IsLootingItem(historicalEntry.Item) or not (LootReserve:IsMe(winners[1]) and LootReserve:GetTradeableItemCount(historicalEntry.Item) > 0)) then
                 historicalEntry.Owed = true;
             end
             table.insert(self.RollHistory, historicalEntry);

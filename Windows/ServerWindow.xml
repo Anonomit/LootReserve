@@ -456,6 +456,7 @@
 								end
 							end
 							Roll.Winners = nil;
+							Roll.Owed    = nil;
 							
 							-- Fill the item frame with the previously reserved item
 							if not LootReserve.Server.RequestedRoll then
@@ -712,13 +713,17 @@
 						end
 						
 						if self.Lootable then
-							if C_Map.GetBestMapForUnit(unit) ~= myZone then
+							if C_Map.GetBestMapForUnit(unit) ~= C_Map.GetBestMapForUnit("player") then
 								return self:SetState("Winner not found", false, false);
 							end
 							
 							return self:SetState("Master loot", true, true);
 							
 						elseif self.Tradeable then
+							if UnitIsUnit(unit, "player") then
+								return self:SetState("Winner is me", false, false);
+							end
+							
 							if UnitIsDeadOrGhost(unit) then
 								return self:SetState("Winner is dead", false, false);
 							end
@@ -816,7 +821,7 @@
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								self:GetParent():GetParent().Roll.Owed = false;
+								self:GetParent():GetParent().Roll.Owed = nil;
 								LootReserve.Server:UpdateRollList();
 							</OnClick>
 				  	</Scripts>
@@ -1040,7 +1045,7 @@
 			</Frame>
 		</Frames>
 	</Frame>
-	<Button name="LootReserveTradeFrameAutoButton" inherits="UIPanelButtonTemplate" parent="TradeFrame" text="Trade" hidden="false">
+	<Button name="LootReserveTradeFrameAutoButton" inherits="UIPanelButtonTemplate" parent="TradeFrame" hidden="true">
 		<Size x="168" />
 		<Anchors>
 			<Anchor point="TOP" relativeTo="TradeFrameTradeButton" relativePoint="TOP" />
