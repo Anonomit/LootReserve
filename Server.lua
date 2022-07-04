@@ -75,6 +75,7 @@ LootReserve.Server =
     },
     PendingMasterLoot   = nil,
     RecentTradeAttempt  = nil,
+    RecentLootAttempts  = nil,
     TradeAcceptState    = { false, false };
     OwedRolls           = { },
     ExtraRollRequestNag = { },
@@ -102,6 +103,8 @@ LootReserve.Server =
     PendingLootEditTextUpdate = false,
     PendingInputOptionsUpdate = false,
     PendingReservesListUpdate = nil,
+    
+    PendingRecentLootAttemptsWipe = nil,
 };
 
 StaticPopupDialogs["LOOTRESERVE_CONFIRM_FORCED_CANCEL_RESERVE"] =
@@ -788,54 +791,13 @@ function LootReserve.Server:PrepareLootTracking()
     
     local function MarkDistributed(item, player)
         for i, roll in ipairs(self.OwedRolls) do
-            if roll.Item == item then
+            if roll.Item == item and roll.Winners[1] == player then
                 roll.Owed = nil;
                 table.remove(self.OwedRolls, i);
                 return;
             end
         end
     end
-    
-    local RecentLootAttempt = nil;
-    hooksecurefunc("GiveMasterLoot", function(lootSlot, playerSlot)
-        local itemLink = GetLootSlotLink(lootSlot);
-        if not itemLink or not itemLink:find("item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
-            return;
-        end
-        local item = LootReserve.ItemCache:Item(itemLink);
-        local candidate = GetMasterLootCandidate(lootSlot, playerSlot);
-        if not candidate then return; end
-        RecentLootAttempt = { lootSlot = lootSlot, item = item, player = candidate };
-    end);
-    LootReserve:RegisterEvent("LOOT_CLOSED", function(lootSlot)
-        RecentLootAttempt = nil;
-    end);
-    LootReserve:RegisterEvent("LOOT_SLOT_CLEARED", function(lootSlot)
-        if not RecentLootAttempt then return; end
-        if RecentLootAttempt.lootSlot == lootSlot then
-            MarkDistributed(RecentLootAttempt.item, RecentLootAttempt.player);
-        end
-    end);
-    LootReserve:RegisterEvent("TRADE_ACCEPT_UPDATE", function(player, target)
-        self.TradeAcceptState = { player == 1, target == 1 };
-        LootReserve.Server:UpdateTradeFrameAutoButton();
-    end);
-    LootReserve:RegisterEvent("TRADE_CLOSED", function(player, target)
-        self.TradeAcceptState = { false, false };
-    end);
-    LootReserve:RegisterEvent("UI_INFO_MESSAGE", function(e, msg)
-        if msg == ERR_TRADE_COMPLETE then
-            if self.RecentTradeAttempt then
-                for i = 1, 6 do
-                    if self.RecentTradeAttempt[i] then
-                        for j = 1, self.RecentTradeAttempt[i].quantity do
-                            MarkDistributed(self.RecentTradeAttempt[i].item, self.RecentTradeAttempt.player);
-                        end
-                    end
-                end
-            end
-        end
-    end);
     
     local function AddRecentLoot(item)
         if item:GetQuality() >= self.Settings.MinimumLootQuality then
@@ -848,7 +810,6 @@ function LootReserve.Server:PrepareLootTracking()
     end
     
     local function AddLootToTrackingList(looter, item, count)
-        looter = LootReserve:Player(looter);
         count = tonumber(count);
         if looter and item and count then
             if LootReserve:IsMe(looter) then
@@ -875,7 +836,7 @@ function LootReserve.Server:PrepareLootTracking()
     local lootSelf = LootReserve:FormatToRegexp(LOOT_ITEM_SELF);
     local lootSelfMultiple = LootReserve:FormatToRegexp(LOOT_ITEM_SELF_MULTIPLE);
     LootReserve:RegisterEvent("CHAT_MSG_LOOT", function(text)
-        if IsMasterLooter() then
+        if IsMasterLooter() and not self.RecentLootAttempts then
             return;
         end
         local looter, itemLink, count;
@@ -901,8 +862,18 @@ function LootReserve.Server:PrepareLootTracking()
                 end
             end
         end
-        local itemID = itemLink and tonumber(itemLink:match("Hitem:(%d+):") or "")
-        if itemID then
+        looter = LootReserve:Player(looter);
+        if IsMasterLooter() then
+            LootReserve.ItemCache:Item(itemLink):OnCache(function(item)
+                if not self.RecentLootAttempts then return; end
+                for lootSlot, lootData in pairs(self.RecentLootAttempts) do
+                    if lootData.item == item and lootData.player == looter then
+                        MarkDistributed(item, looter);
+                        self.RecentLootAttempts[lootSlot] = nil;
+                    end
+                end
+            end);
+        else
             LootReserve.ItemCache:Item(itemLink):OnCache(function(item)
                 if (item:GetStackSize() == 1 or not item:IsBindOnPickup()) and not LootReserve.Data.RecentLootBlacklist[item:GetID()] then -- don't add stackable BoP items
                     return AddLootToTrackingList(looter, item, count);
@@ -914,6 +885,11 @@ function LootReserve.Server:PrepareLootTracking()
         if not IsMasterLooter() then
            return; 
         end
+        if self.PendingRecentLootAttemptsWipe then
+            self.PendingRecentLootAttemptsWipe:Cancel();
+            self.PendingRecentLootAttemptsWipe = nil;
+        end
+        self.RecentLootAttempts = { };
         -- best guess at what object the player is looting. won't work for chests
         local guid = UnitExists("target") and UnitIsDead("target") and not UnitIsFriend("player", "target") and UnitGUID("target");
         if guid then
@@ -932,6 +908,51 @@ function LootReserve.Server:PrepareLootTracking()
                         local item = LootReserve.ItemCache:Item(itemLink);
                         if not LootReserve.Data.RecentLootBlacklist[item:GetID()] then
                             AddRecentLoot(item);
+                        end
+                    end
+                end
+            end
+        end
+    end);
+    
+    hooksecurefunc("GiveMasterLoot", function(lootSlot, playerSlot)
+        local itemLink = GetLootSlotLink(lootSlot);
+        if not itemLink or not itemLink:find("item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
+            return;
+        end
+        local item = LootReserve.ItemCache:Item(itemLink);
+        local candidate = GetMasterLootCandidate(lootSlot, playerSlot);
+        if not candidate then return; end
+        if self.RecentLootAttempts then
+            self.RecentLootAttempts[lootSlot] = {item = item, player = LootReserve:Player(candidate)};
+        end
+    end);
+    LootReserve:RegisterEvent("LOOT_CLOSED", function(lootSlot)
+        if self.RecentLootAttempts and not self.PendingRecentLootAttemptsWipe then
+            self.PendingRecentLootAttemptsWipe = C_Timer.NewTicker(0.5, function() self.RecentLootAttempts = nil; self.PendingRecentLootAttemptsWipe = nil; end, 1);
+        end
+    end);
+    LootReserve:RegisterEvent("LOOT_SLOT_CLEARED", function(lootSlot)
+        if not self.RecentLootAttempts then return; end
+        if self.RecentLootAttempts[lootSlot] then
+            MarkDistributed(self.RecentLootAttempts[lootSlot].item, self.RecentLootAttempts[lootSlot].player);
+            self.RecentLootAttempts[lootSlot] = nil;
+        end
+    end);
+    LootReserve:RegisterEvent("TRADE_ACCEPT_UPDATE", function(player, target)
+        self.TradeAcceptState = { player == 1, target == 1 };
+        LootReserve.Server:UpdateTradeFrameAutoButton();
+    end);
+    LootReserve:RegisterEvent("TRADE_CLOSED", function(player, target)
+        self.TradeAcceptState = { false, false };
+    end);
+    LootReserve:RegisterEvent("UI_INFO_MESSAGE", function(e, msg)
+        if msg == ERR_TRADE_COMPLETE then
+            if self.RecentTradeAttempt then
+                for i = 1, 6 do
+                    if self.RecentTradeAttempt[i] then
+                        for j = 1, self.RecentTradeAttempt[i].quantity do
+                            MarkDistributed(self.RecentTradeAttempt[i].item, self.RecentTradeAttempt.player);
                         end
                     end
                 end
@@ -2489,7 +2510,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent)
     end
 
     if self:IsRolling(item) then
-        local masterloot = nil;
+        local masterLoot = nil;
         local roll, winners, losers = self:GetWinningRollAndPlayers();
         if roll and winners then
             local raidroll = self.RequestedRoll.RaidRoll;
@@ -2616,7 +2637,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
             historicalEntry.MaxDuration = nil;
             if winners and #winners == 1 and (LootReserve:IsLootingItem(historicalEntry.Item) or not (LootReserve:IsMe(winners[1]) and LootReserve:GetTradeableItemCount(historicalEntry.Item) > 0)) then
                 historicalEntry.Owed = true;
-                table.insert(self.OwedRolls, 1, historicalEntry);
+                table.insert(self.OwedRolls, historicalEntry);
             end
             table.insert(self.RollHistory, historicalEntry);
             if #self.RollHistory > self.Settings.RollHistoryKeepLimit then
@@ -3310,10 +3331,10 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
     if not name or not link then return; end
     local quality = item:GetQuality()
 
-    if not self.Settings.RollMasterLoot then
+    -- if not self.Settings.RollMasterLoot then
         -- LootReserve:ShowError("Failed to masterloot %s to %s: masterlooting not enabled in LootReserve settings", link, LootReserve:ColoredPlayer(player));
-        return;
-    end
+    --     return;
+    -- end
 
     if not IsMasterLooter() or GetLootMethod() ~= "master" then
         -- LootReserve:ShowError("Failed to masterloot %s to %s: not master looter", link, LootReserve:ColoredPlayer(player));

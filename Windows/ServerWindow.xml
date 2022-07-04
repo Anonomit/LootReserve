@@ -776,7 +776,9 @@
 						local unit = self.Unit
 						
 						if not unit then return; end
-						if self.Tradeable then
+						if self.Lootable then
+							LootReserve.Server:MasterLootItem(item, LootReserve:Player(UnitName(unit)));
+						elseif self.Tradeable then
 							local bag, slot;
 							for b = 0, NUM_BAG_SLOTS do
 								for s = 1, GetContainerNumSlots(b) do
@@ -808,8 +810,6 @@
 									end
 								end
 							end
-						else
-							LootReserve.Server:MasterLootItem(item, UnitName(unit));
 						end
 					</OnClick>
 		  	</Scripts>
