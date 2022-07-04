@@ -1055,20 +1055,24 @@
 		</Anchors>
 		<Scripts>
 			<OnClick>
-				local i = 1;
-				for _, item in ipairs(self.ItemsToInsert) do
-					while GetTradePlayerItemInfo(i) do
-						i = i + 1;
+				if self.ItemsToInsert then
+					local i = 1;
+					for _, item in ipairs(self.ItemsToInsert) do
+						while GetTradePlayerItemInfo(i) do
+							i = i + 1;
+						end
+						if i > 6 then
+							return;
+						end
+						local bag, slot = LootReserve:GetBagSlot(item);
+						if bag and slot then
+							PickupContainerItem(bag, slot);
+							ClickTradeButton(i);
+							i = i + 1;
+						end
 					end
-					if i > 6 then
-						return;
-					end
-					local bag, slot = LootReserve:GetBagSlot(item);
-					if bag and slot then
-						PickupContainerItem(bag, slot);
-						ClickTradeButton(i);
-						i = i + 1;
-					end
+				else
+					AcceptTrade();
 				end
 			</OnClick>
 		</Scripts>

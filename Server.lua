@@ -727,6 +727,7 @@ function LootReserve.Server:UpdateTradeFrameAutoButton()
     local target        = LootReserve:Player(UnitName("npc"));
     local itemsToInsert = { };
     local slotsFree     = 6;
+    local relevantSlots = 0;
     -- Add all "recent" owed items to the list
     for _, roll in ipairs(self.OwedRolls) do
         if roll.Winners[1] == target then
@@ -747,7 +748,9 @@ function LootReserve.Server:UpdateTradeFrameAutoButton()
             offsets[item] = offsets[item] + 1;
             self.RecentTradeAttempt[i] = {item = item, quantity = quantity};
             
-            LootReserve:TableRemove(itemsToInsert, item);
+            if LootReserve:TableRemove(itemsToInsert, item) then
+                relevantSlots = relevantSlots + 1;
+            end
             slotsFree = slotsFree - 1;
         end
     end
@@ -764,7 +767,12 @@ function LootReserve.Server:UpdateTradeFrameAutoButton()
         end
     end
     
-    if #itemsToInsert > 0 then
+    if relevantSlots > 0 and (slotsFree == 0 or #itemsToInsert == 0) then
+        LootReserveTradeFrameAutoButton:Show();
+        LootReserveTradeFrameAutoButton:SetEnabled(not self.TradeAcceptState[1]);
+        LootReserveTradeFrameAutoButton:SetText("|TInterface\\AddOns\\LootReserve\\Assets\\Textures\\IconDice:16:16:0:0|t Trade");
+        LootReserveTradeFrameAutoButton.ItemsToInsert = nil;
+    elseif #itemsToInsert > 0 then
         LootReserveTradeFrameAutoButton:Show();
         LootReserveTradeFrameAutoButton:SetEnabled(slotsFree ~= 0);
         LootReserveTradeFrameAutoButton:SetText(format("|TInterface\\AddOns\\LootReserve\\Assets\\Textures\\IconDice:16:16:0:0|t Insert %s%d |4item:items;", #itemsToInsert > slotsFree and format("%d / ", slotsFree) or "", #itemsToInsert));
@@ -811,6 +819,7 @@ function LootReserve.Server:PrepareLootTracking()
     end);
     LootReserve:RegisterEvent("TRADE_ACCEPT_UPDATE", function(player, target)
         self.TradeAcceptState = { player == 1, target == 1 };
+        LootReserve.Server:UpdateTradeFrameAutoButton();
     end);
     LootReserve:RegisterEvent("UI_INFO_MESSAGE", function(e, msg)
         if msg == ERR_TRADE_COMPLETE then
