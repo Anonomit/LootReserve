@@ -808,7 +808,6 @@ function LootReserve.Server:PrepareLootTracking()
         RecentLootAttempt = { lootSlot = lootSlot, item = item, player = candidate };
     end);
     LootReserve:RegisterEvent("LOOT_CLOSED", function(lootSlot)
-        self.TradeAcceptState = { false, false };
         RecentLootAttempt = nil;
     end);
     LootReserve:RegisterEvent("LOOT_SLOT_CLEARED", function(lootSlot)
@@ -820,6 +819,9 @@ function LootReserve.Server:PrepareLootTracking()
     LootReserve:RegisterEvent("TRADE_ACCEPT_UPDATE", function(player, target)
         self.TradeAcceptState = { player == 1, target == 1 };
         LootReserve.Server:UpdateTradeFrameAutoButton();
+    end);
+    LootReserve:RegisterEvent("TRADE_CLOSED", function(player, target)
+        self.TradeAcceptState = { false, false };
     end);
     LootReserve:RegisterEvent("UI_INFO_MESSAGE", function(e, msg)
         if msg == ERR_TRADE_COMPLETE then
