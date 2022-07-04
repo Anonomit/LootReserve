@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<Script file="Windows/ServerExportWindow.lua" />
 	<Frame name="LootReserveServerExportWindow" parent="UIParent" inherits="BasicFrameTemplateWithInset" toplevel="true" movable="true" resizable="true" enableMouse="true" clampedToScreen="true" hidden="true">
-		<Size x="400" y="150" />
+		<Size x="300" y="150" />
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
