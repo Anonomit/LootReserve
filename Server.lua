@@ -808,6 +808,7 @@ function LootReserve.Server:PrepareLootTracking()
         RecentLootAttempt = { lootSlot = lootSlot, item = item, player = candidate };
     end);
     LootReserve:RegisterEvent("LOOT_CLOSED", function(lootSlot)
+        self.TradeAcceptState = { false, false };
         RecentLootAttempt = nil;
     end);
     LootReserve:RegisterEvent("LOOT_SLOT_CLEARED", function(lootSlot)
