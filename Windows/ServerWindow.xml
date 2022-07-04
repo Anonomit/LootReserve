@@ -822,6 +822,7 @@
 						<Scripts>
 							<OnClick>
 								self:GetParent():GetParent().Roll.Owed = nil;
+								LootReserve:TableRemove(LootReserve.Server.OwedRolls, self:GetParent():GetParent().Roll);
 								LootReserve.Server:UpdateRollList();
 							</OnClick>
 				  	</Scripts>
@@ -1710,6 +1711,17 @@
 								end,
 								tooltipText = "Items without rolls will be hidden from view. They will still be kept in the history.",
 							},
+							{
+								text = "Hide Distributed Rolls",
+								func = function(info)
+									LootReserve.Server.Settings.RollHistoryHideNotOwed = not LootReserve.Server.Settings.RollHistoryHideNotOwed;
+									LootReserve.Server:UpdateRollList();
+								end,
+								checked = function(info)
+									return LootReserve.Server.Settings.RollHistoryHideNotOwed;
+								end,
+								tooltipText = "Items that have been distributed will be hidden from view. They will still be kept in the history.",
+							},
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Display Limit", isTitle = true },
 							LootReserve:MakeMenuSeparator(),
@@ -1725,22 +1737,26 @@
 							{ text = "Close" },
 						};
 						for i, limit in ipairs({ 100, 250, 500, 1000, 10000 }) do
-							table.insert(menu, 5 + i,
+							table.insert(menu, 6 + i,
 							{
 								text = format("%d |4roll:rolls;", limit),
 								arg1 = limit,
 								func = function(info, limit)
 									LootReserve.Server.Settings.RollHistoryKeepLimit = limit;
 									
-			            if #LootReserve.Server.RollHistory > LootReserve.Server.Settings.RollHistoryKeepLimit then
-		                local delta = #LootReserve.Server.RollHistory - LootReserve.Server.Settings.RollHistoryKeepLimit;
-		                for i = 1, LootReserve.Server.Settings.RollHistoryKeepLimit do
-		                  LootReserve.Server.RollHistory[i] = LootReserve.Server.RollHistory[i+1];
-		                end
-		                for i = #LootReserve.Server.RollHistory + 1, LootReserve.Server.Settings.RollHistoryKeepLimit, -1 do
-		                  LootReserve.Server.RollHistory[i] = nil;
-		                end
-			            end
+									if #LootReserve.Server.RollHistory > LootReserve.Server.Settings.RollHistoryKeepLimit then
+										wipe(LootReserve.Server.OwedRolls);
+										local delta = #LootReserve.Server.RollHistory - LootReserve.Server.Settings.RollHistoryKeepLimit;
+										for i = 1, LootReserve.Server.Settings.RollHistoryKeepLimit do
+											LootReserve.Server.RollHistory[i] = LootReserve.Server.RollHistory[i + delta];
+											if LootReserve.Server.RollHistory[i].Owed then
+												table.insert(LootReserve.Server.OwedRolls, LootReserve.Server.RollHistory[i]);
+											end
+										end
+										for i = #LootReserve.Server.RollHistory, LootReserve.Server.Settings.RollHistoryKeepLimit + 1, -1 do
+											LootReserve.Server.RollHistory[i] = nil;
+										end
+									end
 									LootReserve.Server:UpdateRollList();
 									LootReserve:ReopenMenu(self);
 								end,
@@ -1748,7 +1764,7 @@
 							});
 						end
 						for i, limit in ipairs({ 5, 10, 25, 50, 100 }) do
-							table.insert(menu, 3 + i,
+							table.insert(menu, 4 + i,
 							{
 								text = format("%d |4roll:rolls;", limit),
 								arg1 = limit,

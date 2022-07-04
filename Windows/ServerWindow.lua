@@ -691,7 +691,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
         local match = false;
         local roll = self.RollHistory[i];
         local item = roll.Item;
-        if self.Settings.RollHistoryHideEmpty and next(roll.Players) == nil then
+        if self.Settings.RollHistoryHideEmpty and next(roll.Players) == nil or self.Settings.RollHistoryHideNotOwed and not roll.Owed then
             match = true;
         elseif item:IsCached() then
             if not filter or matchesFilter(item, roll, filter) then

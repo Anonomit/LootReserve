@@ -48,6 +48,7 @@ LootReserve.Server =
         RollHistoryDisplayLimit         = 10,
         RollHistoryKeepLimit            = 1000,
         RollHistoryHideEmpty            = true,
+        RollHistoryHideNotOwed          = false,
         RollMasterLoot                  = true,
         AcceptAllRollFormats            = false,
         WinnerReservesRemoval           = LootReserve.Constants.WinnerReservesRemoval.Smart,
@@ -75,6 +76,7 @@ LootReserve.Server =
     PendingMasterLoot   = nil,
     RecentTradeAttempt  = nil,
     TradeAcceptState    = { false, false };
+    OwedRolls           = { },
     ExtraRollRequestNag = { },
 
     ReservableIDs                      = { },
@@ -261,6 +263,7 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_CLEAR_HISTORY"] =
     hideOnEscape = 1,
     OnAccept = function(self)
         table.wipe(LootReserve.Server.RollHistory);
+        table.wipe(LootReserve.Server.OwedRolls);
         LootReserve.Server:UpdateRollList();
     end,
 };
@@ -580,6 +583,10 @@ function LootReserve.Server:Load()
     -- Create Item objects
     for _, roll in ipairs(self.RollHistory) do
         roll.Item = LootReserve.ItemCache:Item(roll.Item);
+        -- Populate list of items that have not been distributed
+        if roll.Owed then
+            table.insert(self.OwedRolls, roll);
+        end
     end
     if self.RequestedRoll then
        self.RequestedRoll.Item = LootReserve.ItemCache:Item(self.RequestedRoll.Item); 
@@ -712,17 +719,6 @@ function LootReserve.Server:HasAlreadyWon(player, item)
     return false;
 end
 
-function LootReserve.Server:GetOldestRollHistoryWithin(duration)
-    local timestamp = time() - duration;
-    for i = #self.RollHistory, 1, -1 do
-        local startTime = self.RollHistory[i].StartTime;
-        if not startTime or startTime < timestamp then
-            return i + 1;
-        end
-    end
-    return 1;
-end
-
 function LootReserve.Server:UpdateTradeFrameAutoButton()
     if not TradeFrame:IsShown() then
         return;
@@ -731,12 +727,10 @@ function LootReserve.Server:UpdateTradeFrameAutoButton()
     local target        = LootReserve:Player(UnitName("npc"));
     local itemsToInsert = { };
     local slotsFree     = 6;
-    local aDay          = 60 * 60 * 24;
-    local recentStart   = self:GetOldestRollHistoryWithin(aDay);
     -- Add all "recent" owed items to the list
-    for i = recentStart, #self.RollHistory do
-        if self.RollHistory[i].Owed and self.RollHistory[i].Winners[1] == target then
-            table.insert(itemsToInsert, self.RollHistory[i].Item);
+    for _, roll in ipairs(self.OwedRolls) do
+        if roll.Winners[1] == target then
+            table.insert(itemsToInsert, roll.Item);
         end
     end
     -- Remove items which are currently being traded
@@ -784,13 +778,11 @@ function LootReserve.Server:PrepareLootTracking()
     if self.LootTrackingRegistered then return; end
     self.LootTrackingRegistered = true;
     
-    local aDay = 60 * 60 * 24;
     local function MarkDistributed(item, player)
-        local recentStart = self:GetOldestRollHistoryWithin(aDay);
-        for i = recentStart, #self.RollHistory do
-            local roll = self.RollHistory[i];
-            if roll.Owed and roll.Item == item then
+        for i, roll in ipairs(self.OwedRolls) do
+            if roll.Item == item then
                 roll.Owed = nil;
+                table.remove(self.OwedRolls, i);
                 return;
             end
         end
@@ -2607,14 +2599,19 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
             historicalEntry.MaxDuration = nil;
             if winners and #winners == 1 and (LootReserve:IsLootingItem(historicalEntry.Item) or not (LootReserve:IsMe(winners[1]) and LootReserve:GetTradeableItemCount(historicalEntry.Item) > 0)) then
                 historicalEntry.Owed = true;
+                table.insert(self.OwedRolls, 1, historicalEntry);
             end
             table.insert(self.RollHistory, historicalEntry);
             if #self.RollHistory > self.Settings.RollHistoryKeepLimit then
+                wipe(self.OwedRolls);
                 local delta = #self.RollHistory - self.Settings.RollHistoryKeepLimit;
                 for i = 1, self.Settings.RollHistoryKeepLimit do
                     self.RollHistory[i] = self.RollHistory[i+1];
+                    if self.RollHistory[i].Owed then
+                        table.insert(self.OwedRolls, self.RollHistory[i]);
+                    end
                 end
-                for i = #self.RollHistory + 1, self.Settings.RollHistoryKeepLimit, -1 do
+                for i = #self.RollHistory, self.Settings.RollHistoryKeepLimit + 1, -1 do
                     self.RollHistory[i] = nil;
                 end
             end
