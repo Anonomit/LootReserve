@@ -2616,10 +2616,8 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                 end
             end
 
-            if LootReserve:GetTradeableItemCount(item) <= 1 then
-                if self.Settings.RemoveRecentLootAfterRolling then
-                    LootReserve:TableRemove(self.RecentLoot, item);
-                end
+            if self.Settings.RemoveRecentLootAfterRolling then
+                LootReserve:TableRemove(self.RecentLoot, item);
             end
             if winners then
                 -- LootReserve:PrintMessage(format("%s won by: %s", self.RequestedRoll.Item:GetLink(), LootReserve:FormatPlayersTextColored(self.RequestedRoll.Winners)));
