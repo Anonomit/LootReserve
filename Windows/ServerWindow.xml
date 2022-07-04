@@ -1481,12 +1481,14 @@
 										end
 										if LootReserve.Server.RecentLoot and #LootReserve.Server.RecentLoot > 0 then
 											for _, item in ipairs(LootReserve.Server.RecentLoot) do
-												local button = MakeItem(1, item);
-												local count = LootReserve:GetTradeableItemCount(item:GetID());
-												if count > 0 then
-													button.text = button.text .. format("|cFFC0C0C0 (%d in bags)|r", count);
+												if not LootReserve:IsLootingItem(item) then
+													local button = MakeItem(1, item);
+													local count = LootReserve:GetTradeableItemCount(item:GetID());
+													if count > 0 then
+														button.text = button.text .. format("|cFFC0C0C0 (%d in bags)|r", count);
+													end
+													table.insert(menu, 2, button);
 												end
-												table.insert(menu, 2, button);
 											end
 										else
 											table.insert(menu, 2, { text = "No Loot", disabled = true });
