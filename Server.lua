@@ -938,6 +938,12 @@ function LootReserve.Server:PrepareLootTracking()
             end
         end
     end);
+    
+    -- Fix blizzard bug
+    -- This can be removed once blizzard stops resetting the highlights on every GET_ITEM_INFO_RECEIVED
+    hooksecurefunc("TradeFrame_Update", function()
+        TradeFrame_SetAcceptState(self.TradeAcceptState[1] and 1 or 0, self.TradeAcceptState[2] and 1 or 0);
+    end);
 end
 
 function LootReserve.Server:PrepareGuildTracking()
