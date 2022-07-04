@@ -2005,6 +2005,10 @@ LootReserve.Data =
     },
     ItemConditions = { },
     
+    RecentLootBlacklist = {
+        [29434] = true, -- Badge of Justice
+    },
+    
     -- Items which start a quest that can only be completed one time
     QuestStarters = {
         -- Ancient Petrified Leaf

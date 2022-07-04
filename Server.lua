@@ -871,7 +871,7 @@ function LootReserve.Server:PrepareLootTracking()
     local lootSelf = LootReserve:FormatToRegexp(LOOT_ITEM_SELF);
     local lootSelfMultiple = LootReserve:FormatToRegexp(LOOT_ITEM_SELF_MULTIPLE);
     LootReserve:RegisterEvent("CHAT_MSG_LOOT", function(text)
-        if IsMasterLooter()  then
+        if IsMasterLooter() then
             return;
         end
         local looter, itemLink, count;
@@ -900,7 +900,7 @@ function LootReserve.Server:PrepareLootTracking()
         local itemID = itemLink and tonumber(itemLink:match("Hitem:(%d+):") or "")
         if itemID then
             LootReserve.ItemCache:Item(itemLink):OnCache(function(item)
-                if item:GetStackSize() == 1 or not item:IsBindOnPickup() then -- don't add stackable BoP items
+                if (item:GetStackSize() == 1 or not item:IsBindOnPickup()) and not LootReserve.Data.RecentLootBlacklist[item:GetID()] then -- don't add stackable BoP items
                     return AddLootToTrackingList(looter, item, count);
                 end
             end);
@@ -926,7 +926,9 @@ function LootReserve.Server:PrepareLootTracking()
                     local itemLink = GetLootSlotLink(lootSlot);
                     if itemLink and itemLink:find("item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
                         local item = LootReserve.ItemCache:Item(itemLink);
-                        AddRecentLoot(item);
+                        if not LootReserve.Data.RecentLootBlacklist[item:GetID()] then
+                            AddRecentLoot(item);
+                        end
                     end
                 end
             end

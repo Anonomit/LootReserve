@@ -249,6 +249,7 @@ function LootReserve:OpenSubMenu(...)
                 if arrow then
                     arrow:Click();
                     opened = true;
+                    break;
                 end
             end
         end
