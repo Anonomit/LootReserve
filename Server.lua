@@ -952,7 +952,7 @@ function LootReserve.Server:PrepareLootTracking()
                 for i = 1, 6 do
                     if self.RecentTradeAttempt[i] then
                         for j = 1, self.RecentTradeAttempt[i].quantity do
-                            MarkDistributed(self.RecentTradeAttempt[i].item, self.RecentTradeAttempt.player);
+                            MarkDistributed(self.RecentTradeAttempt[i].item, self.RecentTradeAttempt.target);
                         end
                     end
                 end
