@@ -1424,6 +1424,7 @@
 												text = format("|T%d:0|t %s%s%s", texture, LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] and (select(3, LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players)) .. "x|TInterface/Buttons/UI-GroupLoot-Dice-Up:0|t ") or "", (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", ""), count and format("|cFF808080 x%d|r", count) or ""),
 												arg1 = item,
 												func = SelectItem,
+												tooltipOnButton = item:GetString(), -- Not how this is supposed to be used
 											};
 										end
 										local bagMenus = { };

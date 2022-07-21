@@ -700,6 +700,32 @@ function LootReserve.Server:Startup()
             self:UpdateRollList();
         end);
     end
+    
+    -- Prepare dropdown lists for displaying item tooltips
+    local OnTooltipEnter = function(self)
+        if type(self.tooltipOnButton) == "string" and self.tooltipOnButton:find("item:%d+") then
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+            GameTooltip:SetHyperlink(self.tooltipOnButton);
+            GameTooltip:Show();
+        end
+    end
+    
+    -- Hook all existing dropdown buttons
+    local list, index = 1, 1
+    while _G["DropDownList"..list] do
+        while _G["DropDownList"..list.."Button"..index] do
+            _G["DropDownList"..list.."Button"..index]:HookScript("OnEnter", OnTooltipEnter)
+            index = index + 1
+        end
+        list = list + 1
+    end
+    
+    -- Hook all future dropdown buttons
+    hooksecurefunc("CreateFrame", function(frameType, name, _, template, _, ...)
+        if frameType == "Button" and name and type(name) == "string" and name:find("DropDownList%d+Button%d+") and template == "UIDropDownMenuButtonTemplate" then
+            _G[name]:HookScript("OnEnter", OnTooltipEnter)
+        end
+    end)
 
     -- Show reserves even if no longer the server, just a failsafe
     self:UpdateReserveList();
