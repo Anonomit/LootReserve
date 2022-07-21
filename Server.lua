@@ -1802,19 +1802,17 @@ function LootReserve.Server:IncrementReservesDelta(player, amount, automatic, wi
             reservesCount[member.ReservedItems[i]] = reservesCount[member.ReservedItems[i]] and reservesCount[member.ReservedItems[i]] + 1 or 1;
         end
 
-        -- Removing reservesLeft first to avoid race condition while sending multiple CancelReserve messages
+        -- Removing ReservesLeft first to avoid race condition while sending multiple CancelReserve messages
         for itemID, count in pairs(reservesCount) do
             member.ReservesLeft = member.ReservesLeft - count;
         end
         for itemID, count in pairs(reservesCount) do
             self:CancelReserve(player, itemID, count, false, true, winner, false);
         end
+    else
+        member.ReservesLeft = member.ReservesLeft + amount;
     end
     
-    if member.ReservesLeft == 0 then
-        member.OptedOut = nil;
-    end
-    member.ReservesLeft = member.ReservesLeft + amount;
     member.ReservesDelta = member.ReservesDelta + amount;
 
     -- Send packets
