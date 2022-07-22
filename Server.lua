@@ -748,7 +748,7 @@ function LootReserve.Server:HasAlreadyWon(player, item)
     return false;
 end
 
-function LootReserve.Server:UpdateTradeFrameAutoButton()
+function LootReserve.Server:UpdateTradeFrameAutoButton(accepting)
     if not TradeFrame:IsShown() then
         return;
     end
@@ -765,7 +765,9 @@ function LootReserve.Server:UpdateTradeFrameAutoButton()
     end
     -- Remove items which are currently being traded
     local offsets = { };
-    self.RecentTradeAttempt = { target = target };
+    if accepting then
+        self.RecentTradeAttempt = { target = target };
+    end
     for i = 1, 6 do
         local name, texture, quantity, quality, isUsable, enchant = GetTradePlayerItemInfo(i);
         local link = GetTradePlayerItemLink(i);
@@ -775,7 +777,9 @@ function LootReserve.Server:UpdateTradeFrameAutoButton()
                 offsets[item] = -1;
             end
             offsets[item] = offsets[item] + 1;
-            self.RecentTradeAttempt[i] = {item = item, quantity = quantity};
+            if accepting then
+                self.RecentTradeAttempt[i] = {item = item, quantity = quantity};
+            end
             
             if LootReserve:TableRemove(itemsToInsert, item) then
                 relevantSlots = relevantSlots + 1;
@@ -967,7 +971,7 @@ function LootReserve.Server:PrepareLootTracking()
     end);
     LootReserve:RegisterEvent("TRADE_ACCEPT_UPDATE", function(player, target)
         self.TradeAcceptState = { player == 1, target == 1 };
-        LootReserve.Server:UpdateTradeFrameAutoButton();
+        LootReserve.Server:UpdateTradeFrameAutoButton(true);
     end);
     LootReserve:RegisterEvent("TRADE_CLOSED", function(player, target)
         self.TradeAcceptState = { false, false };
