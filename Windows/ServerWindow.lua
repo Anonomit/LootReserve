@@ -640,17 +640,17 @@ function LootReserve.Server:UpdateRollList(lockdown)
             frame:SetHeight(frame:IsShown() and 44 or 0.00001);
         end
 
-        if historical and firstHistorical then
+        frame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
+        frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
+        list.ContentHeight = list.ContentHeight + frame:GetHeight();
+        
+        if firstHistorical then
             firstHistorical = false;
             list.HistoryHeader:Show();
             list.HistoryHeader:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
             list.HistoryHeader:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
             list.ContentHeight = list.ContentHeight + list.HistoryHeader:GetHeight();
         end
-
-        frame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
-        frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
-        list.ContentHeight = list.ContentHeight + frame:GetHeight();
     end
 
     local function matchesFilter(item, roll, filter)
