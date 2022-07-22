@@ -765,7 +765,7 @@
 								return self:SetState("Wait"), false, false;
 							end
 							
-							return self:SetState("Accept trade", true, not (LootReserveTradeFrameAutoButton:IsShown() and LootReserveTradeFrameAutoButton:IsEnabled()));
+							return self:SetState("Accept trade", true, LootReserveTradeFrameAutoButton:IsShown() and not LootReserveTradeFrameAutoButton.ItemsToInsert);
 						else
 							return self:SetState("Can't find item", false, false);
 						end
