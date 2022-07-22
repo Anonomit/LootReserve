@@ -649,7 +649,15 @@
 					<OnLoad inherit="prepend">
 						self.Text:SetPoint("CENTER", 0, 0); -- Fix the inherited offset of y=-1
 						
-						self.SetState = function(self, text, enable, glow)
+						function self:GetDistance(x1, y1, x2, y2)
+							local dx    = x2 - x1;
+							local dy    = y2 - y1;
+							local dist  = math.sqrt(dx * dx + dy * dy);
+							local angle = math.atan2(dy, dx) - GetPlayerFacing();
+							return dist, angle;
+						end
+						
+						function self:SetState(text, enable, glow)
 							if self:GetText() ~= text then
 								self:SetText(text);
 							end
@@ -729,22 +737,41 @@
 							end
 							
 							if not UnitIsVisible(unit) then
-								return self:SetState("Way out of range", false, false);
+								local playerMapID = C_Map.GetBestMapForUnit("player")
+								local targetMapID = C_Map.GetBestMapForUnit(unit)
+								if playerMapID and targetMapID and GetPlayerFacing() then
+									local playerMapPos = C_Map.GetPlayerMapPosition(playerMapID, "player")
+									local targetMapPos = C_Map.GetPlayerMapPosition(targetMapID, unit)
+									
+									if playerMapPos and targetMapPos then
+										local playerContinent, playerPos = C_Map.GetWorldPosFromMapPos(playerMapID, playerMapPos)
+										local targetContinent, targetPos = C_Map.GetWorldPosFromMapPos(targetMapID, targetMapPos)
+										
+										if playerContinent == targetContinent and playerPos and targetPos then
+											local x1, y1, x2, y2 = playerPos.x, playerPos.y, targetPos.x, targetPos.y
+											if x1 and y1 and x2 and y2 then
+												local dist, angle = self:GetDistance(x1, y1, x2, y2);
+												self.Arrow:Show();
+												self.Arrow:SetRotation(angle);
+												return self:SetState(format("Travel: |cffffffff%.0f|r yds |TInterface\\Common\\Spacer:16|t", dist), false, false);
+											end
+										end
+									end
+								end
+								
+								return self:SetState("Different instance", false, false);
 							end
 							
 							if not CheckInteractDistance(unit, 2) then
 								local x1, y1, x2, y2 = LootReserve:Locate(unit);
-								if x1 then
-									local dx    = x2 - x1;
-									local dy    = y2 - y1;
-									local dist  = math.sqrt(dx * dx + dy * dy);
-									local angle = math.atan2(dy, dx) - GetPlayerFacing();
-									self.Arrow:Show();
-									self.Arrow:SetRotation(angle);
-									return self:SetState(format("Approach: %.0f yds |TInterface\\Common\\Spacer:16|t", dist), true, true);
-								else
+								if not x1 or not y1 or not x2 or not y2 then
 									return self:SetState("Out of range", false, false);
 								end
+								
+								local dist, angle = self:GetDistance(x1, y1, x2, y2);
+								self.Arrow:Show();
+								self.Arrow:SetRotation(angle);
+								return self:SetState(format("Approach: %.0f yds |TInterface\\Common\\Spacer:16|t", dist), true, true);
 							end
 							
 							if not TradeFrame:IsShown() then
