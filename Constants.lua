@@ -76,6 +76,7 @@ LootReserve.Constants.ChatAnnouncement = {
     SessionInstructions = 8,
     RollCountdown       = 9,
     SessionBlindToggle  = 10,
+    SessionReserves     = 11,
 };
 LootReserve.Constants.DefaultPhases = {
     "MainSpec",

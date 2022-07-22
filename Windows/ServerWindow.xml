@@ -1956,6 +1956,7 @@
 								MakeMenuToggle("Reserves Stopped",              { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.SessionStop               }, MakeRaidWarningTooltip("when stopping reserves")),
 								MakeMenuToggle("Blind Reserves Toggled",        { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.SessionBlindToggle        }, MakeRaidWarningTooltip("when enabling or disabling blind reserves")),
 								MakeMenuToggle("Announce Instructions",         { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.SessionInstructions       }, MakeRaidWarningTooltip("when manually announcing reserve instructions")),
+								MakeMenuToggle("Announce Reserves",             { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.SessionReserves           }, MakeRaidWarningTooltip("when manually announcing reserves")),
 								MakeMenuToggle("Roll on an Item",               { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.RollStartCustom           }, MakeRaidWarningTooltip("when starting an item roll")),
 								MakeMenuToggle("Roll on a Reserved Item",       { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.RollStartReserved         }, MakeRaidWarningTooltip("when starting a roll on a reserved item")),
 								MakeMenuToggle("Roll Countdown",                { "ChatAsRaidWarning", LootReserve.Constants.ChatAnnouncement.RollCountdown             }, MakeRaidWarningTooltip("when the roll timer is nearing its end (if countdown was enabled for this roll)")),
