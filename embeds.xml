@@ -10,5 +10,7 @@
 	<Include file="Libs\LibDBIcon-1.0\lib.xml"/>
 	<Include file="Libs\LibDeflate\lib.xml"/>
 	
+	<Script file="Libs\LibRangeCheck-2.0\LibRangeCheck-2.0.lua"/>
+	
 	<Include file="Libs\ItemCache\ItemCache.xml"/>
 </Ui>

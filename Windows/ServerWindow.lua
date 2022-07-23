@@ -881,7 +881,7 @@ function LootReserve.Server:OnWindowLoad(window)
         self:UpdateReserveList();
         self:UpdateRollList();
     end);
-    LootReserve:RegisterEvent("TRADE_SHOW", "TRADE_CLOSED", "TRADE_PLAYER_ITEM_CHANGED", "TRADE_ACCEPT_UPDATE", "BAG_UPDATE_DELAYED", "PLAYER_TARGET_CHANGED", function()
+    LootReserve:RegisterEvent("TRADE_SHOW", "TRADE_CLOSED", "TRADE_PLAYER_ITEM_CHANGED", "TRADE_ACCEPT_UPDATE", "BAG_UPDATE_DELAYED", "PLAYER_TARGET_CHANGED", "GROUP_JOINED", "GROUP_LEFT", "GROUP_ROSTER_UPDATE", function()
         LootReserve:WipeBagCache();
         LootReserve.Server:UpdateRollList();
     end);

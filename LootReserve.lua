@@ -11,7 +11,8 @@ LootReserve.EventFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
 LootReserve.EventFrame:SetSize(0, 0);
 LootReserve.EventFrame:Show();
 
-LootReserve.ItemCache = LibStub("ItemCache");
+LootReserve.LibRangeCheck = LibStub("LibRangeCheck-2.0");
+LootReserve.ItemCache     = LibStub("ItemCache");
 
 LootReserveCharacterSave =
 {
@@ -264,6 +265,13 @@ function LootReserve:ReopenMenu(button, ...)
     CloseMenus();
     button:Click();
     self:OpenSubMenu(...);
+end
+
+function LootReserve:Round(num, nearest)
+    nearest = nearest or 1;
+    local lower = math.floor(num / nearest) * nearest;
+    local upper = lower + nearest;
+    return (upper - num < num - lower) and upper or lower;
 end
 
 -- Used to prevent LootReserve:SendChatMessage from breaking a hyperlink into multiple segments if the message is too long
@@ -563,40 +571,40 @@ end
 
 local charSimplifications =
 {
-    ["a"  ] = "[ÀÁÂÃÄÅàáâãäåĀāĂăĄąǍǎǞǟǠǡǺǻȀȁȂȃɐɑɒ]",
-    ["ae" ] = "[ÆæǢǣǼǽ]",
-    ["b"  ] = "[ƀƁƂƃɓʙ]",
-    ["c"  ] = "[ÇçĆćĈĉĊċČčƇƈɔɕʗ]",
-    ["d"  ] = "[ĎďĐđƉƊƋƌɖɗ]",
-    ["dz" ] = "[ǄǅǆǱǲǳʣʥ]",
-    ["e"  ] = "[ÈÉÊËèéêëĒēĔĕĖėĘęĚěƎƐǝȄȅȆȇɘəɚɛɜɝɞʚ]",
-    ["eth"] = "[ð]",
-    ["f"  ] = "[Ƒƒɟ]",
-    ["g"  ] = "[ĜĝĞğĠġĢģƓǤǥǦǧǴǵɠɡɢʛ]",
-    ["h"  ] = "[ĤĥĦħɥɦɧʜ]",
-    ["i"  ] = "[ÌÍÎÏìíîïĨĩĪīĬĭĮįİıƗǏǐȈȉȊȋɨɩɪ]",
-    ["ij" ] = "[Ĳĳ]",
-    ["j"  ] = "[Ĵĵǰʄʝ]",
-    ["k"  ] = "[ĶķĸƘƙǨǩʞ]",
-    ["l"  ] = "[ĹĺĻļĽľĿŀŁłƚɫɬɭʟ]",
-    ["lj" ] = "[Ǉǈǉ]",
-    ["m"  ] = "[Ɯɯɰɱ]",
-    ["n"  ] = "[ÑñŃńŅņŇňŉŊŋƝƞɲɳɴ]",
-    ["nj" ] = "[Ǌǋǌ]",
-    ["o"  ] = "[ÒÓÔÕÖØòóôõöøŌōŎŏŐőƆƟƠơǑǒǪǫǬǭǾǿȌȍȎȏɵ]",
-    ["oe" ] = "[Œœɶ]",
-    ["oi" ] = "[Ƣƣ]",
-    ["p"  ] = "[ÞþƤƥ]",
-    ["q"  ] = "[ʠ]",
-    ["r"  ] = "[ŔŕŖŗŘřƦȐȑȒȓɹɺɻɼɽɾɿʀʁ]",
-    ["s"  ] = "[ŚśŜŝŞşŠšſʂ]",
-    ["ss" ] = "[ß]",
-    ["t"  ] = "[ŢţŤťŦŧƫƬƭƮʇʈ]",
-    ["u"  ] = "[ÙÚÛÜùúûüŨũŪūŬŭŮůŰűŲųƯưǓǔǕǖǗǘǙǚǛǜȔȕȖȗʉʊ]",
-    ["v"  ] = "[Ʋʋʌ]",
-    ["w"  ] = "[Ŵŵʍ]",
-    ["y"  ] = "[ÝýÿŶŷŸƳƴʎʏ]",
-    ["z"  ] = "[ŹźŻżŽžƵƶʐʑ]",
+    ["a"  ] = "ÀÁÂÃÄÅàáâãäåĀāĂăĄąǍǎǞǟǠǡǺǻȀȁȂȃɐɑɒ",
+    ["ae" ] = "ÆæǢǣǼǽ",
+    ["b"  ] = "ƀƁƂƃɓʙ",
+    ["c"  ] = "ÇçĆćĈĉĊċČčƇƈɔɕʗ",
+    ["d"  ] = "ĎďĐđƉƊƋƌɖɗ",
+    ["dz" ] = "ǄǅǆǱǲǳʣʥ",
+    ["e"  ] = "ÈÉÊËèéêëĒēĔĕĖėĘęĚěƎƐǝȄȅȆȇɘəɚɛɜɝɞʚ",
+    ["eth"] = "ð",
+    ["f"  ] = "Ƒƒɟ",
+    ["g"  ] = "ĜĝĞğĠġĢģƓǤǥǦǧǴǵɠɡɢʛ",
+    ["h"  ] = "ĤĥĦħɥɦɧʜ",
+    ["i"  ] = "ÌÍÎÏìíîïĨĩĪīĬĭĮįİıƗǏǐȈȉȊȋɨɩɪ",
+    ["ij" ] = "Ĳĳ",
+    ["j"  ] = "Ĵĵǰʄʝ",
+    ["k"  ] = "ĶķĸƘƙǨǩʞ",
+    ["l"  ] = "ĹĺĻļĽľĿŀŁłƚɫɬɭʟ",
+    ["lj" ] = "Ǉǈǉ",
+    ["m"  ] = "Ɯɯɰɱ",
+    ["n"  ] = "ÑñŃńŅņŇňŉŊŋƝƞɲɳɴ",
+    ["nj" ] = "Ǌǋǌ",
+    ["o"  ] = "ÒÓÔÕÖØòóôõöøŌōŎŏŐőƆƟƠơǑǒǪǫǬǭǾǿȌȍȎȏɵ",
+    ["oe" ] = "Œœɶ",
+    ["oi" ] = "Ƣƣ",
+    ["p"  ] = "ÞþƤƥ",
+    ["q"  ] = "ʠ",
+    ["r"  ] = "ŔŕŖŗŘřƦȐȑȒȓɹɺɻɼɽɾɿʀʁ",
+    ["s"  ] = "ŚśŜŝŞşŠšſʂ",
+    ["ss" ] = "ß",
+    ["t"  ] = "ŢţŤťŦŧƫƬƭƮʇʈ",
+    ["u"  ] = "ÙÚÛÜùúûüŨũŪūŬŭŮůŰűŲųƯưǓǔǕǖǗǘǙǚǛǜȔȕȖȗʉʊ",
+    ["v"  ] = "Ʋʋʌ",
+    ["w"  ] = "Ŵŵʍ",
+    ["y"  ] = "ÝýÿŶŷŸƳƴʎʏ",
+    ["z"  ] = "ŹźŻżŽžƵƶʐʑ",
 };
 
 local simplificationMapping = { }
@@ -604,9 +612,7 @@ for replacement, pattern in pairs(charSimplifications) do
     local len = pattern:utf8len();
     for i = 1, len do
         local char = pattern:utf8sub(i, i);
-        if char ~= "[" and char ~= "]" then
-            simplificationMapping[char] = replacement;
-        end
+        simplificationMapping[char] = replacement;
     end
 end
 
@@ -872,17 +878,56 @@ function LootReserve:IsLootingItem(item)
     end
 end
 
+function LootReserve:CanLocate(unitID)
+    return not not UnitPosition(unitID);
+end
+
 function LootReserve:CanUseDBMLocator(unitID)
-    return (DBM and DBM.ReleaseRevision > 20220618000000 and UnitPosition("player")) and true or false;
+    return DBM and DBM.ReleaseRevision > 20220618000000 and self:CanLocate(unitID) and UnitIsVisible(unitID) and true or false;
 end
 
 function LootReserve:Locate(unitID)
-    local x1, y1, _, instance1 = UnitPosition("player");
-    if not x1 then return false; end
-    local x2, y2, _, instance2 = UnitPosition(unitID);
-    if not x2 then return false; end
-    if instance1 ~= instance2 then return false; end
-    return x1, y1, x2, y2;
+    if not self:CanLocate(unitID) then return; end
+    
+    local playerMapID = C_Map.GetBestMapForUnit("player")
+    local targetMapID = C_Map.GetBestMapForUnit(unitID)
+    if not playerMapID or not targetMapID then return; end
+    
+    local playerMapPos = C_Map.GetPlayerMapPosition(playerMapID, "player")
+    local targetMapPos = C_Map.GetPlayerMapPosition(targetMapID, unitID)
+    if not playerMapPos or not targetMapPos then return; end
+    
+    local playerContinent, playerPos = C_Map.GetWorldPosFromMapPos(playerMapID, playerMapPos)
+    local targetContinent, targetPos = C_Map.GetWorldPosFromMapPos(targetMapID, targetMapPos)
+    if not playerContinent or playerContinent ~= targetContinent or not playerPos or not targetPos then return; end
+    
+    return playerPos.x, playerPos.y, targetPos.x, targetPos.y;
+end
+
+function LootReserve:GetRange(unitID)
+    local x1, y1, x2, y2 = self:Locate(unitID);
+    if not x1 or not y1 or not x2 or not y2 then return; end
+    
+    local facing = GetPlayerFacing();
+    if not facing then return; end
+    
+    local dx    = x2 - x1;
+    local dy    = y2 - y1;
+    local dist  = math.sqrt(dx * dx + dy * dy);
+    local angle = math.atan2(dy, dx) - facing;
+    return dist, angle;
+end
+
+function LootReserve:GetRangeColor(range)
+    if range < 15 then
+        return "|cff00ff00"; -- green
+    elseif range < 25 then
+        return "|cffffff00"; -- yellow
+    elseif range < 40 then
+        return "|cffff7700"; -- orange
+    else
+        return "|cffff0000"; -- red
+    end
 end
 
 function LootReserve:TransformSearchText(text)

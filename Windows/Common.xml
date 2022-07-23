@@ -12,19 +12,13 @@
 			</OnMouseDown>
 			<OnMouseUp>
 				self:GetParent():StopMovingOrSizing();
-
-				local function round(num, numDecimalPlaces)
-					local mult = 10 ^ (numDecimalPlaces or 0)
-					return math.floor(num * mult + 0.5) / mult
-				end
-
 				if self:GetParent():IsProtected() and InCombatLockdown() then return; end
 
 				local point, relativeFrame, relativePoint, x, y = self:GetParent():GetPoint(1);
-				x = round(x);
-				y = round(y);
-				if (point == "CENTER" or point == "TOP" or point == "BOTTOM") and (round(self:GetParent():GetWidth() ) % 2 == 1) then x = x + 0.5; end
-				if (point == "CENTER" or point == "LEFT" or point == "RIGHT") and (round(self:GetParent():GetHeight()) % 2 == 1) then y = y + 0.5; end
+				x = LootReserve:Round(x);
+				y = LootReserve:Round(y);
+				if (point == "CENTER" or point == "TOP" or point == "BOTTOM") and (LootReserve:Round(self:GetParent():GetWidth())  % 2 == 1) then x = x + 0.5; end
+				if (point == "CENTER" or point == "LEFT" or point == "RIGHT") and (LootReserve:Round(self:GetParent():GetHeight()) % 2 == 1) then y = y + 0.5; end
 				self:GetParent():ClearAllPoints();
 				self:GetParent():SetPoint(point, relativeFrame, relativePoint, x, y);
 			</OnMouseUp>
@@ -46,15 +40,10 @@
 				self:GetHighlightTexture():Show();
 				self:GetParent():StopMovingOrSizing();
 
-				local function round(num, numDecimalPlaces)
-					local mult = 10 ^ (numDecimalPlaces or 0)
-					return math.floor(num * mult + 0.5) / mult
-				end
-
 				if self:GetParent():IsProtected() and InCombatLockdown() then return; end
 
 				local w, h = self:GetParent():GetSize();
-				self:GetParent():SetSize(round(w), round(h));
+				self:GetParent():SetSize(LootReserve:Round(w), LootReserve:Round(h));
 			</OnMouseUp>
 		</Scripts>
 		<NormalTexture file="Interface\ChatFrame\UI-ChatIM-SizeGrabber-Up"/>
@@ -513,6 +502,8 @@
 		</Layers>
 		<Scripts>
 			<OnLoad>
+				self.Text:SetPoint("CENTER", 0, 0);
+				
 				self.GlowLeft:SetDesaturated(true);
 				self.GlowRight:SetDesaturated(true);
 				self.GlowLeft2:SetDesaturated(true);
