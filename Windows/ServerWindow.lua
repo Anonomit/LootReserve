@@ -474,7 +474,6 @@ function LootReserve.Server:UpdateRollList(lockdown)
     list.LastIndex = 0;
     list.ContentHeight = 0;
 
-    local firstHistorical = true;
     if not list.HistoryHeader then
         list.HistoryHeader = CreateFrame("Frame", nil, list, "LootReserveRollHistoryHeader");
     end
@@ -644,13 +643,6 @@ function LootReserve.Server:UpdateRollList(lockdown)
         frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
         list.ContentHeight = list.ContentHeight + frame:GetHeight();
         
-        if firstHistorical then
-            firstHistorical = false;
-            list.HistoryHeader:Show();
-            list.HistoryHeader:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
-            list.HistoryHeader:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
-            list.ContentHeight = list.ContentHeight + list.HistoryHeader:GetHeight();
-        end
     end
 
     local function matchesFilter(item, roll, filter)
@@ -682,6 +674,11 @@ function LootReserve.Server:UpdateRollList(lockdown)
             createFrame(self.RequestedRoll.Item, self.RequestedRoll, false);
         --end
     end
+    list.HistoryHeader:Show();
+    list.HistoryHeader:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
+    list.HistoryHeader:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
+    list.ContentHeight = list.ContentHeight + list.HistoryHeader:GetHeight();
+    
     local missing = { };
     local itemsVisible = 0;
     for i = #self.RollHistory, 1, -1 do
