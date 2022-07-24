@@ -128,13 +128,16 @@ function LootReserve.Client:SearchForServer(startup)
 end
 
 function LootReserve.Client:SetMasquerade(player)
+    local oldMasquerade = self.Masquerade;
     if self.SessionServer and LootReserve:IsMe(self.SessionServer) and LootReserve.Server and LootReserve.Server.CurrentSession then
         if not player or LootReserve:IsMe(player) then
-            self.Masquerade = nil
+            self.Masquerade = nil;
         else
-            self.Masquerade = player
+            self.Masquerade = player;
         end
-        LootReserve.Comm:SendSessionInfo(LootReserve:Me());
+        if oldMasquerade ~= self.Masquerade then
+            LootReserve.Comm:SendSessionInfo(LootReserve:Me());
+        end
     end
 end
 
@@ -227,9 +230,11 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
 
     if starting then
         self.Masquerade = nil;
-        PlaySound(SOUNDKIT.GS_CHARACTER_SELECTION_ENTER_WORLD);
-        local lootCategoriesText = LootReserve:GetCategoriesText(self.LootCategories, true);
+        local lootCategoriesText = LootReserve:GetCategoriesText(self.LootCategories);
         LootReserve:PrintMessage("Session started%s%s.", lootCategoriesText ~= "" and " for ", lootCategoriesText);
+        if self.AcceptingReserves then
+            PlaySound(SOUNDKIT.GS_CHARACTER_SELECTION_ENTER_WORLD);
+        end
     end
 end
 

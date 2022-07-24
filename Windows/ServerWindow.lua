@@ -942,7 +942,6 @@ function LootReserve.Server:SessionStarted()
     self.Window.PanelSession.ButtonStartReserves:Hide();
     self.Window.PanelSession.ButtonStopReserves:Show();
     self.Window.PanelSession.ButtonResetSession:Hide();
-    PlaySound(SOUNDKIT.GS_CHARACTER_SELECTION_ENTER_WORLD);
     self:UpdateServerAuthority();
     self:UpdateRollList();
     self.LootEdit.Window:Hide();

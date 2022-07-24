@@ -208,11 +208,13 @@ function LootReserve.Comm:BroadcastHello()
     LootReserve.Comm:BroadcastVersion();
 end
 LootReserve.Comm.Handlers[Opcodes.Hello] = function(sender)
-    LootReserve.Comm:SendVersion(sender);
-
-    if LootReserve.Server.CurrentSession and LootReserve.Server:CanBeServer() then
-        LootReserve.Comm:SendSessionInfo(sender);
+    if not LootReserve:IsMe(sender) then
+        LootReserve.Comm:SendVersion(sender);
+        if LootReserve.Server.CurrentSession and LootReserve.Server:CanBeServer() then
+            LootReserve.Comm:SendSessionInfo(sender, true);
+        end
     end
+    
     if LootReserve.Server.RequestedRoll and not LootReserve.Server.RequestedRoll.RaidRoll and LootReserve.Server:CanRoll(sender) then
         local players = { sender };
         if not LootReserve.Server.RequestedRoll.Custom then
