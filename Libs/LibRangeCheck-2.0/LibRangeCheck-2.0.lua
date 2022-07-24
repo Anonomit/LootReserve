@@ -283,7 +283,7 @@ tinsert(HarmSpells.WARLOCK, 234153)		-- Drain Life (40 yards, level 9)
 tinsert(HarmSpells.WARLOCK, 198590)		-- Drain Soul (40 yards, level 15)
 tinsert(HarmSpells.WARLOCK, 686)		-- Shadow Bolt (Demonology, Affliction) (40 yards)
 tinsert(HarmSpells.WARLOCK, 232670)		-- Shadow Bolt (40 yards)
--- tinsert(HarmSpells.WARLOCK, 5782)		-- Fear (30 yards)
+tinsert(HarmSpells.WARLOCK, 5782)		-- Fear (30 yards)
 
 if not isRetail then
 	tinsert(HarmSpells.WARLOCK, 172)	-- Corruption (30 yards, level 4, rank 1)
