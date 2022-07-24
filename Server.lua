@@ -80,6 +80,7 @@ LootReserve.Server =
     TradeAcceptState    = { false, false };
     OwedRolls           = { },
     ExtraRollRequestNag = { },
+    SentMessages        = { },
 
     ReservableIDs                      = { },
     ReservableRewardIDs                = { },
@@ -2484,7 +2485,6 @@ function LootReserve.Server:ResolveRollTie(item)
                 local playersText = LootReserve:FormatReservesText(winners);
                 
                 local msg = format("Tie for %s between players %s. All rolled %d. Please /roll again", item:GetLink(), playersText, roll);
-                self.LastChat = msg;
                 LootReserve:SendChatMessage(msg, self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollTie));
             end);
 
@@ -2985,10 +2985,12 @@ function LootReserve.Server:PrepareRequestRoll()
                 if self.RequestedRoll then
                     local player = LootReserve:Player(sender);
                     
-                    -- Filter out roll announcement
-                    if LootReserve:IsMe(player) and self.LastChat and text == self.LastChat:gsub("\1", " ") then
-                        self.LastChat = nil;
-                        return;
+                    -- Filter out LootReserve messages
+                    if LootReserve:IsMe(player) then
+                        local sentTime = self.SentMessages[LootReserve:FixText(text)];
+                        if sentTime and time() - sentTime < 10 then
+                            return;
+                        end
                     end
                     
                     self.RequestedRoll.Chat = self.RequestedRoll.Chat or { };
@@ -3102,7 +3104,6 @@ function LootReserve.Server:RequestRoll(item, duration, phases, allowedPlayers)
 
             local playersText = LootReserve:FormatReservesText(players);
             local msg = format("%s - roll on reserved %s%s", playersText, LootReserve:FixLink(link), durationStr);
-            self.LastChat = msg;
             LootReserve:SendChatMessage(msg, self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollStartReserved));
             
             local sentToPlayer = { };
@@ -3212,7 +3213,6 @@ function LootReserve.Server:RequestCustomRoll(item, duration, phases, allowedPla
                 end
             else
                 local msg = format("Roll%s on %s%s", self.RequestedRoll.Phases and format(" for %s", self.RequestedRoll.Phases[1] or "") or "", link, durationStr);
-                self.LastChat = msg;
                 LootReserve:SendChatMessage(msg, self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollStartCustom));
             end
         end);

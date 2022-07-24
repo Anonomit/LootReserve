@@ -281,6 +281,9 @@ end
 function LootReserve:FixLink(link)
     return link:gsub(" ", "\1");
 end
+function LootReserve:FixText(text)
+    return text:gsub("\1", " ");
+end
 
 function LootReserve:SendChatMessage(text, channel, target)
     if channel == "RAID_WARNING" and not (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
@@ -295,10 +298,12 @@ function LootReserve:SendChatMessage(text, channel, target)
     if target and not LootReserve:IsPlayerOnline(target) then return; end
     local function Send(text)
         if #text > 0 then
+            text = self:FixText(text);
+            self.Server.SentMessages[text] = time();
             if ChatThrottleLib then
-                ChatThrottleLib:SendChatMessage("NORMAL", self.Comm.Prefix, text:gsub("\1", " "), channel, nil, target);
+                ChatThrottleLib:SendChatMessage("NORMAL", self.Comm.Prefix, text, channel, nil, target);
             else
-                SendChatMessage(text:gsub("\1", " "), channel, nil, target);
+                SendChatMessage(text, channel, nil, target);
             end
         end
     end
