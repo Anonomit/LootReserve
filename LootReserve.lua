@@ -721,6 +721,16 @@ function LootReserve:GetTradeableItemCount(itemOrID, includeLoot)
             count = count + slotData.quantity;
         end
     end
+    
+    for i = 0, 19 do
+        local link = GetInventoryItemLink("player", i);
+        if link and link:find("item:%d+") then
+            local item = self.ItemCache:Item(link);
+            if match(item, itemOrID) and not item:Binds() then
+                count = count + 1;
+            end
+        end
+    end
     return count;
 end
     
