@@ -400,6 +400,7 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
                 end
             end
 
+            local alreadyHighlighted = { };
             for _, button in ipairs(frame.ReservesFrame.Players) do
                 if button:IsShown() then
                     if frame.Roll and frame.Roll.Players[button.Player] and frame.Roll.Players[button.Player][button.RollNumber] then
@@ -409,9 +410,12 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
                         local deleted = roll == LootReserve.Constants.RollType.Deleted;
                         local winner;
                         if frame.Roll.Winners then
-                            winner = LootReserve:Contains(frame.Roll.Winners, button.Player);
-                        else
-                            winner = rolled and highest > LootReserve.Constants.RollType.NotRolled and roll == highest; -- Backwards compatibility
+                            if LootReserve:Contains(frame.Roll.Winners, button.Player) and not alreadyHighlighted[button.Player] then
+                                winner = true;
+                                alreadyHighlighted[button.Player] = true;
+                            end
+                        elseif not frame.Historical then
+                            winner = rolled and highest > LootReserve.Constants.RollType.NotRolled and roll == highest;
                         end
 
                         local color = winner and GREEN_FONT_COLOR or passed and GRAY_FONT_COLOR or deleted and RED_FONT_COLOR or HIGHLIGHT_FONT_COLOR;
