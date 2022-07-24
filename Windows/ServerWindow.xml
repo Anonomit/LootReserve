@@ -395,89 +395,7 @@
 					</OnLoad>
 					<OnClick>
 						if not LootReserve.Server.RequestedRoll and self:GetParent().Historical then
-							-- Copy historical roll into RequestedRoll
-							local Roll = LootReserve:Deepcopy(self:GetParent().Roll);
-							Roll.Item = self:GetParent().Item;
-							
-							-- Discard deleted and passed rolls
-							local toRemove = { };
-							for player, rolls in pairs(Roll.Players) do
-								for i = #rolls, 1, -1 do
-									if rolls[i] &lt; 0 then
-									  table.remove(rolls, i);
-									end
-								end
-								if #rolls == 0 then
-								  table.insert(toRemove, player);
-								end
-							end
-							for _, player in ipairs(toRemove) do
-							  Roll.Players[player] = nil;
-							end
-							
-							LootReserve.Server.RequestedRoll = Roll;
-							if Roll.Custom then
-								for _, winner in ipairs(Roll.Winners or {}) do
-									Roll.Players[winner] = nil;
-								end
-								if not next(Roll.Players) then
-									LootReserve.Server.RequestedRoll = nil;
-									local phases = Roll.Phases;
-									if phases and #phases > 1 then
-										table.remove(phases, 1);
-										LootReserve.Server:RequestCustomRoll(Roll.Item, LootReserve.Server.Settings.RollLimitDuration and LootReserve.Server.Settings.RollDuration or nil, phases);
-									end
-								end
-							elseif Roll.Winners then
-								if LootReserve.Server.CurrentSession then
-									for _, winner in ipairs(Roll.Winners) do
-										-- Remove winning roll
-										local maxI, maxRoll = 1, Roll.Players[winner][1];
-										for i, roll in ipairs(Roll.Players[winner]) do
-											if roll > maxRoll then
-												maxI, maxRoll= i, roll;
-											end
-										end
-										table.remove(Roll.Players[winner], maxI);
-										
-										if #Roll.Players[winner] == 0 then
-											Roll.Players[winner] = nil;
-										end
-										local reserve = LootReserve.Server.CurrentSession.ItemReserves[Roll.Item:GetID()];
-										if not reserve or not LootReserve:Contains(reserve.Players, winner) then
-											Roll.Players[winner] = nil;
-										end
-									end
-									if not next(Roll.Players) then
-										LootReserve.Server.RequestedRoll = nil;
-									end
-								else
-									LootReserve.Server.RequestedRoll = nil;
-								end
-							end
-							Roll.Winners = nil;
-							Roll.Owed    = nil;
-							
-							-- Fill the item frame with the previously reserved item
-							if not LootReserve.Server.RequestedRoll then
-								for _, panelRolls in ipairs({LootReserve.Server.Window.PanelRollsLockdown, LootReserve.Server.Window.PanelRolls}) do
-									local frames = panelRolls.Scroll.Container.Frames;
-									if frames and frames[1] and frames[1]:IsShown() then
-										frames[1]:SetItem(Roll.Item);
-									end
-								end
-								LootReserve.Server.RequestedRoll = nil;
-							else
-								-- Clear dropdown item selection
-								for _, panelRolls in ipairs({LootReserve.Server.Window.PanelRollsLockdown, LootReserve.Server.Window.PanelRolls}) do
-									local frames = panelRolls.Scroll.Container.Frames;
-									if frames and frames[1] and frames[1]:IsShown() then
-										frames[1]:SetItem();
-									end
-								end
-							end
-							
-							LootReserve.Server:UpdateRollList();
+							LootReserve.Server:ContinueRoll(self:GetParent().Roll);
 						elseif LootReserve.Server:IsRolling(self:GetParent().Item) then
 							local roll, players = LootReserve.Server:GetWinningRollAndPlayers();
 							if players then
@@ -494,10 +412,16 @@
 								LootReserve:MakeMenuSeparator(),
 								{ text = "Cancel" },
 							};
-							if players and #players > 1 then
-								table.insert(menu, 2, { text = format("Resolve Tie Roll: |cFF00FF00%d|r (%s)", roll, strjoin(", ", unpack(players))), func = function() LootReserve.Server:ResolveRollTie(self:GetParent().Item); end });
-							end
-							if not players and LootReserve.Server.RequestedRoll.Phases and #LootReserve.Server.RequestedRoll.Phases > 1 then
+							if players then
+								
+								local recentLootCount = LootReserve:TableCount(LootReserve.Server.RecentLoot, self:GetParent().Item);
+								if #players > 1 then
+									table.insert(menu, 2, { text = format("Resolve Tie Roll: |cFF00FF00%d|r (%s)", roll, strjoin(", ", unpack(players))), func = function() LootReserve.Server:ResolveRollTie(self:GetParent().Item); end });
+								end
+								if recentLootCount > #players and (not self:GetParent().Roll.Custom or self:GetParent().Roll.Phases and #self:GetParent().Roll.Phases > 1) then
+									table.insert(menu, 2, { text = players and format("Announce %d |4Winner:Winners; (%s) and continue", #players, strjoin(", ", unpack(players))) or "Announce Winner", disabled = not players or #players == 0, func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, nil, true); LootReserve.Server:ContinueRoll(LootReserve.Server.RollHistory[#LootReserve.Server.RollHistory]) end });
+								end
+							elseif LootReserve.Server.RequestedRoll.Phases and #LootReserve.Server.RequestedRoll.Phases > 1 then
 								menu[3] =
 								{
 									text = format("Advance to |cFF00FF00%s|r", LootReserve.Server.RequestedRoll.Phases[2]),
@@ -752,7 +676,7 @@
 								
 								local text = "Travel"
 								if UnitIsVisible(unit) then
-									text = "Approach"
+									text = "Approach:"
 								elseif dist > 20000 then
 									text = "How even"
 								elseif dist > 10000 then
@@ -773,7 +697,7 @@
 								
 								self.Arrow:Show();
 								self.Arrow:SetRotation(angle);
-								return self:SetState(format("%s: %s%.0f|r yds |TInterface\\Common\\Spacer:16|t", text, LootReserve:GetRangeColor(dist), dist), dbmLocator, dbmLocator);
+								return self:SetState(format("%s %s%.0f|r yds |TInterface\\Common\\Spacer:16|t", text, LootReserve:GetRangeColor(dist), dist), dbmLocator, dbmLocator);
 							end
 							
 							if not TradeFrame:IsShown() then
@@ -1463,6 +1387,10 @@
 											if IsShiftKeyDown() then
 											  LootReserve:TableRemove(LootReserve.Server.RecentLoot, info.arg1);
 											  return self:DropHandler();
+											elseif IsControlKeyDown() then
+												-- clear suffix if it has one
+												LootReserve.ItemCache:Item(info.arg1:GetID()):OnCache(function(item) StaticPopup_Show("LOOTRESERVE_CONFIRM_ADD_TO_RECENT_LOOT_BLACKLIST", item:GetLink(), nil, {item = item}) end);
+											  return self:DropHandler();
 											else
 												frame:SetItem(info.arg1);
 												CloseMenus();
@@ -1541,6 +1469,11 @@
 													func = function(_, _, _, checked) LootReserve.Server.Settings.RemoveRecentLootAfterRolling = checked; end,
 												},
 											} },
+											{
+												text = "Clear Blacklist",
+												tooltipText = "Clear all items blocked from Recent Loot.|n|nHint:|nControl-Click an item to block it.|nShift-Click an item to forget it.",
+												func = function() StaticPopup_Show("LOOTRESERVE_CONFIRM_CLEAR_RECENT_LOOT_BLACKLIST"); end,
+											},
 											{ text = "Cancel" },
 										};
 										for bag, bagMenu in ipairs(bagMenus) do
@@ -1550,40 +1483,46 @@
 												menuList = bagMenu,
 											});
 										end
-										if LootReserve.Server.RecentLoot and #LootReserve.Server.RecentLoot > 0 then
-											for _, item in ipairs(LootReserve.Server.RecentLoot) do
-												if not LootReserve:IsLootingItem(item) then
-													local button = MakeItem(1, item);
-													local count = LootReserve:GetTradeableItemCount(item:GetID());
-													if count > 0 then
-														button.text = button.text .. format("|cFFC0C0C0 (%d in bags)|r", count);
-													end
-													table.insert(menu, 2, button);
-												end
-											end
-										else
-											table.insert(menu, 2, { text = "No Loot", disabled = true });
-										end
+										local currentLootOffset = 0;
+										local recentLootBlocks = { };
 										if GetNumLootItems() > 0 then
-											local index = 0;
 											for i = 1, GetNumLootItems() do
 												local itemID = GetLootSlotInfo(i);
 												if itemID then
 			                    local itemLink = GetLootSlotLink(i);
 			                    if itemLink and itemLink:find("item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
 														local item = LootReserve.ItemCache:Item(itemLink);
-														if item then
-															if index == 0 then
+														if not LootReserve.Server.Settings.RecentLootBlacklist[item:GetID()] and not LootReserve.Data.RecentLootBlacklist[item:GetID()] then
+															if currentLootOffset == 0 then
 																table.insert(menu, 1, { text = "Current Loot", isTitle = true });
 																table.insert(menu, 2, LootReserve:MakeMenuSeparator());
+																currentLootOffset = currentLootOffset + 2;
 															end
 															local texture, name, count = GetLootSlotInfo(i);
-															table.insert(menu, 2 + index, MakeItem(count, item, texture));
-															index = index + 1;
+															table.insert(menu, currentLootOffset, MakeItem(count, item, texture));
+															currentLootOffset = currentLootOffset + 1;
+															recentLootBlocks[item] = recentLootBlocks[item] and recentLootBlocks[item] + 1 or 1;
 														end
 													end
 												end
 											end
+										end
+										local recentLootCount = 0;
+										for _, item in ipairs(LootReserve.Server.RecentLoot) do
+											if IsMasterLooter() and recentLootBlocks[item] and recentLootBlocks[item] > 0 then
+												recentLootBlocks[item] = recentLootBlocks[item] - 1;
+											else
+												local button = MakeItem(1, item);
+												local count = LootReserve:GetTradeableItemCount(item:GetID());
+												if count > 0 then
+													button.text = button.text .. format("|cFFC0C0C0 (%d in bags)|r", count);
+												end
+												table.insert(menu, 2 + currentLootOffset, button);
+												recentLootCount = recentLootCount + 1;
+											end
+										end
+										if recentLootCount == 0 then
+											table.insert(menu, 2 + currentLootOffset, { text = "No Loot", disabled = true });
 										end
 										LootReserve:OpenMenu(menu, self:GetParent().Menu, self);
 

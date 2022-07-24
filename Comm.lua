@@ -39,6 +39,14 @@ local function ThrottlingError()
 end
 
 function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
+    -- local opKey;
+    -- for k, v in pairs(Opcodes) do
+    --     if v == opcode then
+    --         opKey = k;
+    --         break;
+    --     end
+    -- end
+    -- LootReserve:debug(channel, target, opKey or opcode, ...);
     
     local message = "";
     for _, part in ipairs({ ... }) do
@@ -140,15 +148,6 @@ function LootReserve.Comm:Broadcast(opcode, ...)
 end
 function LootReserve.Comm:Whisper(target, opcode, ...)
     if not self:CanWhisper(target) then return; end
-
-    -- local opKey;
-    -- for k, v in pairs(Opcodes) do
-    --     if v == opcode then
-    --         opKey = k;
-    --         break;
-    --     end
-    -- end
-    -- LootReserve:debug(target, opKey or opcode, ...);
     local message = self:SendCommMessage("WHISPER", target, opcode, ...);
 end
 function LootReserve.Comm:Send(target, opcode, ...)

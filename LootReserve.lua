@@ -710,9 +710,12 @@ function LootReserve:WipeBagCache()
     self.BagCache = nil;
 end
 
-function LootReserve:GetTradeableItemCount(itemOrID)
+function LootReserve:GetTradeableItemCount(itemOrID, includeLoot)
     CheckBagCache(self);
-    local count = 0;
+    local count, _ = 0;
+    if includeLoot then
+        _, count = self:IsLootingItem(itemOrID);
+    end
     for _, slotData in ipairs(self.BagCache) do
         if match(slotData.item, itemOrID) and self:IsTradeableItem(slotData.bag, slotData.slot) then
             count = count + slotData.quantity;
@@ -870,17 +873,21 @@ function LootReserve:GetItemDescription(itemID, noTokenRedirect)
     return itemText;
 end
 
-function LootReserve:IsLootingItem(item)
-    item = LootReserve.ItemCache:Item(item);
+function LootReserve:IsLootingItem(itemOrID)
+    local item = LootReserve.ItemCache:Item(itemOrID);
+    local firstIndex;
+    local count = 0;
     for i = 1, GetNumLootItems() do
         local itemLink = GetLootSlotLink(i);
         if itemLink and itemLink:find"item:%d" then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
             local lootItem = LootReserve.ItemCache:Item(itemLink);
             if lootItem and lootItem:GetID() == item:GetID() then
-                return i;
+                firstIndex = firstIndex or i;
+                count = count + 1;
             end
         end
     end
+    return firstIndex, count;
 end
 
 function LootReserve:CanLocate(unitID)
@@ -975,6 +982,16 @@ function LootReserve:TableRemove(tbl, val)
         end
     end
     return false;
+end
+
+function LootReserve:TableCount(tbl, val)
+    local count = 0;
+    for _, i in ipairs(tbl) do
+        if i == val then
+            count = count + 1;
+        end
+    end
+    return count;
 end
 
 function LootReserve:Contains(tbl, val)

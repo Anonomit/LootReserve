@@ -55,6 +55,7 @@ LootReserve.Server =
         WinnerReservesRemoval           = LootReserve.Constants.WinnerReservesRemoval.Smart,
         ItemConditions                  = { },
         CollapsedExpansions             = { },
+        RecentLootBlacklist             = { },
         MaxRecentLoot                   = 25,
         MinimumLootQuality              = 2,
         RemoveRecentLootAfterRolling    = true,
@@ -242,6 +243,35 @@ StaticPopupDialogs["LOOTRESERVE_NEW_PHASE_NAME"] =
     end,
     EditBoxOnEscapePressed = function(self)
         self:GetParent():Hide();
+    end,
+};
+
+StaticPopupDialogs["LOOTRESERVE_CONFIRM_ADD_TO_RECENT_LOOT_BLACKLIST"] =
+{
+    text         = "Are you sure you want to add %s to the Recent Loot Blacklist?\n\nIt won't show up in Recent Loot until you clear the Blacklist.",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self, data)
+        LootReserve.Server.Settings.RecentLootBlacklist[data.item:GetID()] = time();
+        while LootReserve:TableRemove(LootReserve.Server.RecentLoot, data.item) do end
+        CloseMenus();
+    end,
+};
+
+StaticPopupDialogs["LOOTRESERVE_CONFIRM_CLEAR_RECENT_LOOT_BLACKLIST"] =
+{
+    text         = "Are you sure you want to clear the Recent Loot Blacklist?",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self)
+        wipe(LootReserve.Server.Settings.RecentLootBlacklist);
+        CloseMenus();
     end,
 };
 
@@ -832,12 +862,14 @@ function LootReserve.Server:PrepareLootTracking()
     end
     
     local function AddRecentLoot(item)
-        if item:GetQuality() >= self.Settings.MinimumLootQuality then
+        if self.Settings.RecentLootBlacklist[item:GetID()] or LootReserve.Data.RecentLootBlacklist[item:GetID()] then return; end
+        if item:GetQuality() < self.Settings.MinimumLootQuality then return; end
+        if item:GetStackSize() > 1 then
             LootReserve:TableRemove(self.RecentLoot, item);
-            table.insert(self.RecentLoot, item);
-            while #self.RecentLoot > self.Settings.MaxRecentLoot do
-                table.remove(self.RecentLoot, 1);
-            end
+        end
+        table.insert(self.RecentLoot, item);
+        while #self.RecentLoot > self.Settings.MaxRecentLoot do
+            table.remove(self.RecentLoot, 1);
         end
     end
     
@@ -907,7 +939,7 @@ function LootReserve.Server:PrepareLootTracking()
             end);
         else
             LootReserve.ItemCache:Item(itemLink):OnCache(function(item)
-                if (item:GetStackSize() == 1 or not item:IsBindOnPickup()) and not LootReserve.Data.RecentLootBlacklist[item:GetID()] then -- don't add stackable BoP items
+                if (item:GetStackSize() == 1 or not item:IsBindOnPickup()) then
                     return AddLootToTrackingList(looter, item, count);
                 end
             end);
@@ -915,7 +947,7 @@ function LootReserve.Server:PrepareLootTracking()
     end);
     LootReserve:RegisterEvent("LOOT_READY", function(text)
         if not IsMasterLooter() then
-           return; 
+           return;
         end
         if self.PendingRecentLootAttemptsWipe then
             self.PendingRecentLootAttemptsWipe:Cancel();
@@ -937,10 +969,7 @@ function LootReserve.Server:PrepareLootTracking()
                 if itemID then
                     local itemLink = GetLootSlotLink(lootSlot);
                     if itemLink and itemLink:find("item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
-                        local item = LootReserve.ItemCache:Item(itemLink);
-                        if not LootReserve.Data.RecentLootBlacklist[item:GetID()] then
-                            AddRecentLoot(item);
-                        end
+                        AddRecentLoot(LootReserve.ItemCache:Item(itemLink));
                     end
                 end
             end
@@ -2510,7 +2539,7 @@ function LootReserve.Server:ResolveRollTie(item)
     end
 end
 
-function LootReserve.Server:FinishRollRequest(item, soleReserver, silent)
+function LootReserve.Server:FinishRollRequest(item, soleReserver, silent, noLosers)
     local function RecordRollWinner(player, item, phase)
         if self.CurrentSession then
             local token;
@@ -2557,13 +2586,13 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent)
                 RecordRollWinner(player, item, recordPhase);
             end
             if not silent then
-                LootReserve.Comm:BroadcastWinner(item, winners, losers, roll, self.RequestedRoll.Custom, recordPhase, raidroll);
+                LootReserve.Comm:BroadcastWinner(item, winners, noLosers and { } or losers, roll, self.RequestedRoll.Custom, recordPhase, raidroll);
                 
                 -- Announce winner
                 item:OnCache(function()
                     local link        = item:GetLink();
                     local playersText = LootReserve:FormatPlayersText(winners);
-                    LootReserve:SendChatMessage(format(raidroll and "%s won %s%s via raid-roll" or "%s won %s%s with a roll of %d", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or "", roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
+                    LootReserve:SendChatMessage(format(raidroll and "%s won %s%s via raid-roll" or "%s won %s%s with %s of %d", playersText, LootReserve:FixLink(link), phases and format(" for %s", phases[1] or "") or "", #winners > 1 and "rolls" or "a roll", roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
                     if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and item:GetQuality() >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
                         for _, player in ipairs(winners) do
                             if LootReserve:Contains(self.GuildMembers, player) then
@@ -2649,51 +2678,33 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                 self.RequestedRoll.Chat[player] = nil;
             end
         end
+        
+        local RequestedRoll = self.RequestedRoll;
 
         local uniqueWinners = { };
-        if winners then
-            self.RequestedRoll.Winners = { };
-            for _, winner in ipairs(winners) do
-                table.insert(self.RequestedRoll.Winners, winner);
-                uniqueWinners[winner] = true;
-            end
+        for _, winner in ipairs(winners or { }) do
+            uniqueWinners[winner] = true;
         end
-
         if not noHistory then
-            local historicalEntry = LootReserve:Deepcopy(self.RequestedRoll);
-            historicalEntry.Item = LootReserve.ItemCache:Item(historicalEntry.Item);
-            historicalEntry.Duration    = nil;
-            historicalEntry.MaxDuration = nil;
-            if winners and #winners == 1 and (LootReserve:IsLootingItem(historicalEntry.Item) or not (LootReserve:IsMe(winners[1]) and LootReserve:GetTradeableItemCount(historicalEntry.Item) > 0)) then
-                historicalEntry.Owed = true;
-                table.insert(self.OwedRolls, historicalEntry);
-            end
-            table.insert(self.RollHistory, historicalEntry);
-            if #self.RollHistory > self.Settings.RollHistoryKeepLimit then
-                wipe(self.OwedRolls);
-                local delta = #self.RollHistory - self.Settings.RollHistoryKeepLimit;
-                for i = 1, self.Settings.RollHistoryKeepLimit do
-                    self.RollHistory[i] = self.RollHistory[i+1];
-                    if self.RollHistory[i].Owed then
-                        table.insert(self.OwedRolls, self.RollHistory[i]);
+            if winners then
+                for _, winner in ipairs(winners) do
+                    self:RecordRollHistory(self.RequestedRoll, winner);
+                    self.RequestedRoll = nil;
+                    self:ContinueRoll(self.RollHistory[#self.RollHistory], true);
+                    if self.Settings.RemoveRecentLootAfterRolling then
+                        LootReserve:TableRemove(self.RecentLoot, item);
                     end
                 end
-                for i = #self.RollHistory, self.Settings.RollHistoryKeepLimit + 1, -1 do
-                    self.RollHistory[i] = nil;
+            else
+                self:RecordRollHistory(self.RequestedRoll);
+                if self.Settings.RemoveRecentLootAfterRolling then
+                    LootReserve:TableRemove(self.RecentLoot, item);
                 end
-            end
-
-            if self.Settings.RemoveRecentLootAfterRolling then
-                LootReserve:TableRemove(self.RecentLoot, item);
-            end
-            if winners then
-                -- LootReserve:PrintMessage(format("%s won by: %s", self.RequestedRoll.Item:GetLink(), LootReserve:FormatPlayersTextColored(self.RequestedRoll.Winners)));
             end
         end
         
-        local RequestedRoll = self.RequestedRoll
 
-        LootReserve.Comm:BroadcastRequestRoll(LootReserve.ItemCache:Item(0), { }, self.RequestedRoll and (self.RequestedRoll.Custom or self.RequestedRoll.RaidRoll));
+        LootReserve.Comm:BroadcastRequestRoll(LootReserve.ItemCache:Item(0), { }, RequestedRoll and (RequestedRoll.Custom or RequestedRoll.RaidRoll));
         self.RequestedRoll = nil;
         self.SaveProfile.RequestedRoll = self.RequestedRoll;
         
@@ -2749,6 +2760,118 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
         self:UpdateReserveListRolls();
         self:UpdateRollList();
     end
+end
+
+function LootReserve.Server:RecordRollHistory(roll, winner, excludePlayers)
+    if winner then
+        roll.Winners = { winner };
+    end
+    local historicalEntry = LootReserve:Deepcopy(roll);
+    historicalEntry.Item = LootReserve.ItemCache:Item(historicalEntry.Item);
+    historicalEntry.Duration    = nil;
+    historicalEntry.MaxDuration = nil;
+    if winner and (LootReserve:IsLootingItem(historicalEntry.Item) or not (LootReserve:IsMe(winner) and LootReserve:GetTradeableItemCount(historicalEntry.Item) > 0)) then
+        historicalEntry.Owed = true;
+        table.insert(self.OwedRolls, historicalEntry);
+    end
+    table.insert(self.RollHistory, historicalEntry);
+    if #self.RollHistory > self.Settings.RollHistoryKeepLimit then
+        wipe(self.OwedRolls);
+        local delta = #self.RollHistory - self.Settings.RollHistoryKeepLimit;
+        for i = 1, self.Settings.RollHistoryKeepLimit do
+            self.RollHistory[i] = self.RollHistory[i+1];
+            if self.RollHistory[i].Owed then
+                table.insert(self.OwedRolls, self.RollHistory[i]);
+            end
+        end
+        for i = #self.RollHistory, self.Settings.RollHistoryKeepLimit + 1, -1 do
+            self.RollHistory[i] = nil;
+        end
+    end
+end
+
+function LootReserve.Server:ContinueRoll(oldRoll, noFill)
+    if self.RequestedRoll then
+        LootReserve:ShowError("There's a roll in progress");
+        return;
+    end
+    
+    -- Copy historical roll into RequestedRoll
+    local Roll = LootReserve:Deepcopy(oldRoll);
+    Roll.Item = oldRoll.Item;
+    
+    -- Discard deleted and passed rolls
+    local toRemove = { };
+    for player, rolls in pairs(Roll.Players) do
+        for i = #rolls, 1, -1 do
+            if rolls[i] < 0 then
+              table.remove(rolls, i);
+            end
+        end
+        if #rolls == 0 then
+          table.insert(toRemove, player);
+        end
+    end
+    for _, player in ipairs(toRemove) do
+      Roll.Players[player] = nil;
+    end
+    
+    self.RequestedRoll = Roll;
+    self.SaveProfile.RequestedRoll = Roll;
+    if Roll.Custom then
+        for _, winner in ipairs(Roll.Winners or {}) do
+            Roll.Players[winner] = nil;
+        end
+        if not next(Roll.Players) then
+            self.RequestedRoll = nil;
+            self.SaveProfile.RequestedRoll = nil;
+            local phases = Roll.Phases;
+            if phases and #phases > 1 then
+                table.remove(phases, 1);
+                self:RequestCustomRoll(Roll.Item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil, phases);
+            end
+        end
+    elseif Roll.Winners then
+        if self.CurrentSession then
+            for _, winner in ipairs(Roll.Winners) do
+                -- Remove winning roll
+                local maxI, maxRoll = 1, Roll.Players[winner][1];
+                for i, roll in ipairs(Roll.Players[winner]) do
+                    if roll > maxRoll then
+                        maxI, maxRoll= i, roll;
+                    end
+                end
+                table.remove(Roll.Players[winner], maxI);
+                
+                if #Roll.Players[winner] == 0 then
+                    Roll.Players[winner] = nil;
+                end
+                local reserve = self.CurrentSession.ItemReserves[Roll.Item:GetID()];
+                if not reserve or not LootReserve:Contains(reserve.Players, winner) then
+                    Roll.Players[winner] = nil;
+                end
+            end
+            if not next(Roll.Players) then
+                self.RequestedRoll = nil;
+                self.SaveProfile.RequestedRoll = nil;
+            end
+        else
+            self.RequestedRoll = nil;
+            self.SaveProfile.RequestedRoll = nil;
+        end
+    end
+    Roll.Winners = nil;
+    Roll.Owed    = nil;
+    
+    -- Fill the item frame with the previously reserved item, or empty it
+    for _, panelRolls in ipairs({self.Window.PanelRollsLockdown, self.Window.PanelRolls}) do
+        local frames = panelRolls.Scroll.Container.Frames;
+        if frames and frames[1] and frames[1]:IsShown() then
+            frames[1]:SetItem(not noFill and not self.RequestedRoll and Roll.Item or nil);
+        end
+    end
+    
+    self:UpdateRollList();
 end
 
 function LootReserve.Server:CanRoll(player)
@@ -3084,7 +3207,7 @@ function LootReserve.Server:RequestRoll(item, duration, phases, allowedPlayers)
 
     self:PrepareRequestRoll();
 
-    LootReserve.Comm:BroadcastRequestRoll(item, players, self.RequestedRoll.Custom, self.RequestedRoll.Duration, self.RequestedRoll.MaxDuration, self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or "");
+    LootReserve.Comm:BroadcastRequestRoll(item, players, nil, self.RequestedRoll.Duration, self.RequestedRoll.MaxDuration, self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or "");
 
     if self.CurrentSession.Settings.ChatFallback then
         local durationStr = "";

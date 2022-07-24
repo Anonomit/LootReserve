@@ -365,6 +365,7 @@ LootReserve.Constants.LocomotionPhrases = {
     "Walk",
     "Wander",
     -- "Warp",
+    "Water Ski",
     "Water Walk",
     -- "Whiz",
     "Zigzag",
