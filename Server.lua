@@ -1334,7 +1334,7 @@ function LootReserve.Server:PrepareSession()
                         self:SendReservesList(sender);
                     end
                 else
-                    LootReserve:SendChatMessage(format("That item is not reservable in this raid.%s", self:GetSupportString(sender, " ", true)), "WHISPER", sender);
+                    LootReserve:SendChatMessage(format("%s.%s", LootReserve.Constants.ReserveResultText[LootReserve.Constants.ReserveResult.ItemNotReservable], self:GetSupportString(sender, " ", true)), "WHISPER", sender);
                 end
             end
 
