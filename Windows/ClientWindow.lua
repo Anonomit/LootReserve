@@ -135,6 +135,10 @@ function LootReserve.Client:UpdateLootList()
     local missing     = { };
     local missingLoad = { };
     local function createFrame(item, source)
+        if not item:IsCached() then
+            return;
+        end
+        
         list.LastIndex = list.LastIndex + 1;
         local frame = list.Frames[list.LastIndex];
         while not frame do
