@@ -1496,7 +1496,7 @@
 											} },
 											{
 												text = "Clear Blacklist",
-												tooltipText = "Clear all items blocked from Recent Loot.|n|nHint:|nControl-Click an item to block it.|nShift-Click an item to forget it.",
+												tooltipText = "Clear all items blocked from Recent Loot.|n|nHint:|nShift-Click an item to forget it.|nControl-Click an item to block it.",
 												func = function() StaticPopup_Show("LOOTRESERVE_CONFIRM_CLEAR_RECENT_LOOT_BLACKLIST"); end,
 											},
 											{ text = "Cancel" },
