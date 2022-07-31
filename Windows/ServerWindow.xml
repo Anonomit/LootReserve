@@ -168,6 +168,15 @@
 					<Anchor point="TOPLEFT" x="16" />
 					<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Roll" relativePoint="BOTTOMLEFT" />
 				</Anchors>
+				<Scripts>
+					<OnUpdate>
+						local hovered = self:IsMouseOver() and self:GetParent():GetParent():IsMouseOver();
+						if self.hovered ~= hovered then
+							self.hovered = hovered;
+							self.ButtonWhisper:SetShown(hovered);
+						end
+					</OnUpdate>
+				</Scripts>
 				<Frames>
 					<Button parentKey="WonRolls" parentArray="Buttons" hidden="true">
 						<Size x="12" y="12" />
@@ -278,6 +287,23 @@
 						</Scripts>
 						<NormalTexture file="Interface\ChatFrame\UI-ChatWhisperIcon" alpha="0.25" />
 						<HighlightTexture file="Interface\ChatFrame\UI-ChatWhisperIcon" alpha="0.5" alphaMode="ADD" />
+					</Button>
+					<Button parentKey="ButtonWhisper" parentArray="Buttons" hidden="true">
+						<Anchors>
+							<Anchor point="TOP" />
+							<Anchor point="BOTTOM" />
+						</Anchors>
+						<ButtonText parentKey="Text" inherits="GameFontNormal" text=" /w " setAllPoints="true" />
+						<Scripts>
+							<OnLoad>
+								local info = ChatTypeInfo["WHISPER"];
+								self.Text:SetTextColor(info.r, info.g, info.b);
+								self:SetWidth(self.Text:GetStringWidth());
+							</OnLoad>
+							<OnClick>
+								ChatFrame_SendTell(self:GetParent():GetParent().Player);
+							</OnClick>
+						</Scripts>
 					</Button>
 				</Frames>
 			</Frame>
