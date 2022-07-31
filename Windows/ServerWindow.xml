@@ -676,75 +676,74 @@
 								return self:SetState("Winner is dead", false, false);
 							end
 							
-							if not CheckInteractDistance(unit, 2) or not UnitInPhase(unit) then
-								if not LootReserve:CanLocate(unit) then
-									local min, max = LootReserve.LibRangeCheck:getRange(unit);
-									if not min then
-										return self:SetState("Locate", false, false);
-									end
-									return self:SetState(format("Approach: %s%s|r yds", LootReserve:GetRangeColor(min), max and (min .. "-" .. max) or (min .. "+")), false, false);
-								end
-								
-								local dist, angle = LootReserve:GetRange(unit);
-								if not dist then
+							local min, max, distText = LootReserve:GetRange(unit);
+							
+							if not min then
+								if LootReserve:CanLocate() then
 									return self:SetState("Different instance", false, false);
+								else
+									return self:SetState("Locate", false, false);
+								end
+							end
+							
+							if not CheckInteractDistance(unit, 2) then
+								if not CanLocate() then
+									return self:SetState(format("%s: %s", "Approach", distText), false, false);
 								end
 								
-								if dist &lt;= 9 and UnitInPhase(unit) then
-									return self:SetState("Different layer", false, false);
+								if UnitInPhase(unit) then
+									return self:SetState(format("%s: %s", "Wrong Layer", distText), false, false);
 								end
 								
 								if dist &lt;= 9 then
-									return self:SetState("Different elevation", false, false);
+									return self:SetState(format("%s: %s", "Above/Below", distText), false, false);
 								end
 								
-								local dbmLocator = LootReserve:CanUseDBMLocator(unit);
-								
-								local text = "Travel"
+								local prefix = "Travel"
 								if UnitIsVisible(unit) then
-									text = "Approach:"
+									prefix = "Approach:"
 								elseif dist > 20000 then
-									text = "How even"
+									prefix = "How even"
 								elseif dist > 10000 then
-									text = "Good luck"
+									prefix = "Good luck"
 								elseif dist > 500 then
 									local roundDist = LootReserve:Round(dist+50, 100);
 									if roundDist == self.lastRoundDist then
-										text = self.lastRandText;
+										prefix = self.lastRandPrefix;
 									else
-										text = self.lastRandText;
-										while text == self.lastRandText do
-											text = LootReserve.Constants.LocomotionPhrases[math.random(1, #LootReserve.Constants.LocomotionPhrases)];
+										prefix = self.lastRandPrefix;
+										while prefix == self.lastRandPrefix do
+											prefix = LootReserve.Constants.LocomotionPhrases[math.random(1, #LootReserve.Constants.LocomotionPhrases)];
 										end
 										self.lastRoundDist = roundDist;
-										self.lastRandText = text;
+										self.lastRandPrefix = prefix;
 									end
 								end
 								
 								self.Arrow:Show();
 								self.Arrow:SetRotation(angle);
-								return self:SetState(format("%s %s%.0f|r yds |TInterface\\Common\\Spacer:16|t", text, LootReserve:GetRangeColor(dist), dist), dbmLocator, dbmLocator);
+								return self:SetState(format("%s %s", prefix, distText), dbmLocator, dbmLocator);
 							end
 							
 							if not TradeFrame:IsShown() then
-								return self:SetState("Open trade", true, true);
+								return self:SetState(format("%s: %s", "Open trade", distText), true, true);
 							end
 							if not UnitIsUnit("npc", unit) then
-								return self:SetState("Wrong trader", false, false);
+								return self:SetState(format("%s: %s", "Wrong trader", distText), false, false);
 							end
 							if not LootReserve:IsItemBeingTraded(self:GetParent().Item) then
 								for i = 1, 6 do
 									if not GetTradePlayerItemInfo(i) then
-										return self:SetState("Insert item", true, true);
+										return self:SetState(format("%s: %s", "Insert item", distText), true, true);
 									end
 								end
-								return self:SetState("Finish trading", false, false);
+								return self:SetState(format("%s: %s", "Finish trade", distText), false, false);
 							end
 							if LootReserve.Server.TradeAcceptState[1] then
-								return self:SetState("Wait"), false, false;
+								return self:SetState(format("%s: %s", "Wait", distText), false, false);
 							end
 							
-							return self:SetState("Accept trade", true, LootReserveTradeFrameAutoButton:IsShown() and not LootReserveTradeFrameAutoButton.ItemsToInsert);
+							return self:SetState(format("%s: %s", "Accept trade", distText), true, LootReserveTradeFrameAutoButton:IsShown() and not LootReserveTradeFrameAutoButton.ItemsToInsert);
 						else
 							return self:SetState("Can't find item", false, false);
 						end
