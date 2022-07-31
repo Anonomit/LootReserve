@@ -3111,8 +3111,7 @@ function LootReserve.Server:PrepareRequestRoll()
                     
                     -- Filter out LootReserve messages
                     if LootReserve:IsMe(player) then
-                        local sentTime = self.SentMessages[LootReserve:FixText(text)];
-                        if sentTime and time() - sentTime < 10 then
+                        if self.SentMessages[LootReserve:FixText(text)] then
                             return;
                         end
                     end

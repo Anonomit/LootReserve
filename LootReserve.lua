@@ -299,7 +299,10 @@ function LootReserve:SendChatMessage(text, channel, target)
     local function Send(text)
         if #text > 0 then
             text = self:FixText(text);
-            self.Server.SentMessages[text] = time();
+            if self.Server.SentMessages[text] then
+                self.Server.SentMessages[text]:Cancel();
+            end
+            self.Server.SentMessages[text] = C_Timer.NewTicker(10, function() self.Server.SentMessages[text] = nil end, 1);
             if ChatThrottleLib then
                 ChatThrottleLib:SendChatMessage("NORMAL", self.Comm.Prefix, text, channel, nil, target);
             else
