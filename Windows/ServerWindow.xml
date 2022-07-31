@@ -2110,10 +2110,11 @@
 									local reserves = max - member.ReservesLeft;
 									table.insert(menuWhisperPlayers,
 									{
-										text = format("%s%s", LootReserve:ColoredPlayer(player), LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""),
 										text = format("|cFF%s[%d/%d] %s%s", reserves == 0 and "FF0000" or "FF7700", reserves, max, LootReserve:ColoredPlayer(player), LootReserve:IsPlayerOnline(player) == nil and "|cFF808080 (not in raid)|r" or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""),
 										arg1 = player,
 										func = function(info) LootReserve.Server:WhisperPlayerWithoutReserves(info.arg1); LootReserve:ReopenMenu(self, "#whisper"); end,
+										tooltipTitle = "Send Automatic Whisper",
+										tooltipText = format("Send an automatic whisper to %s to use %d |4outstanding reserve:outstanding reserves;", LootReserve:ColoredPlayer(player), member.ReservesLeft),
 									});
 								end
 							end
@@ -2121,12 +2122,12 @@
 						local menu =
 						{
 							{ text = "Players Missing Reserves", isTitle = true },
-							{ text = "Remind All", disabled = #menuWhisperPlayers == 0, func = function() LootReserve.Server:WhisperAllWithoutReserves(); end },
+							{ text = "Remind All", disabled = #menuWhisperPlayers == 0, func = function() LootReserve.Server:WhisperAllWithoutReserves(); end, tooltipText = "Send an automatic whisper to all players with outstanding reserves.|n|nWhispers will be sent very slowly to avoid being chat throttled.|n|nIf a lot players have outstanding reserves, try using Announce Instructions instead." },
 							{ text = "Remind...", arg1 = "#whisper", menuList = menuWhisperPlayers, disabled = #menuWhisperPlayers == 0 },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Misc", isTitle = true },
-							{ text = "Announce Instructions", disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.AcceptingReserves, func = function() LootReserve.Server:BroadcastInstructions(); end },
-							{ text = "Announce All Reserves", disabled = not LootReserve.Server.CurrentSession, func = function() LootReserve.Server:SendReservesList(); end },
+							{ text = "Announce Instructions", disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.AcceptingReserves, func = function() LootReserve.Server:BroadcastInstructions(); end, tooltipText = "Announce instructions to chat" },
+							{ text = "Announce All Reserves", disabled = not LootReserve.Server.CurrentSession, func = function() LootReserve.Server:SendReservesList(); end, tooltipText = format("Announce all reserves to chat%s", LootReserve.Server.CurrentSession.Settings.Blind and "|n|n|cFFFF0000Warning: Blind mode is on.|r" or "") },
 							{ text = "View Players", func = function() LootReserve.Server.MembersEdit.Window:SetShown(not LootReserve.Server.MembersEdit.Window:IsShown()); end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Cancel" },
