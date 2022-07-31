@@ -2653,13 +2653,13 @@ function LootReserve.Server:AdvanceRollPhase(item)
         if not phases or #phases <= 1 then return; end
         table.remove(phases, 1);
 
-        self:CancelRollRequest(item);
+        self:CancelRollRequest(item, nil, nil, true);
         self:RequestCustomRoll(item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil, phases);
         return true;
     end
 end
 
-function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
+function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancing)
     self.NextRollCountdown = nil;
     if self:IsRolling(item) then
         if type(item) == "number" then
@@ -2697,14 +2697,15 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory)
                 end
             else
                 self:RecordRollHistory(self.RequestedRoll);
-                if self.Settings.RemoveRecentLootAfterRolling then
+                if not advancing and self.Settings.RemoveRecentLootAfterRolling then
                     LootReserve:TableRemove(self.RecentLoot, item);
                 end
             end
         end
         
-
-        LootReserve.Comm:BroadcastRequestRoll(LootReserve.ItemCache:Item(0), { }, RequestedRoll and (RequestedRoll.Custom or RequestedRoll.RaidRoll));
+        if not advancing then
+            LootReserve.Comm:BroadcastRequestRoll(LootReserve.ItemCache:Item(0), { }, RequestedRoll and (RequestedRoll.Custom or RequestedRoll.RaidRoll));
+        end
         self.RequestedRoll = nil;
         self.SaveProfile.RequestedRoll = self.RequestedRoll;
         
