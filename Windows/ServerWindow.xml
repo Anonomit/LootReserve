@@ -1562,21 +1562,27 @@
 												end
 											end
 										end
-										local recentLootCount = 0;
+										local numRecentLootItems = 0;
+										local recentLootItemsDone = { };
 										for _, item in ipairs(LootReserve.Server.RecentLoot) do
 											if IsMasterLooter() and recentLootBlocks[item] and recentLootBlocks[item] > 0 then
 												recentLootBlocks[item] = recentLootBlocks[item] - 1;
-											else
+											elseif not recentLootItemsDone[item] then
+												recentLootItemsDone[item] = true;
 												local button = MakeItem(1, item);
+												local count = LootReserve:TableCount(LootReserve.Server.RecentLoot, item);
+												if count > 1 then
+													button.text = button.text .. format(" |cFFFFFFFFx%s|r ", count);
+												end
 												local count = LootReserve:GetTradeableItemCount(item:GetID());
 												if count > 0 then
-													button.text = button.text .. format("|cFFC0C0C0 (%d in bags)|r", count);
+													button.text = button.text .. format(" |cFFC0C0C0(%d in bags)|r", count);
 												end
 												table.insert(menu, 2 + currentLootOffset, button);
-												recentLootCount = recentLootCount + 1;
+												numRecentLootItems = numRecentLootItems + 1;
 											end
 										end
-										if recentLootCount == 0 then
+										if numRecentLootItems == 0 then
 											table.insert(menu, 2 + currentLootOffset, { text = "No Loot", disabled = true });
 										end
 										LootReserve:OpenMenu(menu, self:GetParent().Menu, self);
