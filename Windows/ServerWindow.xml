@@ -96,13 +96,6 @@
 		<Size y="16" />
 		<Layers>
 			<Layer>
-				<Texture parentKey="RedHighlight" file="Interface\QUESTFRAME\UI-QuestTitleHighlight" alphaMode="ADD" alpha="0.5">
-					<Anchors>
-						<Anchor point="TOPLEFT" x="16" />
-						<Anchor point="BOTTOMRIGHT" />
-					</Anchors>
-					<Color r="1" g="0.5" b="0" />
-				</Texture>
 				<Texture parentKey="GreenHighlight" file="Interface\QUESTFRAME\UI-QuestTitleHighlight" alphaMode="ADD" alpha="0.5">
 					<Anchors>
 						<Anchor point="TOPLEFT" x="16" />
@@ -121,6 +114,42 @@
 			</Layer>
 		</Layers>
 		<Frames>
+			<Frame parentKey="RedHighlight" >
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="BOTTOMRIGHT" />
+				</Anchors>
+				<Layers>
+					<Layer>
+						<Texture parentKey="RedHighlightTexture" file="Interface\QUESTFRAME\UI-QuestTitleHighlight" alphaMode="ADD" alpha="0.5">
+							<Anchors>
+								<Anchor point="TOPLEFT" x="16" />
+								<Anchor point="BOTTOMRIGHT" />
+							</Anchors>
+							<Color r="1" g="0.5" b="0" />
+						</Texture>
+					</Layer>
+				</Layers>
+				<Color r="1" g="0.5" b="0" />
+				<Scripts>
+					<OnUpdate>
+						local hovered = self:IsMouseOver();
+						if self.hovered ~= hovered then
+							self.hovered = hovered;
+							if hovered then
+								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+								GameTooltip:SetText(self.title);
+								for _, line in ipairs(self.text or {}) do
+									GameTooltip:AddLine(line, HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+								end
+								GameTooltip:Show()
+							elseif GameTooltip:GetOwner() == self then
+								GameTooltip:Hide()
+							end
+						end
+					</OnUpdate>
+				</Scripts>
+			</Frame>
 			<Button parentKey="ButtonDelete" hidden="true">
 				<Size x="12" y="12"/>
 				<Anchors>
@@ -168,15 +197,6 @@
 					<Anchor point="TOPLEFT" x="16" />
 					<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Roll" relativePoint="BOTTOMLEFT" />
 				</Anchors>
-				<Scripts>
-					<OnUpdate>
-						local hovered = self:IsMouseOver() and self:GetParent():GetParent():IsMouseOver();
-						if self.hovered ~= hovered then
-							self.hovered = hovered;
-							self.ButtonWhisper:SetShown(hovered);
-						end
-					</OnUpdate>
-				</Scripts>
 				<Frames>
 					<Button parentKey="WonRolls" parentArray="Buttons" hidden="true">
 						<Size x="12" y="12" />
@@ -312,17 +332,24 @@
 			<OnUpdate>
 				if self:IsProtected() and InCombatLockdown() then return; end
 				local frame = self:GetParent():GetParent();
-				if not self:IsMouseOver() or self:GetParent():GetParent().Historical then
-					self.ButtonDelete:Hide();
-					self.ButtonReroll:Hide();
-				elseif not frame.Roll then
-					self.ButtonDelete:Show();
-					self.ButtonReroll:Hide();
-				else
-					local roll = frame.Roll.Players[self.Player] and frame.Roll.Players[self.Player][self.RollNumber];
-					local isRaidRoll = frame.Roll.RaidRoll;
-					self.ButtonDelete:SetShown(roll and roll > LootReserve.Constants.RollType.NotRolled and not isRaidRoll);
-					self.ButtonReroll:SetShown(roll and roll > LootReserve.Constants.RollType.NotRolled and     isRaidRoll);
+				local hovered = self:IsMouseOver();
+				if self.hovered ~= hovered then
+					self.hovered = hovered;
+					if not hovered or self:GetParent():GetParent().Historical then
+						self.Name.ButtonWhisper:SetShown(hovered);
+						self.ButtonDelete:Hide();
+						self.ButtonReroll:Hide();
+					elseif not frame.Roll then
+						self.Name.ButtonWhisper:Show();
+						self.ButtonDelete:Show();
+						self.ButtonReroll:Hide();
+					else
+						local roll = frame.Roll.Players[self.Player] and frame.Roll.Players[self.Player][self.RollNumber];
+						local isRaidRoll = frame.Roll.RaidRoll;
+						self.Name.ButtonWhisper:Show();
+						self.ButtonDelete:SetShown(roll and roll > LootReserve.Constants.RollType.NotRolled and not isRaidRoll);
+						self.ButtonReroll:SetShown(roll and roll > LootReserve.Constants.RollType.NotRolled and     isRaidRoll);
+					end
 				end
 			</OnUpdate>
 		</Scripts>

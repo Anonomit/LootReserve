@@ -47,7 +47,13 @@ function LootReserve.Server:UpdateReserveListRolls(lockdown)
                         button.Roll:SetText(rolled and tostring(roll) or passed and "PASS" or deleted and "DEL" or "...");
                         button.Roll:SetTextColor(color.r, color.g, color.b);
                         if not frame.Historical then
-                            button.RedHighlight:SetShown(LootReserve.Server:HasAlreadyWon(button.Player, frame.Item));
+                            if LootReserve.Server:HasAlreadyWon(button.Player, frame.Item:GetID()) then
+                                button.RedHighlight.title = "Already won";
+                                button.RedHighlight.text  = {format("%s has already won %s this session.", LootReserve:ColoredPlayer(button.Player), frame.Item:GetLink())};
+                                button.RedHighlight:Show();
+                            else
+                                button.RedHighlight:Hide();
+                            end
                             button.GreenHighlight:Hide();
                         else
                             button.RedHighlight:Hide();
@@ -423,7 +429,27 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
                         button.Roll:SetText(rolled and tostring(roll) or passed and "PASS" or deleted and "DEL" or "...");
                         button.Roll:SetTextColor(color.r, color.g, color.b);
                         if not frame.Historical then
-                            button.RedHighlight:SetShown(LootReserve.Server:HasAlreadyWon(button.Player, frame.Item) or not LootReserve.ItemConditions:TestPlayer(button.Player, frame.Item:GetID(), true));
+                            button.RedHighlight:Hide();
+                            button.RedHighlight.text = nil;
+                            
+                            if LootReserve.Server:HasAlreadyWon(button.Player, frame.Item:GetID()) then
+                                button.RedHighlight.title = "Already won";
+                                button.RedHighlight.text  = {format("%s has already won %s this session.", LootReserve:ColoredPlayer(button.Player), frame.Item:GetLink())};
+                                button.RedHighlight:Show();
+                            end
+                            if (LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings or LootReserve.Server.NewSessionSettings).Equip then
+                                local playerClass = select(2, LootReserve:UnitClass(button.Player))
+                                if playerClass and not LootReserve.ItemConditions:IsItemUsable(frame.Item:GetID(), playerClass) then
+                                    local text = format("%s cannot use %s", LootReserve:ColoredPlayer(button.Player), frame.Item:GetLink());
+                                    button.RedHighlight.title = "Warning";
+                                    if not button.RedHighlight.text then
+                                        button.RedHighlight.title = "Unusable item";
+                                        button.RedHighlight.text = { };
+                                    end
+                                    table.insert(button.RedHighlight.text, format("%s cannot use %s.", LootReserve:ColoredPlayer(button.Player), frame.Item:GetLink()));
+                                    button.RedHighlight:Show();
+                                end
+                            end
                             button.GreenHighlight:Hide();
                         else
                             button.RedHighlight:Hide();

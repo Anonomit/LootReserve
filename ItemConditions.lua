@@ -389,7 +389,7 @@ function LootReserve.ItemConditions:TestPlayer(player, itemID, server)
         -- Show all items until connected to a server
         return true;
     end
-    local playerClass, playerClassID = select(2, LootReserve:UnitClass(player))
+    local playerClass, playerClassID = select(2, LootReserve:UnitClass(player));
 
     local conditions = self:Get(itemID, server);
     local equip
