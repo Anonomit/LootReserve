@@ -911,34 +911,29 @@ function LootReserve:CanUseDBMLocator(unitID)
     return DBM and DBM.ReleaseRevision > 20220618000000 and self:CanLocate() and UnitIsVisible(unitID) and true or false;
 end
 
-function LootReserve:Locate(unitID)
-    if not self:CanLocate() then return; end
+function LootReserve:GetContinent(unitID)
+    local mapID = C_Map.GetBestMapForUnit(unitID)
+    if not mapID then return; end
     
-    local playerMapID = C_Map.GetBestMapForUnit("player")
-    local targetMapID = C_Map.GetBestMapForUnit(unitID)
-    if not playerMapID or not targetMapID then return; end
+    local mapPos = C_Map.GetPlayerMapPosition(mapID, unitID)
+    if not mapPos then return; end
     
-    local playerMapPos = C_Map.GetPlayerMapPosition(playerMapID, "player")
-    local targetMapPos = C_Map.GetPlayerMapPosition(targetMapID, unitID)
-    if not playerMapPos or not targetMapPos then return; end
+    local continent, worldPos = C_Map.GetWorldPosFromMapPos(mapID, mapPos)
+    if not continent or not worldPos then return; end
     
-    local playerContinent, playerPos = C_Map.GetWorldPosFromMapPos(playerMapID, playerMapPos)
-    local targetContinent, targetPos = C_Map.GetWorldPosFromMapPos(targetMapID, targetMapPos)
-    if not playerContinent or playerContinent ~= targetContinent or not playerPos or not targetPos then return; end
-    
-    return playerPos.x, playerPos.y, targetPos.x, targetPos.y;
+    return continent, worldPos;
 end
 
-function LootReserve:GetRange(unitID)
-    local x1, y1, x2, y2 = self:Locate(unitID);
-    if not x1 or not y1 or not x2 or not y2 then
+function LootReserve:GetRange(unitID, playerPos, targetPos)
+    if not playerPos or not targetPos then
         local min, max = self.LibRangeCheck:getRange(unitID);
         if not min then
             return nil, nil, nil, nil;
         end
-        return min, max, format("%s%s|r yds", self:GetRangeColor(min), max and (min.."-"..max) or (min.."+"));
+        return min, max, nil, format("%s%s|r yds", self:GetRangeColor(min), max and (min.."-"..max) or (min.."+"));
     end
     
+    local x1, y1, x2, y2 = playerPos.x, playerPos.y, targetPos.x, targetPos.y;
     local facing = GetPlayerFacing();
     if not facing then return; end
     
@@ -946,7 +941,7 @@ function LootReserve:GetRange(unitID)
     local dy    = y2 - y1;
     local dist  = math.sqrt(dx * dx + dy * dy);
     local angle = math.atan2(dy, dx) - facing;
-    return dist, nil, format("%s%.0f|r yd%s |TInterface\\Common\\Spacer:16|t", self:GetRangeColor(dist), dist, dist == 1 and "" or "s");
+    return dist, nil, angle, format("%s%.0f|r yd%s |TInterface\\Common\\Spacer:16|t", self:GetRangeColor(dist), dist, dist == 1 and "" or "s");
 end
 
 function LootReserve:GetRangeColor(range)

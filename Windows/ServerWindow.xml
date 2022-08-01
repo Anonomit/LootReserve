@@ -677,8 +677,6 @@
 						self.Arrow:Hide();
 						local unit = self.Unit;
 						
-						-- figure out what to do if the winner is me
-						
 						if not unit or not UnitExists(unit) then
 							return self:SetState("Can't find winner", false, false);
 						end
@@ -703,38 +701,43 @@
 								return self:SetState("Winner is dead", false, false);
 							end
 							
-							local min, max, distText = LootReserve:GetRange(unit);
 							
-							if not min then
-								if LootReserve:CanLocate() then
-									return self:SetState("Different instance", false, false);
-								else
-									return self:SetState("Locate", false, false);
-								end
+							local playerContinent, playerPos = LootReserve:GetContinent("player");
+							local targetContinent, targetPos = LootReserve:GetContinent(unit);
+							
+							if playerContinent ~= targetContinent then
+								return self:SetState("Different instance", false, false);
+							end
+							
+							local min, max, angle, distText = LootReserve:GetRange(unit, playerPos, targetPos);
+							
+							if angle then
+								self.Arrow:Show();
+								self.Arrow:SetRotation(angle);
 							end
 							
 							if not CheckInteractDistance(unit, 2) then
-								if not CanLocate() then
-									return self:SetState(format("%s: %s", "Approach", distText), false, false);
+								if not LootReserve:CanLocate() then
+									return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Approach" or "Travel", distText), false, false);
 								end
 								
-								if UnitInPhase(unit) then
+								if not UnitInPhase(unit) or (not UnitIsVisible(unit) and (max or min) &lt;= 9) then
 									return self:SetState(format("%s: %s", "Wrong Layer", distText), false, false);
 								end
 								
-								if dist &lt;= 9 then
+								if (max or min) &lt;= 9 then
 									return self:SetState(format("%s: %s", "Above/Below", distText), false, false);
 								end
 								
 								local prefix = "Travel"
 								if UnitIsVisible(unit) then
 									prefix = "Approach:"
-								elseif dist > 20000 then
-									prefix = "How even"
-								elseif dist > 10000 then
-									prefix = "Good luck"
-								elseif dist > 500 then
-									local roundDist = LootReserve:Round(dist+50, 100);
+								elseif min > 20000 then
+									prefix = "LOL:"
+								elseif min > 10000 then
+									prefix = "Good luck:"
+								elseif min > 500 then
+									local roundDist = LootReserve:Round(min+50, 100);
 									if roundDist == self.lastRoundDist then
 										prefix = self.lastRandPrefix;
 									else
@@ -747,9 +750,9 @@
 									end
 								end
 								
-								self.Arrow:Show();
-								self.Arrow:SetRotation(angle);
-								return self:SetState(format("%s %s", prefix, distText), dbmLocator, dbmLocator);
+								local dbmLocator = LootReserve:CanUseDBMLocator(unit);
+								
+								return self:SetState(format("%s %s", prefix, distText), dbmLocator, false);
 							end
 							
 							if not TradeFrame:IsShown() then
