@@ -184,6 +184,7 @@ StaticPopupDialogs["LOOTRESERVE_ACCEPT_ALL_ROLL_FORMATS_ENABLE"] =
     hideOnEscape = 1,
     OnAccept = function(self)
         LootReserve.Server.Settings.AcceptAllRollFormats = true;
+        CloseMenus();
     end,
 };
 
@@ -199,6 +200,7 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_GLOBAL_PROFILE_ENABLE"] =
         LootReserveGlobalSave.Server.GlobalProfile = LootReserveCharacterSave.Server;
         LootReserve.Server.Settings.UseGlobalProfile = true;
         LootReserve.Server:Load();
+        CloseMenus();
     end,
 };
 
@@ -214,6 +216,7 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_GLOBAL_PROFILE_DISABLE"] =
         LootReserveCharacterSave.Server = LootReserveGlobalSave.Server.GlobalProfile;
         LootReserveGlobalSave.Server.GlobalProfile = nil;
         LootReserve.Server.Settings.UseGlobalProfile = false;
+        CloseMenus();
         LootReserve.Server:Load();
         LootReserve.Server:Startup();
         LootReserve.Server:UpdateReserveList();

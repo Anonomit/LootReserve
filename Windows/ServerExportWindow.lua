@@ -66,7 +66,7 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
             end
         end
         if #missing > 0 then
-            text = format("Loading item names...\nRemaining: %d\n\nInstall/Update ItemCache to remember database between sessions...", #missing);
+            text = format("Loading item names...\nRemaining: %d\n\nInstall/Update ItemCache to remember the item database between sessions...", #missing);
         elseif text ~= "" then
             text = "Time,Item ID,Item Name,Winner" .. text;
         end

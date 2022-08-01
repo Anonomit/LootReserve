@@ -588,7 +588,7 @@
 								});
 								table.insert(menu,
 								{
-									text = "Install/Update ItemCache to remember database between sessions",
+									text = "Install/Update ItemCache to remember the item database between sessions",
 									disabled = true,
 								});
 								if not LootReserve.Server.PendingLootTextEdit then
