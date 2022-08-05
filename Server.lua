@@ -465,6 +465,15 @@ function LootReserve.Server:Load()
             self.Settings.ChatAsRaidWarning[key] = true;
         end
     end
+    
+    -- 2021-08-28: Convert active session LootCategory to LootCategories
+    -- Date is late because the check was added late
+    if versionSave < "2022-05-21" then
+        if LootReserve.Server.CurrentSession and not LootReserve.Server.CurrentSession.Settings.LootCategories then
+            LootReserve.Server.CurrentSession.Settings.LootCategories = {LootReserve.Server.CurrentSession.Settings.LootCategory};
+            LootReserve.Server.NewSessionSettings.LootCategories = {LootReserve.Server.CurrentSession.Settings.LootCategory};
+        end
+    end
 
     -- 2021-02-12: Upgrade item conditions
     if versionGlobal < "2021-02-12" then
@@ -531,15 +540,6 @@ function LootReserve.Server:Load()
                     roll.Players = players;
                 end
             end
-        end
-    end
-    
-    -- 2021-08-28: Convert active session LootCategory to LootCategories
-    -- Date is late because the check was added late
-    if versionSave < "2022-05-21" then
-        if LootReserve.Server.CurrentSession and not LootReserve.Server.CurrentSession.Settings.LootCategories then
-            LootReserve.Server.CurrentSession.Settings.LootCategories = {LootReserve.Server.CurrentSession.Settings.LootCategory};
-            LootReserve.Server.NewSessionSettings.LootCategories = {LootReserve.Server.CurrentSession.Settings.LootCategory};
         end
     end
     
@@ -668,6 +668,13 @@ function LootReserve.Server:Load()
         local fields = { "Settings", "StartTime", "Duration", "DurationEndTimestamp", "Members", "WonItems", "ItemReserves", "LootTracking" };
         for _, field in ipairs(fields) do
             verifySessionField(field);
+        end
+        for _, category in ipairs(self.CurrentSession.Settings.LootCategories) do
+            if not LootReserve.Data.Categories[category] then
+                self.CurrentSession = nil;
+                self.SaveProfile.CurrentSession = nil;
+                break;
+            end
         end
     end
 
