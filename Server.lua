@@ -1159,7 +1159,7 @@ function LootReserve.Server:PrepareSession()
                     for _, player in ipairs(self.CurrentSession.WonItems[tokenID or itemID].Players) do
                         playerCounts[player] = playerCounts[player] and playerCounts[player] + 1 or 1;
                         local found = 0;
-                        for _, roll in ipairs(self.CurrentSession.Members[player].WonRolls) do
+                        for _, roll in ipairs(self.CurrentSession.Members[player] and self.CurrentSession.Members[player].WonRolls or { }) do
                             if (tokenID or itemID) == LootReserve.ItemCache:Item(roll.Item):GetID() then
                                 found = found + 1;
                                 if found == playerCounts[player] then
@@ -2683,6 +2683,8 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
         end
         
         local RequestedRoll = self.RequestedRoll;
+        self.RequestedRoll = nil;
+        self.SaveProfile.RequestedRoll = self.RequestedRoll;
 
         local uniqueWinners = { };
         for _, winner in ipairs(winners or { }) do
@@ -2690,16 +2692,17 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
         end
         if not noHistory then
             if winners then
+                local oldRoll = RequestedRoll;
                 for _, winner in ipairs(winners) do
-                    self:RecordRollHistory(self.RequestedRoll, winner);
-                    self.RequestedRoll = nil;
-                    self:ContinueRoll(self.RollHistory[#self.RollHistory], true);
+                    local Roll, RequestedRoll = self:GetContinueRollData(oldRoll);
+                    self:RecordRollHistory(Roll, winner);
+                    oldRoll = #self.RollHistory;
                     if self.Settings.RemoveRecentLootAfterRolling then
                         LootReserve:TableRemove(self.RecentLoot, item);
                     end
                 end
             else
-                self:RecordRollHistory(self.RequestedRoll);
+                self:RecordRollHistory(RequestedRoll);
                 if not advancing and self.Settings.RemoveRecentLootAfterRolling then
                     LootReserve:TableRemove(self.RecentLoot, item);
                 end
@@ -2709,8 +2712,6 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
         if not advancing then
             LootReserve.Comm:BroadcastRequestRoll(LootReserve.ItemCache:Item(0), { }, RequestedRoll and (RequestedRoll.Custom or RequestedRoll.RaidRoll));
         end
-        self.RequestedRoll = nil;
-        self.SaveProfile.RequestedRoll = self.RequestedRoll;
         
         -- Remove winners' reserves
         if self.CurrentSession and not RequestedRoll.Custom then
@@ -2794,12 +2795,7 @@ function LootReserve.Server:RecordRollHistory(roll, winner, excludePlayers)
     end
 end
 
-function LootReserve.Server:ContinueRoll(oldRoll, noFill)
-    if self.RequestedRoll then
-        LootReserve:ShowError("There's a roll in progress");
-        return;
-    end
-    
+function LootReserve.Server:GetContinueRollData(oldRoll)
     -- Copy historical roll into RequestedRoll
     local Roll = LootReserve:Deepcopy(oldRoll);
     Roll.Item = oldRoll.Item;
@@ -2820,19 +2816,17 @@ function LootReserve.Server:ContinueRoll(oldRoll, noFill)
       Roll.Players[player] = nil;
     end
     
-    self.RequestedRoll = Roll;
-    self.SaveProfile.RequestedRoll = Roll;
+    local RequestedRoll = true;
     if Roll.Custom then
         for _, winner in ipairs(Roll.Winners or {}) do
             Roll.Players[winner] = nil;
         end
         if not next(Roll.Players) then
-            self.RequestedRoll = nil;
-            self.SaveProfile.RequestedRoll = nil;
             local phases = Roll.Phases;
             if phases and #phases > 1 then
                 table.remove(phases, 1);
-                self:RequestCustomRoll(Roll.Item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil, phases);
+            else
+                RequestedRoll = nil;
             end
         end
     elseif Roll.Winners then
@@ -2856,16 +2850,32 @@ function LootReserve.Server:ContinueRoll(oldRoll, noFill)
                 end
             end
             if not next(Roll.Players) then
-                self.RequestedRoll = nil;
-                self.SaveProfile.RequestedRoll = nil;
+                RequestedRoll = nil;
             end
         else
-            self.RequestedRoll = nil;
-            self.SaveProfile.RequestedRoll = nil;
+            RequestedRoll = nil;
         end
     end
     Roll.Winners = nil;
     Roll.Owed    = nil;
+    
+    return Roll, RequestedRoll;
+end
+
+function LootReserve.Server:ContinueRoll(oldRoll, noFill)
+    if self.RequestedRoll then
+        LootReserve:ShowError("There's a roll in progress");
+        return;
+    end
+    
+    local Roll, RequestedRoll = self:GetContinueRollData(oldRoll);
+    if RequestedRoll then
+        self.RequestedRoll             = Roll;
+        self.SaveProfile.RequestedRoll = Roll;
+    end
+    if Roll.Phases then
+        self:RequestCustomRoll(Roll.Item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil, Roll.Phases);
+    end
     
     -- Fill the item frame with the previously reserved item, or empty it
     for _, panelRolls in ipairs({self.Window.PanelRollsLockdown, self.Window.PanelRolls}) do
