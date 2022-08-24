@@ -148,7 +148,11 @@
 					</OnLoad>
 					<OnClick>
 						if button == "LeftButton" then
-							HandleModifiedItemClick(self:GetParent():GetParent().Item:GetLink());
+							local item = self:GetParent():GetParent().Item;
+							if type(item) == "number" then
+								item = LootReserve.ItemCache(item);
+							end
+							item:OnCache(function() HandleModifiedItemClick(item:GetLink()); end)
 						end
 					</OnClick>
 					<OnEnter>
