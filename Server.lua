@@ -2699,13 +2699,17 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
         end
         if not noHistory then
             if winners then
-                local oldRoll = RequestedRoll;
-                for _, winner in ipairs(winners) do
-                    local Roll, RequestedRoll = self:GetContinueRollData(oldRoll);
-                    self:RecordRollHistory(Roll, winner);
-                    oldRoll = #self.RollHistory;
-                    if self.Settings.RemoveRecentLootAfterRolling then
-                        LootReserve:TableRemove(self.RecentLoot, item);
+                self:RecordRollHistory(RequestedRoll, winners[1]);
+                if self.Settings.RemoveRecentLootAfterRolling then
+                    LootReserve:TableRemove(self.RecentLoot, item);
+                end
+                if #winners > 1 then
+                    for i = 2, #winners do
+                        local Roll, RequestedRoll = self:GetContinueRollData(self.RollHistory[#self.RollHistory]);
+                        self:RecordRollHistory(Roll, winners[i]);
+                        if self.Settings.RemoveRecentLootAfterRolling then
+                            LootReserve:TableRemove(self.RecentLoot, item);
+                        end
                     end
                 end
             else
@@ -2879,9 +2883,8 @@ function LootReserve.Server:ContinueRoll(oldRoll, noFill)
     if RequestedRoll then
         self.RequestedRoll             = Roll;
         self.SaveProfile.RequestedRoll = Roll;
-    end
-    if Roll.Phases then
-        self:RequestCustomRoll(Roll.Item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil, Roll.Phases);
+    elseif Roll.Phases then
+        self:RequestCustomRoll(Roll.Item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil, Roll.Phases, next(Roll.Players) and Roll.Players or nil);
     end
     
     -- Fill the item frame with the previously reserved item, or empty it
