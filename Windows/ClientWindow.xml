@@ -486,7 +486,7 @@
 					<OnEnter>
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 						GameTooltip:SetText("Opt In");
-						GameTooltip:AddLine("This indicates that have not completed reserving.|n|nYou may once again be notified to complete your reserves.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
+						GameTooltip:AddLine("This indicates that you have not completed reserving.|n|nYou may once again be notified to complete your reserves.", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
 						GameTooltip:Show();
 					</OnEnter>
 					<OnLeave function="GameTooltip_Hide" />
