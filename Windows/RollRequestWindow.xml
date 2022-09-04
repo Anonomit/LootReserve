@@ -157,7 +157,7 @@
 				if roll and roll.Duration and roll.Duration > 0 then
 					if roll.Duration > elapsed then
 						roll.Duration = roll.Duration - elapsed;
-					else
+					elseif not roll.Persistent then
 						LootReserve.Client.RollRequest = nil;
 						self:Hide();
 					end

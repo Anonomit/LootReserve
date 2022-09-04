@@ -1,6 +1,6 @@
 local LibCustomGlow = LibStub("LibCustomGlow-1.0");
 
-local function RollRequested(self, sender, item, players, custom, duration, maxDuration, phase, example)
+local function RollRequested(self, sender, item, players, custom, duration, maxDuration, phase, acceptRollsAfterTimerEnded, example)
     local frame = LootReserveRollRequestWindow;
 
     if LibCustomGlow then
@@ -39,11 +39,12 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
         Sender      = sender,
         Item        = item,
         Custom      = custom or nil,
-        Duration    = duration and duration > 0 and duration or nil,
+        Duration    = duration,
         MaxDuration = maxDuration and maxDuration > 0 and maxDuration or nil,
         Phase       = phase,
         Example     = example,
         Count       = myCount,
+        Persistent  = acceptRollsAfterTimerEnded,
     };
     local roll = self.RollRequest;
 

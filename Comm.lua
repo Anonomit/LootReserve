@@ -225,7 +225,8 @@ LootReserve.Comm.Handlers[Opcodes.Hello] = function(sender)
                 end
             end
         end
-        LootReserve.Comm:SendRequestRoll(sender, LootReserve.Server.RequestedRoll.Item, players, LootReserve.Server.RequestedRoll.Custom, LootReserve.Server.RequestedRoll.Duration, LootReserve.Server.RequestedRoll.MaxDuration);
+        local Roll = LootReserve.Server.RequestedRoll
+        LootReserve.Comm:SendRequestRoll(sender, Roll.Item, players, Roll.Custom, Roll.Duration, Roll.MaxDuration, Roll.Phases and Roll.Phases[1] or "");
     end
 end
 
@@ -704,15 +705,17 @@ function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duratio
         custom == true,
         format("%.2f", duration or 0),
         maxDuration or 0,
-        phase or "");
+        phase or "",
+        LootReserve.Server.Settings.AcceptRollsAfterTimerEnded);
 end
-LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phase)
+LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phase, acceptRollsAfterTimerEnded)
     local id, suffix = strsplit(",", item);
     item = LootReserve.ItemCache:Item(tonumber(id), tonumber(suffix));
     custom = tonumber(custom) == 1;
     duration = tonumber(duration);
     maxDuration = tonumber(maxDuration);
     phase = phase and #phase > 0 and phase or nil;
+    acceptRollsAfterTimerEnded = tonumber(acceptRollsAfterTimerEnded) == 1;
 
     if LootReserve.Client.SessionServer == sender or custom then
         if #players > 0 then
@@ -720,7 +723,7 @@ LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players,
         else
             players = { };
         end
-        LootReserve.Client:RollRequested(sender, item, players, custom, duration, maxDuration, phase);
+        LootReserve.Client:RollRequested(sender, item, players, custom, duration, maxDuration, phase, acceptRollsAfterTimerEnded);
     end
 end
 

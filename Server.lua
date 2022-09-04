@@ -52,6 +52,7 @@ LootReserve.Server =
         RollHistoryHideNotOwed          = false,
         RollMasterLoot                  = true,
         AcceptAllRollFormats            = false,
+        AcceptRollsAfterTimerEnded      = false,
         WinnerReservesRemoval           = LootReserve.Constants.WinnerReservesRemoval.Smart,
         ItemConditions                  = { },
         CollapsedExpansions             = { },
@@ -2870,6 +2871,9 @@ function LootReserve.Server:GetContinueRollData(oldRoll)
     Roll.Winners = nil;
     Roll.Owed    = nil;
     
+    Roll.MaxDuration = self.Settings.RollLimitDuration and self.Settings.RollDuration or nil
+    Roll.Duration    = Roll.MaxDuration and 0 or nil
+    
     return Roll, RequestedRoll;
 end
 
@@ -2902,7 +2906,7 @@ function LootReserve.Server:CanRoll(player)
     -- Roll must exist
     if not self.RequestedRoll then return false; end
     -- Roll must not have expired yet
-    if self.RequestedRoll.MaxDuration and self.RequestedRoll.Duration == 0 then return false; end
+    if self.RequestedRoll.MaxDuration and self.RequestedRoll.Duration == 0 and not self.Settings.AcceptRollsAfterTimerEnded then return false; end
     -- Player must be online and in raid
     if not LootReserve:IsPlayerOnline(player) then return false; end
     -- Player must be allowed to roll if the roll is limited to specific players

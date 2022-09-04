@@ -1223,6 +1223,7 @@
 							return format("%d:%02d", math.floor(time / 60), time % 60);
 						end
 						local durationMenu = { };
+						table.insert(durationMenu, { text = "Duration", isTitle = true });
 						for _, time in ipairs({ 10, 15, 20, 30, 45, 60, 90, 120, 180, 240, 300, 600 }) do
 							table.insert(durationMenu,
 							{
@@ -1232,6 +1233,14 @@
 								checked = LootReserve.Server.Settings.RollDuration == time,
 							});
 						end
+						table.insert(durationMenu, LootReserve:MakeMenuSeparator());
+							table.insert(durationMenu,
+							{
+								text = "Accept Late Rolls",
+								tooltipText = "Accept rolls even if the duration has ended.",
+								checked = LootReserve.Server.Settings.AcceptRollsAfterTimerEnded,
+								func = function(_, _, _, checked) LootReserve.Server.Settings.AcceptRollsAfterTimerEnded = checked; LootReserve:ReopenMenu(self, "#duration"); end,
+							});
 						table.insert(durationMenu, LootReserve:MakeMenuSeparator());
 						table.insert(durationMenu, { text = "Countdown", isTitle = true });
 						for _, time in ipairs({ 0, 3, 5, 10 }) do
