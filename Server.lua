@@ -878,7 +878,13 @@ function LootReserve.Server:PrepareLootTracking()
         if item:GetStackSize() > 1 then
             LootReserve:TableRemove(self.RecentLoot, item);
         end
-        table.insert(self.RecentLoot, item);
+        local count = 1;
+        while LootReserve:TableRemove(self.RecentLoot, item) do
+            count = count + 1;
+        end
+        for i = 1, count do
+            table.insert(self.RecentLoot, item);
+        end
         while #self.RecentLoot > self.Settings.MaxRecentLoot do
             table.remove(self.RecentLoot, 1);
         end

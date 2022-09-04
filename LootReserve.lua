@@ -991,11 +991,10 @@ end
 function LootReserve:TableRemove(tbl, val)
     for index, i in ipairs(tbl) do
         if i == val then
-            table.remove(tbl, index);
-            return true;
+            return table.remove(tbl, index);
         end
     end
-    return false;
+    return nil;
 end
 
 function LootReserve:TableCount(tbl, val)
