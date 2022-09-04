@@ -135,7 +135,7 @@ function LootReserve.Client:UpdateLootList()
     local missing     = { };
     local missingLoad = { };
     local function createFrame(item, source)
-        if not item:IsCached() then
+        if item:GetID() ~= 0 and not item:IsCached() then
             return;
         end
         
