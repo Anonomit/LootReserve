@@ -147,67 +147,6 @@ end
 
 
 
-local UNUSABLE_EQUIPMENT = { };
-
-local armorClasses = {"Miscellaneous", "Cloth", "Leather", "Mail", "Shields", "Plate", "Librams", "Idols", "Totems"};
-
-local usableArmor = {
-    WARRIOR = {Leather = true, Mail = true, Plate = true, Shields = true},
-    ROGUE   = {Leather = true},
-    MAGE    = {},
-    PRIEST  = {},
-    WARLOCK = {},
-    HUNTER  = {Leather = true, Mail = true},
-    DRUID   = {Leather = true, Idols = true},
-    SHAMAN  = {Leather = true, Mail = true, Shields = true, Totems = true},
-    PALADIN = {Leather = true, Mail = true, Plate = true, Shields = true, Librams = true},
-};
-for _, armorTypes in pairs(usableArmor) do
-    armorTypes.Miscellaneous = true;
-    armorTypes.Cloth = true;
-end
-for class in pairs(usableArmor) do
-    UNUSABLE_EQUIPMENT[class] = {
-        [ARMOR]  = {},
-        [WEAPON] = {},
-    };
-    for _, armorType in ipairs(armorClasses) do
-        UNUSABLE_EQUIPMENT[class][ARMOR][armorType] = not usableArmor[class][armorType];
-    end
-end
-
-local function setClassWeapons(class, ...)
-    for _, weapon in ipairs{...} do
-        UNUSABLE_EQUIPMENT[class][WEAPON][weapon] = nil;
-    end
-end
-
-for class in pairs(usableArmor) do
-    for _, weapon in ipairs{"Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
-                            "Two-Handed Maces", "One-Handed Maces", "Polearms", "Staves", "Daggers",
-                            "Fist Weapons", "Bows", "Crossbows", "Guns", "Thrown", "Wands", "Relic"} do
-        UNUSABLE_EQUIPMENT[class][WEAPON][weapon] = true;
-    end
-end
-
-setClassWeapons("DRUID",   "Two-Handed Maces", "One-Handed Maces", "Staves", "Daggers", "Fist Weapons", "Relic");
-setClassWeapons("HUNTER",  "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
-                           "Polearms", "Staves", "Daggers", "Fist Weapons", "Bows", 
-                           "Crossbows", "Guns", "Thrown");
-setClassWeapons("MAGE",    "One-Handed Swords", "Staves", "Daggers", "Wands");
-setClassWeapons("PALADIN", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
-                           "Two-Handed Maces", "One-Handed Maces", "Polearms", "Relic");
-setClassWeapons("PRIEST",  "One-Handed Maces", "Staves", "Daggers", "Wands");
-setClassWeapons("ROGUE",   "One-Handed Swords", "One-Handed Maces", "Daggers", "Fist Weapons",
-                           "Bows", "Crossbows", "Guns", "Thrown");
-setClassWeapons("SHAMAN",  "Two-Handed Axes", "One-Handed Axes", "Two-Handed Maces", "One-Handed Maces",
-                           "Staves", "Daggers", "Fist Weapons", "Relic");
-setClassWeapons("WARLOCK", "One-Handed Swords", "Staves", "Daggers", "Wands");
-setClassWeapons("WARRIOR", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
-                           "Two-Handed Maces", "One-Handed Maces", "Polearms", "Staves", "Daggers", "Fist Weapons", 
-                           "Bows", "Crossbows", "Guns", "Thrown");
-
-
 local function IsItemUsable(itemID, playerClass, isMe)
     local numOwned;
     if isMe then
@@ -216,16 +155,11 @@ local function IsItemUsable(itemID, playerClass, isMe)
     
     local item = LootReserve.ItemCache:Item(itemID);
     if not item:Cache():IsCached() then
-        return true, true;
+        return item:IsUsableBy(playerClass), true;
     end
     
     -- If item is Armor or Weapon then fail if class cannot equip it
-    local itemType, itemSubType = item:GetTypeSubType();
-    if UNUSABLE_EQUIPMENT[playerClass][itemType] then
-        if UNUSABLE_EQUIPMENT[playerClass][itemType][itemSubType] then
-           return false; 
-        end
-    end
+    if not item:IsUsableBy(playerClass) then return false end
     
     -- If item starts a quest, make sure the quest is not completed and I do not already own the item
     -- If item requires a quest to loot, make sure the quest is not completed, I am on it, and I do not already own the item

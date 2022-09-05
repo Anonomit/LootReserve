@@ -35,31 +35,86 @@ end
 
 
 
-local assert            = assert
-local type              = type
-local next              = next
-local ipairs            = ipairs
-local pairs             = pairs
-local getmetatable      = getmetatable
-local setmetatable      = setmetatable
-local tonumber          = tonumber
+local assert       = assert
+local type         = type
+local next         = next
+local ipairs       = ipairs
+local pairs        = pairs
+local getmetatable = getmetatable
+local setmetatable = setmetatable
+local tonumber     = tonumber
 
-local format            = format
-local strsplit          = strsplit
-local wipe              = wipe
-local GetMouseFocus     = GetMouseFocus
-local DoesItemExistByID = C_Item.DoesItemExistByID
-local GetItemInfo       = GetItemInfo -- removes the need to bypass own hook
-local UnitExists        = UnitExists
-local UnitClass         = UnitClass
+local format             = format
+local strsplit           = strsplit
+local wipe               = wipe
+local GetMouseFocus      = GetMouseFocus
+local DoesItemExistByID  = C_Item.DoesItemExistByID
+local GetItemInfo        = GetItemInfo -- removes the need to bypass own hook
+local GetItemInfoInstant = GetItemInfoInstant
+local UnitExists         = UnitExists
+local UnitClass          = UnitClass
 
-local strmatch          = string.match
-local strfind           = string.find
-local strgmatch         = string.gmatch
-local strgsub           = string.gsub
-local tblinsert         = table.insert
-local tblremove         = table.remove
-local floor             = math.floor
+local strmatch  = string.match
+local strfind   = string.find
+local strgmatch = string.gmatch
+local strgsub   = string.gsub
+local tblinsert = table.insert
+local tblremove = table.remove
+local floor     = math.floor
+
+
+
+function Addon:MakeLookupTable(t, val, keepOrigVals)
+  local ValFunc
+  if val ~= nil then
+    if type(val) == "function" then
+      ValFunc = val
+    else
+      ValFunc = function() return val end
+    end
+  end
+  local new = {}
+  for k, v in next, t, nil do
+    if ValFunc then
+      new[v] = ValFunc(v, k, t)
+    else
+      new[v] = k
+    end
+    if keepOrigVals and new[k] == nil then
+      new[k] = v
+    end
+  end
+  return new
+end
+
+
+
+do
+  Addon.expansions = {
+    retail  = 9,
+    wrath   = 3,
+    wotlk   = 3,
+    tbc     = 2,
+    bcc     = 2,
+    classic = 1,
+  }
+  Addon.expansionLevel = tonumber(GetBuildInfo():match"^(%d+)%.")
+  if Addon.expansionLevel >= Addon.expansions.retail then
+    Addon.expansionName = "retail"
+  elseif Addon.expansionLevel >= Addon.expansions.wrath then
+    Addon.expansionName = "wrath"
+  elseif Addon.expansionLevel == Addon.expansions.tbc then
+    Addon.expansionName = "tbc"
+  elseif Addon.expansionLevel == Addon.expansions.classic then
+    Addon.expansionName = "classic"
+  end
+  Addon.isRetail  = Addon.expansionName == "retail"
+  Addon.isWrath   = Addon.expansionName == "wrath"
+  Addon.isTBC     = Addon.expansionName == "tbc"
+  Addon.isClassic = Addon.expansionName == "classic"
+end
+
+local MY_CLASS = select(2, UnitClassBase"player")
 
 
 
@@ -123,8 +178,6 @@ function Addon:ResetGlobalOption(...)
 end
 
 
-local UNUSABLE_EQUIPMENT = {}
-
 local CLASS_MAP_TO_ID = {}
 for i = 1, GetNumClasses() do
   local name, file, id = GetClassInfo(i)
@@ -136,333 +189,79 @@ for i = 1, GetNumClasses() do
   end
 end
   
+
+local IsItemUsable, IsItemUnusable
 do
-  -- these are constants, not normal translations
-  -- they are not open to interpretation, and are required whether the library is run standalone or embedded
-  -- this is why they are not in a separate locale file
-  local localeSubTypes = {
-    ["ptBR"] = {
-      ["Totems"] = "Totens",
-      ["Librams"] = "Incunábulos",
-      ["Thrown"] = "Bestas",
-      ["Idols"] = "Ídolos",
-      ["Crossbows"] = "Arremesso",
-      ["Plate"] = "Placas",
-      ["One-Handed Maces"] = "Maças de Uma Mão",
-      ["Polearms"] = "Armas de Haste",
-      ["One-Handed Axes"] = "Machados de Uma Mão",
-      ["Shields"] = "Escudos",
-      ["Daggers"] = "Adagas",
-      ["Mail"] = "Malha",
-      ["Bows"] = "Arcos",
-      ["Two-Handed Swords"] = "Espadas de Duas Mãos",
-      ["Staves"] = "Báculos",
-      ["Leather"] = "Couro",
-      ["One-Handed Swords"] = "Espadas de Uma Mão",
-      ["Guns"] = "Armas de Fogo",
-      ["Fist Weapons"] = "Armas de punho",
-      ["Cloth"] = "Tecido",
-      ["Wands"] = "Varinhas",
-      ["Two-Handed Maces"] = "Maças de Duas Mãos",
-      ["Two-Handed Axes"] = "Machados de Duas Mãos",
-    },
-    ["ruRU"] = {
-      ["Totems"] = "Тотемы",
-      ["Librams"] = "Манускрипты",
-      ["Thrown"] = "Арбалеты",
-      ["Idols"] = "Идолы",
-      ["Crossbows"] = "Метательное оружие",
-      ["Plate"] = "Латы",
-      ["One-Handed Maces"] = "Одноручное ударное оружие",
-      ["Polearms"] = "Древковое оружие",
-      ["One-Handed Axes"] = "Одноручные топоры",
-      ["Shields"] = "Щиты",
-      ["Daggers"] = "Кинжалы",
-      ["Mail"] = "Кольчуга",
-      ["Bows"] = "Луки",
-      ["Two-Handed Swords"] = "Двуручные мечи",
-      ["Staves"] = "Посохи",
-      ["Leather"] = "Кожа",
-      ["One-Handed Swords"] = "Одноручные мечи",
-      ["Guns"] = "Ружья",
-      ["Fist Weapons"] = "Кистевое оружие",
-      ["Cloth"] = "Ткань",
-      ["Wands"] = "Жезлы",
-      ["Two-Handed Maces"] = "Двуручное ударное оружие",
-      ["Two-Handed Axes"] = "Двуручные топоры",
-    },
-    ["frFR"] = {
-      ["Totems"] = "Totems",
-      ["Librams"] = "Librams",
-      ["Thrown"] = "Arbalètes",
-      ["Idols"] = "Idoles",
-      ["Crossbows"] = "Armes de jet",
-      ["Plate"] = "Plaques",
-      ["One-Handed Maces"] = "Masses à une main",
-      ["Polearms"] = "Armes d'hast",
-      ["Two-Handed Maces"] = "Masses à deux mains",
-      ["Shields"] = "Boucliers",
-      ["Bows"] = "Arcs",
-      ["Cloth"] = "Tissu",
-      ["Daggers"] = "Dagues",
-      ["Two-Handed Swords"] = "Epées à deux mains",
-      ["Staves"] = "Bâtons",
-      ["Leather"] = "Cuir",
-      ["One-Handed Swords"] = "Epées à une main",
-      ["Guns"] = "Fusils",
-      ["Fist Weapons"] = "Armes de pugilat",
-      ["Mail"] = "Mailles",
-      ["Wands"] = "Baguettes",
-      ["One-Handed Axes"] = "Haches à une main",
-      ["Two-Handed Axes"] = "Haches à deux mains",
-    },
-    ["koKR"] = {
-      ["Totems"] = "토템",
-      ["Librams"] = "성서",
-      ["Thrown"] = "석궁류",
-      ["Idols"] = "우상",
-      ["Crossbows"] = "투척 무기류",
-      ["Plate"] = "판금",
-      ["One-Handed Maces"] = "한손 둔기류",
-      ["Polearms"] = "장창류",
-      ["Two-Handed Maces"] = "양손 둔기류",
-      ["Shields"] = "방패",
-      ["Bows"] = "활류",
-      ["Cloth"] = "천",
-      ["Daggers"] = "단검류",
-      ["Two-Handed Swords"] = "양손 도검류",
-      ["Staves"] = "지팡이류",
-      ["Leather"] = "가죽",
-      ["One-Handed Swords"] = "한손 도검류",
-      ["Guns"] = "총기류",
-      ["Fist Weapons"] = "장착 무기류",
-      ["Mail"] = "사슬",
-      ["Wands"] = "마법봉류",
-      ["One-Handed Axes"] = "한손 도끼류",
-      ["Two-Handed Axes"] = "양손 도끼류",
-    },
-    ["esMX"] = {
-      ["Totems"] = "Tótems",
-      ["Librams"] = "Tratados",
-      ["Thrown"] = "Ballestas",
-      ["Idols"] = "Ídolos",
-      ["Crossbows"] = "Armas arrojadizas",
-      ["Plate"] = "Placas",
-      ["One-Handed Maces"] = "Mazas de una mano",
-      ["Polearms"] = "Armas de asta",
-      ["Two-Handed Maces"] = "Mazas de dos manos",
-      ["Shields"] = "Escudos",
-      ["Bows"] = "Arcos",
-      ["Cloth"] = "Tela",
-      ["Daggers"] = "Dagas",
-      ["Two-Handed Swords"] = "Espadas de dos manos",
-      ["Staves"] = "Bastones",
-      ["Leather"] = "Cuero",
-      ["One-Handed Swords"] = "Espadas de una mano",
-      ["Guns"] = "Armas de fuego",
-      ["Fist Weapons"] = "Armas de puño",
-      ["Mail"] = "Malla",
-      ["Wands"] = "Varitas",
-      ["One-Handed Axes"] = "Hachas de una mano",
-      ["Two-Handed Axes"] = "Hachas de dos manos",
-    },
-    ["enUS"] = {
-      ["Totems"] = "Totems",
-      ["Librams"] = "Librams",
-      ["Thrown"] = "Crossbows",
-      ["Idols"] = "Idols",
-      ["Crossbows"] = "Thrown",
-      ["Plate"] = "Plate",
-      ["One-Handed Maces"] = "One-Handed Maces",
-      ["Polearms"] = "Polearms",
-      ["Two-Handed Maces"] = "Two-Handed Maces",
-      ["Shields"] = "Shields",
-      ["Bows"] = "Bows",
-      ["Cloth"] = "Cloth",
-      ["Daggers"] = "Daggers",
-      ["Two-Handed Swords"] = "Two-Handed Swords",
-      ["Staves"] = "Staves",
-      ["Leather"] = "Leather",
-      ["One-Handed Swords"] = "One-Handed Swords",
-      ["Guns"] = "Guns",
-      ["Fist Weapons"] = "Fist Weapons",
-      ["Mail"] = "Mail",
-      ["Wands"] = "Wands",
-      ["One-Handed Axes"] = "One-Handed Axes",
-      ["Two-Handed Axes"] = "Two-Handed Axes",
-    },
-    ["zhCN"] = {
-      ["Totems"] = "图腾",
-      ["Librams"] = "圣契",
-      ["Thrown"] = "弩",
-      ["Idols"] = "神像",
-      ["Crossbows"] = "投掷武器",
-      ["Plate"] = "板甲",
-      ["One-Handed Maces"] = "单手锤",
-      ["Polearms"] = "长柄武器",
-      ["Two-Handed Maces"] = "双手锤",
-      ["Shields"] = "盾牌",
-      ["One-Handed Axes"] = "单手斧",
-      ["Bows"] = "弓",
-      ["Daggers"] = "匕首",
-      ["Two-Handed Swords"] = "双手剑",
-      ["Staves"] = "法杖",
-      ["Leather"] = "皮甲",
-      ["One-Handed Swords"] = "单手剑",
-      ["Guns"] = "枪械",
-      ["Fist Weapons"] = "拳套",
-      ["Cloth"] = "布甲",
-      ["Wands"] = "魔杖",
-      ["Mail"] = "锁甲",
-      ["Two-Handed Axes"] = "双手斧",
-    },
-    ["deDE"] = {
-      ["Totems"] = "Totems",
-      ["Librams"] = "Buchbände",
-      ["Thrown"] = "Armbrüste",
-      ["Idols"] = "Götzen",
-      ["Crossbows"] = "Wurfwaffen",
-      ["Plate"] = "Platte",
-      ["One-Handed Maces"] = "Einhandstreitkolben",
-      ["Polearms"] = "Stangenwaffen",
-      ["Two-Handed Maces"] = "Zweihandstreitkolben",
-      ["Shields"] = "Schilde",
-      ["Bows"] = "Bogen",
-      ["Cloth"] = "Stoff",
-      ["Daggers"] = "Dolche",
-      ["Two-Handed Swords"] = "Zweihandschwerter",
-      ["Staves"] = "Stäbe",
-      ["Leather"] = "Leder",
-      ["One-Handed Swords"] = "Einhandschwerter",
-      ["Guns"] = "Schusswaffen",
-      ["Fist Weapons"] = "Faustwaffen",
-      ["Mail"] = "Schwere Rüstung",
-      ["Wands"] = "Zauberstäbe",
-      ["One-Handed Axes"] = "Einhandäxte",
-      ["Two-Handed Axes"] = "Zweihandäxte",
-    },
-    ["zhTW"] = {
-      ["Totems"] = "圖騰",
-      ["Librams"] = "聖契",
-      ["Thrown"] = "弩",
-      ["Idols"] = "塑像",
-      ["Crossbows"] = "投擲武器",
-      ["Plate"] = "鎧甲",
-      ["One-Handed Maces"] = "單手錘",
-      ["Polearms"] = "長柄武器",
-      ["Mail"] = "鎖甲",
-      ["Shields"] = "盾牌",
-      ["One-Handed Axes"] = "單手斧",
-      ["Daggers"] = "匕首",
-      ["Bows"] = "弓",
-      ["Two-Handed Swords"] = "雙手劍",
-      ["Staves"] = "法杖",
-      ["Leather"] = "皮甲",
-      ["One-Handed Swords"] = "單手劍",
-      ["Guns"] = "槍械",
-      ["Fist Weapons"] = "拳套",
-      ["Cloth"] = "布甲",
-      ["Wands"] = "魔杖",
-      ["Two-Handed Maces"] = "雙手錘",
-      ["Two-Handed Axes"] = "雙手斧",
-    },
-    ["esES"] = {
-      ["Totems"] = "Tótems",
-      ["Librams"] = "Tratados",
-      ["Thrown"] = "Ballestas",
-      ["Idols"] = "Ídolos",
-      ["Crossbows"] = "Armas arrojadizas",
-      ["Plate"] = "Placas",
-      ["One-Handed Maces"] = "Mazas de una mano",
-      ["Polearms"] = "Armas de asta",
-      ["One-Handed Axes"] = "Hachas de una mano",
-      ["Shields"] = "Escudos",
-      ["Daggers"] = "Dagas",
-      ["Mail"] = "Malla",
-      ["Bows"] = "Arcos",
-      ["Two-Handed Swords"] = "Espadas de dos manos",
-      ["Staves"] = "Bastones",
-      ["Leather"] = "Cuero",
-      ["One-Handed Swords"] = "Espadas de una mano",
-      ["Guns"] = "Armas de fuego",
-      ["Fist Weapons"] = "Armas de puño",
-      ["Cloth"] = "Tela",
-      ["Wands"] = "Varitas",
-      ["Two-Handed Maces"] = "Mazas de dos manos",
-      ["Two-Handed Axes"] = "Hachas de dos manos",
-    },
-  }
-  local translate = localeSubTypes[GetLocale()]
-  if not translate then translate = localeSubTypes["enUS"] end
-
-  local localeArmorTypes = {MISCELLANEOUS}
-  for _, subType in ipairs{"Cloth", "Leather", "Mail", "Plate", "Shields", "Librams", "Idols", "Totems"} do
-    tblinsert(localeArmorTypes, translate[subType])
-  end
-  
-  local usableArmor = {}
-  usableArmor[CLASS_MAP_TO_ID.WARRIOR] = {[translate["Leather"]] = true, [translate["Mail"]] = true, [translate["Plate"]] = true, [translate["Shields"]] = true}
-  usableArmor[CLASS_MAP_TO_ID.ROGUE]   = {[translate["Leather"]] = true}
-  usableArmor[CLASS_MAP_TO_ID.MAGE]    = {}
-  usableArmor[CLASS_MAP_TO_ID.PRIEST]  = {}
-  usableArmor[CLASS_MAP_TO_ID.WARLOCK] = {}
-  usableArmor[CLASS_MAP_TO_ID.HUNTER]  = {[translate["Leather"]] = true, [translate["Mail"]] = true}
-  usableArmor[CLASS_MAP_TO_ID.DRUID]   = {[translate["Leather"]] = true, [translate["Idols"]] = true}
-  usableArmor[CLASS_MAP_TO_ID.SHAMAN]  = {[translate["Leather"]] = true, [translate["Mail"]] = true, [translate["Shields"]] = true, [translate["Totems"]] = true}
-  usableArmor[CLASS_MAP_TO_ID.PALADIN] = {[translate["Leather"]] = true, [translate["Mail"]] = true, [translate["Plate"]] = true, [translate["Shields"]] = true, [translate["Librams"]] = true}
-  
-  for _, usableArmorTypes in pairs(usableArmor) do
-    usableArmorTypes[MISCELLANEOUS]      = true
-    usableArmorTypes[translate["Cloth"]] = true
-  end
-  for class in pairs(usableArmor) do
-    UNUSABLE_EQUIPMENT[class] = {
-      [ARMOR]  = {},
-      [WEAPON] = {},
-    }
-    for _, armorType in ipairs(localeArmorTypes) do
-      UNUSABLE_EQUIPMENT[class][ARMOR][armorType] = not usableArmor[class][armorType]
+  -- WARRIOR, PALADIN, HUNTER, ROGUE, PRIEST, DEATHKNIGHT, SHAMAN, MAGE, WARLOCK, MONK, DRUID, DEMONHUNTER
+  local ID = {}
+  for i = 1, GetNumClasses() do
+    local classInfo = C_CreatureInfo.GetClassInfo(i)
+    if classInfo then
+      ID[classInfo.classFile] = classInfo.classID
     end
   end
   
-  local function SetClassWeapons(class, ...)
-    local class = CLASS_MAP_TO_ID[class]
-    for _, weapon in ipairs{...} do
-      UNUSABLE_EQUIPMENT[class][WEAPON][translate[weapon]] = nil
+  local weapon      = Enum.ItemClass.Weapon
+  local subWeapon   = Enum.ItemWeaponSubclass
+  local armor       = Enum.ItemClass.Armor
+  local subArmor    = Enum.ItemArmorSubclass
+  local usableTypes = Addon:MakeLookupTable({weapon, armor}, function() return {} end)
+  
+  usableTypes[weapon][subWeapon.Axe1H]    = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Axe2H]    = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Bows]     = Addon:MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Guns]     = Addon:MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Mace1H]   = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.PALADIN, ID.PRIEST,  ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Mace2H]   = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Polearm]  = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.HUNTER,  ID.PALADIN, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Sword1H]  = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.MAGE,    ID.PALADIN, ID.ROGUE,   ID.WARLOCK, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Sword2H]  = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Staff]    = Addon:MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.MAGE,    ID.PRIEST,  ID.SHAMAN,  ID.WARLOCK, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Dagger]   = Addon:MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.MAGE,    ID.PRIEST,  ID.ROGUE,   ID.SHAMAN,  ID.WARLOCK, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Crossbow] = Addon:MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Wand]     = Addon:MakeLookupTable{ID.MAGE,        ID.PRIEST,  ID.WARLOCK}
+  usableTypes[weapon][subWeapon.Thrown]   = Addon:MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
+  
+  usableTypes[armor][subArmor.Leather]    = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.HUNTER,  ID.PALADIN, ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[armor][subArmor.Mail]       = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[armor][subArmor.Plate]      = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.PALADIN, ID.WARRIOR}
+  usableTypes[armor][subArmor.Shield]     = Addon:MakeLookupTable{ID.PALADIN,     ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[armor][subArmor.Libram]     = Addon:MakeLookupTable{ID.PALADIN}
+  usableTypes[armor][subArmor.Idol]       = Addon:MakeLookupTable{ID.DRUID}
+  usableTypes[armor][subArmor.Totem]      = Addon:MakeLookupTable{ID.SHAMAN}
+  usableTypes[armor][subArmor.Sigil]      = Addon:MakeLookupTable{ID.DEATHKNIGHT}
+  -- usableTypes[weapon][subWeapon.Warglaive]   = Addon:MakeLookupTable{}
+  -- usableTypes[weapon][subWeapon.Bearclaw]    = Addon:MakeLookupTable{}
+  -- usableTypes[weapon][subWeapon.Catclaw]     = Addon:MakeLookupTable{}
+  -- usableTypes[weapon][subWeapon.Unarmed]     = Addon:MakeLookupTable{}
+  -- usableTypes[weapon][subWeapon.Generic]     = Addon:MakeLookupTable{}
+  -- usableTypes[weapon][subWeapon.Obsolete3]   = Addon:MakeLookupTable{} -- Spears
+  -- usableTypes[weapon][subWeapon.Fishingpole] = Addon:MakeLookupTable{}
+  
+  -- usableTypes[armor][subArmor.Generic]       = Addon:MakeLookupTable{}
+  -- usableTypes[armor][subArmor.Cloth]         = Addon:MakeLookupTable{}
+  -- usableTypes[armor][subArmor.Cosmetic]      = Addon:MakeLookupTable{}
+  -- usableTypes[armor][subArmor.Relic]         = Addon:MakeLookupTable{}
+  
+  
+  if Addon.expansionLevel <= Addon.expansions.tbc then
+    usableTypes[weapon][subWeapon.Axe1H][ID.ROGUE]   = nil
+    usableTypes[weapon][subWeapon.Polearm][ID.DRUID] = nil
+  end
+  
+  local dualWielders = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER, ID.ROGUE, ID.SHAMAN, ID.WARRIOR}
+  
+  IsItemUsable = function(item, classID)
+    local invType, _, itemClassID, subClassID = select(4, item:GetInfoInstant())
+    if usableTypes[itemClassID] and usableTypes[itemClassID][subClassID] then
+      local class = classID or MY_CLASS
+      return usableTypes[itemClassID][subClassID][class] and (invType ~= "INVTYPE_WEAPONOFFHAND" or dualWielders[class]) and true or false
     end
+    return true
   end
+  IsItemUnusable = function(...) return IsItemUsable(...) end
   
-  local localeWeaponTypes = {}
-  for _, subType in ipairs{"Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
-                           "Two-Handed Maces", "One-Handed Maces", "Polearms", "Staves", "Daggers",
-                           "Fist Weapons", "Bows", "Crossbows", "Guns", "Thrown", "Wands"} do
-    tblinsert(localeWeaponTypes, translate[subType])
-  end
-  
-  for class in pairs(usableArmor) do
-    for _, weapon in ipairs(localeWeaponTypes) do
-      UNUSABLE_EQUIPMENT[class][WEAPON][weapon] = true
-    end
-  end
-  
-  SetClassWeapons("DRUID",   "Two-Handed Maces", "One-Handed Maces", "Staves", "Daggers", "Fist Weapons")
-  SetClassWeapons("HUNTER",  "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
-                             "Polearms", "Staves", "Daggers", "Fist Weapons", "Bows", 
-                             "Crossbows", "Guns", "Thrown")
-  SetClassWeapons("MAGE",    "One-Handed Swords", "Staves", "Daggers", "Wands")
-  SetClassWeapons("PALADIN", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
-                             "Two-Handed Maces", "One-Handed Maces", "Polearms")
-  SetClassWeapons("PRIEST",  "One-Handed Maces", "Staves", "Daggers", "Wands")
-  SetClassWeapons("ROGUE",   "One-Handed Swords", "One-Handed Maces", "Daggers", "Fist Weapons",
-                             "Bows", "Crossbows", "Guns", "Thrown")
-  SetClassWeapons("SHAMAN",  "Two-Handed Axes", "One-Handed Axes", "Two-Handed Maces", "One-Handed Maces",
-                             "Staves", "Daggers", "Fist Weapons")
-  SetClassWeapons("WARLOCK", "One-Handed Swords", "Staves", "Daggers", "Wands")
-  SetClassWeapons("WARRIOR", "Two-Handed Axes", "One-Handed Axes", "Two-Handed Swords", "One-Handed Swords",
-                             "Two-Handed Maces", "One-Handed Maces", "Polearms", "Staves", "Daggers", "Fist Weapons", 
-                             "Bows", "Crossbows", "Guns", "Thrown")
 end
-
 
 
 
@@ -623,7 +422,7 @@ local itemMeta = {
   __eq        = function(item1, item2) return item1:GetID() == item2:GetID() and item1:GetSuffix() == item2:GetSuffix() end,
   __lt        = function(item1, item2) return (item1:GetName() or "") <  (item2:GetName() or "") end,
   __le        = function(item1, item2) return (item1:GetName() or "") <= (item2:GetName() or "") end,
-  __tostring  = function(self) return "Item " .. self:GetID() end,
+  __tostring  = function(self) return "Item " .. self:GetID() .. (self:HasSuffix() and (":" .. self:GetSuffix()) or "") end,
 }
 
 function ItemCache:DoesItemExistByID(id)
@@ -748,10 +547,10 @@ end
 -- save an item into storage
 function ItemDB:Store(item)
   if not storage[item:GetID()] then
-    if not item:GetSuffix() then
+    if not item:HasSuffix() then
       storage[item:GetID()] = {[0] = private(item)}
     end
-  elseif item:GetSuffix() and not storage[item:GetID()][item:GetSuffix()] then -- only store suffix items if the suffix matters
+  elseif item:HasSuffix() and not storage[item:GetID()][item:GetSuffix()] then -- only store suffix items if the suffix matters
     local noSuffixItem = self:Get(item:GetID())
     if noSuffixItem and item:GetName() ~= noSuffixItem:GetName() then
       storage[item:GetID()][item:GetSuffix()] = private(item)
@@ -1165,7 +964,7 @@ function Item:GetSuffix()
   return private(self).suffix
 end
 function Item:HasSuffix()
-  return self:GetSuffix() ~= nil
+  return private(self).suffix ~= nil
 end
 function Item:GetIDSuffix()
   return self:GetID(), self:GetSuffix()
@@ -1259,26 +1058,25 @@ function Item:GetInfoPacked()
   return {self:GetInfo()}
 end
 
+function Item:GetInfoInstant()
+  return GetItemInfoInstant(self:GetID())
+end
+
 
 
 function Item:IsUsableBy(classOrUnit)
-  if not self:IsCached() then return nil end
-  local id = CLASS_MAP_TO_ID[classOrUnit]
-  if not id and UnitExists(classOrUnit) then
-    local className, classFile, classID = UnitClass(classOrUnit)
-    id = classID
+  local classID = CLASS_MAP_TO_ID[classOrUnit]
+  if not classID and UnitExists(classOrUnit) then
+    classID = select(2, UnitClassBase(classOrUnit))
   end
   local classesAllowed = private(self).classesAllowed
   if classesAllowed then
-    return classesAllowed[id] or false
+    return classesAllowed[classID] or false
   end
-  local itemType, itemSubType = self:GetTypeSubType()
-  if itemType and itemSubType then
-    if UNUSABLE_EQUIPMENT[id][itemType] and UNUSABLE_EQUIPMENT[id][itemType][itemSubType] then
-      return false
-    end
-  end
-  return true
+  return IsItemUsable(self, classID)
+end
+function Item:IsUsable(classOrUnit)
+  return self:IsUsableBy(classOrUnit or MY_CLASS)
 end
 function Item:GetSkillRequired()
   if not self:IsCached() then return nil end
@@ -1350,7 +1148,7 @@ function Item:GetNameLink()
   return name, link
 end
 function Item:GetTexture()
-  return (select(5, GetItemInfoInstant(self:GetString())))
+  return (select(5, self:GetInfoInstant()))
 end
 Item.GetIcon = Item.GetTexture
 function Item:GetNameLinkTexture()
@@ -1360,13 +1158,13 @@ end
 Item.GetNameLinkIcon = Item.GetNameLinkTexture
 
 function Item:GetType()
-  return (select(2, GetItemInfoInstant(self:GetString())))
+  return (select(2, self:GetInfoInstant()))
 end
 function Item:GetSubType()
-  return (select(3, GetItemInfoInstant(self:GetString())))
+  return (select(3, self:GetInfoInstant()))
 end
 function Item:GetTypeSubType()
-  local _, itemType, itemSubType = GetItemInfoInstant(self:GetString())
+  local _, itemType, itemSubType = self:GetInfoInstant()
   return itemType, itemSubType
 end
 
@@ -1412,7 +1210,7 @@ Item.IsBoU = Item.IsBindOnUse
 
 
 function Item:GetEquipLocation()
-  return (select(4, GetItemInfoInstant(self:GetString())))
+  return (select(4, self:GetInfoInstant()))
 end
 function Item:IsEquippable()     return self:GetEquipLocation() ~= ""                       and self:GetEquipLocation() ~= "INVTYPE_NON_EQUIP" end
 function Item:IsHelm()           return self:GetEquipLocation() == "INVTYPE_HEAD"           end
