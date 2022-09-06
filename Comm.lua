@@ -563,7 +563,7 @@ LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, resu
 
         local text = LootReserve.Constants.ReserveResultText[result];
         if not text or #text > 0 then
-            LootReserve:ShowError("Failed to reserve the item:|n%s", text or "Unknown error");
+            LootReserve:ShowError("Failed to reserve:|n%s", text or "Unknown error");
         end
         if forced then
             LootReserve.ItemCache:Item(itemID):OnCache(function(item)
@@ -679,7 +679,7 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
 
         local text = LootReserve.Constants.CancelReserveResultText[result];
         if not text or #text > 0 then
-            LootReserve:ShowError("Failed to cancel reserve of the item:|n%s", text or "Unknown error");
+            LootReserve:ShowError("Failed to cancel reserve:|n%s", text or "Unknown error");
         end
 
         for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID) or {}) do

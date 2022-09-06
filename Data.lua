@@ -209,13 +209,13 @@ LootReserve.Data =
                         15410, 0,
                     },
                 },
-                {
-                    Name = " + Quest Rewards",
-                    Loot =
-                    {
-                        18404, 18403, 18406, 0,
-                    },
-                },
+                -- {
+                --     Name = " + Quest Rewards",
+                --     Loot =
+                --     {
+                --         18404, 18403, 18406, 0,
+                --     },
+                -- },
             },
         },
         [1030] = {
@@ -322,14 +322,14 @@ LootReserve.Data =
                         18562, 0,
                     },
                 },
-                { Separator = true },
-                {
-                    Name = " + Quest Rewards",
-                    Loot =
-                    {
-                        19383, 19384, 19366, 0,
-                    },
-                },
+                -- { Separator = true },
+                -- {
+                --     Name = " + Quest Rewards",
+                --     Loot =
+                --     {
+                --         19383, 19384, 19366, 0,
+                --     },
+                -- },
             },
         },
         [1040] = {
@@ -1070,7 +1070,7 @@ LootReserve.Data =
                     {
                         28515, 28517, 28511, 28521, 28514, 28520, 28519, 28512, 28518, 0,
                         28516, 0,
-                        28522, 28523, 0,
+                        28523, 28522, 0,
                     },
                 },
                 {
@@ -1114,8 +1114,8 @@ LootReserve.Data =
                     Loot =
                     {
                         28602, 28600, 28601, 28599, 28610, 28608, 28597, 0,
-                        28603, 28609, 0,
-                        28604, 28611, 28606, 0,
+                        28609, 0,
+                        28603, 28604, 28611, 28606, 0,
                     },
                 },
                 {
@@ -1280,7 +1280,7 @@ LootReserve.Data =
                     Loot =
                     {
                         29754, 29753, 29755, 0,
-                        32385, 0,
+                        32385, 32386, 0,
                         28780, 28777, 28776, 28778, 28779, 28775, 0,
                         28789, 0,
                         28783, 28781, 28782, 29458, 28774, 0,
@@ -1289,13 +1289,13 @@ LootReserve.Data =
                     },
                 },
                 { Separator = true },
-                {
-                    Name = " + Quest Rewards",
-                    Loot =
-                    {
-                        28791, 28790, 28793, 28792, 0,
-                    },
-                },
+                -- {
+                --     Name = " + Quest Rewards",
+                --     Loot =
+                --     {
+                --         28791, 28790, 28793, 28792, 0,
+                --     },
+                -- },
                 {
                     Name = " + Tier 4 Pieces",
                     Loot =
@@ -2257,6 +2257,9 @@ ApplyFactionRestriction(18423, "Alliance");
 ApplyFactionRestriction(19002, "Horde");
 ApplyFactionRestriction(19003, "Alliance");
 
+-- Magtheridon's Head
+ApplyFactionRestriction(32385, "Alliance");
+ApplyFactionRestriction(32386, "Horde");
 
 -- Classic only restrictions
 if LootReserve:GetCurrentExpansion() == 0 then
@@ -2352,9 +2355,12 @@ local tokenMap = {
     
     
     -- Ony
+    
     -- Can't add mature black dragon sinew because it's a token reward in MC
+    -- Can't add Head of Onyxia since there are Alliance and Horde versions
     -- Head of Onyxia
-    [18423] = {18404, 18403, 18406},
+    -- [18423] = {18404, 18403, 18406},
+    -- [18422] = {18404, 18403, 18406},
     
     
     -- Ony/BWL
@@ -2365,8 +2371,10 @@ local tokenMap = {
     
     -- BWL
     
+    -- Can't add Head of Nefarian since there are Alliance and Horde versions
     -- Head of Nefarian
-    [19003] = {19383, 19384, 19366},
+    -- [19003] = {19383, 19384, 19366},
+    -- [19002] = {19383, 19384, 19366},
     
     
     -- ZG
@@ -2528,8 +2536,10 @@ local tokenMap = {
     
     -- Mag
     
-    -- Magtheridon's Head
-    [32385] = {28791, 28790, 28793, 28792},
+    -- Can't add Magtheridon's Head since there are Alliance and Horde versions
+    -- [32385] = {28791, 28790, 28793, 28792},
+    -- [32386] = {28791, 28790, 28793, 28792},
+    
     -- Chestguard of the Fallen Champion
     [29754] = {29071, 29066, 29062, 29045, 29038, 29033, 29029, --[[PVP]] 31613, 27702, 27879, 25831, 27469, 31396, 25997},
     -- Chestguard of the Fallen Defender
