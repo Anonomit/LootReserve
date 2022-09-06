@@ -320,7 +320,11 @@ end
 
 function LootReserve.ItemConditions:TestPlayer(player, itemID, server)
     if not server and not LootReserve.Client.SessionServer then
-        -- Show all items until connected to a server
+        -- Show all items until connected to a server, unless the item is locked to the other faction
+        local conditions = self:Get(itemID, server);
+        if conditions and conditions.Faction and not self:TestFaction(conditions.Faction) then
+            return false, LootReserve.Constants.ReserveResult.FailedFaction;
+        end
         return true;
     end
     local playerClass, playerClassID = select(2, LootReserve:UnitClass(player));
