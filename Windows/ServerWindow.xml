@@ -1143,9 +1143,16 @@
 							if info and info.arg1 and LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
 								LootReserve.Server:RequestRoll(item);
 							else
+								local phases = LootReserve.Server.Settings.RollUsePhases and #LootReserve.Server.Settings.RollPhases > 0 and LootReserve.Server.Settings.RollPhases or nil;
+								if info.arg2 then
+									phases = LootReserve:Deepcopy(LootReserve.Server.Settings.RollPhases)
+									for i = 2, info.arg2 do
+										table.remove(phases, 1)
+									end
+								end
 								LootReserve.Server:RequestCustomRoll(item,
 									LootReserve.Server.Settings.RollLimitDuration and LootReserve.Server.Settings.RollDuration or nil,
-									LootReserve.Server.Settings.RollUsePhases and #LootReserve.Server.Settings.RollPhases > 0 and LootReserve.Server.Settings.RollPhases or nil);
+									phases);
 							end
 						end
 						local function RaidRoll()
@@ -1154,12 +1161,6 @@
 							frame:SetItem(nil);
 							LootReserve.Server:RaidRoll(item);
 						end
-						--[[
-						if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item:GetID()] then
-							StartRoll();
-							return;
-						end
-						]]
 
 						-- Roll Phases
 						local phaseMenu = { };
@@ -1277,13 +1278,6 @@
 									StartRoll(...);
 								end
 							end, },
-							{ text = "Among All Players", func = function(...)
-									if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
-										StartRoll(...)
-									else
-										StaticPopup_Show("LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM", link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players), {Item = item, Frame = self:GetParent()});
-									end
-								end },
 							{ text = "Auto Raid-Roll", func = RaidRoll },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Settings for \"Reserving Players\"", isTitle = true },
@@ -1343,7 +1337,7 @@
 							{ text = "Cancel" },
 						};
 
-						table.insert(menu, 6, LootReserve:MakeMenuSeparator());
+						table.insert(menu, 5, LootReserve:MakeMenuSeparator());
 						local warning = (function()
 							if not IsMasterLooter() or GetLootMethod() ~= "master" then
 								return "Not master looter";
@@ -1357,19 +1351,41 @@
 							end
 						end)();
 						if warning then
-							table.insert(menu, 6,
+							table.insert(menu, 5,
 							{
 								text = format("Warning: %s", warning),
 								disabled = true,
 							});
 						end
-						table.insert(menu, 6,
+						table.insert(menu, 5,
 						{
 							text = "Master Loot to Winner",
 							tooltipText = "Automatically masterloot the item away to the roll winner once they're announced.",
 							checked = LootReserve.Server.Settings.RollMasterLoot,
 							func = function(_, _, _, checked) LootReserve.Server.Settings.RollMasterLoot = checked; end,
 						});
+						
+						if LootReserve.Server.Settings.RollUsePhases and #LootReserve.Server.Settings.RollPhases > 0 then
+							for i = #LootReserve.Server.Settings.RollPhases, 1, -1 do
+								table.insert(menu, 3,
+								{ text = format("Among All Players (|cff00ff00%s|r)", LootReserve.Server.Settings.RollPhases[i]), arg2 = i, func = function(...)
+									if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
+										StartRoll(...)
+									else
+										StaticPopup_Show("LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM", link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players), {Item = item, Frame = self:GetParent(), Phase = i});
+									end
+								end });
+							end
+						else
+							table.insert(menu, 3,
+							{ text = "Among All Players", func = function(...)
+								if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
+									StartRoll(...)
+								else
+									StaticPopup_Show("LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM", link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players), {Item = item, Frame = self:GetParent()});
+								end
+							end });
+						end
 
 						LootReserve:OpenMenu(menu, self:GetParent().Menu, self);
 					</OnClick>

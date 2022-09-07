@@ -147,9 +147,16 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM"] =
     hideOnEscape = 1,
     OnAccept = function(self)
         self.data.Frame:SetItem(nil);
+        local phases = LootReserve.Server.Settings.RollUsePhases and #LootReserve.Server.Settings.RollPhases > 0 and LootReserve.Server.Settings.RollPhases or nil;
+        if self.data.Phase then
+            phases = LootReserve:Deepcopy(LootReserve.Server.Settings.RollPhases)
+            for i = 2, self.data.Phase do
+                table.remove(phases, 1)
+            end
+        end
         LootReserve.Server:RequestCustomRoll(self.data.Item,
             LootReserve.Server.Settings.RollLimitDuration and LootReserve.Server.Settings.RollDuration or nil,
-            LootReserve.Server.Settings.RollUsePhases and #LootReserve.Server.Settings.RollPhases > 0 and LootReserve.Server.Settings.RollPhases or nil);
+            phases);
     end,
 };
 
