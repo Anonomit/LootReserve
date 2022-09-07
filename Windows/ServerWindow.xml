@@ -419,9 +419,9 @@
 							if self:GetParent().Historical then
 								
 								local oldRoll = self:GetParent().Roll;
-								local Roll, RequestedRoll = LootReserve.Server:GetContinueRollData(oldRoll);
+								local Roll, doRequestedRoll = LootReserve.Server:GetContinueRollData(oldRoll);
 								
-								if RequestedRoll then
+								if doRequestedRoll then
 									GameTooltip:SetText("Continue Roll");
 									GameTooltip:AddLine(format("Continue this roll%s.%s", oldRoll.Winners and format(", removing the %d |4winner:winners;", #oldRoll.Winners) or "", Roll.Phases and ("|nThe item will roll for " .. Roll.Phases[1] .. ".") or ""), HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1, 1);
 								else

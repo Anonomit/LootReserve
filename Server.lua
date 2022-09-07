@@ -2712,7 +2712,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
                 end
                 if #winners > 1 then
                     for i = 2, #winners do
-                        local Roll, RequestedRoll = self:GetContinueRollData(self.RollHistory[#self.RollHistory]);
+                        local Roll, doRequestedRoll = self:GetContinueRollData(self.RollHistory[#self.RollHistory]);
                         self:RecordRollHistory(Roll, winners[i]);
                         if self.Settings.RemoveRecentLootAfterRolling then
                             LootReserve:TableRemove(self.RecentLoot, item);
@@ -2834,7 +2834,7 @@ function LootReserve.Server:GetContinueRollData(oldRoll)
       Roll.Players[player] = nil;
     end
     
-    local RequestedRoll = true;
+    local doRequestRoll = true;
     if Roll.Custom then
         for _, winner in ipairs(Roll.Winners or {}) do
             Roll.Players[winner] = nil;
@@ -2844,7 +2844,7 @@ function LootReserve.Server:GetContinueRollData(oldRoll)
             if phases and #phases > 1 then
                 table.remove(phases, 1);
             else
-                RequestedRoll = nil;
+                doRequestRoll = nil;
             end
         end
     elseif Roll.Winners then
@@ -2868,10 +2868,10 @@ function LootReserve.Server:GetContinueRollData(oldRoll)
                 end
             end
             if not next(Roll.Players) then
-                RequestedRoll = nil;
+                doRequestRoll = nil;
             end
         else
-            RequestedRoll = nil;
+            doRequestRoll = nil;
         end
     end
     Roll.Winners = nil;
@@ -2880,7 +2880,7 @@ function LootReserve.Server:GetContinueRollData(oldRoll)
     Roll.MaxDuration = self.Settings.RollLimitDuration and self.Settings.RollDuration or nil
     Roll.Duration    = Roll.MaxDuration and 0 or nil
     
-    return Roll, RequestedRoll;
+    return Roll, doRequestRoll;
 end
 
 function LootReserve.Server:ContinueRoll(oldRoll, noFill)
@@ -2889,12 +2889,16 @@ function LootReserve.Server:ContinueRoll(oldRoll, noFill)
         return;
     end
     
-    local Roll, RequestedRoll = self:GetContinueRollData(oldRoll);
-    if RequestedRoll then
-        self.RequestedRoll             = Roll;
-        self.SaveProfile.RequestedRoll = Roll;
-    elseif Roll.Phases then
-        self:RequestCustomRoll(Roll.Item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil, Roll.Phases, next(Roll.Players) and Roll.Players or nil);
+    local Roll, doRequestedRoll = self:GetContinueRollData(oldRoll);
+    if doRequestedRoll then
+        if next(Roll.Players or {}) then
+            self.RequestedRoll             = Roll;
+            self.SaveProfile.RequestedRoll = Roll;
+        elseif Roll.Custom then
+            self:RequestCustomRoll(Roll.Item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil, Roll.Phases, next(Roll.Players) and Roll.Players or nil);
+        else
+            self:RequestRoll(Roll.Item, self.Settings.RollLimitDuration and self.Settings.RollDuration or nil)
+        end
     end
     
     -- Fill the item frame with the previously reserved item, or empty it
@@ -2903,6 +2907,7 @@ function LootReserve.Server:ContinueRoll(oldRoll, noFill)
         if frames and frames[1] and frames[1]:IsShown() then
             frames[1]:SetItem(not noFill and not self.RequestedRoll and Roll.Item or nil);
         end
+        panelRolls.Scroll:SetVerticalScroll(0);
     end
     
     self:UpdateRollList();
