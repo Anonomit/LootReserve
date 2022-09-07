@@ -79,13 +79,9 @@ LootReserve.Constants.ChatAnnouncement = {
     SessionReserves     = 11,
 };
 LootReserve.Constants.DefaultPhases = {
-    "MainSpec",
-    "OffSpec",
-    "Learning",
-    "Quest",
-    "Reputation",
-    "Profession",
-    "Looks",
+    "Main Spec",
+    "Off Spec",
+    "Collection",
     "Vendor",
 };
 LootReserve.Constants.WonRollPhase = {
