@@ -134,7 +134,7 @@
 				<Scripts>
 					<OnUpdate>
 						local hovered = self:IsMouseOver();
-						if self.hovered ~= hovered then
+						if self.hovered ~= hovered or not GameTooltip:IsShown() then
 							self.hovered = hovered;
 							if hovered then
 								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
