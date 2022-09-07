@@ -2722,7 +2722,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
             else
                 self:RecordRollHistory(RequestedRoll);
                 if not advancing and self.Settings.RemoveRecentLootAfterRolling then
-                    LootReserve:TableRemove(self.RecentLoot, item);
+                    while LootReserve:TableRemove(LootReserve.Server.RecentLoot, item) do end
                 end
             end
         end
