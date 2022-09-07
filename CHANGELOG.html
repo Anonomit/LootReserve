@@ -1,3 +1,57 @@
+<h2>2022-09-06</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Highlights</strong></p>
+<ul>
+<li>Death Knights are now supported, and should no longer cause lua errors.</li>
+<li>Host now has semi-automatic item distribution. Click the buttons to send items automatically to their destinations.</li>
+<li>Created a library for item caching: ItemCache. Precaching is now configurable, and defaults to off.</li>
+<li>Many performance improvements, especially related to UI and Search.</li>
+<li>Lowered storage and memory usage.</li>
+<li>LootReserve now patches a Blizzard issue where the trade frame green highlighting can disappear after the trade has been accepted.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Host</strong></p>
+<ul>
+<li>Added export for Roll History. The export format is CSV. There is no way to import history.</li>
+<li>Added config option to change default channel for when Reserves are listed. This used to use the same channel as Instructions.</li>
+<li>Added config option for 12h time format. 24h remains the default format.</li>
+<li>Added config option to accept rolls after the timer has ended. This is on by default.</li>
+<li>Best Name Match is enabled by default in Host Import.</li>
+
+<li>Can now continue a roll from history. Rolls with multiple phases that were made prior to this change will not continue to the next phase as expected.</li>
+<li>Stackable BoP items are no longer added to Recent Loot if someone else loots one (they are never tradeable in raids).</li>
+<li>Can now shift-click and control-click on Recent Loot items to hide or block them from the list.</li>
+<li>Recent Loot dropdown now shows item tooltips.</li>
+<li>Empty Rolls can now be hidden from Roll History. This is on by default.</li>
+<li>Distributed rolls can now be hidden from Roll History. This is off by default.</li>
+<li>Recent Chat icon in Rolls tab is better at detecting when chat is irrelevant.</li>
+<li>Session now starts with reserves closed. Reserves must be opened with a second click.</li>
+<li>Rolls with a red glow in Rolls tab now show a tooltip explaining the reason for the glow.</li>
+<li>When multiple roll phases are selected, a roll can be started at any phase.</li>
+<li>Reserves and Roll History can be reported over more channels.</li>
+<li>Remind All button now heavily throttles messages. It should work much better when many players are still missing reserves.</li>
+<li>Hid Mojo by default in Zul'Aman.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Dressup window can now be opened from the Roll Popup.</li>
+<li>Some raids now list quest rewards, set items, and other miscellaneous items that may be indirectly acquired from a raid (such as sunmote exchange items).</li>
+<li>Added config option to suppress the Roll Popup for unusable BoE items. This is on by default.</li>
+<li>Added config options to suppress chat hints about how to reopen windows when they're closed.</li>
+<li>Added chat warning when closing the reserves window with remaining reserves.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Many various unlisted fixes.</li>
+<li>Fixed double roll in history when "Remove Winners' Reserves" feature is used.</li>
+<li>Fixed lua error when reporting reserves on an item.</li>
+<li>Fixed lua error which could happen with extremely stale sessions (over a year).</li>
+<li>Fixed lua error related to Broadcast Instructions button.</li>
+</ul>
+<p>&nbsp;</p>
 <h2>2022-02-21</h2>
 <p>&nbsp;FILE CHANGES. UPDATING REQUIRES GAME RESTART</p>
 <p>&nbsp;</p>
