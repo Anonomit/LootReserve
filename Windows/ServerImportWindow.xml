@@ -232,7 +232,7 @@
 				</Scripts>
 			</Frame>
 			<Frame parentKey="InputOptions">
-				<Size y="150" />
+				<Size y="170" />
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.Input" relativePoint="BOTTOMLEFT" y="-5" />
 					<Anchor point="TOPRIGHT" relativeKey="$parent.Input" relativePoint="BOTTOMRIGHT" y="-5" />
@@ -288,10 +288,10 @@
 									</OnClick>
 								</Scripts>
 							</CheckButton>
-							<CheckButton parentKey="MatchNames" inherits="LootReserveCheckBoxTemplate">
+							<CheckButton parentKey="MatchPlayerNames" inherits="LootReserveCheckBoxTemplate">
 								<KeyValues>
-									<KeyValue key="text" value="Best Name Match" type="string" />
-									<KeyValue key="tooltipText" value="Best Name Match" type="string" />
+									<KeyValue key="text" value="Match Player Names" type="string" />
+									<KeyValue key="tooltipText" value="Match Player Names" type="string" />
 									<KeyValue key="tooltipSubtext" value="Attempt to ignore realm names and special characters in player names (e.g. treat Ø as O) and try to match imported names to current raid members." type="string" />
 								</KeyValues>
 								<Anchors>
@@ -299,7 +299,7 @@
 								</Anchors>
 								<Scripts>
 									<OnClick inherit="prepend">
-										LootReserve.Server.Import.MatchNames = self:GetChecked();
+										LootReserve.Server.Import.MatchPlayerNames = self:GetChecked();
 										LootReserve.Server.Import:SessionSettingsUpdated();
 									</OnClick>
 								</Scripts>
@@ -311,11 +311,27 @@
 									<KeyValue key="tooltipSubtext" value="Only import reserves of players who are currently in the raid." type="string" />
 								</KeyValues>
 								<Anchors>
-									<Anchor point="TOPLEFT" relativeKey="$parent.MatchNames" relativePoint="BOTTOMLEFT" />
+									<Anchor point="TOPLEFT" relativeKey="$parent.MatchPlayerNames" relativePoint="BOTTOMLEFT" />
 								</Anchors>
 								<Scripts>
 									<OnClick inherit="prepend">
 										LootReserve.Server.Import.SkipNotInRaid = self:GetChecked();
+										LootReserve.Server.Import:SessionSettingsUpdated();
+									</OnClick>
+								</Scripts>
+							</CheckButton>
+							<CheckButton parentKey="ItemNameMatch" inherits="LootReserveCheckBoxTemplate">
+								<KeyValues>
+									<KeyValue key="text" value="Match Item Names" type="string" />
+									<KeyValue key="tooltipText" value="Match Item Names" type="string" />
+									<KeyValue key="tooltipSubtext" value="Attempt to find items by name, if provided.|n|n|cffff0000Warning: Slow!|r" type="string" />
+								</KeyValues>
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeKey="$parent.SkipNotInRaid" relativePoint="BOTTOMLEFT" />
+								</Anchors>
+								<Scripts>
+									<OnClick inherit="prepend">
+										LootReserve.Server.Import.ItemNameMatch = self:GetChecked();
 										LootReserve.Server.Import:SessionSettingsUpdated();
 									</OnClick>
 								</Scripts>

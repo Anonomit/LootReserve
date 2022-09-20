@@ -1,8 +1,9 @@
-﻿LootReserve.Server.Import.Separator = ",";
-LootReserve.Server.Import.UseHeaders = false;
-LootReserve.Server.Import.MatchNames = true;
-LootReserve.Server.Import.SkipNotInRaid = false;
-LootReserve.Server.Import.Columns = { };
+﻿LootReserve.Server.Import.Separator        = ",";
+LootReserve.Server.Import.UseHeaders       = false;
+LootReserve.Server.Import.MatchPlayerNames = true;
+LootReserve.Server.Import.SkipNotInRaid    = false;
+LootReserve.Server.Import.MatchItemNames   = false;
+LootReserve.Server.Import.Columns          = { };
 
 local function ParseCSVLine(line, sep)
     local res = { };
@@ -348,24 +349,25 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
             end
         end
         
-
-        for _, row in ipairs(self.Rows) do
-            for _, itemColumn in ipairs(itemColumns) do
-                local itemID = row[itemColumn];
-                if itemID and itemID ~= 0 and itemID ~= "" then
-                    if type(itemID) == "string" then
-                        LootReserve.ItemSearch:Load();
-                        if not LootReserve.ItemSearch.FullCache:IsComplete() then
-                            LootReserve.ItemSearch.FullCache:SetSpeed(LootReserve.ItemSearch.ZoomSpeed);
-                            
-                            if not self.PendingInputOptionsUpdate then
-                                self.PendingInputOptionsUpdate = true;
-                                C_Timer.After(0.1, function()
-                                    self.PendingInputOptionsUpdate = false;
-                                    self:InputOptionsUpdated();
-                                end);
+        if self.ItemNameMatch then
+            for _, row in ipairs(self.Rows) do
+                for _, itemColumn in ipairs(itemColumns) do
+                    local itemID = row[itemColumn];
+                    if itemID and itemID ~= 0 and itemID ~= "" then
+                        if type(itemID) == "string" then
+                            LootReserve.ItemSearch:Load();
+                            if not LootReserve.ItemSearch.FullCache:IsComplete() then
+                                LootReserve.ItemSearch.FullCache:SetSpeed(LootReserve.ItemSearch.ZoomSpeed);
+                                
+                                if not self.PendingInputOptionsUpdate then
+                                    self.PendingInputOptionsUpdate = true;
+                                    C_Timer.After(0.1, function()
+                                        self.PendingInputOptionsUpdate = false;
+                                        self:InputOptionsUpdated();
+                                    end);
+                                end
+                                return format("Creating item name database... (%d%%)|n|nInstall/Update ItemCache to remember the item database between sessions", LootReserve.ItemSearch.FullCache:GetProgress(0));
                             end
-                            return format("Creating item name database... (%d%%)|n|nInstall/Update ItemCache to remember the item database between sessions", LootReserve.ItemSearch.FullCache:GetProgress(0));
                         end
                     end
                 end
@@ -375,7 +377,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
 
         local simplifiedRaidNames        = nil;
         local simplifiedRaidNamesByClass = nil;
-        if self.MatchNames then
+        if self.MatchPlayerNames then
             simplifiedRaidNames        = { };
             simplifiedRaidNamesByClass = { };
             LootReserve:ForEachRaider(function(name)
@@ -474,22 +476,24 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 if itemID and itemID ~= 0 and itemID ~= "" then
                     -- Transform Item Name -> Item ID
                     if type(itemID) == "string" then
-                        local query = LootReserve.ItemCache:FormatSearchText(itemID);
-                        local results = LootReserve.ItemCache:Filter(function(item) return item:Matches(query) end)
-                        if #results == 1 then
-                            itemID = results[1]:GetID();
-                        end
+                        if self.ItemNameMatch then
+                            local query = LootReserve.ItemCache:FormatSearchText(itemID);
+                            local results = LootReserve.ItemCache:Filter(function(item) return item:Matches(query) end)
+                            if #results == 1 then
+                                itemID = results[1]:GetID();
+                            end
 
-                        if type(itemID) == "string" then
-                            itemID = 0;
+                            if type(itemID) == "string" then
+                                itemID = 0;
+                            end
+                            if LootReserve.Data:IsTokenReward(itemID) and not LootReserve.Server:GetNewSessionItemConditions()[itemID] then
+                                itemID = LootReserve.Data:GetToken(itemID)
+                            end
+                            if not row.ItemNames[itemID] then
+                                row.ItemNames[itemID] = {Count = 0, Name = row[itemColumn]};
+                            end
+                            row.ItemNames[itemID].Count = row.ItemNames[itemID].Count + 1;
                         end
-                        if LootReserve.Data:IsTokenReward(itemID) and not LootReserve.Server:GetNewSessionItemConditions()[itemID] then
-                            itemID = LootReserve.Data:GetToken(itemID)
-                        end
-                        if not row.ItemNames[itemID] then
-                            row.ItemNames[itemID] = {Count = 0, Name = row[itemColumn]};
-                        end
-                        row.ItemNames[itemID].Count = row.ItemNames[itemID].Count + 1;
                     else
                         if LootReserve.Data:IsTokenReward(itemID) then
                             itemID = LootReserve.Data:GetToken(itemID)
@@ -504,7 +508,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 local nameMatchResult = nil;
                 if player and #player > 0 then
                     player = LootReserve:Player(LootReserve:NormalizeName(player));
-                    if self.MatchNames and LootReserve:IsPlayerOnline(player) == nil then
+                    if self.MatchPlayerNames and LootReserve:IsPlayerOnline(player) == nil then
                         if row.Class then
                             local simplified = simplifiedRaidNamesByClass[row.Class] and simplifiedRaidNamesByClass[row.Class][LootReserve:SimplifyName(player)];
                             if not simplified then
@@ -592,7 +596,7 @@ function LootReserve.Server.Import:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetText("LootReserve Host - Import");
-    self.Window:SetMinResize(LootReserve:IsCrossRealm() and 490 or 390, 440);
-    self.Window.InputOptions.Input.MatchNames:SetChecked(self.MatchNames);
+    self.Window:SetMinResize(LootReserve:IsCrossRealm() and 490 or 390, 460);
+    self.Window.InputOptions.Input.MatchPlayerNames:SetChecked(self.MatchPlayerNames);
     self:InputUpdated();
 end
