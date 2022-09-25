@@ -3,8 +3,8 @@
 ## Notes: Soft reserves management addon
 ## Author: Damagus-Benediction|nOriginal addon by Tagar-NethergardeKeep
 
-## Version: 2022-09-06
-## X-Min-Allowed-Version: 2022-09-06
+## Version: 2022-09-25
+## X-Min-Allowed-Version: 2022-09-25
 
 ## OptionalDeps: ItemCache
 
