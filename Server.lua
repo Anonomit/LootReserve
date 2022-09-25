@@ -626,6 +626,33 @@ function LootReserve.Server:Load()
         end
     end
     
+    -- 2022-09-25: Remove invalid Loot Categories
+    if versionSave < "2022-09-25" then
+        if LootReserve.Server.CurrentSession then
+            local newLootCategories = { };
+            for _, category in ipairs(self.CurrentSession.Settings.LootCategories or {}) do
+                if LootReserve.Data.Categories[category] then
+                    table.insert(newLootCategories, category);
+                end
+            end
+            self.CurrentSession.Settings.LootCategories = newLootCategories;
+            if #self.CurrentSession.Settings.LootCategories == 0 then
+                table.insert(self.CurrentSession.Settings.LootCategories, 3010)
+            end
+        end
+        
+        local newLootCategories = { };
+        for _, category in ipairs(self.NewSessionSettings.LootCategories or {}) do
+            if LootReserve.Data.Categories[category] then
+                table.insert(newLootCategories, category);
+            end
+        end
+        self.NewSessionSettings.LootCategories = newLootCategories;
+        if #self.NewSessionSettings.LootCategories == 0 then
+            table.insert(self.NewSessionSettings.LootCategories, 3010)
+        end
+    end
+    
     -- Create Item objects
     for _, roll in ipairs(self.RollHistory) do
         roll.Item = LootReserve.ItemCache:Item(roll.Item);
