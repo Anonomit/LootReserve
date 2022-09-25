@@ -1867,13 +1867,14 @@ LootReserve.Data =
                         33497, 33498, 33496, 33500, 33499, 0,
                     },
                 },
-                {
-                    Name = " - Fourth Prisoner Saved",
-                    Loot =
-                    {
-                        33809, 0,
-                    },
-                },
+                -- {
+                --     Name = " - Fourth Prisoner Saved",
+                --     Loot =
+                --     {
+                --         -- Mount doesn't drop anymore. Chest appears to now drop items from one or more other chests
+                --         -- 33809, 0,
+                --     },
+                -- },
                 { Separator = true },
                 {
                     Name = "Trash",
