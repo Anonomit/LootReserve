@@ -1,0 +1,12 @@
+<Ui xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+  
+  <Include file="Common.xml"/>
+  <Include file="ClientWindow.xml"/>
+  <Include file="ServerWindow.xml"/>
+  <Include file="RollRequestWindow.xml"/>
+  <Include file="ServerLootEditWindow.xml"/>
+  <Include file="ServerMembersEditWindow.xml"/>
+  <Include file="ServerImportWindow.xml"/>
+  <Include file="ServerExportWindow.xml"/>
+  
+</Ui>

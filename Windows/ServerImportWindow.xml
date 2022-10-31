@@ -1,5 +1,5 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<Script file="Windows/ServerImportWindow.lua" />
+	<Script file="ServerImportWindow.lua" />
 	<Frame name="LootReserveServerImportItemTemplate" virtual="true">
 		<Size x="18" y="18" />
 		<Frames>

@@ -1,5 +1,5 @@
 <Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="Windows/ServerLootEditWindow.lua" />
+	<Script file="ServerLootEditWindow.lua" />
 	<Frame name="LootReserveLootEditListTemplate" virtual="true" enableMouse="true" inherits="LootReserveBackdropTemplate">
 		<KeyValues>
 			<KeyValue key="backdropInfo" value="BACKDROP_TOOLTIP_0_16_5555" type="global" />
