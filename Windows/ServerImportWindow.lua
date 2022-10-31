@@ -46,7 +46,7 @@ local function ParseMultireserveCount(value)
     end
 end
 
-local function ParseDelta(value)
+local function ParseNumber(value)
     if type(value) == "string" then
         value = tonumber(value:match("([%+%-]?%d+)"));
     end
@@ -210,7 +210,7 @@ function LootReserve.Server.Import:InputOptionsUpdated()
     -- Try to guess if there's a headers row
     if self.UseHeaders == nil then
         if #self.Rows > 1 then
-            for _, header in ipairs({"name", "player", "member", "character"}) do
+            for _, header in ipairs({"name", "player", "member", "character", "delta", "bonus"}) do
                 for _, cell in ipairs(self.Rows[1]) do
                     if tostring(cell):lower():match(header) then
                         self.UseHeaders = true;
@@ -248,10 +248,12 @@ function LootReserve.Server.Import:InputOptionsUpdated()
                             break;
                         end
                     end
-                elseif header:find("delta") then
+                elseif header:find("delta") or header:find("reservebonus") then
                     self.Columns[i] = "Delta"
                 elseif header:find("class") then
                     self.Columns[i] = "Class";
+                elseif header:find("rollbonus") then
+                    self.Columns[i] = "RollBonus";
                 end
             end
         end
@@ -324,6 +326,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
             row.Count = nil;
             row.Delta = nil;
             row.Class = nil;
+            row.Bonus = nil;
             for i, column in ipairs(self.Columns) do
                 if column == "Count" and row[i] then
                     if not row.Count then
@@ -334,7 +337,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 end
                 if column == "Delta" and row[i] then
                     if not row.Delta then
-                        row.Delta = ParseDelta(row[i]);
+                        row.Delta = ParseNumber(row[i]);
                     else
                         return "Only one column can be marked as \"Delta\"";
                     end
@@ -344,6 +347,13 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         row.Class = ParseClass(row[i]);
                     else
                         return "Only one column can be marked as \"Class\"";
+                    end
+                end
+                if column == "RollBonus" and row[i] then
+                    if not row.Bonus then
+                        row.Bonus = ParseNumber(row[i]);
+                    else
+                        return "Only one column can be marked as \"RollBonus\"";
                     end
                 end
             end
@@ -416,6 +426,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                     {
                         NameMatchResult = nameMatchResult,
                         ReservedItems   = { },
+                        RollBonuses     = { },
                         InvalidReasons  = { },
                         ReservesDelta   = nil,
                         Class           = nil,
@@ -427,6 +438,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 end
                 for i = 1, (row.Count or 1) * itemCount * playerCount do
                     table.insert(member.ReservedItems, itemID);
+                    member.RollBonuses[itemID] = row.Bonus or 0;
                     itemReserveCount[itemID] = (itemReserveCount[itemID] or 0) + 1;
                     itemReserveCountByPlayer[player] = itemReserveCountByPlayer[player] or { };
                     itemReserveCountByPlayer[player][itemID] = (itemReserveCountByPlayer[player][itemID] or 0) + 1;
@@ -568,6 +580,7 @@ function LootReserve.Server.Import:Import()
                         ReservesLeft  = nil,
                         ReservesDelta = 0,
                         ReservedItems = { },
+                        RollBonuses   = member.RollBonuses,
                         Locked        = nil,
                         OptedOut      = nil,
                     };
@@ -580,6 +593,7 @@ function LootReserve.Server.Import:Import()
                     ReservesLeft  = nil,
                     ReservesDelta = 0,
                     ReservedItems = { },
+                    RollBonuses   = member.RollBonuses,
                     Locked        = nil,
                     OptedOut      = nil,
                 };

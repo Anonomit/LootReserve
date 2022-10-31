@@ -477,9 +477,9 @@ function LootReserve.Server:Load()
     -- 2021-08-28: Convert active session LootCategory to LootCategories
     -- Date is late because the check was added late
     if versionSave < "2022-05-21" then
-        if LootReserve.Server.CurrentSession and not LootReserve.Server.CurrentSession.Settings.LootCategories then
-            LootReserve.Server.CurrentSession.Settings.LootCategories = {LootReserve.Server.CurrentSession.Settings.LootCategory};
-            LootReserve.Server.NewSessionSettings.LootCategories = {LootReserve.Server.CurrentSession.Settings.LootCategory};
+        if self.CurrentSession and not self.CurrentSession.Settings.LootCategories then
+            self.CurrentSession.Settings.LootCategories = {self.CurrentSession.Settings.LootCategory};
+            self.NewSessionSettings.LootCategories = {self.CurrentSession.Settings.LootCategory};
         end
     end
 
@@ -628,7 +628,7 @@ function LootReserve.Server:Load()
     
     -- 2022-09-25: Remove invalid Loot Categories
     if versionSave < "2022-09-25" then
-        if LootReserve.Server.CurrentSession then
+        if self.CurrentSession then
             local newLootCategories = { };
             for _, category in ipairs(self.CurrentSession.Settings.LootCategories or {}) do
                 if LootReserve.Data.Categories[category] then
@@ -650,6 +650,20 @@ function LootReserve.Server:Load()
         self.NewSessionSettings.LootCategories = newLootCategories;
         if #self.NewSessionSettings.LootCategories == 0 then
             table.insert(self.NewSessionSettings.LootCategories, 3010)
+        end
+    end
+    
+    -- 2022-10-30: Add RollBonus field
+    if versionSave < "2022-10-30" then
+        if self.CurrentSession and self.CurrentSession.Members then
+            for member, memberData in pairs(self.CurrentSession.Members) do
+                if not memberData.RollBonuses then
+                    memberData.RollBonuses = { };
+                    for _, id in ipairs(memberData.ReservedItems) do
+                        memberData.RollBonuses[id] = 0;
+                    end
+                end
+            end
         end
     end
     
@@ -1668,6 +1682,7 @@ function LootReserve.Server:StartSession()
                 ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
                 ReservesDelta = 0,
                 ReservedItems = { ItemID, ItemID, ... },
+                RollBonuses   = { [ItemID] = 0, [ItemID] = 10, ... },
                 Locked        = nil,
                 OptedOut      = nil,
             },
@@ -1718,6 +1733,7 @@ function LootReserve.Server:StartSession()
             ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
             ReservesDelta = 0,
             ReservedItems = { },
+            RollBonuses   = { },
             Locked        = nil,
             OptedOut      = nil,
         };
@@ -1733,9 +1749,11 @@ function LootReserve.Server:StartSession()
             ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
             ReservesDelta = 0,
             ReservedItems = { },
+            RollBonuses   = { },
             Locked        = nil,
             OptedOut      = nil,
         };
+        member.RollBonuses = importedMember.RollBonuses;
         self.CurrentSession.Members[player] = member;
         for _, itemID in ipairs(importedMember.ReservedItems) do
             itemID = LootReserve.Data:GetToken(itemID) or itemID;
@@ -3065,6 +3083,9 @@ function LootReserve.Server:PrepareRequestRoll()
                             if oldRoll == LootReserve.Constants.RollType.NotRolled then
                                 if not rollSubmitted then
                                     self.RequestedRoll.Players[player][i] = tonumber(roll);
+                                    if not self.RequestedRoll.Custom and self.CurrentSession and self.CurrentSession.Members and self.CurrentSession.Members[player] then
+                                        self.RequestedRoll.Players[player][i] = self.RequestedRoll.Players[player][i] + self.CurrentSession.Members[player].RollBonuses[self.RequestedRoll.Item:GetID()];
+                                    end
                                     rollSubmitted = true;
                                 else
                                     extraRolls = true;

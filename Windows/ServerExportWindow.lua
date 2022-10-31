@@ -6,13 +6,12 @@ function LootReserve.Server.Export:UpdateReservesExportText()
     if members and next(members) then
         local maxItems = 0
         for player, member in LootReserve:Ordered(members, function(aMember, bMember, aPlayer, bPlayer) return aPlayer < bPlayer; end) do
-            text = text .. format("\n%s,%s,%d", player, member.Class and select(2, LootReserve:GetClassInfo(member.Class)) or "", member.ReservesDelta);
             for i, itemID in ipairs(member.ReservedItems) do
-                text = text .. format(",%d", itemID);
+                text = text .. format("\n%s,%s,%d,%d", player, member.Class and select(2, LootReserve:GetClassInfo(member.Class)) or "", member.ReservesDelta, itemID);
                 maxItems = i > maxItems and i or maxItems;
             end
         end
-        text = format("Player,Class,Delta%s", string.rep(",Item", maxItems)) .. text;
+        text = format("Player,Class,Delta%s", string.rep(",Item", maxItems and 1)) .. text;
     end
     self:SetText(text);
 end
