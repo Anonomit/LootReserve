@@ -36,7 +36,7 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
                     if #missing == 0 then
                         if roll.Winners then
                             for _, winner in ipairs(roll.Winners) do
-                                text = text .. format("\n%d,%d,%s,%s", roll.StartTime, roll.Item:GetID(), roll.Item:GetName(), winner);
+                                text = text .. format("\n%d,%d,%s,%s,%d,%s", roll.StartTime, roll.Item:GetID(), roll.Item:GetName(), winner, roll.Custom and 0 or 1, roll.Phases and roll.Phases[1] or "");
                             end
                         else
                             -- this can happen with older rolls, or on a reserved item when nobody rolled
@@ -55,7 +55,7 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
                             end
                             if max > 0 then
                                 for winner in pairs(winners) do
-                                    text = text .. format("\n%d,%d,%s,%s", roll.StartTime, roll.Item:GetID(), roll.Item:GetName(), winner);
+                                    text = text .. format("\n%d,%d,%s,%s,%d,%s", roll.StartTime, roll.Item:GetID(), roll.Item:GetName(), winner, roll.Custom and 0 or 1, roll.Phases and roll.Phases[1] or "");
                                 end
                             end
                         end
@@ -68,7 +68,7 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
         if #missing > 0 then
             text = format("Loading item names...\nRemaining: %d\n\nInstall/Update ItemCache to remember the item database between sessions...", #missing);
         elseif text ~= "" then
-            text = "Time,Item ID,Item Name,Winner" .. text;
+            text = "Time,Item ID,Item Name,Winner,Reserved,Reason" .. text;
         end
     end
     
