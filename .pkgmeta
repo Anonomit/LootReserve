@@ -1,5 +1,5 @@
 ignore:
-  - LICENSE
+  - LICENCE
 
 manual-changelog:
     filename: CHANGELOG.html
