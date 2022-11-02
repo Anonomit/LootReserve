@@ -4,14 +4,16 @@ function LootReserve.Server.Export:UpdateReservesExportText()
     local members = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members or LootReserve.Server.NewSessionSettings.ImportedMembers;
     local text = "";
     if members and next(members) then
-        local maxItems = 0
         for player, member in LootReserve:Ordered(members, function(aMember, bMember, aPlayer, bPlayer) return aPlayer < bPlayer; end) do
+            local counts = { };
             for i, itemID in ipairs(member.ReservedItems) do
-                text = text .. format("\n%s,%s,%d,%d", player, member.Class and select(2, LootReserve:GetClassInfo(member.Class)) or "", member.ReservesDelta, itemID);
-                maxItems = i > maxItems and i or maxItems;
+                counts[itemID] = (counts[itemID] or 0) + 1;
+            end
+            for itemID, count in pairs(counts) do
+                text = text .. format("\n%s,%s,%d,%d,%d,%d", player, member.Class and select(2, LootReserve:GetClassInfo(member.Class)) or "", member.ReservesDelta, member.RollBonus[itemID], itemID, count);
             end
         end
-        text = format("Player,Class,Delta%s", string.rep(",Item", maxItems and 1)) .. text;
+        text = "Player,Class,ExtraReserves,RollBonus,Item,Count" .. text;
     end
     self:SetText(text);
 end
