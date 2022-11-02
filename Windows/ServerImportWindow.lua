@@ -248,12 +248,12 @@ function LootReserve.Server.Import:InputOptionsUpdated()
                             break;
                         end
                     end
-                elseif header:find("delta") or header:find("reservebonus") then
-                    self.Columns[i] = "Delta"
+                elseif header:find("delta") or header:find("reserves?%s*bonus") or header:find("bonus%s*reserves?") or header:find("extra%s*reserves?") then
+                    self.Columns[i] = "Extra Reserves"
                 elseif header:find("class") then
                     self.Columns[i] = "Class";
-                elseif header:find("rollbonus") then
-                    self.Columns[i] = "RollBonus";
+                elseif header:find("roll%s*bonus") then
+                    self.Columns[i] = "Roll Bonus";
                 end
             end
         end
@@ -335,11 +335,11 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         return "Only one column can be marked as \"Count\"";
                     end
                 end
-                if column == "Delta" and row[i] then
+                if column == "Extra Reserves" and row[i] then
                     if not row.Delta then
                         row.Delta = ParseNumber(row[i]);
                     else
-                        return "Only one column can be marked as \"Delta\"";
+                        return "Only one column can be marked as \"Extra Reserves\"";
                     end
                 end
                 if column == "Class" and row[i] then
@@ -349,11 +349,11 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         return "Only one column can be marked as \"Class\"";
                     end
                 end
-                if column == "RollBonus" and row[i] then
+                if column == "Roll Bonus" and row[i] then
                     if not row.Bonus then
                         row.Bonus = ParseNumber(row[i]);
                     else
-                        return "Only one column can be marked as \"RollBonus\"";
+                        return "Only one column can be marked as \"Roll Bonus\"";
                     end
                 end
             end
@@ -426,7 +426,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                     {
                         NameMatchResult = nameMatchResult,
                         ReservedItems   = { },
-                        RollBonuses     = { },
+                        RollBonus       = { },
                         InvalidReasons  = { },
                         ReservesDelta   = nil,
                         Class           = nil,
@@ -438,7 +438,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 end
                 for i = 1, (row.Count or 1) * itemCount * playerCount do
                     table.insert(member.ReservedItems, itemID);
-                    member.RollBonuses[itemID] = row.Bonus or 0;
+                    member.RollBonus[itemID] = row.Bonus or 0;
                     itemReserveCount[itemID] = (itemReserveCount[itemID] or 0) + 1;
                     itemReserveCountByPlayer[player] = itemReserveCountByPlayer[player] or { };
                     itemReserveCountByPlayer[player][itemID] = (itemReserveCountByPlayer[player][itemID] or 0) + 1;
@@ -580,7 +580,7 @@ function LootReserve.Server.Import:Import()
                         ReservesLeft  = nil,
                         ReservesDelta = 0,
                         ReservedItems = { },
-                        RollBonuses   = member.RollBonuses,
+                        RollBonus     = member.RollBonus,
                         Locked        = nil,
                         OptedOut      = nil,
                     };
@@ -593,7 +593,7 @@ function LootReserve.Server.Import:Import()
                     ReservesLeft  = nil,
                     ReservesDelta = 0,
                     ReservedItems = { },
-                    RollBonuses   = member.RollBonuses,
+                    RollBonus     = member.RollBonus,
                     Locked        = nil,
                     OptedOut      = nil,
                 };

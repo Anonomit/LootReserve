@@ -657,10 +657,10 @@ function LootReserve.Server:Load()
     if versionSave < "2022-10-30" then
         if self.CurrentSession and self.CurrentSession.Members then
             for member, memberData in pairs(self.CurrentSession.Members) do
-                if not memberData.RollBonuses then
-                    memberData.RollBonuses = { };
+                if not memberData.RollBonus then
+                    memberData.RollBonus = { };
                     for _, id in ipairs(memberData.ReservedItems) do
-                        memberData.RollBonuses[id] = 0;
+                        memberData.RollBonus[id] = 0;
                     end
                 end
             end
@@ -1682,7 +1682,7 @@ function LootReserve.Server:StartSession()
                 ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
                 ReservesDelta = 0,
                 ReservedItems = { ItemID, ItemID, ... },
-                RollBonuses   = { [ItemID] = 0, [ItemID] = 10, ... },
+                RollBonus     = { [ItemID] = 0, [ItemID] = 10, ... },
                 Locked        = nil,
                 OptedOut      = nil,
             },
@@ -1733,7 +1733,7 @@ function LootReserve.Server:StartSession()
             ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
             ReservesDelta = 0,
             ReservedItems = { },
-            RollBonuses   = { },
+            RollBonus     = { },
             Locked        = nil,
             OptedOut      = nil,
         };
@@ -1749,11 +1749,11 @@ function LootReserve.Server:StartSession()
             ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
             ReservesDelta = 0,
             ReservedItems = { },
-            RollBonuses   = { },
+            RollBonus     = { },
             Locked        = nil,
             OptedOut      = nil,
         };
-        member.RollBonuses = importedMember.RollBonuses;
+        member.RollBonus = importedMember.RollBonus;
         self.CurrentSession.Members[player] = member;
         for _, itemID in ipairs(importedMember.ReservedItems) do
             itemID = LootReserve.Data:GetToken(itemID) or itemID;
@@ -3084,7 +3084,7 @@ function LootReserve.Server:PrepareRequestRoll()
                                 if not rollSubmitted then
                                     self.RequestedRoll.Players[player][i] = tonumber(roll);
                                     if not self.RequestedRoll.Custom and self.CurrentSession and self.CurrentSession.Members and self.CurrentSession.Members[player] then
-                                        self.RequestedRoll.Players[player][i] = self.RequestedRoll.Players[player][i] + self.CurrentSession.Members[player].RollBonuses[self.RequestedRoll.Item:GetID()];
+                                        self.RequestedRoll.Players[player][i] = self.RequestedRoll.Players[player][i] + self.CurrentSession.Members[player].RollBonus[self.RequestedRoll.Item:GetID()];
                                     end
                                     rollSubmitted = true;
                                 else
