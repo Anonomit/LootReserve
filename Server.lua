@@ -43,6 +43,9 @@ LootReserve.Server =
         RollLimitDuration               = false,
         RollDuration                    = 30,
         RollFinishOnExpire              = false,
+        Disenchanters                   = { },
+        RollDisenchant                  = false,
+        RollDisenchanters               = { },
         RollFinishOnAllReservingRolled  = true,
         RollFinishOnRaidRoll            = false,
         RollSkipNotContested            = true,
@@ -157,6 +160,20 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM"] =
         LootReserve.Server:RequestCustomRoll(self.data.Item,
             LootReserve.Server.Settings.RollLimitDuration and LootReserve.Server.Settings.RollDuration or nil,
             phases);
+    end,
+};
+
+StaticPopupDialogs["LOOTRESERVE_CONFIRM_DISENCHANT_RESERVED_ITEM"] =
+{
+    text         = "Are you sure you want to send to disenchanter?|n|n%s has been reserved by:|n%s.",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self)
+        self.data.Frame:SetItem(nil);
+        LootReserve.Server:RecordDisenchant(self.data.Item, self.data.Disenchanter, true);
     end,
 };
 
@@ -296,6 +313,20 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_RESET_PHASES"] =
     hideOnEscape = 1,
     OnAccept = function(self)
         LootReserve.Server.Settings.Phases = LootReserve:Deepcopy(LootReserve.Constants.DefaultPhases);
+    end,
+};
+
+StaticPopupDialogs["LOOTRESERVE_CONFIRM_RESET_DISENCHANTERS"] =
+{
+    text         = "Are you sure you want to clear the list of disenchanters?",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self)
+        LootReserve.Server.Settings.RollDisenchanters = { };
+        LootReserve.Server.Settings.Disenchanters     = { };
     end,
 };
 
@@ -2472,10 +2503,15 @@ end
 
 function LootReserve.Server:ExpireRollRequest()
     if self.RequestedRoll then
+        local item = self.RequestedRoll.Item;
+        local disenchanter = self:GetDisenchanter();
         if self:GetWinningRollAndPlayers() then
             -- If someone rolled on this phase - end the roll
             if self.Settings.RollFinishOnExpire then
                 self:FinishRollRequest(self.RequestedRoll.Item);
+                if disenchanter then
+                    self:RecordDisenchant(item, disenchanter);
+                end
             end
         else
             -- If nobody rolled on this phase - advance to the next
@@ -2484,12 +2520,18 @@ function LootReserve.Server:ExpireRollRequest()
                     -- If the phase cannot advance (i.e. because we ran out of phases) - end the roll
                     if self.Settings.RollFinishOnExpire then
                         self:FinishRollRequest(self.RequestedRoll.Item);
+                        if disenchanter then
+                            self:RecordDisenchant(item, disenchanter);
+                        end
                     end
                 end
             elseif not self.RequestedRoll.Phases or #self.RequestedRoll.Phases <= 1 then
                 -- If no more phases remaining - end the roll
                 if self.Settings.RollFinishOnExpire then
                     self:FinishRollRequest(self.RequestedRoll.Item);
+                    if disenchanter then
+                        self:RecordDisenchant(item, disenchanter);
+                    end
                 end
             end
         end
@@ -2837,7 +2879,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
     end
 end
 
-function LootReserve.Server:RecordRollHistory(roll, winner, excludePlayers)
+function LootReserve.Server:RecordRollHistory(roll, winner)
     if winner then
         roll.Winners = { winner };
     end
@@ -2865,6 +2907,33 @@ function LootReserve.Server:RecordRollHistory(roll, winner, excludePlayers)
     end
 end
 
+function LootReserve.Server:RecordDisenchant(item, disenchanter, handleRecentLootRemoval)
+    LootReserve.Server:RecordRollHistory(
+    {
+        Players = { [disenchanter] = { 0 } },
+        Item = item,
+        StartTime = time(),
+        Disenchant = true,
+    }, disenchanter);
+    if handleRecentLootRemoval and self.Settings.RemoveRecentLootAfterRolling then
+        LootReserve:TableRemove(self.RecentLoot, item);
+    end
+    self:UpdateRollList();
+end
+
+function LootReserve.Server:GetDisenchanter()
+    local names = { };
+    LootReserve:ForEachRaider(function(name) names[name] = true end);
+    if self.Settings.RollDisenchant then
+        for _, name in ipairs(self.Settings.RollDisenchanters) do
+            if names[name] then
+                return name;
+            end
+        end
+    end
+    return nil;
+end
+
 function LootReserve.Server:GetContinueRollData(oldRoll)
     -- Copy historical roll into RequestedRoll
     local Roll = LootReserve:Deepcopy(oldRoll);
@@ -2887,7 +2956,9 @@ function LootReserve.Server:GetContinueRollData(oldRoll)
     end
     
     local doRequestRoll = true;
-    if Roll.Custom then
+    if Roll.Disenchant then
+        doRequestRoll = false;
+    elseif Roll.Custom then
         for _, winner in ipairs(Roll.Winners or {}) do
             Roll.Players[winner] = nil;
         end

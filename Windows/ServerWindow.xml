@@ -446,10 +446,16 @@
 									players[i] = LootReserve:ColoredPlayer(players[i]);
 								end
 							end
+							local disenchanter = LootReserve.Server:GetDisenchanter();
 							local menu =
 							{
 								{ text = "End Roll", isTitle = true },
 								{ text = players and format("Announce %d |4Winner:Winners; (%s)", #players, strjoin(", ", unpack(players))) or "Announce Winner", disabled = not players or #players == 0, func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item); end },
+								{
+									text = format(disenchanter and "Send to Disenchanter: %s" or "Send to Disenchanter", disenchanter and LootReserve:ColoredPlayer(disenchanter)),
+									disabled = not disenchanter,
+									func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, true); LootReserve.Server:RecordDisenchant(self:GetParent().Item); end,
+								},
 								{ text = "End Silently", func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, true); end },
 								{ text = "Cancel Roll", func = function() LootReserve.Server:CancelRollRequest(self:GetParent().Item, nil, true); end },
 								LootReserve:MakeMenuSeparator(),
@@ -972,7 +978,7 @@
 											end
 											if i == 1 then
 												if frame.Roll.Winners then
-													LootReserve:SendChatMessage(format("  Reserved by %s", frame.Roll.Winners[1]), info.arg1, recipient);
+													LootReserve:SendChatMessage(format("  %s by %s", frame.Roll.Disenchant and "Disenchanted" or "Reserved", frame.Roll.Winners[1]), info.arg1, recipient);
 												else
 													LootReserve:SendChatMessage("  No Rolls", info.arg1, recipient);
 												end
@@ -1254,12 +1260,89 @@
 								checked = LootReserve.Server.Settings.RollCountdown == time,
 							});
 						end
+
+						-- Disenchanter
+						local disenchanterMenu = { };
+						for _, contains in ipairs({ true, false }) do
+							local first = true;
+							local i = 0;
+							for _, name in ipairs(contains and LootReserve.Server.Settings.RollDisenchanters or LootReserve.Server.Settings.Disenchanters) do
+								if LootReserve:Contains(LootReserve.Server.Settings.RollDisenchanters, name) == contains then
+									if #disenchanterMenu > 0 and first then
+										table.insert(disenchanterMenu, LootReserve:MakeMenuSeparator());
+									end
+									first = false;
+									i = i + 1;
+									table.insert(disenchanterMenu,
+									{
+										text = contains and format("|cFF00FF00%d. %s|r", i, LootReserve:ColoredPlayer(name)) or LootReserve:ColoredPlayer(name),
+										arg1 = name,
+										arg2 = contains,
+										func = function(info, name, contains)
+											if contains then
+												for index, i in ipairs(LootReserve.Server.Settings.RollDisenchanters) do
+													if i == name then
+														table.remove(LootReserve.Server.Settings.RollDisenchanters, index);
+														break;
+													end
+												end
+											else
+												table.insert(LootReserve.Server.Settings.RollDisenchanters, name);
+											end
+											LootReserve:ReopenMenu(self, "#disenchanters");
+										end,
+										checked = contains,
+									});
+								end
+							end
+						end
+						if #disenchanterMenu > 0 then
+							table.insert(disenchanterMenu, LootReserve:MakeMenuSeparator());
+						end
+						table.insert(disenchanterMenu, { text = "Manage", isTitle = true });
+						local disenchanters = { };
+						LootReserve:ForEachRaider(function(name)
+							disenchanters[name] = true;
+						end)
+						for name in pairs(LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members or LootReserve.Server.NewSessionSettings and LootReserve.Server.NewSessionSettings.ImportedMembers or {}) do
+							disenchanters[name] = true;
+						end
+						local disenchantersList = { };
+						for name in pairs(disenchanters) do
+							if not LootReserve:Contains(LootReserve.Server.Settings.Disenchanters, name) then
+								table.insert(disenchantersList, name);
+							end
+						end
+						table.sort(disenchantersList, function(a, b) return b >= a end);
+						local addDisenchantersMenu = { };
+						for _, name in ipairs(disenchantersList) do
+							table.insert(addDisenchantersMenu, { text = LootReserve:ColoredPlayer(name), func = function(info)
+								table.insert(LootReserve.Server.Settings.Disenchanters, name);
+								LootReserve:ReopenMenu(self, "#disenchanters");
+							end });
+						end
+						table.insert(disenchanterMenu, { text = "Add...", menuList = addDisenchantersMenu });
+						local removeDisenchantersMenu = { };
+						for _, name in ipairs(LootReserve.Server.Settings.Disenchanters) do
+							table.insert(removeDisenchantersMenu, { text = LootReserve:ColoredPlayer(name), arg1 = name, func = function(info)
+								LootReserve:TableRemove(LootReserve.Server.Settings.Disenchanters, info.arg1);
+								LootReserve:TableRemove(LootReserve.Server.Settings.RollDisenchanters, info.arg1);
+								LootReserve:ReopenMenu(self, "#disenchanters");
+							end });
+						end
+						table.insert(disenchanterMenu, { text = "Remove...", menuList = removeDisenchantersMenu });
+						table.insert(disenchanterMenu, { text = "Clear", func = function()
+							CloseMenus();
+							StaticPopup_Show("LOOTRESERVE_CONFIRM_RESET_DISENCHANTERS");
+						end });
+						
 						local item, link = self:GetParent().Item, self:GetParent().Link;
 						local token;
 						if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
 							token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
 						end
 
+						local disenchanter = LootReserve.Server:GetDisenchanter();
 						local menu =
 						{
 							{ text = "Start Roll", isTitle = true },
@@ -1279,6 +1362,8 @@
 								end
 							end, },
 							{ text = "Auto Raid-Roll", func = RaidRoll },
+							LootReserve:MakeMenuSeparator(),
+							-- Master Loot options go here
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Settings for \"Reserving Players\"", isTitle = true },
 							{
@@ -1302,6 +1387,14 @@
 								func = function(_, _, _, checked) LootReserve.Server.Settings.RollUsePhases = checked; LootReserve:ReopenMenu(self); end,
 								hasArrow = LootReserve.Server.Settings.RollUsePhases,
 								menuList = phaseMenu,
+							},
+							{
+								text = format(disenchanter and "Disenchanter: %s" or "Disenchant", disenchanter and LootReserve:ColoredPlayer(disenchanter)),
+								arg1 = "#disenchanters",
+								checked = LootReserve.Server.Settings.RollDisenchant,
+								func = function(_, _, _, checked) LootReserve.Server.Settings.RollDisenchant = checked; LootReserve:ReopenMenu(self); end,
+								hasArrow = LootReserve.Server.Settings.RollDisenchant,
+								menuList = disenchanterMenu,
 							},
 							{
 								text = format(LootReserve.Server.Settings.RollLimitDuration and (LootReserve.Server.Settings.RollCountdown and "Limit Duration: |cFF00FF00%s|r|cFF808080 (%d secs C/D)|r" or "Limit Duration: |cFF00FF00%s|r") or "Limit Duration", FormatTime(LootReserve.Server.Settings.RollDuration), LootReserve.Server.Settings.RollCountdown),
@@ -1337,7 +1430,6 @@
 							{ text = "Cancel" },
 						};
 
-						table.insert(menu, 5, LootReserve:MakeMenuSeparator());
 						local warning = (function()
 							if not IsMasterLooter() or GetLootMethod() ~= "master" then
 								return "Not master looter";
@@ -1363,6 +1455,19 @@
 							tooltipText = "Automatically masterloot the item away to the roll winner once they're announced.",
 							checked = LootReserve.Server.Settings.RollMasterLoot,
 							func = function(_, _, _, checked) LootReserve.Server.Settings.RollMasterLoot = checked; end,
+						});
+						
+						table.insert(menu, 3,
+						{ text = format(disenchanter and "To Disenchanter: %s" or "To Disenchanter", disenchanter and LootReserve:ColoredPlayer(disenchanter)),
+							disabled = not disenchanter,
+							func = function(...)
+								if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
+									self:GetParent():SetItem(nil);
+									LootReserve.Server:RecordDisenchant(item, true);
+								else
+									StaticPopup_Show("LOOTRESERVE_CONFIRM_DISENCHANT_RESERVED_ITEM", link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players), {Item = item, Disenchanter = disenchanter, Frame = self:GetParent()});
+								end
+							end,
 						});
 						
 						if LootReserve.Server.Settings.RollUsePhases and #LootReserve.Server.Settings.RollPhases > 0 then
