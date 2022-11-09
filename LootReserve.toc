@@ -10,7 +10,7 @@
 
 ## Title: LootReserve
 ## Notes: Soft reserves management addon
-## Author: Anonomit, Damagus-Benediction|nOriginal addon by Tagar-NethergardeKeep
+## Author: Anonomit (Damagus-Benediction)|nOriginal addon by Tagar-NethergardeKeep
 
 ## SavedVariables: LootReserveGlobalSave
 ## SavedVariablesPerCharacter: LootReserveCharacterSave
