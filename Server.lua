@@ -1120,28 +1120,22 @@ function LootReserve.Server:PrepareLootTracking()
     -- Announce reserves when a group loot roll starts
     LootReserve:RegisterEvent("START_LOOT_ROLL", function(rollID)
         local link = GetLootRollItemLink(rollID);
-        LootReserve:debug(rollID, link)
         if not link then return end
         
         local item = LootReserve.ItemCache:Item(link);
-        LootReserve:debug(item:GetLink())
         
         local token;
         if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
             token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
         end
-        LootReserve:debug(token)
         local itemID = token and token:GetID() or item:GetID();
         if self.CurrentSession.ItemReserves[itemID] then
-            LootReserve:debug(itemID)
             item:OnCache(function()
-                LootReserve:debug("cached")
                 if not self.CurrentSession then return end
                 local reservesText = LootReserve:GetReservesData(self.CurrentSession.ItemReserves[itemID].Players);
                 LootReserve:SendChatMessage(format("%s is reserved by: %s", item:GetLink(), reservesText), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollStartReserved));
             end);
         end
-        LootReserve:debug("done")
     end);
     
     -- Fix blizzard bug
