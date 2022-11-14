@@ -150,16 +150,12 @@ function LootReserve:PrintMessage(fmt, ...)
 end
 
 function LootReserve:debug(...)
-    -- Curseforge automatic packaging will comment this out
-    -- https://support.curseforge.com/en/support/solutions/articles/9000197281-automatic-packaging
     --@debug@
     print("[DEBUG] ", ...);
     --@end-debug@
 end
 
 function LootReserve:debugFunc(func)
-    -- Curseforge automatic packaging will comment this out
-    -- https://support.curseforge.com/en/support/solutions/articles/9000197281-automatic-packaging
     --@debug@
     func();
     --@end-debug@
