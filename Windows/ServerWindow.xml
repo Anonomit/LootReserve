@@ -1590,7 +1590,7 @@
 											end
 					            local token;
 					            if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
-					                token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
+					              token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
 					            end
 											return
 											{
