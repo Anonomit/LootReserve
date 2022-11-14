@@ -446,6 +446,7 @@
 									players[i] = LootReserve:ColoredPlayer(players[i]);
 								end
 							end
+							local item = self:GetParent().Item;
 							local disenchanter = LootReserve.Server:GetDisenchanter();
 							local menu =
 							{
@@ -475,7 +476,7 @@
 								table.insert(menu, 3, {
 									text = format(disenchanter and "Send to Disenchanter: %s" or "Send to Disenchanter", disenchanter and LootReserve:ColoredPlayer(disenchanter)),
 									disabled = not disenchanter,
-									func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, true); LootReserve.Server:RecordDisenchant(self:GetParent().Item, disenchanter); end,
+									func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, true); LootReserve.Server:RecordDisenchant(item, disenchanter); end,
 								});
 							end
 							if LootReserve:IsLootingItem(self:GetParent().Item) then
