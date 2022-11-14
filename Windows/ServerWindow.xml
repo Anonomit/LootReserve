@@ -451,11 +451,6 @@
 							{
 								{ text = "End Roll", isTitle = true },
 								{ text = players and format("Announce %d |4Winner:Winners; (%s)", #players, strjoin(", ", unpack(players))) or "Announce Winner", disabled = not players or #players == 0, func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item); end },
-								{
-									text = format(disenchanter and "Send to Disenchanter: %s" or "Send to Disenchanter", disenchanter and LootReserve:ColoredPlayer(disenchanter)),
-									disabled = not disenchanter,
-									func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, true); LootReserve.Server:RecordDisenchant(self:GetParent().Item); end,
-								},
 								{ text = "End Silently", func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, true); end },
 								{ text = "Cancel Roll", func = function() LootReserve.Server:CancelRollRequest(self:GetParent().Item, nil, true); end },
 								LootReserve:MakeMenuSeparator(),
@@ -476,6 +471,12 @@
 									text = format("Advance to |cFF00FF00%s|r", LootReserve.Server.RequestedRoll.Phases[2]),
 									func = function() LootReserve.Server:AdvanceRollPhase(self:GetParent().Item); end,
 								};
+							else
+								table.insert(menu, 3, {
+									text = format(disenchanter and "Send to Disenchanter: %s" or "Send to Disenchanter", disenchanter and LootReserve:ColoredPlayer(disenchanter)),
+									disabled = not disenchanter,
+									func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, true); LootReserve.Server:RecordDisenchant(self:GetParent().Item, disenchanter); end,
+								});
 							end
 							if LootReserve:IsLootingItem(self:GetParent().Item) then
 								table.insert(menu, #menu - 1, LootReserve:MakeMenuSeparator());
@@ -1463,7 +1464,7 @@
 							func = function(...)
 								if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
 									self:GetParent():SetItem(nil);
-									LootReserve.Server:RecordDisenchant(item, true);
+									LootReserve.Server:RecordDisenchant(item, disenchanter, true);
 								else
 									StaticPopup_Show("LOOTRESERVE_CONFIRM_DISENCHANT_RESERVED_ITEM", link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players), {Item = item, Disenchanter = disenchanter, Frame = self:GetParent()});
 								end

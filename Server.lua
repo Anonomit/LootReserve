@@ -2509,9 +2509,6 @@ function LootReserve.Server:ExpireRollRequest()
             -- If someone rolled on this phase - end the roll
             if self.Settings.RollFinishOnExpire then
                 self:FinishRollRequest(self.RequestedRoll.Item);
-                if disenchanter then
-                    self:RecordDisenchant(item, disenchanter);
-                end
             end
         else
             -- If nobody rolled on this phase - advance to the next
