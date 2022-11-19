@@ -5500,7 +5500,7 @@ end
 function LootReserve.Data:GetItemCategories(itemID)
     local categories = { };
     for category in pairs(self.Categories) do
-        if self:IsItemInCategories(itemID, category) then
+        if self:IsItemInCategories(itemID, {category}) then
             table.insert(categories, category);
         end
     end
