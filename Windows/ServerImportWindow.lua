@@ -236,11 +236,11 @@ function LootReserve.Server.Import:InputOptionsUpdated()
             -- Try to guess what each column means by the header
             for i, header in ipairs(self.Headers) do
                 header = header:lower();
-                if header:find("item") then
+                if header:find("item") and not (header:find("note") or header:find("tier")) then
                     self.Columns[i] = "Item";
-                elseif (header:find("name") or header:find("player") or header:find("member") or header:find("character")) and not (header:find("guild") or header:find("class") or header:find("race")) then
+                elseif (header:find("name") or header:find("player")) and not (header:find("member") or header:find("guild") or header:find("class") or header:find("race") or header:find("group")) then
                     self.Columns[i] = "Player";
-                elseif header:find("note") or header:find("count") or header:find("quantity") then
+                elseif header:find("count") or header:find("quantity") then
                     -- Search for meaningful numbers first (basically where count > 1)
                     for _, row in ipairs(self.Rows) do
                         if row[i] and ParseMultireserveCount(row[i]) then
@@ -254,6 +254,8 @@ function LootReserve.Server.Import:InputOptionsUpdated()
                     self.Columns[i] = "Class";
                 elseif header:find("roll%s*bonus") then
                     self.Columns[i] = "Roll Bonus";
+                elseif header:find("character_is_alt") or header:find("is_offspec") or header:find("received_at") then -- ThatsMyBis export
+                    self.Columns[i] = "Do Not Reserve";
                 end
             end
         end
@@ -327,6 +329,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
             row.Delta = nil;
             row.Class = nil;
             row.Bonus = nil;
+            row.Ignore = nil;
             for i, column in ipairs(self.Columns) do
                 if column == "Count" and row[i] then
                     if not row.Count then
@@ -356,27 +359,41 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         return "Only one column can be marked as \"Roll Bonus\"";
                     end
                 end
+                if column == "Do Not Reserve" and row[i] then
+                    if not row.Ignore then
+                        if type(row[i]) == "string" then
+                            local text = row[i]:lower();
+                            if text ~= "" and text ~= "false" and text ~= "no" then
+                                row.Ignore = true;
+                            end
+                        elseif row[i] ~= 0 then
+                            row.Ignore = true;
+                        end
+                    end
+                end
             end
         end
         
         if self.ItemNameMatch then
             for _, row in ipairs(self.Rows) do
-                for _, itemColumn in ipairs(itemColumns) do
-                    local itemID = row[itemColumn];
-                    if itemID and itemID ~= 0 and itemID ~= "" then
-                        if type(itemID) == "string" then
-                            LootReserve.ItemSearch:Load();
-                            if not LootReserve.ItemSearch.FullCache:IsComplete() then
-                                LootReserve.ItemSearch.FullCache:SetSpeed(LootReserve.ItemSearch.ZoomSpeed);
-                                
-                                if not self.PendingInputOptionsUpdate then
-                                    self.PendingInputOptionsUpdate = true;
-                                    C_Timer.After(0.1, function()
-                                        self.PendingInputOptionsUpdate = false;
-                                        self:InputOptionsUpdated();
-                                    end);
+                if not row.Ignore then
+                    for _, itemColumn in ipairs(itemColumns) do
+                        local itemID = row[itemColumn];
+                        if itemID and itemID ~= 0 and itemID ~= "" then
+                            if type(itemID) == "string" then
+                                LootReserve.ItemSearch:Load();
+                                if not LootReserve.ItemSearch.FullCache:IsComplete() then
+                                    LootReserve.ItemSearch.FullCache:SetSpeed(LootReserve.ItemSearch.ZoomSpeed);
+                                    
+                                    if not self.PendingInputOptionsUpdate then
+                                        self.PendingInputOptionsUpdate = true;
+                                        C_Timer.After(0.1, function()
+                                            self.PendingInputOptionsUpdate = false;
+                                            self:InputOptionsUpdated();
+                                        end);
+                                    end
+                                    return format("Creating item name database... (%d%%)|n|nInstall/Update ItemCache to remember the item database between sessions", LootReserve.ItemSearch.FullCache:GetProgress(0));
                                 end
-                                return format("Creating item name database... (%d%%)|n|nInstall/Update ItemCache to remember the item database between sessions", LootReserve.ItemSearch.FullCache:GetProgress(0));
                             end
                         end
                     end
@@ -467,88 +484,90 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
         end
 
         for _, row in ipairs(self.Rows) do
-            row.Players   = { };
-            row.ItemIDs   = { };
-            row.ItemNames = { };
-            for _, playerColumn in ipairs(playerColumns) do
-                local player = row[playerColumn];
-                if type(player) ~= "string" then
-                    player = nil;
-                end
+            if not row.Ignore then
+                row.Players   = { };
+                row.ItemIDs   = { };
+                row.ItemNames = { };
+                for _, playerColumn in ipairs(playerColumns) do
+                    local player = row[playerColumn];
+                    if type(player) ~= "string" then
+                        player = nil;
+                    end
 
-                if player then
-                    row.Players[player] = row.Players[player] and row.Players[player] + 1 or 1;
-                end
-            end
-                
-            for _, itemColumn in ipairs(itemColumns) do
-                local itemID = row[itemColumn];
-
-
-                if itemID and itemID ~= 0 and itemID ~= "" then
-                    -- Transform Item Name -> Item ID
-                    if type(itemID) == "string" then
-                        if self.ItemNameMatch then
-                            local query = LootReserve.ItemCache:FormatSearchText(itemID);
-                            local results = LootReserve.ItemCache:Filter(function(item) return item:Matches(query) end)
-                            if #results == 1 then
-                                itemID = results[1]:GetID();
-                            end
-
-                            if type(itemID) == "string" then
-                                itemID = 0;
-                            end
-                            if LootReserve.Data:IsTokenReward(itemID) and not LootReserve.Server:GetNewSessionItemConditions()[itemID] then
-                                itemID = LootReserve.Data:GetToken(itemID)
-                            end
-                            if not row.ItemNames[itemID] then
-                                row.ItemNames[itemID] = {Count = 0, Name = row[itemColumn]};
-                            end
-                            row.ItemNames[itemID].Count = row.ItemNames[itemID].Count + 1;
-                        end
-                    else
-                        if LootReserve.Data:IsTokenReward(itemID) then
-                            itemID = LootReserve.Data:GetToken(itemID)
-                        end
-                        row.ItemIDs[itemID] = row.ItemIDs[itemID] and row.ItemIDs[itemID] + 1 or 1;
+                    if player then
+                        row.Players[player] = row.Players[player] and row.Players[player] + 1 or 1;
                     end
                 end
-            end
+                    
+                for _, itemColumn in ipairs(itemColumns) do
+                    local itemID = row[itemColumn];
 
-            for player, playerCount in pairs(row.Players) do
-                
-                local nameMatchResult = nil;
-                if player and #player > 0 then
-                    player = LootReserve:Player(LootReserve:NormalizeName(player));
-                    if self.MatchPlayerNames and LootReserve:IsPlayerOnline(player) == nil then
-                        if row.Class then
-                            local simplified = simplifiedRaidNamesByClass[row.Class] and simplifiedRaidNamesByClass[row.Class][LootReserve:SimplifyName(player)];
-                            if not simplified then
-                                nameMatchResult = "not in raid";
-                            elseif type(simplified) == "string" then
-                                player = simplified;
-                            elseif type(simplified) == "number" then
-                                nameMatchResult = "ambiguous name";
+
+                    if itemID and itemID ~= 0 and itemID ~= "" then
+                        -- Transform Item Name -> Item ID
+                        if type(itemID) == "string" then
+                            if self.ItemNameMatch then
+                                local query = LootReserve.ItemCache:FormatSearchText(itemID);
+                                local results = LootReserve.ItemCache:Filter(function(item) return item:Matches(query) end)
+                                if #results == 1 then
+                                    itemID = results[1]:GetID();
+                                end
+
+                                if type(itemID) == "string" then
+                                    itemID = 0;
+                                end
+                                if LootReserve.Data:IsTokenReward(itemID) and not LootReserve.Server:GetNewSessionItemConditions()[itemID] then
+                                    itemID = LootReserve.Data:GetToken(itemID)
+                                end
+                                if not row.ItemNames[itemID] then
+                                    row.ItemNames[itemID] = {Count = 0, Name = row[itemColumn]};
+                                end
+                                row.ItemNames[itemID].Count = row.ItemNames[itemID].Count + 1;
                             end
                         else
-                            local simplified = simplifiedRaidNames[LootReserve:SimplifyName(player)];
-                            if not simplified then
-                                nameMatchResult = "not in raid";
-                            elseif type(simplified) == "string" then
-                                player = simplified;
-                            elseif type(simplified) == "number" then
-                                nameMatchResult = "ambiguous name";
+                            if LootReserve.Data:IsTokenReward(itemID) then
+                                itemID = LootReserve.Data:GetToken(itemID)
+                            end
+                            row.ItemIDs[itemID] = row.ItemIDs[itemID] and row.ItemIDs[itemID] + 1 or 1;
+                        end
+                    end
+                end
+
+                for player, playerCount in pairs(row.Players) do
+                    
+                    local nameMatchResult = nil;
+                    if player and #player > 0 then
+                        player = LootReserve:Player(LootReserve:NormalizeName(player));
+                        if self.MatchPlayerNames and LootReserve:IsPlayerOnline(player) == nil then
+                            if row.Class then
+                                local simplified = simplifiedRaidNamesByClass[row.Class] and simplifiedRaidNamesByClass[row.Class][LootReserve:SimplifyName(player)];
+                                if not simplified then
+                                    nameMatchResult = "not in raid";
+                                elseif type(simplified) == "string" then
+                                    player = simplified;
+                                elseif type(simplified) == "number" then
+                                    nameMatchResult = "ambiguous name";
+                                end
+                            else
+                                local simplified = simplifiedRaidNames[LootReserve:SimplifyName(player)];
+                                if not simplified then
+                                    nameMatchResult = "not in raid";
+                                elseif type(simplified) == "string" then
+                                    player = simplified;
+                                elseif type(simplified) == "number" then
+                                    nameMatchResult = "ambiguous name";
+                                end
                             end
                         end
-                    end
-                    for itemID, itemCount in pairs(row.ItemIDs) do
-                        if not row.ItemNames[itemID] or row.ItemNames[itemID].Count == 1 then
-                            ParseRow(player, nameMatchResult, itemID, itemID, row, itemCount, playerCount);
+                        for itemID, itemCount in pairs(row.ItemIDs) do
+                            if not row.ItemNames[itemID] or row.ItemNames[itemID].Count == 1 then
+                                ParseRow(player, nameMatchResult, itemID, itemID, row, itemCount, playerCount);
+                            end
                         end
-                    end
-                    for itemID, itemData in pairs(row.ItemNames) do
-                        if not row.ItemIDs[itemID] or (row.ItemIDs[itemID] == 1 and itemData.Count > 1) then
-                            ParseRow(player, nameMatchResult, itemID, itemData.Name, row, itemData.Count, playerCount);
+                        for itemID, itemData in pairs(row.ItemNames) do
+                            if not row.ItemIDs[itemID] or (row.ItemIDs[itemID] == 1 and itemData.Count > 1) then
+                                ParseRow(player, nameMatchResult, itemID, itemData.Name, row, itemData.Count, playerCount);
+                            end
                         end
                     end
                 end

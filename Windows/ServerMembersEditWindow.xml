@@ -306,7 +306,7 @@
 							</Anchors>
 						</FontString>
 						<FontString parentKey="Count" inherits="GameFontNormal" justifyH="CENTER" text="">
-							<Size x="32" />
+							<Size x="40" />
 							<Anchors>
 								<Anchor point="LEFT" relativeKey="$parent.WonRolls" relativePoint="RIGHT" x="60" />
 							</Anchors>
