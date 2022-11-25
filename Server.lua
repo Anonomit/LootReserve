@@ -689,12 +689,16 @@ function LootReserve.Server:Load()
         if self.CurrentSession and self.CurrentSession.Members then
             for member, memberData in pairs(self.CurrentSession.Members) do
                 if not memberData.RollBonus then
-                    memberData.RollBonus = { };
-                    for _, id in ipairs(memberData.ReservedItems) do
-                        memberData.RollBonus[id] = 0;
-                    end
+                    memberData.RollBonus = { }; -- metatable added in next block
                 end
             end
+        end
+    end
+    
+    -- Create RollBonus metatables
+    if self.CurrentSession then
+        for _, member in pairs(self.CurrentSession.Members) do
+            member.RollBonus = setmetatable(member.RollBonus, { __index = function() return 0 end })
         end
     end
     
@@ -714,7 +718,7 @@ function LootReserve.Server:Load()
             if member.WonRolls then
                 for i, won in ipairs(member.WonRolls) do
                     won.Item = LootReserve.ItemCache:Item(won.Item);
-                end 
+                end
             end
         end
     end
@@ -1195,6 +1199,7 @@ function LootReserve.Server:UpdateGroupMembers()
                     ReservedItems = { },
                     Locked        = nil,
                     OptedOut      = nil,
+                    RollBonus     = setmetatable({ }, { __index = function() return 0 end }),
                 };
                 self.MembersEdit:UpdateMembersList();
             end
@@ -1787,7 +1792,7 @@ function LootReserve.Server:StartSession()
             ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
             ReservesDelta = 0,
             ReservedItems = { },
-            RollBonus     = { },
+            RollBonus     = setmetatable({ }, { __index = function() return 0 end }),
             Locked        = nil,
             OptedOut      = nil,
         };
@@ -1803,7 +1808,7 @@ function LootReserve.Server:StartSession()
             ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
             ReservesDelta = 0,
             ReservedItems = { },
-            RollBonus     = { },
+            RollBonus     = setmetatable({ }, { __index = function() return 0 end }),
             Locked        = nil,
             OptedOut      = nil,
         };

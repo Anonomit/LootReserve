@@ -443,7 +443,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                     {
                         NameMatchResult = nameMatchResult,
                         ReservedItems   = { },
-                        RollBonus       = { },
+                        RollBonus       = setmetatable({ }, { __index = function() return 0 end }),
                         InvalidReasons  = { },
                         ReservesDelta   = nil,
                         Class           = nil,
@@ -455,7 +455,9 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 end
                 for i = 1, (row.Count or 1) * itemCount * playerCount do
                     table.insert(member.ReservedItems, itemID);
-                    member.RollBonus[itemID] = row.Bonus or 0;
+                    if row.Bonus and row.Bonus ~= 0 then
+                        member.RollBonus[itemID] = row.Bonus;
+                    end
                     itemReserveCount[itemID] = (itemReserveCount[itemID] or 0) + 1;
                     itemReserveCountByPlayer[player] = itemReserveCountByPlayer[player] or { };
                     itemReserveCountByPlayer[player][itemID] = (itemReserveCountByPlayer[player][itemID] or 0) + 1;
