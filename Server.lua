@@ -34,6 +34,7 @@ LootReserve.Server =
         ChatReservesList                = true,
         ChatReservesListLimit           = 5,
         ChatUpdates                     = true,
+        ChatRequiresExclamation         = true,
         ReservesSorting                 = LootReserve.Constants.ReservesSorting.BySource,
         UseGlobalProfile                = false,
         Phases                          = LootReserve:Deepcopy(LootReserve.Constants.DefaultPhases),
@@ -1308,30 +1309,34 @@ function LootReserve.Server:PrepareSession()
 
     if self.CurrentSession.Settings.ChatFallback and not self.ChatFallbackRegistered then
         self.ChatFallbackRegistered = true;
-
-        local reservesStrings  = {"^[!¡]+reserves(.*)"};
-        local myResStrings     = {"^[!¡]+myreserves", "^[!¡]+myreserve", "^[!¡]+myres"};
-        local optStrings       = {"^[!¡]+opt%s*(in)", "^[!¡]+opt%s*(out)"};
-        local cancelStrings    = {"^[!¡]+cancelreserve(.*)", "^[!¡]+cancelres(.*)", "^[!¡]+cancel(.*)", "^[!¡]+unreserve(.*)", "^[!¡]+unres(.*)"};
-        local reserveStrings   = {"^[!¡]+reserve(.*)", "^[!¡]+res(.*)"};
+        
+        local reservesStrings  = {"^([!¡]*)reserves(.*)"};
+        local myResStrings     = {"^([!¡]*)myreserves", "^([!¡]*)myreserve", "^([!¡]*)myres"};
+        local optStrings       = {"^([!¡]*)opt%s*(in)", "^([!¡]*)opt%s*(out)"};
+        local cancelStrings    = {"^([!¡]*)cancelreserve(.*)", "^([!¡]*)cancelres(.*)", "^([!¡]*)cancel(.*)", "^([!¡]*)unreserve(.*)", "^([!¡]*)unres(.*)"};
+        local reserveStrings   = {"^([!¡]*)reserve(.*)", "^([!¡]*)res(.*)"};
+        
         local greedyResStrings = {"^[!¡]+(.*)"};
+        local failString       = "^[!¡]+";
+        local linkResString    = {"(.*)"};
         
 
-        local function ProcessChat(text, sender)
+        local function ProcessChat(origText, sender, chatType)
+            local isWhisper = chatType == "CHAT_MSG_WHISPER"
             sender = LootReserve:Player(sender);
             if not self.CurrentSession then return; end;
 
             local member = self.CurrentSession.Members[sender];
             if not member or not LootReserve:IsPlayerOnline(sender) then return; end
 
-            text = text:lower();
+            local text = origText:lower();
             text = LootReserve:StringTrim(text);
             
             
-            local command, greedy;
+            local command, greedy, reqLink;
             for _, pattern in ipairs(reservesStrings) do
-                local args = text:match(pattern);
-                if args then
+                local exclamation, args = text:match(pattern);
+                if args and (isWhisper or #exclamation > 0) then
                     command = "reserves";
                     text = args;
                     break;
@@ -1339,7 +1344,8 @@ function LootReserve.Server:PrepareSession()
             end
             
             for _, pattern in ipairs(myResStrings) do
-                if text:match(pattern) then
+                local exclamation, args = text:match(pattern);
+                if args and (isWhisper or #exclamation > 0) then
                     if self.Settings.ChatReservesList then
                         self:SendReservesList(sender, true);
                     end
@@ -1348,20 +1354,22 @@ function LootReserve.Server:PrepareSession()
             end
             
             for _, pattern in ipairs(optStrings) do
-                local direction = text:match(pattern);
-                if direction == "in" then
-                    self:Opt(sender, nil, true);
-                    return;
-                elseif direction == "out" then
-                    self:Opt(sender, true, true);
-                    return;
+                local exclamation, direction = text:match(pattern);
+                if direction and (isWhisper or #exclamation > 0) then
+                    if direction == "in" then
+                        self:Opt(sender, nil, true);
+                        return;
+                    elseif direction == "out" then
+                        self:Opt(sender, true, true);
+                        return;
+                    end
                 end
             end
             
             if not command then
                 for _, pattern in ipairs(cancelStrings) do
-                    local args = text:match(pattern);
-                    if args then
+                    local exclamation, args = text:match(pattern);
+                    if args and (isWhisper or #exclamation > 0) then
                         command = "cancel";
                         text = args;
                         break;
@@ -1371,8 +1379,8 @@ function LootReserve.Server:PrepareSession()
             
             if not command then
                 for _, pattern in ipairs(reserveStrings) do
-                    local args = text:match(pattern);
-                    if args then
+                    local exclamation, args = text:match(pattern);
+                    if args and (isWhisper or #exclamation > 0) then
                         command = "reserve";
                         text = args;
                         break;
@@ -1387,6 +1395,19 @@ function LootReserve.Server:PrepareSession()
                         command = "reserve";
                         text = args;
                         greedy = true;
+                        break;
+                    end
+                end
+            end
+            
+            if not command and not text:match(failString) and not (LootReserve:IsMe(sender) and self.SentMessages[LootReserve:FixText(origText)]) and isWhisper then
+                for _, pattern in ipairs(linkResString) do
+                    local args = text:match(pattern);
+                    if args then
+                        command = "reserve";
+                        text = args;
+                        greedy  = true;
+                        reqLink = true;
                         break;
                     end
                 end
@@ -1495,7 +1516,7 @@ function LootReserve.Server:PrepareSession()
                         local s, e = items[i-1] and items[i-1].e+1 or 1, items[i+1] and items[i+1].s-1 or text:len();
                         local pre, post = text:sub(s, itemData.s-1), text:sub(itemData.e+1, e);
                         local count1, count2 = pre:match("(%d+)%s*[xX%*]"), post:match("[xX%*]%s*(%d+)");
-                        local ambig1, ambig2 = pre:match("(%d+)"), post:match("(%d+)");
+                        local ambig1, ambig2 = pre:match("(%d+)%s*^"), post:match("^%s*(%d+)");
                         local counterambig1, counterambig2 = pre:match("[xX%*]%s*(%d+)"), post:match("(%d+)%s*[xX%*]");
                         
                         -- [xX*] is not always necessary, as a solo number is not ambiguous at the start or end
@@ -1547,7 +1568,7 @@ function LootReserve.Server:PrepareSession()
                         self:SendSupportString(sender, true);
                     end
                 end
-            else
+            elseif not reqLink then
                 local count = tonumber(text:match("%s*[xX%*]?%s*(%d+)%s*[Xx%*]?$"));
                 if count then
                     text = text:match("^(.-)%s*[xX%*]?%s*(%d+)%s*[Xx%*]?$");
@@ -1658,7 +1679,7 @@ function LootReserve.Server:PrepareSession()
             "CHAT_MSG_RAID_WARNING",
         };
         for _, type in ipairs(chatTypes) do
-            LootReserve:RegisterEvent(type, ProcessChat);
+            LootReserve:RegisterEvent(type, function(text, sender) return ProcessChat(text, sender, type); end);
         end
     end
 
