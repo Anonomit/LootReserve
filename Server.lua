@@ -3264,16 +3264,25 @@ function LootReserve.Server:PrepareRequestRoll()
             end
         end);
 
-        local function ProcessChat(text, sender, isPrivateChannel)
+        local function ProcessChat(origText, sender, isPrivateChannel)
+            if not self.RequestedRoll then return end
             sender = LootReserve:Player(sender);
 
-            text = text:lower();
+            local text = origText:lower();
             text = LootReserve:StringTrim(text);
             if text == "pass" or text == "p" then
-                if self.RequestedRoll then
-                    self:PassRoll(sender, self.RequestedRoll.Item, true, isPrivateChannel);
-                end
+                self:PassRoll(sender, self.RequestedRoll.Item, true, isPrivateChannel);
                 return;
+            elseif (text:match("%f[%w]pass%f[^%w]") or text:match("%f[%w]p%f[^%w]")) and self.RequestedRoll.Players[sender] and not self.SentMessages[LootReserve:FixText(origText)] then
+                local item = self.RequestedRoll.Item;
+                
+                -- Whisper player
+                item:OnCache(function()
+                    if not self.RequestedRoll or self.RequestedRoll.Item ~= item then return; end
+
+                    local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
+                    LootReserve:SendChatMessage(format("Did you mean to pass on %s%s? You can type 'p' or 'pass' to automatically pass on an item.", item:GetLink(), phase and format(" for %s", phase) or ""), "WHISPER", sender);
+                end);
             end
         end
         local chatTypes =
@@ -3619,7 +3628,7 @@ function LootReserve.Server:PassRoll(player, item, chat, isPrivateChannel)
             if not self.RequestedRoll or self.RequestedRoll.Item ~= item then return; end
             
             local phase = self.RequestedRoll.Phases and self.RequestedRoll.Phases[1] or nil;
-            LootReserve:SendChatMessage(format("%s has passed on %s%s.", player, item:GetLink(), phase and format(" for %s", phase or "")), "RAID");
+            LootReserve:SendChatMessage(format("%s has passed on %s%s.", player, item:GetLink(), phase and format(" for %s", phase) or ""), "RAID");
         end);
     end
 
