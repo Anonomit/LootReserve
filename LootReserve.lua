@@ -1,6 +1,8 @@
 ﻿local addon, ns = ...;
 
+L = LibStub("AceLocale-3.0"):GetLocale("LootReserve");
 LootReserve = LibStub("AceAddon-3.0"):NewAddon("LootReserve", "AceComm-3.0");
+
 LootReserve.Version = GetAddOnMetadata(addon, "Version");
 LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version");
 LootReserve.LatestKnownVersion = LootReserve.Version;

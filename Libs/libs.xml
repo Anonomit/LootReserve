@@ -5,6 +5,7 @@
   
   <Include file="AceAddon-3.0\AceAddon-3.0.xml"/>
   <Include file="AceComm-3.0\AceComm-3.0.xml"/>
+  <Include file="AceLocale-3.0\AceLocale-3.0.xml"/>
   
   <Script file="UTF8\utf8data.lua"/>
   <Script file="UTF8\utf8.lua"/>
@@ -20,5 +21,5 @@
   <Script file="LibRangeCheck-2.0\LibRangeCheck-2.0.lua"/>
   
   <Include file="ItemCache\ItemCache.xml"/>
-  
+
 </Ui>

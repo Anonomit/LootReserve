@@ -1947,7 +1947,7 @@ function LootReserve.Server:StopSession()
     if self.CurrentSession.Settings.ChatFallback then
         local categories = LootReserve:GetCategoriesText(self.CurrentSession and self.CurrentSession.Settings.LootCategories);
         
-        LootReserve:SendChatMessage(format("No longer accepting loot reserves%s.",
+        LootReserve:SendChatMessage(format(L["No longer accepting loot reserves%s."],
             categories ~= "" and format(" for %s", categories) or ""
         ), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStop));
     end
