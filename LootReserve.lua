@@ -1,4 +1,4 @@
-﻿local addon, ns = ...;
+local addon, ns = ...;
 
 LootReserve = LibStub("AceAddon-3.0"):NewAddon("LootReserve", "AceComm-3.0");
 LootReserve.Version = GetAddOnMetadata(addon, "Version");
@@ -346,6 +346,10 @@ end
 
 function LootReserve:GetNumClasses()
     return 11;
+end
+
+function LootReserve:GetNumGuildRanks() 
+    return GuildControlGetNumRanks()
 end
 
 function LootReserve:GetClassInfo(classID)
