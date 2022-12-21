@@ -69,7 +69,7 @@ function LootReserve.ItemConditions:Save(itemID, server)
                 conditions.Guild = nil;
                 conditions.MinimumGuildRank = nil;
             end
-            if conditions.MinimumGuildRank and conditions.MinimumGuildRank >= 10 then
+            if conditions.MinimumGuildRank and conditions.MinimumGuildRank >= 11 then
                 conditions.MinimumGuildRank = nil;
             end
         end
@@ -444,7 +444,7 @@ function LootReserve.ItemConditions:Pack(conditions)
     end
     if conditions.OnlyGuild == true then
         text = text .. "G";
-        if conditions.MinimumGuildRank and conditions.MinimumGuildRank < 10 then
+        if conditions.MinimumGuildRank and conditions.MinimumGuildRank < 11 then
             text = text.. "R" .. conditions.MinimumGuildRank;
         end
     end
