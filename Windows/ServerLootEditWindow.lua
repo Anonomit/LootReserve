@@ -83,6 +83,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             frame.ConditionsFrame.ClassMask:Update();
             frame.ConditionsFrame.State:Update();
             frame.ConditionsFrame.Limit:Update();
+            frame.ConditionsFrame.OnlyGuild:Update();
             frame.ConditionsFrame.LimitNoHover:Update();
             frame.hovered = nil;
         end
