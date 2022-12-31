@@ -1056,13 +1056,11 @@ function LootReserve.Server:PrepareLootTracking()
         end
         self.RecentLootAttempts = { };
         -- best guess at what object the player is looting. won't work for chests
-        local guid = UnitExists("target") and UnitIsDead("target") and not UnitIsFriend("player", "target") and UnitGUID("target");
-        if guid then
-            if self.LootedCorpses[guid] then
-                return;
-            else
-                self.LootedCorpses[guid] = true;
-            end
+        local guid = UnitExists("target") and UnitIsDead("target") and not UnitIsFriend("player", "target") and UnitGUID("target") or "CHEST";
+        if self.LootedCorpses[guid] then
+            return;
+        else
+            self.LootedCorpses[guid] = true;
         end
         for lootSlot = 1, GetNumLootItems() do
             if GetLootSlotType(lootSlot) == 1 then -- loot slot contains item, not currency/empty
@@ -1090,6 +1088,7 @@ function LootReserve.Server:PrepareLootTracking()
         end
     end);
     LootReserve:RegisterEvent("LOOT_CLOSED", function(lootSlot)
+        self.LootedCorpses["CHEST"] = nil;
         if self.RecentLootAttempts and not self.PendingRecentLootAttemptsWipe then
             self.PendingRecentLootAttemptsWipe = C_Timer.NewTicker(0.5, function() self.RecentLootAttempts = nil; self.PendingRecentLootAttemptsWipe = nil; end, 1);
         end
