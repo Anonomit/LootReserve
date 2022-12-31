@@ -1309,10 +1309,11 @@ function LootReserve.Server:PrepareSession()
     if self.CurrentSession.Settings.ChatFallback and not self.ChatFallbackRegistered then
         self.ChatFallbackRegistered = true;
         
+        local prefixString     = "^([!¡]+)"
         local reservesStrings  = {"^([!¡]*)reserves(.*)"};
         local myResStrings     = {"^([!¡]*)myreserves", "^([!¡]*)myreserve", "^([!¡]*)myres"};
         local optStrings       = {"^([!¡]*)opt%s*(in)", "^([!¡]*)opt%s*(out)"};
-        local cancelStrings    = {"^([!¡]*)cancelreserve(.*)", "^([!¡]*)cancelres(.*)", "^([!¡]*)cancel(.*)", "^([!¡]*)unreserve(.*)", "^([!¡]*)unres(.*)"};
+        local cancelStrings    = {"^([!¡]*)cancelreserve(.*)", "^([!¡]*)cancelres(.*)", "^([!¡]*)cancel(.*)", "^([!¡]*)unreserve(.*)", "^([!¡]*)unres(.*)", "^([!¡]*)rescancel(.*)", "^([!¡]*)reservecancel(.*)"};
         local reserveStrings   = {"^([!¡]*)reserve(.*)", "^([!¡]*)res(.*)"};
         
         local greedyResStrings = {"^[!¡]+(.*)"};
@@ -1331,6 +1332,9 @@ function LootReserve.Server:PrepareSession()
             local text = origText:lower();
             text = LootReserve:StringTrim(text);
             
+            if isWhisper and LootReserve:IsMe(sender) and not text:match(prefixString) then
+                return;
+            end
             
             local command, greedy, reqLink;
             for _, pattern in ipairs(reservesStrings) do
@@ -1343,8 +1347,8 @@ function LootReserve.Server:PrepareSession()
             end
             
             for _, pattern in ipairs(myResStrings) do
-                local exclamation, args = text:match(pattern);
-                if args and (isWhisper or #exclamation > 0) then
+                local exclamation = text:match(pattern);
+                if exclamation and (isWhisper or #exclamation > 0) then
                     if self.Settings.ChatReservesList then
                         self:SendReservesList(sender, true);
                     end
@@ -2537,7 +2541,19 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemLi
                     LootReserve:SendChatMessage(line, player and "WHISPER" or self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionReserves), player);
                 end
             else
-                LootReserve:SendChatMessage(onlyRelevant and "You currently have no reserves. To reserve an item, whisper me: !reserve ItemLinkOrName" or "There are currently no reserves", player and "WHISPER" or self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionReserves), player);
+                local count = 0;
+                for _ in pairs(itemList or {}) do
+                    count = count + 1;
+                end
+                local message;
+                if onlyRelevant then
+                    message = "You currently have no reserves. To reserve an item, whisper me: !reserve ItemLinkOrName";
+                elseif count > 0 then
+                    message = count > 1 and "There are currently no reserves on these items" or "There are currently no reserves on this item";
+                else
+                    message = "There are currently no reserves";
+                end
+                LootReserve:SendChatMessage(message, player and "WHISPER" or self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionReserves), player);
             end
             if player then self:SendSupportString(player); end
         end
