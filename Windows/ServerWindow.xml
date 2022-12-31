@@ -2315,7 +2315,7 @@
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Misc", isTitle = true },
 							{ text = "Announce Instructions", disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.AcceptingReserves, func = function() LootReserve.Server:BroadcastInstructions(); end, tooltipText = "Announce instructions to chat" },
-							{ text = "Announce All Reserves", disabled = not LootReserve.Server.CurrentSession, func = function() LootReserve.Server:SendReservesList(); end, tooltipText = format("Announce all reserves to chat%s", LootReserve.Server.CurrentSession.Settings.Blind and "|n|n|cFFFF0000Warning: Blind mode is on.|r" or "") },
+							{ text = "Announce All Reserves", disabled = not LootReserve.Server.CurrentSession, func = function() LootReserve.Server:SendReservesList(); end, tooltipText = format("Announce all reserves to chat%s", LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings.Blind and "|n|n|cFFFF0000Warning: Blind mode is on.|r" or "") },
 							{ text = "View Players", func = function() LootReserve.Server.MembersEdit.Window:SetShown(not LootReserve.Server.MembersEdit.Window:IsShown()); end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Cancel" },
