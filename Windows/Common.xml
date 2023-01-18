@@ -353,7 +353,7 @@
 					self.Text:SetText(format("%d:%02d", math.floor(value / 60), value % 60));
 					self.Text:Show();
 					self.Glow:SetWidth(math.min(64, self.Texture:GetWidth()));
-					self.Glow:SetAlpha(1 - math.max(0, math.abs(pct * 2 - 1) - 0.99) / 0.01);
+					self.Glow:SetAlpha(math.max(1 - math.max(0, math.abs(pct * 2 - 1) - 0.99) / 0.01, 0));
 					self.Glow:SetVertexColor(0.5 + r * 0.5, g, 0);
 					self.Glow:Show();
 					self.Spark:SetAlpha(self.Glow:GetAlpha());
