@@ -2184,6 +2184,13 @@ LootReserve.Data =
                         39561, 39619, 39625, 39491, 39531, 39545, 39553, 0,
                     },
                 },
+                {
+                    Name = " + Quest Rewards",
+                    Loot =
+                    {
+                        44658, 44657, 44659, 44660, 0,
+                    },
+                },
             },
         },
         [3011] = {
@@ -2362,6 +2369,13 @@ LootReserve.Data =
                         40571, 40576, 40581, 40447, 40456, 40421, 0,
                         40528, 40546, 40505, 40510, 40516, 40521, 0,
                         40499, 40554, 40565, 40416, 40461, 40467, 40473, 0,
+                    },
+                },
+                {
+                    Name = " + Quest Rewards",
+                    Loot =
+                    {
+                        44661, 44662, 44664, 44665, 0,
                     },
                 },
             },
@@ -5312,113 +5326,119 @@ local tokenMap = {
     
     -- Naxx 10
     
-    -- "Spaulders of the Lost Conqueror
+    -- Key to the Focusing Iris
+    [44569] = {44658, 44657, 44659, 44660},
+    
+    -- Spaulders of the Lost Conqueror
     [40622] = {39631, 39637, 39642, 39518, 39529, 39499},
-    -- "Spaulders of the Lost Protector
+    -- Spaulders of the Lost Protector
     [40623] = {39608, 39613, 39581, 39590, 39596, 39604},
-    -- "Spaulders of the Lost Vanquisher
+    -- Spaulders of the Lost Vanquisher
     [40624] = {39565, 39621, 39627, 39494, 39542, 39548, 39556},
-    -- "Chestguard of the Lost Conqueror
+    -- Chestguard of the Lost Conqueror
     [40610] = {39629, 39633, 39638, 39515, 39523, 39497},
-    -- "Chestguard of the Lost Protector
+    -- Chestguard of the Lost Protector
     [40611] = {39606, 39611, 39579, 39588, 39592, 39597},
-    -- "Chestguard of the Lost Vanquisher
+    -- Chestguard of the Lost Vanquisher
     [40612] = {39558, 39617, 39623, 39492, 39538, 39547, 39554},
-    -- "Leggings of the Lost Conqueror
+    -- Leggings of the Lost Conqueror
     [40619] = {39630, 39636, 39641, 39517, 39528, 39498},
-    -- "Leggings of the Lost Protector
+    -- Leggings of the Lost Protector
     [40620] = {39607, 39612, 39580, 39589, 39595, 39603},
-    -- "Leggings of the Lost Vanquisher
+    -- Leggings of the Lost Vanquisher
     [40621] = {39564, 39620, 39626, 39493, 39539, 39546, 39555},
-    -- "Helm of the Lost Conqueror
+    -- Helm of the Lost Conqueror
     [40616] = {39628, 39635, 39640, 39514, 39521, 39496},
-    -- "Helm of the Lost Protector
+    -- Helm of the Lost Protector
     [40617] = {39605, 39610, 39578, 39583, 39594, 39602},
-    -- "Helm of the Lost Vanquisher
+    -- Helm of the Lost Vanquisher
     [40618] = {39561, 39619, 39625, 39491, 39531, 39545, 39553},
     
     
     -- Naxx 25
     
-    -- "Mantle of the Lost Conqueror
+    -- Heroic Key to the Focusing Iris
+    [44577] = {44661, 44662, 44664, 44665},
+    
+    -- Mantle of the Lost Conqueror
     [40637] = {40573, 40578, 40584, 40450, 40459, 40424},
-    -- "Mantle of the Lost Protector
+    -- Mantle of the Lost Protector
     [40638] = {40530, 40548, 40507, 40513, 40518, 40524},
-    -- "Mantle of the Lost Vanquisher
+    -- Mantle of the Lost Vanquisher
     [40639] = {40502, 40557, 40568, 40419, 40465, 40470, 40494},
-    -- "Breastplate of the Lost Conqueror
+    -- Breastplate of the Lost Conqueror
     [40625] = {40569, 40574, 40579, 40449, 40458, 40423},
-    -- "Breastplate of the Lost Protector
+    -- Breastplate of the Lost Protector
     [40626] = {40525, 40544, 40503, 40508, 40514, 40523},
-    -- "Breastplate of the Lost Vanquisher
+    -- Breastplate of the Lost Vanquisher
     [40627] = {40495, 40550, 40559, 40418, 40463, 40469, 40471},
-    -- "Legplates of the Lost Conqueror
+    -- Legplates of the Lost Conqueror
     [40634] = {40572, 40577, 40583, 40448, 40457, 40422},
-    -- "Legplates of the Lost Protector
+    -- Legplates of the Lost Protector
     [40635] = {40529, 40547, 40506, 40512, 40517, 40522},
-    -- "Legplates of the Lost Vanquisher
+    -- Legplates of the Lost Vanquisher
     [40636] = {40500, 40556, 40567, 40417, 40462, 40468, 40493},
-    -- "Crown of the Lost Conqueror
+    -- Crown of the Lost Conqueror
     [40631] = {40571, 40576, 40581, 40447, 40456, 40421},
-    -- "Valorous Dreadnaught Helmet
+    -- Valorous Dreadnaught Helmet
     [40528] = {40546, 40505, 40510, 40516, 40521},
-    -- "Crown of the Lost Vanquisher
+    -- Crown of the Lost Vanquisher
     [40633] = {40499, 40554, 40565, 40416, 40461, 40467, 40473},
     
     
     -- OS 10
     
-    -- "Gloves of the Lost Conqueror
+    -- Gloves of the Lost Conqueror
     [40613] = {39632, 39634, 39639, 39519, 39530, 39500},
-    -- "Gloves of the Lost Protector
+    -- Gloves of the Lost Protector
     [40614] = {39609, 39622, 39582, 39591, 39593, 39601},
-    -- "Gloves of the Lost Vanquisher
+    -- Gloves of the Lost Vanquisher
     [40615] = {39560, 39618, 39624, 39495, 39543, 39544, 39557},
     
     
     -- OS 25
     
-    -- "Gauntlets of the Lost Conqueror
+    -- Gauntlets of the Lost Conqueror
     [40628] = {40570, 40575, 40580, 40445, 40454, 40420},
-    -- "Gauntlets of the Lost Protector
+    -- Gauntlets of the Lost Protector
     [40629] = {40527, 40545, 40504, 40509, 40515, 40520},
-    -- "Gauntlets of the Lost Vanquisher
+    -- Gauntlets of the Lost Vanquisher
     [40630] = {40496, 40552, 40563, 40415, 40460, 40466, 40472},
     
     
     -- Ulduar 10
     
-    -- "Reply-Code Alpha
+    -- Reply-Code Alpha
     [46052] = {46320, 46321, 46322, 46323},
-    -- "Leggings of the Wayward Conqueror
+    -- Leggings of the Wayward Conqueror
     [45650] = {45371, 45379, 45384, 45388, 45394, 45420},
-    -- "Leggings of the Wayward Protector
+    -- Leggings of the Wayward Protector
     [45651] = {45427, 45432, 45362, 45403, 45409, 45416},
-    -- "Leggings of the Wayward Vanquisher
+    -- Leggings of the Wayward Vanquisher
     [45652] = {45399, 45338, 45343, 45367, 45347, 45353, 45357},
-    -- "Spaulders of the Wayward Conqueror
+    -- Spaulders of the Wayward Conqueror
     [45659] = {45373, 45380, 45385, 45390, 45393, 45422},
-    -- "Spaulders of the Wayward Protector
+    -- Spaulders of the Wayward Protector
     [45660] = {45428, 45433, 45363, 45404, 45410, 45415},
-    -- "Spaulders of the Wayward Vanquisher
+    -- Spaulders of the Wayward Vanquisher
     [45661] = {45400, 45339, 45344, 45369, 45349, 45352, 45359},
-    -- "Gloves of the Wayward Conqueror
+    -- Gloves of the Wayward Conqueror
     [45644] = {45370, 45376, 45383, 45387, 45392, 45419},
-    -- "Gloves of the Wayward Protector
+    -- Gloves of the Wayward Protector
     [45645] = {45426, 45430, 45360, 45401, 45406, 45414},
-    -- "Gloves of the Wayward Vanquisher
+    -- Gloves of the Wayward Vanquisher
     [45646] = {45397, 45337, 45341, 46131, 45345, 45351, 45355},
-    -- "Helm of the Wayward Conqueror
+    -- Helm of the Wayward Conqueror
     [45647] = {45372, 45377, 45382, 45386, 45391, 45417},
-    -- "Helm of the Wayward Protector
+    -- Helm of the Wayward Protector
     [45648] = {45425, 45431, 45361, 45402, 45408, 45412},
-    -- "Helm of the Wayward Vanquisher
+    -- Helm of the Wayward Vanquisher
     [45649] = {45398, 45336, 45342, 45365, 45346, 45356, 46313},
-    -- "Chestguard of the Wayward Conqueror
+    -- Chestguard of the Wayward Conqueror
     [45635] = {45374, 45375, 45381, 45389, 45395, 45421},
-    -- "Chestguard of the Wayward Protector
+    -- Chestguard of the Wayward Protector
     [45636] = {45424, 45429, 45364, 45405, 45411, 45413},
-    -- "Chestguard of the Wayward Vanquisher
+    -- Chestguard of the Wayward Vanquisher
     [45637] = {45396, 45335, 45340, 45368, 45348, 45354, 45358},
     
     
