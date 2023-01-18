@@ -1,9 +1,9 @@
-## Interface: 30400
-## Interface-Wrath: 30400
+## Interface: 30401
+## Interface-Wrath: 30401
 ## Interface-Classic: 11403
 
-## Version: 2022-10-10-2
-## X-Min-Allowed-Version: 2022-10-10-2
+## Version: 2023-01-18
+## X-Min-Allowed-Version: 2023-01-18
 
 ## X-Curse-Project-ID: 390790
 ## X-Wago-ID: WL6JpyGv

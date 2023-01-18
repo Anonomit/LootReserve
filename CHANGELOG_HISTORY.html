@@ -1,0 +1,628 @@
+<p>&nbsp;</p><h2>2023-01-18</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Host</strong></p>
+<ul>
+<li>Added disenchanter options. Set players as disenchanters, and send unwanted items to them automatically.</li>
+<li>Add more data to rolls export. You can now tell if an item was reserved, or won for Main Spec, Off Spec, etc.</li>
+<li>Now puts a message in chat when a reserved item is being rolled through Group Loot.</li>
+<li>Recent Loot dropdown now shows a gold icon by BoE items.</li>
+<li>Distribution buttons no longer prompt you to trade items while you're dead. Now they advise you to be alive first.</li>
+<li>LootReserve may whisper players who appear to be wanting to pass on a roll in chat, but did not explicitly say the command 'pass' or '-1'.</li>
+<li>Chat message commands are now more loosely recognized. It's no longer necessary to use a leading exclamation mark over whispers.</li>
+<li>Now recognize '!reserved' and '!myreserved' as aliases for '!reserves' and '!myreserves' respectively.</li>
+<li>Can now import from a ThatMyBis CSV export.</li>
+<li>Added basic support for Roll Bonuses through CSV import. Use the column name: RollBonus.</li>
+<li>Reformatted Reserves export. Now includes Roll Bonuses.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>P1 raids have had their loot tables adjusted to the changes in P2.</li>
+<li>Sapphiron quest rewards can now be seen in the Naxxramas loot tables.</li>
+<li>Using a chat message to pass on a roll now closes the roll popup.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Updated to patch 3.4.1.</li>
+<li>Fixed search bars in host window only working for items. They once again will find players as well.</li>
+<li>The Insert button in the trade window now ignores untradeable items, just like the other distribution buttons.</li>
+<li>The continue option is no longer missing on the last phase of a roll.</li>
+<li>Manually reporting roll results from roll history should now always indicate if an item was reserved.</li>
+<li>Looting objects from a untargetable container no longer causes duplicate recent loot entries in some cases. Looting the container more than once will still cause duplicate entries.</li>
+<li>Fixed an issue where the reserves window wouldn't automatically open for a player when the host manually cancelled one of their reserves and they had none left.</li>
+<li>Fixed a UI issue for the host after reserving for another player and then closing and opening the reserves window.</li>
+<li>Fixed a lua error when opening the reserves window after starting a session with no raids selected.</li>
+<li>Fixed an issue with data not upgrading correctly in some ancient settings files.</li>
+</ul>
+<p>&nbsp;</p><h2>2022-10-10-2</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Added (Heroic) Key to the Focusing Iris to Sapphiron 10/25.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2022-09-25</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Host</strong></p>
+<ul>
+<li>Item Name Matching during import is now configurable, and defaults to off. It was causing huge lag when a lot of item names were entered.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Wrath data has been added.</li>
+<li>Amani War Bear removed from ZA.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Fist Weapons are no longer considered usable for all classes.</li>
+<li>Added a check to hopefully fix lua errors with very old settings.</li>
+<li>Fixed some issues with Classic quest rewards which were specific to Horde.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2022-09-06</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Highlights</strong></p>
+<ul>
+<li>Death Knights are now supported, and should no longer cause lua errors.</li>
+<li>Host now has semi-automatic item distribution. Click the buttons to send items automatically to their destinations.</li>
+<li>Created a library for item caching: ItemCache. Precaching is now configurable, and defaults to off.</li>
+<li>Many performance improvements, especially related to UI and Search.</li>
+<li>Lowered storage and memory usage.</li>
+<li>LootReserve now patches a Blizzard issue where the trade frame green highlighting can disappear after the trade has been accepted.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Host</strong></p>
+<ul>
+<li>Added export for Roll History. The export format is CSV. There is no way to import history.</li>
+<li>Added config option to change default channel for when Reserves are listed. This used to use the same channel as Instructions.</li>
+<li>Added config option for 12h time format. 24h remains the default format.</li>
+<li>Added config option to accept rolls after the timer has ended. This is on by default.</li>
+<li>Best Name Match is enabled by default in Host Import.</li>
+<li>Can now continue a roll from history. Rolls with multiple phases that were made prior to this change will not continue to the next phase as expected.</li>
+<li>Stackable BoP items are no longer added to Recent Loot if someone else loots one (they are never tradeable in raids).</li>
+<li>Can now shift-click and control-click on Recent Loot items to hide or block them from the list.</li>
+<li>Recent Loot dropdown now shows item tooltips.</li>
+<li>Empty Rolls can now be hidden from Roll History. This is on by default.</li>
+<li>Distributed rolls can now be hidden from Roll History. This is off by default.</li>
+<li>Recent Chat icon in Rolls tab is better at detecting when chat is irrelevant.</li>
+<li>Session now starts with reserves closed. Reserves must be opened with a second click.</li>
+<li>Rolls with a red glow in Rolls tab now show a tooltip explaining the reason for the glow.</li>
+<li>When multiple roll phases are selected, a roll can be started at any phase.</li>
+<li>Reserves and Roll History can be reported over more channels.</li>
+<li>Remind All button now heavily throttles messages. It should work much better when many players are still missing reserves.</li>
+<li>Hid Mojo by default in Zul'Aman.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Dressup window can now be opened from the Roll Popup.</li>
+<li>Some raids now list quest rewards, set items, and other miscellaneous items that may be indirectly acquired from a raid (such as sunmote exchange items).</li>
+<li>Added config option to suppress the Roll Popup for unusable BoE items. This is on by default.</li>
+<li>Added config options to suppress chat hints about how to reopen windows when they're closed.</li>
+<li>Added chat warning when closing the reserves window with remaining reserves.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Many various unlisted fixes.</li>
+<li>Fixed double roll in history when "Remove Winners' Reserves" feature is used.</li>
+<li>Fixed lua error when reporting reserves on an item.</li>
+<li>Fixed lua error which could happen with extremely stale sessions (over a year).</li>
+<li>Fixed lua error related to Broadcast Instructions button.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2022-02-21</h2>
+<p>&nbsp;FILE CHANGES. UPDATING REQUIRES GAME RESTART</p>
+<p>&nbsp;</p>
+<p><strong>Miscellaneous</strong></p>
+<ul>
+<li>Added Shutting Down sound when LootReserve is critically out of date (only if the versions are incompatible). Added more detail to the popup infobox when this happens.</li>
+<li>Lowered the passive item cache speed to a single request per frame. Hopefully this helps to avoid stuttering if some other addon is doing heavy processing on item data.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Host</strong></p>
+<ul>
+<li>Rolls history can now be reported to officer channel.</li>
+<li>Stale session/roll reminders now open the Host window and select the appropriate tab. Default tab when a session is active is now Setup instead of Reserves.</li>
+<li>Improved instructions text when starting/resuming reserves, or broadcasting instructions.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Added a one-time message in chat to inform players that automatic rolling on reserved items can be disabled. It will be displayed the first time an item is rolled automatically.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Fixed an issue with the roll popup window staying too long sometimes.</li>
+<li>Fixed win history not always showing accurately on Host tooltips.</li>
+<li>Fixed an error when someone requests reserves info by whisper.</li>
+<li>Fixed a harmless error when the Host broadcasts instructions.</li>
+<li>Fixed another issue with german locale. Thanks again to Xikun201.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2022-02-13</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Host</strong></p>
+<ul>
+<li>Renamed Server to Host since it's less ambiguous.</li>
+<li>It's now possible to place a reserve on behalf of another player. Hosts will see the option in their Reserves window.</li>
+<li>Automatic Distribution now works in combat. Click the glowing icons in the Rolls tab to distribute loot automatically.</li>
+<li>Added "smart" mode for removing winners' reserves. This mode removes duplicate reserves if Usable is on, and removes just one reserve otherwise. For some items types (non-unique rings, tradeable raid materials), just one reserve will always be removed. Smart mode is now the default instead of Duplicate.</li>
+<li>Recent Loot list shows the number of players reserving an item.</li>
+<li>Items that have been won in the current session now show what type of roll granted the item. For example: Reserved, Main-Spec, +1.</li>
+<li>Players rolling on unusable items will appear highlighted in red.</li>
+<li>Added option to accept all roll formats. If enabled, rolls in any range (0-1000000) will be honored. This option is disabled by default.</li>
+<li>Recent Chat now always shows up, making it possible to see the roll message.</li>
+<li>Commands received over whispers should be smoother. Tokens can be reserved by attempting to reserve an item that they grant.</li>
+<li>Added an option to limit !reserves command responses to a certain number of items at once. This should help in large groups with many players reserving over whispers. By default, this is enabled and limited to 5 items.</li>
+<li>The chat command  '!reserves'  can now take arguments. Players will be encouraged to try whispering `!reserves ItemLinkOrName` instead if they hit the !reserves response limit.</li>
+<li>Messages starting with only  '!'  and no keyword will not be responded to unless the command is successful. This should help prevent accidental whispers.</li>
+<li>Slightly increased the roll nag delay (the reminder message whispered to players when the host is waiting on them to roll).</li>
+<li>Many performance improvements. The Rolls window tolerates many more items being shown before it becomes laggy.</li>
+<li>Searching for items/players is much faster and no longer causes freezes. All TBC items are now cached and searchable. Item loading is now done asynchronously.</li>
+<li>Session and active roll are no longer deleted after being logged out for an extended time. There is now a prompt to remind the host that a stale session/roll exists.</li>
+<li>Player classes are now remembered through logout/import/export.</li>
+<li>Changed export format. Everything is still compatible.</li>
+<li>Rolling the colored sack of gems off of Onyxia/Nefarion now treats it as if the common quality reservable sack of gems is being rolled. Sack of gems is no longer hidden by default.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Client is much better at at recognizing unusable items. It can now check if the item is unique, part of a quest, requires an unlearned profession, or is an already known skillbook/recipe.</li>
+<li>Unusable items have a red description. They can still be reserved and rolled on.</li>
+<li>Item descriptions on recipes now include the required level.</li>
+<li>Added option to roll automatically on reserved items. This is enabled by default.</li>
+<li>Tailoring, Leatherworking, and Blacksmithing patterns now appear in Hyjal loot.</li>
+<li>Performance improvements. Searching for an item without an active session no longer causes freezes. Item loading is now done asynchronously.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Fixed an issue causing extremely long loading screens while the host window is open.</li>
+<li>SoM realms should no longer be considered connected.</li>
+<li>Fixed the "competition beep" playing sometimes after winning an item under certain host settings.</li>
+<li>Fixed an error when someone who has no reserves tries to cancel a reserve.</li>
+<li>Fixed a possible error when rolling an item with no reason provided.</li>
+<li>Fixed an issue with german locale.</li>
+<li>Minor text fixes.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2021-12-27</h2>
+<p>&nbsp;FILE CHANGES. UPDATING REQUIRES GAME RESTART</p>
+<p>&nbsp;</p>
+<p><strong>Server</strong></p>
+<ul>
+<li>Items in combined raids may now be hidden.</li>
+<li>Custom items will now appear in combined raids.</li>
+<li>Changed "help message" shown when attempting to edit combined raids. It should be more clear that this can be done by inheriting loot from individual raids.</li>
+<li>Import/Export now supports modified reserves count.</li>
+<li>Placing an item in the Rolls tab will show the number of reserving players instead of the total number of reserves.</li>
+<li>Minimum reserve count lowered to 0.</li>
+<li>Improved detection of "!reserves" chat message.</li>
+<li>Rephrased "Not tradeable" -> "Cannot distribute".</li>
+<li>Players window default width increased.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Item shift comparison has been added everywhere. Hold shift to compare with equipped items.</li>
+<li>Levelup sound which plays when an item is won will now be quieter. Character will still cheer/congratulate at the same volume.</li>
+<li>When someone <i>removes</i> a reserve from an item you have reserved, the notification sound is slightly different. It is now possible to distinguish audibly whether your reserved item has become more or less popular.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Classic Era (including Season of Mastery) should now actually work! Testing was brief since I do not play this version of the game.</li>
+<li>Fixed icon glow in Rolls tab affecting the wrong icons sometimes. This change reintroduces a bug where the glow sometimes looks very odd. It seems to be a problem with the glow library. I've removed my workaround since I've decided that this visual bug is the lesser of the two.</li>
+<li>Server should be better at remembering "significant" players between groups (including logout). Players are considered insignificant if they have placed no reserves, have not had their reserves limit adjusted, are not opted out, and have not won any rolls.</li>
+<li>Fixed error which could happen when importing reserves with players missing from the group.</li>
+<li>Fixed incorrect error shown when failing to masterloot an item. Probably. It's hard to reproduce this since Blizzard has raised minimum loot threshold.</li>
+<li>A player passing on a reserved item should now correctly cause a whisper to be sent to the reserver.</li>
+<li>Fixed a rare error which happened when an uncached item was reserved.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2021-09-20</h2>
+<p>&nbsp;</p>
+<p><strong>Server</strong></p>
+<ul>
+<li>Reserve count can be modified for individual players. Available reserves can be increased or decreased in the Players window.</li>
+<li>New config option to remove a winner's reserves when they win a reserved item. This can be configured to remove one reserve, all of the winner's reserves on that item, or all of the winner's reserves on every item.</li>
+<li>Import now accepts more formats. It is possible to have multiple players or items on the same row.</li>
+<li>Import now understands player classes, and will restrict reserves by class even if the player is missing. Name matching will use the imported class to help guess which player is which.</li>
+<li>Chat fallback now supports multiple reserves at once. For example: !res [ItemLink1] 2x[ItemLink2] [ItemLink3] x 3 [ItemLink4] 4</li>
+<li>Recent Loot dropdown shows an icon on reserved items.</li>
+<li>Rolls will be ended if the player is logged out for 6 hours. Session timeout increased from 1 hour to 6 hours.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Your character now cheers or congratulates you when you win an item. Only you can hear it, and there's no message in chat.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Fixes</strong></p>
+<ul>
+<li>Better version checking. It should no longer require a UI reload or group rejoin to discover other addon versions in the group.</li>
+<li>Roll history should no longer clear itself unexpectedly.</li>
+<li>Chat history storage is now capped at a reasonable limit. This will apply retroactively, meaning that if a player were to accidentally leave a roll active for a long time, the addon will purge the excessive chat history. Not that anyone would do that, of course. (Current record: roll ended after accruing chat history for 265 days)</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2021-09-11</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Server</strong></p>
+<ul>
+<li>Upgraded "item usable" detection. Many class-specific items are now detected automatically, and no longer require class overrides in Raid Edit.</li>
+<li>Many default class overrides removed from items as they are now redundant. Control which classes may reserve certain items by setting class overrides, or by checking 'Usable' when starting reserves.</li>
+<li>AQ40 Prophet Skeram boots now correctly marked as faction specific. Boots of the Redeemed Prophecy for Alliance. Boots of the Fallen Prophet for Horde.</li>
+<li>Paladin- and Shaman-specific gear are only hidden to opposing factions in Classic Era. This equipment can be dropped for both factions in BCC.</li>
+<li>Soulbound tradeable items that have a suffix will now be properly detected in bags.</li>
+<li>Addon name has been added to some whisper messages. This is mostly targeting messages which are sent when a player may be having trouble using chat commands.</li>
+<li>Added a chat message in group chat whenever a player passes on a roll in a way that is probably not visible to all group members (by whisper, for example).</li>
+<li>Whispers prompting players to /roll now have a short delay. This is intended as a way to not nag players who are prompt with their rolls.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Added sound queue for when another player reserves or cancels a reserve on any item that you have reserved.</li>
+<li>Reserves now appear on tooltips when clicked, not just hovered.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2021-09-09</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Server</strong></p>
+<ul>
+<li>Reserved items in current loot always appear first in Reserves window.</li>
+<li>Narain's Scrying Goggles hidden by default, since Blizzard no longer allows common quality items to be masterlooted. This change affects the Data file, so it requires a minimum version bump.</li>
+<li>More locations will use full raid names instead of shortened nicknames.</li>
+<li>Various bug fixes.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2021-09-07</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Server</strong></p>
+<ul>
+<li>Item suffix is now stored. Starting a roll for [Shiny Bracers of the Eagle] will now show the item name and link correctly, rather than simplifying to [Shiny Bracers].</li>
+<li>Added automatic history purge: use the cogwheel by History to configure number of records to keep.</li>
+<li>Export window clears text when it is opened.</li>
+<li>Searching server window for player names will leniently match players with accented characters.</li>
+<li>Added "Not tradeable" text in Rolls window when rolling an item that does not appear to have a tradeable version in your bags or the current loot.</li>
+<li>When a player passes on an item, they will be imformed of the roll phase.</li>
+<li>Loading itemlinks <i>should</i> be faster some of the time.</li>
+<li>Starting and pausing reserves now mentions the current session raid(s).</li>
+<li>"Addon Users" counter should be more accurate when players join and leave the group.</li>
+<li>The option to resolve a roll tie will now only show up when a tie actually occurs.</li>
+<li>Rolling a reserved item will not automatically skip rolling if the sole reserver is offline or not in raid</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Reserves now appear on item tooltips.</li>
+<li>Reserves window now displays the current session's raid(s) in the title.</li>
+<li>Reserves window now shows how many reserves the player has in total, as well as how many are remaining.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2021-08-31</h2>
+<p>&nbsp;</p>
+<p><strong>Server</strong></p>
+<ul>
+<li>Players window considers reserves to be completed for opted out players. The number of reserves will be green if the player has completed reserves or opted out.</li>
+<li>Added confirmation for rolling a reserved item that has already been won by one of the reservers.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Default category changed to Favorites.</li>
+<li>Updated item descriptions now correctly show in all places where they should be visible (like the Reserves window).</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2021-08-28</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Server</strong></p>
+<ul>
+<li>It is now possible to select multiple raids. Reserves are shared between all selected raids.</li>
+<li>Icons in the Roll tab may now be clicked to distribute loot by automatic trade/masterloot. They will glow when ready to be clicked.</li>
+<li>Recent loot tracking simplified.&nbsp;If you are the masterlooter, items will be added to the recent loot list when you see them on a corpse for the first time. If you are not the masterlooter, items will be added to the recent loot list when they are looted by anybody.</li>
+<li>Leaving a group will no longer stop or reset the session.</li>
+<li>Searching for an item that contains "special characters" (like [Bloodmaw Magus-Blade]) works correctly.</li>
+<li>Added confirmation prompt when rolling a reserved item among all players.</li>
+<li>Counter for players who haven't reserved is more accurate. It now counts players who have items reserved but are not in the group.</li>
+<li>Whispering someone a reminder to reserve their items will unlock the player if they are locked.</li>
+<li>Players window displays multireserves better.</li>
+<li>Chat messages made a bit more clear and consistent.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Added opt out feature. Opting out causes the player to be considered by the server as if they've used up all of their reserves. They will not be bothered with automatic whispers or with the reserve window opening automatically.</li>
+<li>Reorganized items. Items that a boss drops are now ordered more consistently. Groups of items are generally ordered with ones that more cloth classes use at the top, followed by leather&gt;mail&gt;plate.</li>
+<li>Item descriptions (as seen in Reserves window) are now more accurate and descriptive. They will show the equipment type (trinket/wand/etc), the tier of equipment (cloth/leather/mail/plate) when relevant, and indicate if an item is BoE.</li>
+<li>Reserves window will only open automatically when not in combat.&nbsp;If it wants to open automatically during combat, it will instead politely wait until combat is over.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2021-08-21</h2>
+<p>&nbsp;MANDATORY UPDATE</p>
+<p>&nbsp;</p>
+<p><strong>Server</strong></p>
+<ul>
+<li>Whispering players without reserves can be done individually.</li>
+<li>Session can now be stopped or reset regardless of group status.</li>
+<li>Added an option for class reserve restrictions:&nbsp;Can toggle the option to restrict equipment reserves to characters that are able to equip the item. Tokens and other items that previously had forced class requirements will respect this new setting.</li>
+<li>Updated Report button:&nbsp;Can now report reserves in the Reserves tab. Reporting rolls will now correctly report the winner when the item was won by a solo reserver.</li>
+<li>Update Server Rolls tab item tooltip:&nbsp;Icon now shows item tooltip on mouseover when an item is selected.</li>
+<li>Applying temporary fix for Blizzard masterloot bug:&nbsp;This should fix the bug with MasterLoot frames breaking addon-created dropdowns. This patch is intended to be temporary, and can be removed once Blizzard fixes things on their end. Thanks to Roxi-Atiesh for finding the solution.</li>
+<li>Masterloot is no longer experimental.</li>
+<li>Added more Recent Loot options:&nbsp;Expanded option ranges. Can set minimum item quantity.</li>
+<li>Removed option to disable chat throttle:&nbsp;Chat throttling reduces the risk of undefined behavior.</li>
+</ul>
+<p>&nbsp;</p>
+<p><strong>Client</strong></p>
+<ul>
+<li>Reserves window will not pop up when it is likely unwanted:&nbsp;When a session is resumed, the reserves window will only pop up for players that have remaining reserves and are not locked.</li>
+<li>Added new chat fallback prefixes:&nbsp;Reserve with '!' and cancel with '!cancel'</li>
+<li>Added more chat fallback commands:&nbsp;Retrieve only items you have reserved with any of:&nbsp; !myreserves&nbsp; !myreserve&nbsp; !myres</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2021-08-20</h2>
+<ul>
+<li>Whisper message when a roll is deleted will correctly list the item and roll.</li>
+<li>Fixed an issue with data upgrade from 2021-06-26 where the new format would not apply to a roll currently in progress when the addon was updated.</li>
+</ul>
+<p>&nbsp;</p>
+<h2>2021-07-09</h2>
+<ul>
+<li>Minimap button is reverted back to not being able to toggle the server window in combat. It ended up not actually working.</li>
+<li>Instead, an option is added to disable the use of unitframes inside the server window entirely, which actually allows the minimap button and the&nbsp;<code>/reserve server</code>&nbsp;command to toggle the window in combat.</li>
+</ul>
+<h2>2021-06-26</h2>
+<ul>
+<li>Failure to decompress a packet will now trigger a throttling error popup instead of causing a Lua error.</li>
+</ul>
+<h2>2021-06-23</h2>
+<p>MANDATORY UPDATE</p>
+<p><em>Changes marked with (*) were contributed by Damage from Incendius realm.</em></p>
+<ul>
+<li>Added an ability to allow reserving an item multiple times by the same player. (*)</li>
+<li>Added support for realm names for Classic. Caveats:</li>
+<li>&nbsp;&nbsp; - /roll command doesn't carry the info about the rolling player's realm, so if you have players with the same name but from different realms in your raid - it's impossible to correctly attribute their rolls to them. Blame Blizzard.</li>
+<li>&nbsp;&nbsp; - When importing reserves from CSV, realm names need to be specified as "Playername-RealmName". If they aren't, players will be assumed to be from your realm. But if they are already in your raid - you can check "Best Name Match" to try to find the correct player within the raid based on their name alone.</li>
+<li>Revised some loot lists:</li>
+<li>&nbsp;&nbsp; - Most trade goods and legendary components are now hidden by default. (*)</li>
+<li>&nbsp;&nbsp; - Added some missing quest items. (*)</li>
+<li>&nbsp;&nbsp; - Removed quest items which can be looted by everyone.</li>
+<li>&nbsp;&nbsp; - Reorganized some categories.</li>
+<li>Added aliases for "!reserve cancel" command: !cancelreserve, !cancelres, !unreserve. (*)</li>
+<li>Minimap icon is now able to toggle the server window even in combat. (EDIT: Nope...)</li>
+<li>Fixed a bug that allowed bypassing reserve limit with chat commands.</li>
+<li>Fixed an issue where the addon could fail to load if no other addons were loading the required library.</li>
+</ul>
+<p><strong>Server</strong></p>
+<ul>
+<li>Item tooltips now display the list of players who previously won the item during the session. (*)</li>
+<li>Fixed an error that probably prevented loot tracking from ever working properly. Reserves sorting "By Looter" and the display of which players looted the reserved item might now start working, if they weren't before.</li>
+<li>Expansions in server window raid selection dropdown can now be collapsed.</li>
+<li>Changed "Players Without Reserves" button to instead whisper to players who haven't yet spent ALL their available reserves. (*)</li>
+<li>Added "Cancel Roll" button that simply cancels the ongoing roll without recording it in history. (*)</li>
+<li>Added an optional highlight to players rolling on an item if they had previously won that item during the session. (*)</li>
+<li>Added an option to remove items from Recent Loot dropdown after they've been rolled out. (*)</li>
+<li>Added an option to keep unlooted items in Recent Loot dropdown after leaving the corpse. (*)</li>
+<li>Chat throttling is now enabled by default. (*)</li>
+<li>Optimized the size of communication packets and added compression to allow more data to be sent before throttling kicks in.</li>
+<li>Remove member info for players who aren't in the raid anymore after their reserves were forcibly cancelled. (*)</li>
+<li>Fixed player rolls not being re-sorted after passing or deleting a roll.</li>
+<li>Fixed missing on-hover backdrop in loot edit list in TBC.</li>
+</ul>
+<p><strong>Client</strong></p>
+<ul>
+<li>Messages about your rolls being deleted by the server now include the rolled number and the stage. (*)</li>
+<li>Roll request window will now keep track of manual /rolls and adjust accordingly.</li>
+<li>Passing on roll through the roll request window will have no effect if you manually used /roll prior to that.</li>
+<li>Added a close button to roll request window, and tooltips to other buttons.</li>
+<li>Fixed example roll request window disappearing after loading item cache.</li>
+</ul>
+<h2>2021-05-18</h2>
+<ul>
+<li>Added TBC support and loot data.</li>
+<li>Added an LDB provider and a minimap icon, which can be toggled in the client window's settings menu.</li>
+<li>Added a button to open an example roll request popup.</li>
+<li>Raid and expansion categories in the client window can now be collapsed.</li>
+<li>Item restrictions and custom items are now properly stored separately for each raid, which fixes the inability to have the same custom item available in multiple raids simultaneously, as well as the inability to have different restrictions applied to the same item if it drops from multiple raids. Existing customizations should be automatically upgraded to the new system.</li>
+</ul>
+<h2>2020-12-22</h2>
+<p>MANDATORY UPDATE</p>
+<ul>
+<li>Added the ability to limit the maximum number of reserves for each individual item</li>
+<li>Added an icon next to player names that shows the list of rolls the player has previously won during that session</li>
+<li>Added a counter and a list of rolls the players have won in [Players] window</li>
+<li>Added a 15 secs roll duration option</li>
+<li>Added automatic name capitalization on CSV import and an option to best match imported names to raiders</li>
+<li>Fixed an error when mixing numeric and text data in the player name column on CSV import</li>
+<li>Fixed a wrongfully displayed error message when announcing multiple roll winners when masterlooting was enabled</li>
+<li>Fixed reserves and rolls panel layout not persisting when entering and leaving combat</li>
+<li>Fixed selected custom roll request item not persisting when entering and leaving combat</li>
+</ul>
+<h2>2020-11-03</h2>
+<ul>
+<li>Added missing enchant recipes to AQ20. Users of outdated versions of LootReserve will not be able to see the items in the UI, but they will still be reservable via chat commands</li>
+<li>Added a couple of missing faction restriction defaults for items that can only drop for one faction</li>
+</ul>
+<p><strong>Client</strong></p>
+<ul>
+<li>Added the ability to mark items as favorites, displaying them in a separate easy to access list</li>
+<li>&nbsp;&nbsp; - Favorited "Bind on pickup" items will be visible on the character you favorited them on</li>
+<li>&nbsp;&nbsp; - Favorited "Bind on equip" and non-soulbound items will be visible across all characters on your account</li>
+<li>A messages will now be printed in chat whenever someone reserves one of the items you also reserved (to replicate the functionality that addonless users have through whispers)</li>
+<li>"My Reserves" category will now flash whenever someone reserves one of the items you also reserved</li>
+<li>"All Reserves" category will now briefly flash whenever someone reserves an item</li>
+<li>Items in "My Reserves", "All Reserves" and in response to&nbsp;<code>!reserves</code>&nbsp;command will now be displayed in consistent alphabetical order</li>
+<li>Minor change to how info messages in chat look</li>
+<li>Fixed blind reserves hint being misaligned after one of the recent updates</li>
+</ul>
+<p><strong>Server</strong></p>
+<ul>
+<li>Added experimental automatic master looting</li>
+<li>&nbsp;&nbsp; - I cannot stress this enough, this is a highly experimental and only somewhat tested feature, do not use it unless you can allow for mistakes in item distribution</li>
+<li>&nbsp;&nbsp; - Needs to be enabled first in the settings menu</li>
+<li>&nbsp;&nbsp; - After enabling it, every time you roll on an item you will be able to enable or disable automatic master looting for that specific roll</li>
+<li>&nbsp;&nbsp; - It will automatically give the rolled item to the winner as soon as they're announced</li>
+<li>&nbsp;&nbsp; - It may be incompatible with some addons that change the loot window</li>
+<li>Roll history will now only show a limited number of records with a button to load more</li>
+<li>&nbsp;&nbsp; - The number of displayed records is configurable by clicking on the cogwheel next to "History" header</li>
+<li>&nbsp;&nbsp; - This is done in hopes of reducing performance strain for players with abnormally long history that they don't want to (or don't know how to) clear</li>
+<li>Fixed loot selection menu closing instead of refreshing after loading item data for the first time</li>
+<li>Fixed a rare error when opening player menu</li>
+</ul>
+<h2>2020-10-03</h2>
+<ul>
+<li>Added missing loot to General Rajaxx. Users of outdated versions of LootReserve will not be able to see the items in the UI, but they will still be reservable via chat commands</li>
+<li>Added a missing announcement about&nbsp;<code>!reserves</code>&nbsp;chat command when resuming reserves</li>
+<li>Fixed tainting issues related to dropdown menus and CompactUnitFrames</li>
+<li>Slightly improved performance by not updating server windows when they aren't visible</li>
+<li>Raid-rolls will no longer be automatically cancelled when resetting the reserves session</li>
+</ul>
+<h2>2020-09-10</h2>
+<ul>
+<li>Added the ability to import/export reserves from/to CSV:</li>
+<li>&nbsp;&nbsp; - Accessed by clicking the appropriate button in [Players] window</li>
+<li>&nbsp;&nbsp; - Reserves can only be imported before the session is started</li>
+<li>&nbsp;&nbsp; - The import UI was made to be configurable enough to accept a wide variety of formats, you can choose which column of the CSV represents which data</li>
+<li>&nbsp;&nbsp; - The UI will try to guess the meaning of columns from the column headers, if those are present</li>
+<li>&nbsp;&nbsp; - It should also be possible to copy cells directly from applications like Excel, that delimit values with Tab characters</li>
+<li>Added the ability to list all reserves in chat:</li>
+<li>&nbsp;&nbsp; - Host can click "Announce All Reserves" button in the drop-down menu of Reserves panel to post all reserves made to /raid chat</li>
+<li>&nbsp;&nbsp; - Players can whisper&nbsp;<code>!reserves</code>&nbsp;to request a list of all reserves made in the raid</li>
+<li>&nbsp;&nbsp; - Host can disable&nbsp;<code>!reserves</code>&nbsp;command from the server Settings menu, in case they don't want their chat to be cluttered with that many whispers</li>
+<li>Added an announcement when toggling blind mode</li>
+<li>Added a response if players attempted to invoke&nbsp;<code>!reserve</code>&nbsp;command without any item name</li>
+<li>Single reserves will now show the item name next to the icon in [Players] window</li>
+<li>Restored missing Horde version of Head of Nefarian</li>
+<li>Fixed an issue where removing all the restrictions from an item that had them by default prevented the item from being visible to clients</li>
+<li>Fixed custom added items not being reservable via chat commands in rare circumstances</li>
+<li>Fixed rare nil error when enumerating guild members</li>
+</ul>
+<h2>2020-09-04</h2>
+<p>MANDATORY UPDATE</p>
+<p><strong>Reserves</strong></p>
+<ul>
+<li>Added the ability to edit the list of reservable items, accessed by clicking [Edit] in the server window:</li>
+<li>&nbsp;&nbsp; - You can choose which items are reservable or not</li>
+<li>&nbsp;&nbsp; - You can restrict certain items only to specific classes</li>
+<li>&nbsp;&nbsp; - You can add your own items to be reservable</li>
+<li>&nbsp;&nbsp; - I restored all the loot that was previously removed the list, like legendaries etc; they are still hidden by default, but can be made visible if you want</li>
+<li>&nbsp;&nbsp; - All items with class restrictions are now also marked as such in LootReserve, players with ineligible classes won't be able to reserve them, but it can be overridden if you want</li>
+<li>&nbsp;&nbsp; - Items that are not lootable by your faction entirely are now permanently hidden</li>
+<li>Added an option to have "blind" reserves:</li>
+<li>&nbsp;&nbsp; - When enabled - players won't be able to see what everyone else reserved</li>
+<li>&nbsp;&nbsp; - This option can be toggled at any time, so you can enable blind mode while taking reserves, and disable it after all reserves are finalized</li>
+<li>Added an option to have reserves "lock-in":</li>
+<li>&nbsp;&nbsp; - When enabled - all reserves that players made (or didn't make) are final and cannot be changed after the host stops accepting reserves</li>
+<li>&nbsp;&nbsp; - This only applies to players who were present in the raid while reserves were being accepted, so any late newcomers will still be able to make their own reserves if the host resumes the session</li>
+<li>&nbsp;&nbsp; - This option can be toggled at any time</li>
+<li>&nbsp;&nbsp; - If something went wrong and players were locked out when they shouldn't be - it's possible to manually control the state of lock-ins for every individual player in the players window. Speaking of which...</li>
+<li>Added a separate window - accessible by clicking the [Players] button in the server window - that lists every player in the raid and what they reserved, and gives the abilities to control the status of their lock-ins and quickly whisper them</li>
+<li>Added buttons to increment and decrement the number of reservable items when setting up a session. Not that you needed them, but I found a template for that among Blizzard's UI files, so might as well use it</li>
+<li>When reserves are sorted "By Looter" - reserved items from the currently looted corpse/container will now be sorted on top and will feature a fancy glow</li>
+</ul>
+<p><strong>Rolls</strong></p>
+<ul>
+<li>Added an option to announce the items won with rolling by guild members to /guild, it's under the Settings button menu</li>
+<li>You can now add your own and remove existing stages of loot rolling ("Main-Spec", "Off-Spec" etc)</li>
+<li>Added more settings to the Start Roll menu:</li>
+<li>&nbsp;&nbsp; - Added an option to skip the roll and instantly announce the winner if the reserved item is not contested</li>
+<li>&nbsp;&nbsp; - Added an option to automatically end the roll when all reserving players have rolled</li>
+<li>&nbsp;&nbsp; - Added an option to automatically end the raid-roll</li>
+<li>&nbsp;&nbsp; - Added an option to send a countdown to raid chat when the roll is about to end, it's customizable in the same place where you set up the roll duration</li>
+<li>&nbsp;&nbsp; - It's a proper mess in there now, I should probably do something about it. Maybe.</li>
+</ul>
+<p><strong>General</strong></p>
+<ul>
+<li>Added an option to Settings to have one "Global Profile" for storing the current session on a per-account basis instead of per-character. Use it if you want to gather reserves on one character and then carry them over to another, one which you're really going to be raiding with. Just bear in mind that you can make a mess if you then forget to reset the session on that previous character and go to another raid with it, yadda yadda yadda</li>
+<li>Potentially fixed the issues that could occur if you logged onto a character with an active session, but you weren't the raid leader or the master looter anymore. The session should now stay dormant until you regain that role, at which point it will automatically resume</li>
+<li>Removed empty space to the left of every scrollbar</li>
+</ul>
+<h2>2020-08-19</h2>
+<ul>
+<li>Fixed players being unable to reserve an item via&nbsp;<code>!reserve ItemName</code>&nbsp;command if said item could drop from more than one boss</li>
+<li>Fixed some bugs related to "Recent Chat" and "Report Rolls" buttons</li>
+<li>Fixed context menus bugging out when right-clicking on players who are no longer in the group</li>
+<li>Custom rolls will no longer be cancelled when the server resets the session</li>
+<li>Custom rolls will no longer have player rolls erased if the player cancels a reserve on that item while the roll is ongoing</li>
+<li>Opened context menus will now close along with client/server windows</li>
+<li>Attempting to open the server window while in combat will now be delayed until the player is out of combat to prevent UI taint and protection errors</li>
+</ul>
+<h2>2020-07-21</h2>
+<p>MANDATORY UPDATE: A major change is made to how session info is sent out to prevent chat throttling and subsequently causing major delays when starting/stopping reserves in a big raid</p>
+<p><strong>Reserves:</strong></p>
+<ul>
+<li>Fixed a bug in the previous update that allowed /rolls to be accepted from players who didn't reserve the item</li>
+<li>Added a button to&nbsp;<code>/reserve</code>&nbsp;window to manually search for loot reserve server in the current raid in case something goes wrong; it also shows the server you're currently connected to, so you can pester them to reset their old session if they forgot to</li>
+<li>Added a button to&nbsp;<code>/reserve server</code>&nbsp;to rebroadcast reserve instructions</li>
+<li>All chat announcements are now sent to /rw by default, but they can be configured to be sent to /raid instead on a per-announcement basis</li>
+<li>Reserve session will now automatically expire and reset if logged out for over an hour</li>
+<li>Added a message popup in case another player in the raid is attempting to broadcast their session when there already is an active server</li>
+</ul>
+<p><strong>Rolls:</strong></p>
+<ul>
+<li>NEW: Rolls can now be run over several "stages" and have limited duration:</li>
+<li>&nbsp;&nbsp; - If limited duration is enabled, new /rolls are no longer accepted after the timer expires</li>
+<li>&nbsp;&nbsp; - Stages can include things like "Main-Spec", "Off-Spec", "Vendor" etc, in configurable order</li>
+<li>&nbsp;&nbsp; - You can enable automatic advancement to the next stage if nobody rolled on the item in the allotted time</li>
+<li>&nbsp;&nbsp; - You can enable the option to automatically announce the winner and end the roll if someone has rolled on the item in the allotted time</li>
+<li>NEW: Player chat is now tracked during rolls and displayed in a tooltip, for when players announce what spec they are rolling for in the chat etc</li>
+<li>NEW: Roll item selection dropdown will now also list the loot from the corpse/container that's currently being looted</li>
+<li>NEW: Added a button to report highest rolls to chat</li>
+<li>NEW: Roll request popup will no longer be displayed for items that the player cannot equip or use, unless it was a reserved item. This behavior can be disabled from under the&nbsp;<code>/reserve</code>&nbsp;settings menu, in case the "usability" detection isn't working correctly (currently it just searches for any red text in item tooltips, unaffected by other addons)</li>
+<li>Players who passed on the item from the addon UI can still manually /roll on it if they changed their mind</li>
+<li>Roll item selection dropdown should now properly display soulbound-but-still-tradeable items from your bags</li>
+<li>Currently ongoing rolls on items will now pop up when the player relogs, reloads UI, enters the group or searches for the server again</li>
+<li>Fixed player names in "Rolls" panel not being clickable in parties</li>
+</ul>
+<h2>2020-07-03</h2>
+<ul>
+<li>NEW: Added a separate panel for rolls:</li>
+<li>History of item rolls is now tracked and displayed in the panel</li>
+<li>Rolls can be started for any item</li>
+<li>Rolls can be started by any player, regardless of whether they are the server or not, both in raids and parties</li>
+<li>Rolls can be performed either among the entire raid, or among the players reserving the item, or simply raid-rolled away to a random player</li>
+<li>Player roll can now be deleted if they rolled inappropriately</li>
+<li>Can be opened directly with a&nbsp;<code>/reserve roll</code>&nbsp;command</li>
+<li>Custom rolls are compatible with older versions of the addon, but only if a loot reserve session was started in the raid. Manual /roll commands work regardless.</li>
+<li>Added an additional raid-wide announcement whenever a roll is started for a reserved item</li>
+<li>Added a display of whether the players are offline in reserve and roll lists</li>
+<li>Added a settings button to the server window, providing the options to customize reserves list and toggle some chat options</li>
+<li>Chat throttling is now disabled by default, can be enabled from server settings if needed</li>
+<li>Fixed accidental global modification to one of the game's fonts</li>
+<li>Fixed a bug that prevented the server from removing reserves of offline players or when the reserves were no longer being accepted</li>
+<li>Accent characters (` and &acute;) will now be treated as regular apostrophes for the purposes of item search</li>
+</ul>
+<h2>2020-06-25</h2>
+<p>MANDATORY UPDATE</p>
+<ul>
+<li>Fixed addon chat being cut off due to chat message length limit, resulting in corrupted data being exchanged. Breaking change, requires addon update</li>
+<li>Raid announcements and whispers are now also broken into multiple messages if they end up too long</li>
+<li>Fixed high performance impact in server window when too many reserves are made</li>
+</ul>
+<h2>2020-06-24a</h2>
+<ul>
+<li>Fixed excessive chat spam about outdated version</li>
+</ul>
+<h2>2020-06-24</h2>
+<ul>
+<li>NEW: Added the ability for server to see how many players have made reserves and send nagging whispers to those who didn't</li>
+<li>Attempt to fix players not being able to see ongoing reserve session upon joining the group due to name cache issues</li>
+<li>Fixed players being able to reserve and cancel reserves when the session is stopped</li>
+<li>Fixed roll request whispers being sent to offline players</li>
+<li>Fixed function&nbsp;<code>round</code>&nbsp;leaking into global namespace</li>
+<li>Fixed pixel-perfect window positioning when anchored to screen edge centers</li>
+</ul>
