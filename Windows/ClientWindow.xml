@@ -580,6 +580,7 @@
 			</OnShow>
 			<OnHide>
 				LootReserve.Client.Masquerade = nil;
+				LootReserve.Client.Window.Masquerade.Text:SetText(LootReserve:ColoredPlayer(LootReserve:Me()));
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 				if LootReserve.Client:HasRemainingReserves() and not LootReserve.Client:IsOptedOut() and not LootReserve.Client:IsOptPending() then
