@@ -691,6 +691,14 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
         else
             LootReserve.Client:UpdateReserveStatus();
         end
+        
+        if LootReserve.Client.AcceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
+            if UnitAffectingCombat("player") then
+                LootReserve.Client.PendingOpen = true;
+            else
+                LootReserve.Client.Window:Show();
+            end
+        end
     end
 end
 
