@@ -683,6 +683,10 @@
 							return self:SetState("Winner is offline", false, false);
 						end
 						
+						if UnitIsDeadOrGhost("player") then
+							return self:SetState("Resurrect", false, false);
+						end
+						
 						if self.Lootable then
 							if C_Map.GetBestMapForUnit(unit) ~= C_Map.GetBestMapForUnit("player") then
 								return self:SetState("Winner not found", false, false);
