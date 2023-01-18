@@ -2975,6 +2975,9 @@ function LootReserve.Server:RecordDisenchant(item, disenchanter, handleRecentLoo
         StartTime = time(),
         Disenchant = true,
     }, disenchanter);
+    if self.Settings.RollMasterLoot then
+        self:MasterLootItem(item, disenchanter);
+    end
     if handleRecentLootRemoval and self.Settings.RemoveRecentLootAfterRolling then
         LootReserve:TableRemove(self.RecentLoot, item);
     end
