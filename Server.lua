@@ -657,33 +657,6 @@ function LootReserve.Server:Load()
         end
     end
     
-    -- 2022-09-25: Remove invalid Loot Categories
-    if versionSave < "2022-09-25" then
-        if self.CurrentSession then
-            local newLootCategories = { };
-            for _, category in ipairs(self.CurrentSession.Settings.LootCategories or {}) do
-                if LootReserve.Data.Categories[category] then
-                    table.insert(newLootCategories, category);
-                end
-            end
-            self.CurrentSession.Settings.LootCategories = newLootCategories;
-            if #self.CurrentSession.Settings.LootCategories == 0 then
-                table.insert(self.CurrentSession.Settings.LootCategories, 3010)
-            end
-        end
-        
-        local newLootCategories = { };
-        for _, category in ipairs(self.NewSessionSettings.LootCategories or {}) do
-            if LootReserve.Data.Categories[category] then
-                table.insert(newLootCategories, category);
-            end
-        end
-        self.NewSessionSettings.LootCategories = newLootCategories;
-        if #self.NewSessionSettings.LootCategories == 0 then
-            table.insert(self.NewSessionSettings.LootCategories, 3010)
-        end
-    end
-    
     -- 2022-10-30: Add RollBonus field
     if versionSave < "2022-10-30" then
         if self.CurrentSession and self.CurrentSession.Members then
@@ -739,6 +712,25 @@ function LootReserve.Server:Load()
         self.Window:Show();
         PanelTemplates_SetTab(self.Window, 3);
         self:SetWindowTab(3);
+    end
+    
+    -- Verify that all loot categories actually exist. deselect categories and/or terminate session otherwise
+    if self.CurrentSession then
+        for _, category in ipairs(self.CurrentSession.Settings.LootCategories or {}) do
+            if not LootReserve.Data.Categories[category] then
+                self.CurrentSession = nil;
+                break;
+            end
+        end
+    end
+    do
+        local newLootCategories = { };
+        for _, category in ipairs(self.NewSessionSettings.LootCategories or {}) do
+            if LootReserve.Data.Categories[category] then
+                table.insert(newLootCategories, category);
+            end
+        end
+        self.NewSessionSettings.LootCategories = newLootCategories;
     end
 
     -- Verify that all the required fields are present in the session
