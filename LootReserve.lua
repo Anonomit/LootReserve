@@ -630,6 +630,7 @@ function LootReserve:NormalizeName(name)
 end
 
 local simplifiedNamesMemo = { };
+local simplifiedNamesLowerMemo = { };
 local function SimplifyName(self, name)
     for i = 1, name:utf8len() do
         if name:utf8sub(i, i) == "-" then
@@ -644,6 +645,13 @@ function LootReserve:SimplifyName(name)
         simplifiedNamesMemo[name] = SimplifyName(self, name);
     end
     return simplifiedNamesMemo[name];
+end
+
+function LootReserve:SimplifyNameLower(name)
+    if not simplifiedNamesLowerMemo[name] then
+        simplifiedNamesLowerMemo[name] = self:SimplifyName(name):lower();
+    end
+    return simplifiedNamesLowerMemo[name];
 end
 
 function LootReserve:GetNumGroupMembers(func)

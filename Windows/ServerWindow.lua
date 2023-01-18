@@ -244,7 +244,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         
         if reserve then
             for _, player in pairs(reserve.Players) do
-                if string.find(LootReserve:SimplifyName(player):upper(), filter, 1, true) then
+                if string.find(LootReserve:SimplifyNameLower(player), filter, 1, true) then
                     return true;
                 end
             end
@@ -689,7 +689,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
         
         if roll then
             for player in pairs(roll.Players) do
-                if string.find(LootReserve:SimplifyName(player):upper(), filter, 1, true) then
+                if string.find(LootReserve:SimplifyNameLower(player), filter, 1, true) then
                     return true;
                 end
             end
