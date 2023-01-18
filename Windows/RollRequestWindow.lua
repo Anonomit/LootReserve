@@ -111,6 +111,33 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
                 end
             end
         end);
+        
+        local chatTypes =
+        {
+            "CHAT_MSG_WHISPER",
+            "CHAT_MSG_SAY",
+            "CHAT_MSG_YELL",
+            "CHAT_MSG_PARTY",
+            "CHAT_MSG_PARTY_LEADER",
+            "CHAT_MSG_RAID",
+            "CHAT_MSG_RAID_LEADER",
+            "CHAT_MSG_RAID_WARNING",
+            "CHAT_MSG_EMOTE",
+            "CHAT_MSG_GUILD",
+            "CHAT_MSG_OFFICER",
+        };
+        for _, eventName in ipairs(chatTypes) do
+            LootReserve:RegisterEvent(eventName, function(text, sender)
+                if self.RollRequest and frame:IsShown() then
+                    if LootReserve:IsMe(sender) then
+                        text = text:lower();
+                        if text:match("^pa?s*$") or text == "-1" then
+                            frame:Hide();
+                        end
+                    end
+                end
+            end);
+        end
     end
 end
 
