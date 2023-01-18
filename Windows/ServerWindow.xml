@@ -789,17 +789,7 @@
 						if self.Lootable then
 							LootReserve.Server:MasterLootItem(item, LootReserve:Player(UnitName(unit)));
 						elseif self.Tradeable then
-							local bag, slot;
-							for b = 0, NUM_BAG_SLOTS do
-								for s = 1, C_Container.GetContainerNumSlots(b) do
-									local containerInfo = C_Container.GetContainerItemInfo(b, s);
-									if containerInfo and LootReserve.ItemCache:Item(containerInfo.hyperlink) == item and LootReserve:IsTradeableItem(b, s) then
-										bag, slot = b, s;
-										break;
-									end
-								end
-								if bag or slot then break; end
-							end
+							local bag, slot = LootReserve:GetBagSlot(item);
 							if bag and slot then
 								if TradeFrame:IsShown() then
 									if UnitIsUnit(unit, "npc") then

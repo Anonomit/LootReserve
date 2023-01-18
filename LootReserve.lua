@@ -745,7 +745,7 @@ function LootReserve:GetBagSlot(itemOrID, permitLocked, skipCount)
     CheckBagCache(self);
     skipCount = skipCount or 0;
     for _, slotData in ipairs(self.BagCache) do
-        if match(slotData.item, itemOrID) and (permitLocked or not slotData.locked) then
+        if match(slotData.item, itemOrID) and (permitLocked or not slotData.locked) and self:IsTradeableItem(slotData.bag, slotData.slot) then
             skipCount = skipCount - 1;
             if skipCount < 0 then
                 return slotData.bag, slotData.slot;
