@@ -791,9 +791,9 @@
 						elseif self.Tradeable then
 							local bag, slot;
 							for b = 0, NUM_BAG_SLOTS do
-								for s = 1, GetContainerNumSlots(b) do
-									local itemLink = select(7, GetContainerItemInfo(b, s));
-									if itemLink and LootReserve.ItemCache:Item(itemLink) == item and LootReserve:IsTradeableItem(b, s) then
+								for s = 1, C_Container.GetContainerNumSlots(b) do
+									local containerInfo = C_Container.GetContainerItemInfo(b, s);
+									if containerInfo and LootReserve.ItemCache:Item(containerInfo.hyperlink) == item and LootReserve:IsTradeableItem(b, s) then
 										bag, slot = b, s;
 										break;
 									end
@@ -1604,14 +1604,14 @@
 										end
 										local bagMenus = { };
 										for bag = 0, 4 do
-											local slots = GetContainerNumSlots(bag);
+											local slots = C_Container.GetContainerNumSlots(bag);
 											if slots > 0 then
 												local bagMenu = { };
 												table.insert(bagMenus, bagMenu);
 												for slot = 1, slots do
-													local texture, count, _, _, _, _, link = GetContainerItemInfo(bag, slot);
-													if link and (not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot)) then
-														table.insert(bagMenu, MakeItem(count, LootReserve.ItemCache:Item(link), texture));
+													local containerInfo = C_Container.GetContainerItemInfo(bag, slot);
+													if containerInfo and (not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot)) then
+														table.insert(bagMenu, MakeItem(containerInfo.stackCount, LootReserve.ItemCache:Item(containerInfo.hyperlink), containerInfo.iconFileID));
 													end
 												end
 											end

@@ -658,12 +658,12 @@ function LootReserve:IsTradeableItem(bag, slot)
 end
 
 local function CacheBagSlot(self, bag, slot, i)
-    local _, quantity, locked, _, _, _, link, _, _, id, isBound = GetContainerItemInfo(bag, slot);
-    if link then
+    local containerInfo = C_Container.GetContainerItemInfo(bag, slot);
+    if containerInfo then
         if i then
-            table.insert(self.BagCache, i, {bag = bag, slot = slot, item = self.ItemCache:Item(link), quantity = quantity, locked = locked});
+            table.insert(self.BagCache, i, {bag = bag, slot = slot, item = self.ItemCache:Item(containerInfo.hyperlink), quantity = containerInfo.stackCount, locked = containerInfo.isLocked});
         else
-            table.insert(self.BagCache, {bag = bag, slot = slot, item = self.ItemCache:Item(link), quantity = quantity, locked = locked});
+            table.insert(self.BagCache, {bag = bag, slot = slot, item = self.ItemCache:Item(containerInfo.hyperlink), quantity = containerInfo.stackCount, locked = containerInfo.isLocked});
         end
     end
 end
@@ -690,7 +690,7 @@ local function CheckBagCache(self)
     if not self.BagCache then
         self.BagCache = { };
         for bag = 0, NUM_BAG_SLOTS do
-            for slot = 1, GetContainerNumSlots(bag) do
+            for slot = 1, C_Container.GetContainerNumSlots(bag) do
                 CacheBagSlot(self, bag, slot);
             end
         end

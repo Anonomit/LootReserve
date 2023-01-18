@@ -857,7 +857,7 @@ function LootReserve.Server:OnWindowLoad(window)
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetPoint("TOP", self.Window, "TOP", 0, -4);
     self.Window.TitleText:SetText("LootReserve Host");
-    self.Window:SetMinResize(230, 365);
+    self.Window:SetResizeBounds(230, 365);
     self.Window.PanelSession.LabelDuration:SetPoint("RIGHT", self.Window.PanelSession.DropDownDuration.Text, "LEFT", -16, 0);
     self.Window.PanelSession.DropDownDuration:SetPoint("CENTER", self.Window.PanelSession.Duration, "CENTER", (6 + self.Window.PanelSession.LabelDuration:GetStringWidth()) / 2, 0);
     PanelTemplates_SetNumTabs(self.Window, 3);
