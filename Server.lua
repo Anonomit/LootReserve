@@ -34,7 +34,6 @@ LootReserve.Server =
         ChatReservesList                = true,
         ChatReservesListLimit           = 5,
         ChatUpdates                     = true,
-        ChatRequiresExclamation         = true,
         ReservesSorting                 = LootReserve.Constants.ReservesSorting.BySource,
         UseGlobalProfile                = false,
         Phases                          = LootReserve:Deepcopy(LootReserve.Constants.DefaultPhases),
@@ -3285,10 +3284,10 @@ function LootReserve.Server:PrepareRequestRoll()
 
             local text = origText:lower();
             text = LootReserve:StringTrim(text);
-            if text == "pass" or text == "p" then
+            if text:match("^pa?s*$") or text == "-1" then
                 self:PassRoll(sender, self.RequestedRoll.Item, true, isPrivateChannel);
                 return;
-            elseif (text:match("%f[%w]pass%f[^%w]") or text:match("%f[%w]p%f[^%w]")) and self.RequestedRoll.Players[sender] and not self.SentMessages[LootReserve:FixText(origText)] then
+            elseif (text:match("%f[%w]pas+%f[^%w]") or text:match("%f[%w]p%f[^%w]")) and self.RequestedRoll.Players[sender] and not self.SentMessages[LootReserve:FixText(origText)] then
                 local item = self.RequestedRoll.Item;
                 
                 -- Whisper player
