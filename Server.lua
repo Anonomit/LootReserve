@@ -3466,7 +3466,7 @@ function LootReserve.Server:RequestRoll(item, duration, phases, allowedPlayers)
                 
                 local _, myReserves = LootReserve:GetReservesData(players, player);
                 if roll == LootReserve.Constants.RollType.NotRolled and LootReserve:IsPlayerOnline(player) and not sentToPlayer[player] then
-                    self.ExtraRollRequestNag[player] = C_Timer.NewTimer(self:IsAddonUser(player) and 5 or 7, WhisperPlayer);
+                    self.ExtraRollRequestNag[player] = C_Timer.NewTimer(self:IsAddonUser(player) and 5 or 7, function() WhisperPlayer(); end); -- Wrap in anonymous function just in case of blizzard bug
                     sentToPlayer[player] = true;
                 end
             end
@@ -3549,7 +3549,7 @@ function LootReserve.Server:RequestCustomRoll(item, duration, phases, allowedPla
                 
                 local _, myReserves = LootReserve:GetReservesData(players, player);
                 if roll == LootReserve.Constants.RollType.NotRolled and LootReserve:IsPlayerOnline(player) and not sentToPlayer[player] then
-                    self.ExtraRollRequestNag[player] = C_Timer.NewTimer(self:IsAddonUser(player) and 5 or 7, WhisperPlayer);
+                    self.ExtraRollRequestNag[player] = C_Timer.NewTimer(self:IsAddonUser(player) and 5 or 7, function() WhisperPlayer(); end); -- Wrap in anonymous function just in case of blizzard bug
                     sentToPlayer[player] = true;
                 end
                 end

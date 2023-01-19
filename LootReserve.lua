@@ -126,7 +126,7 @@ function LootReserve:OnEnable()
         -- Load client and server after WoW client restart
         -- Server session should not normally exist when the player is outside of any raid groups, so restarting it upon regular group join shouldn't break anything
         -- With a delay, due to possible name cache issues
-        C_Timer.After(1, Startup);
+        C_Timer.After(1, function() Startup(); end); -- Wrap in anonymous function just in case of blizzard bug
     end);
 
     -- Load client and server after UI reload
@@ -680,8 +680,9 @@ local bagCacheHooked = nil;
 local function CheckBagCache(self)
     if not bagCacheHooked then
         bagCacheHooked = true;
-        self:RegisterEvent("BAG_UPDATE_DELAYED", function()
+        LootReserve:RegisterEvent("BAG_UPDATE", function() -- Return to hooking BAG_UPDATED_DELAYED when blizzard fixes it
             LootReserve:WipeBagCache();
+            C_Timer.After(0, function() LootReserve:WipeBagCache(); end);
         end);
         self:RegisterEvent("ITEM_LOCK_CHANGED", function(bag, slot)
             if not slot then return; end
@@ -813,7 +814,7 @@ end
 function LootReserve:PutItemInTrade(bag, slot)
     for i = 1, 6 do
         if not GetTradePlayerItemInfo(i) then
-            PickupContainerItem(bag, slot);
+            C_Container.PickupContainerItem(bag, slot);
             ClickTradeButton(i);
             return true;
         end

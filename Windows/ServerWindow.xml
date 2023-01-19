@@ -793,7 +793,7 @@
 						if self.Lootable then
 							LootReserve.Server:MasterLootItem(item, LootReserve:Player(UnitName(unit)));
 						elseif self.Tradeable then
-							local bag, slot = LootReserve:GetBagSlot(item);
+							local bag, slot = LootReserve:GetBagSlot(item, true);
 							if bag and slot then
 								if TradeFrame:IsShown() then
 									if UnitIsUnit(unit, "npc") then
@@ -804,9 +804,9 @@
 										end
 									end
 								elseif CheckInteractDistance(unit, 2) then
-									PickupContainerItem(bag, slot);
+									C_Container.PickupContainerItem(bag, slot);
 									DropItemOnUnit(unit);
-									C_Timer.After(1, ClearCursor);
+									C_Timer.After(1, function() ClearCursor(); end);
 								elseif LootReserve:CanUseDBMLocator(unit) then
 									self:DMBLocate(unit);
 								end
@@ -1107,7 +1107,7 @@
 						end
 						local bag, slot = LootReserve:GetBagSlot(item);
 						if bag and slot then
-							PickupContainerItem(bag, slot);
+							C_Container.PickupContainerItem(bag, slot);
 							ClickTradeButton(i);
 							i = i + 1;
 						end

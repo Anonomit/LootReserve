@@ -908,9 +908,19 @@ function LootReserve.Server:OnWindowLoad(window)
         self:UpdateReserveList();
         self:UpdateRollList();
     end);
-    LootReserve:RegisterEvent("TRADE_SHOW", "TRADE_CLOSED", "TRADE_PLAYER_ITEM_CHANGED", "TRADE_ACCEPT_UPDATE", "BAG_UPDATE_DELAYED", "PLAYER_TARGET_CHANGED", "GROUP_JOINED", "GROUP_LEFT", "GROUP_ROSTER_UPDATE", function()
+    LootReserve:RegisterEvent("TRADE_SHOW", "TRADE_CLOSED", "TRADE_PLAYER_ITEM_CHANGED", "TRADE_ACCEPT_UPDATE", "PLAYER_TARGET_CHANGED", "GROUP_JOINED", "GROUP_LEFT", "GROUP_ROSTER_UPDATE", function()
         LootReserve:WipeBagCache();
         LootReserve.Server:UpdateRollList();
+    end);
+    local tempBagFix;
+    LootReserve:RegisterEvent("BAG_UPDATE", function() -- Return to hooking BAG_UPDATED_DELAYED when blizzard fixes it
+        if not tempBagFix then
+            tempBagFix = C_Timer.NewTicker(0, function()
+                LootReserve:WipeBagCache();
+                LootReserve.Server:UpdateRollList();
+                tempBagFix = nil;
+            end, 1);
+        end
     end);
 end
 

@@ -268,8 +268,12 @@ local usableCacheHooked = nil;
 local function IsItemUsableByMe(itemID)
     if not usableCacheHooked then
         usableCacheHooked = true;
-        LootReserve:RegisterEvent("QUEST_ACCEPTED", "QUEST_TURNED_IN", "BAG_UPDATE_DELAYED", "CHAT_MSG_SKILL", function()
+        LootReserve:RegisterEvent("QUEST_ACCEPTED", "QUEST_TURNED_IN", "CHAT_MSG_SKILL", function()
             usableCache = { };
+        end);
+        LootReserve:RegisterEvent("BAG_UPDATE", function() -- Return to hooking BAG_UPDATED_DELAYED when blizzard fixes it
+            usableCache = { };
+            C_Timer.After(0, function() usableCache = { }; end);
         end);
     end
     if not usableCache[itemID] then
