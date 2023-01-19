@@ -2481,11 +2481,60 @@ LootReserve.Data =
             },
         },
         --]]
+        [3029] = {
+            Name = "The Obsidian Sanctum 10",
+            NameShort = "OS 10",
+            Expansion = 2,
+            Children =
+            {
+                {
+                    Name = "Sartharion",
+                    Loot =
+                    {
+                        40628, 40629, 40630, 0,
+                        40437, 40439, 40451, 40438, 40453, 40446, 0,
+                        40433, 40431, 40432, 0,
+                        40455, 0,
+                        43345, 43346, 0,
+                    },
+                },
+                {
+                    Name = " - One Drake Left",
+                    Loot =
+                    {
+                        44002, 44003, 44004, 44000, 0,
+                    },
+                },
+                {
+                    Name = " - Two Drakes Left",
+                    Loot =
+                    {
+                        44008, 44007, 44011, 44006, 0,
+                        44005, 0,
+                    },
+                },
+                {
+                    Name = " - Three Drakes Left",
+                    Loot =
+                    {
+                        43986, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = " + Tier 7 Pieces",
+                    Loot =
+                    {
+                        40570, 40575, 40580, 40445, 40454, 40420, 0,
+                        40527, 40545, 40504, 40509, 40515, 40520, 0,
+                        40496, 40552, 40563, 40415, 40460, 40466, 40472, 0,
+                    },
+                },
+            },
+        },
         [3031] = {
-            -- Name = "The Obsidian Sanctum 25",
-            -- NameShort = "OS 25",
-            Name = "The Obsidian Sanctum",
-            NameShort = "OS",
+            Name = "The Obsidian Sanctum 25",
+            NameShort = "OS 25",
             Expansion = 2,
             Children =
             {
