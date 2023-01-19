@@ -699,19 +699,15 @@ function LootReserve.Server:Load()
         self.RecentLoot[i] = LootReserve.ItemCache:Item(item);
     end
 
-    -- Warn player if a stale session or roll exists
-    if self.CurrentSession and self.CurrentSession.LogoutTime and time() > self.CurrentSession.LogoutTime + 1*15*60 then
-        if self.CurrentSession.AcceptingReserves then
-            LootReserve:ShowError("You logged out with an active session.|nYou can stop and reset the session in the Host window.")
-        else
-            LootReserve:ShowError("You logged out with an active session.|nYou can reset the session in the Host window.")
+    -- Verify that all the required fields are present in the session
+    if self.CurrentSession then
+        for _, field in ipairs({ "Settings", "StartTime", "Duration", "DurationEndTimestamp", "Members", "WonItems", "ItemReserves", "LootTracking" }) do
+            if self.CurrentSession and self.CurrentSession[field] == nil then
+                self.CurrentSession = nil;
+                self.SaveProfile.CurrentSession = nil;
+                break;
+            end
         end
-    end
-    if self.RequestedRoll and time() > self.RequestedRoll.StartTime + 1*15*60 then
-        LootReserve:ShowError("You logged out with an active roll.|nYou can end the roll in the Host window.")
-        self.Window:Show();
-        PanelTemplates_SetTab(self.Window, 3);
-        self:SetWindowTab(3);
     end
     
     -- Verify that all loot categories actually exist. deselect categories and/or terminate session otherwise
@@ -719,6 +715,7 @@ function LootReserve.Server:Load()
         for _, category in ipairs(self.CurrentSession.Settings.LootCategories or {}) do
             if not LootReserve.Data.Categories[category] then
                 self.CurrentSession = nil;
+                self.SaveProfile.CurrentSession = nil;
                 break;
             end
         end
@@ -732,26 +729,20 @@ function LootReserve.Server:Load()
         end
         self.NewSessionSettings.LootCategories = newLootCategories;
     end
-
-    -- Verify that all the required fields are present in the session
-    if self.CurrentSession then
-        local function verifySessionField(field)
-            if self.CurrentSession and self.CurrentSession[field] == nil then
-                self.CurrentSession = nil;
-            end
+    
+    -- Warn player if a stale session or roll exists
+    if self.CurrentSession and self.CurrentSession.LogoutTime and time() > self.CurrentSession.LogoutTime + 1*15*60 then
+        if self.CurrentSession.AcceptingReserves then
+            LootReserve:ShowError("You logged out with an active session.|nYou can stop and reset the session in the Host window.")
+        else
+            LootReserve:ShowError("You logged out with an active session.|nYou can reset the session in the Host window.")
         end
-
-        local fields = { "Settings", "StartTime", "Duration", "DurationEndTimestamp", "Members", "WonItems", "ItemReserves", "LootTracking" };
-        for _, field in ipairs(fields) do
-            verifySessionField(field);
-        end
-        for _, category in ipairs(self.CurrentSession.Settings.LootCategories) do
-            if not LootReserve.Data.Categories[category] then
-                self.CurrentSession = nil;
-                self.SaveProfile.CurrentSession = nil;
-                break;
-            end
-        end
+    end
+    if self.RequestedRoll and time() > self.RequestedRoll.StartTime + 1*15*60 then
+        LootReserve:ShowError("You logged out with an active roll.|nYou can end the roll in the Host window.")
+        self.Window:Show();
+        PanelTemplates_SetTab(self.Window, 3);
+        self:SetWindowTab(3);
     end
 
     -- Rearm the duration timer, to make it expire at about the same time (second precision) as it would've otherwise if the server didn't log out/reload UI
