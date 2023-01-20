@@ -2215,7 +2215,7 @@
 					<Anchor point="TOPRIGHT" x="-10" y="-27" />
 				</Anchors>
 			</StatusBar>
-			<EditBox parentKey="Search" inherits="SearchBoxTemplate">
+			<EditBox parentKey="Searchbar" inherits="SearchBoxTemplate">
 				<Size y="20" />
 				<Anchors>
 					<Anchor point="TOPLEFT" x="10" y="-25" />
@@ -2236,8 +2236,8 @@
 			<Button parentKey="ButtonMenu" inherits="UIMenuButtonStretchTemplate">
 				<Size y="21" />
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.Search" relativePoint="TOPRIGHT" x="0" y="0" />
-					<Anchor point="TOPRIGHT" relativeKey="$parent.Search" relativePoint="TOPRIGHT" x="80" y="0" />
+					<Anchor point="TOPLEFT" relativeKey="$parent.Searchbar" relativePoint="TOPRIGHT" x="0" y="0" />
+					<Anchor point="TOPRIGHT" relativeKey="$parent.Searchbar" relativePoint="TOPRIGHT" x="80" y="0" />
 				</Anchors>
 				<Layers>
 					<Layer>
@@ -2823,7 +2823,7 @@
 			</Frame>
 			<Frame parentKey="PanelReservesLockdown" hidden="true">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.Search" relativePoint="BOTTOMLEFT" x="-3" y="-3" />
+					<Anchor point="TOPLEFT" relativeKey="$parent.Searchbar" relativePoint="BOTTOMLEFT" x="-3" y="-3" />
 					<Anchor point="BOTTOMRIGHT" x="-9" y="6" />
 				</Anchors>
 				<Frames>
@@ -2856,7 +2856,7 @@
 			</Frame>
 			<Frame parentKey="PanelRollsLockdown" hidden="true">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.Search" relativePoint="BOTTOMLEFT" x="-3" y="-3" />
+					<Anchor point="TOPLEFT" relativeKey="$parent.Searchbar" relativePoint="BOTTOMLEFT" x="-3" y="-3" />
 					<Anchor point="BOTTOMRIGHT" x="-9" y="6" />
 				</Anchors>
 				<Frames>

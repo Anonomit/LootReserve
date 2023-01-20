@@ -7,7 +7,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
 
     if not self.Window:IsShown() then return; end
 
-    local filter = LootReserve.ItemCache:FormatSearchText(self.Window.Search:GetText());
+    local filter = LootReserve.ItemCache:FormatSearchText(self.Window.Searchbar:GetText());
     if #filter < 3 and not tonumber(filter) then
         filter = nil;
     end
@@ -115,7 +115,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                 table.insert(missing, item);
             end
         end
-    elseif self.SelectedCategory and self.SelectedCategory.Search and filter then
+    elseif self.SelectedCategory and self.SelectedCategory.SearchResults and filter then
         for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
             if itemID ~= 0 and conditions.Custom then
                 local match = false;
@@ -328,8 +328,8 @@ function LootReserve.Server.LootEdit:OnCategoryClick(button)
         self.FocusedEditBox:ClearFocus();
     end
 
-    if not button.Category.Search then
-        self.Window.Search:ClearFocus();
+    if not button.Category.SearchResults then
+        self.Window.Searchbar:ClearFocus();
     end
 
     -- Don't allow deselecting the current selected category

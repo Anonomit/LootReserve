@@ -99,7 +99,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
-    local filter = LootReserve.ItemCache:FormatSearchText(self.Window.Search:GetText());
+    local filter = LootReserve.ItemCache:FormatSearchText(self.Window.Searchbar:GetText());
     if #filter == 0 and not tonumber(filter) then
         filter = nil;
     end
@@ -494,7 +494,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
 
     lockdown = lockdown or InCombatLockdown() or not self.Settings.UseUnitFrames;
 
-    local filter = LootReserve.ItemCache:FormatSearchText(self.Window.Search:GetText());
+    local filter = LootReserve.ItemCache:FormatSearchText(self.Window.Searchbar:GetText());
     if #filter < 3 and not tonumber(filter) then
         filter = nil;
     end
@@ -800,29 +800,29 @@ function LootReserve.Server:SetWindowTab(tab, lockdown)
     if tab == 1 then
         self.Window.InsetBg:SetPoint("TOPLEFT", self.Window, "TOPLEFT", 4, -24);
         self.Window.Duration:Hide();
-        self.Window.Search:Hide();
+        self.Window.Searchbar:Hide();
         self.Window.ButtonMenu:Hide();
     elseif tab == 2 then
-        self.Window.InsetBg:SetPoint("TOPLEFT", self.Window.Search, "BOTTOMLEFT", -6, 0);
+        self.Window.InsetBg:SetPoint("TOPLEFT", self.Window.Searchbar, "BOTTOMLEFT", -6, 0);
         self.Window.Duration:SetShown(self.CurrentSession and self.CurrentSession.AcceptingReserves and self.CurrentSession.Duration ~= 0 and self.CurrentSession.Settings.Duration ~= 0);
-        self.Window.Search:Show();
+        self.Window.Searchbar:Show();
         self.Window.ButtonMenu:Show();
         if self.Window.Duration:IsShown() then
-            self.Window.Search:SetPoint("TOPLEFT", self.Window.Duration, "BOTTOMLEFT", 3, -3);
-            self.Window.Search:SetPoint("TOPRIGHT", self.Window.Duration, "BOTTOMRIGHT", 3 - 80, -3);
+            self.Window.Searchbar:SetPoint("TOPLEFT", self.Window.Duration, "BOTTOMLEFT", 3, -3);
+            self.Window.Searchbar:SetPoint("TOPRIGHT", self.Window.Duration, "BOTTOMRIGHT", 3 - 80, -3);
             (lockdown and self.Window.PanelReservesLockdown or self.Window.PanelReserves):SetPoint("TOPLEFT", self.Window, "TOPLEFT", 7, -61);
         else
-            self.Window.Search:SetPoint("TOPLEFT", self.Window, "TOPLEFT", 10, -25);
-            self.Window.Search:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", -7 - 80, -25);
+            self.Window.Searchbar:SetPoint("TOPLEFT", self.Window, "TOPLEFT", 10, -25);
+            self.Window.Searchbar:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", -7 - 80, -25);
             (lockdown and self.Window.PanelReservesLockdown or self.Window.PanelReserves):SetPoint("TOPLEFT", self.Window, "TOPLEFT", 7, -48);
         end
     elseif tab == 3 then
-        self.Window.InsetBg:SetPoint("TOPLEFT", self.Window.Search, "BOTTOMLEFT", -6, 0);
+        self.Window.InsetBg:SetPoint("TOPLEFT", self.Window.Searchbar, "BOTTOMLEFT", -6, 0);
         self.Window.Duration:Hide();
-        self.Window.Search:Show();
+        self.Window.Searchbar:Show();
         self.Window.ButtonMenu:Hide();
-        self.Window.Search:SetPoint("TOPLEFT", self.Window, "TOPLEFT", 10, -25);
-        self.Window.Search:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", -7, -25);
+        self.Window.Searchbar:SetPoint("TOPLEFT", self.Window, "TOPLEFT", 10, -25);
+        self.Window.Searchbar:SetPoint("TOPRIGHT", self.Window, "TOPRIGHT", -7, -25);
         (lockdown and self.Window.PanelRollsLockdown or self.Window.PanelRolls):SetPoint("TOPLEFT", self.Window, "TOPLEFT", 7, -48);
         self.RollHistoryKeepLimit = self.Settings.RollHistoryKeepLimit;
     end

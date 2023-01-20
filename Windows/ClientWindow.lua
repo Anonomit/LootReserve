@@ -115,7 +115,7 @@ function LootReserve.Client:UpdateReserveStatus()
 end
 
 function LootReserve.Client:UpdateLootList()
-    local filter = LootReserve.ItemCache:FormatSearchText(self.Window.Search:GetText());
+    local filter = LootReserve.ItemCache:FormatSearchText(self.Window.Searchbar:GetText());
     if #filter < 3 and not tonumber(filter) then
         filter = nil;
     end
@@ -560,8 +560,8 @@ function LootReserve.Client:UpdateCategories()
 end
 
 function LootReserve.Client:OnCategoryClick(button)
-    if not button.Category.Search then
-        self.Window.Search:ClearFocus();
+    if not button.Category.SearchResults then
+        self.Window.Searchbar:ClearFocus();
     end
 
     -- Don't allow deselecting the current selected category

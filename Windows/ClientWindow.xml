@@ -502,7 +502,7 @@
 					<Anchor point="TOPRIGHT" x="-19" y="-63" />
 				</Anchors>
 			</StatusBar>
-			<EditBox parentKey="Search" inherits="SearchBoxTemplate">
+			<EditBox parentKey="Searchbar" inherits="SearchBoxTemplate">
 				<Size x="193" y="20" />
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.Duration" relativePoint="BOTTOMLEFT" x="3" y="-3" />
@@ -511,7 +511,7 @@
 					<OnTextChanged inherit="prepend">
 						if #self:GetText() > 0 then
 							for _, frame in ipairs(self:GetParent().Categories.Scroll.Container.Frames) do
-								if frame.Category and frame.Category.Search then
+								if frame.Category and frame.Category.SearchResults then
 									frame:Click();
 									break;
 								end
@@ -526,7 +526,7 @@
 					<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
 				</KeyValues>
 				<Anchors>
-					<Anchor point="TOPRIGHT" relativeKey="$parent.Search" relativePoint="BOTTOMRIGHT" x="1" />
+					<Anchor point="TOPRIGHT" relativeKey="$parent.Searchbar" relativePoint="BOTTOMRIGHT" x="1" />
 					<Anchor point="BOTTOMLEFT" x="16" y="16" />
 				</Anchors>
 				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
@@ -547,7 +547,7 @@
 					<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
 				</KeyValues>
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.Search" relativePoint="TOPRIGHT" />
+					<Anchor point="TOPLEFT" relativeKey="$parent.Searchbar" relativePoint="TOPRIGHT" />
 					<Anchor point="BOTTOMRIGHT" x="-16" y="16" />
 				</Anchors>
 				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
