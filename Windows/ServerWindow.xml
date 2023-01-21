@@ -1455,7 +1455,7 @@
 						});
 						
 						table.insert(menu, 3,
-						{ text = format(disenchanter and "To Disenchanter: %s" or "To Disenchanter", disenchanter and LootReserve:ColoredPlayer(disenchanter)),
+						{ text = format("To Disenchanter" .. (LootReserve.Server.Settings.RollDisenchant and (disenchanter and ": %s" or " (None Found)") or " (Not Enabled)"), disenchanter and LootReserve:ColoredPlayer(disenchanter)),
 							disabled = not disenchanter,
 							func = function(...)
 								if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
