@@ -8,6 +8,9 @@ local DefaultConditions =
     Faction   = nil,
     ClassMask = nil,
     Limit     = nil,
+    OnlyGuild = nil,
+    Guild = nil,
+    MinimumGuildRank = nil
 };
 
 function LootReserve.ItemConditions:Get(itemID, server)
@@ -60,6 +63,14 @@ function LootReserve.ItemConditions:Save(itemID, server)
             end
             if conditions.Limit and conditions.Limit <= 0 then
                 conditions.Limit = nil;
+            end
+            if  conditions.OnlyGuild == false then
+                conditions.OnlyGuild = nil;
+                conditions.Guild = nil;
+                conditions.MinimumGuildRank = nil;
+            end
+            if conditions.MinimumGuildRank and conditions.MinimumGuildRank >= 11 then
+                conditions.MinimumGuildRank = nil;
             end
         end
 
@@ -303,6 +314,20 @@ function LootReserve.ItemConditions:TestFaction(faction)
     return faction and UnitFactionGroup("player") == faction;
 end
 
+function LootReserve.ItemConditions:TestGuild(onlyGuild, server, player)
+    -- if server then check if player variable same as guild otherwise check if server is in my guild
+    if server then
+        return onlyGuild and UnitIsInMyGuild(player)
+    end
+    return onlyGuild and UnitIsInMyGuild(LootReserve.Client.SessionServer);
+end
+
+function LootReserve.ItemConditions:TestGuildRank(minimumGuildRank, player)
+    -- C_GuildInfo.GetGuildRankOrder(UnitGUID(player)) usable on infinite range
+    local guildRankTesterino = C_GuildInfo.GetGuildRankOrder(UnitGUID(player));
+    return minimumGuildRank and tonumber(guildRankTesterino) <= tonumber(minimumGuildRank);
+end
+
 function LootReserve.ItemConditions:TestLimit(limit, itemID, player, server)
     if limit <= 0 then
         -- Has no limiton the number of reserves
@@ -359,6 +384,15 @@ function LootReserve.ItemConditions:TestPlayer(player, itemID, server)
     if conditions and conditions.Limit and not self:TestLimit(conditions.Limit, itemID, player, server) then
         return false, LootReserve.Constants.ReserveResult.FailedLimit;
     end
+    if conditions and conditions.OnlyGuild then
+        if self:TestGuild(conditions.OnlyGuild, server, player) then
+            if conditions.MinimumGuildRank and not self:TestGuildRank(conditions.MinimumGuildRank, player) then
+                return false, LootReserve.Constants.ReserveResult.FailedGuildRank;
+            end
+        else
+            return false, LootReserve.Constants.ReserveResult.FailedGuild;
+        end
+    end
     return true;
 end
 
@@ -412,6 +446,12 @@ function LootReserve.ItemConditions:Pack(conditions)
     if conditions.Limit and conditions.Limit ~= 0 then
         text = text .. "L" .. conditions.Limit;
     end
+    if conditions.OnlyGuild == true then
+        text = text .. "G";
+        if conditions.MinimumGuildRank and conditions.MinimumGuildRank < 11 then
+            text = text.. "R" .. conditions.MinimumGuildRank;
+        end
+    end
     return text;
 end
 
@@ -444,6 +484,18 @@ function LootReserve.ItemConditions:Unpack(text)
                     conditions.Limit = tonumber(limit);
                 else
                     break;
+                end
+            end
+        elseif char == "G" then
+            conditions.OnlyGuild = true;
+            if text:sub(i+1, i+1) == "R" then
+                for len = 1, 10 do
+                    local rank = text:sub(i + 2, i + 1 + len);
+                    if tonumber(rank) then
+                        conditions.MinimumGuildRank = rank;
+                    else
+                        break;
+                    end
                 end
             end
         end

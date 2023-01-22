@@ -25,6 +25,8 @@ LootReserve.Constants.ReserveResult = {
     FailedLimit              = 15,
     FailedLimitPartial       = 16,
     FailedUsable             = 17,
+    FailedGuild              = 18,
+    FailedGuildRank          = 19,
 };
 LootReserve.Constants.CancelReserveResult = {
     OK                = 0,
@@ -389,6 +391,8 @@ LootReserve.Constants.ReserveResultText =
     [result.FailedLimit]              = "That item has reached the limit of reserves",
     [result.FailedLimitPartial]       = "Not all of your reserves were accepted because the item reached the limit of reserves",
     [result.FailedUsable]             = "You may not reserve unusable items",
+    [result.FailedGuild]              = "That item is not reservable if you're not member of the hosts guild",
+    [result.FailedGuildRank]          = "This item is not reservable on your guildrank",
 };
 
 local result = LootReserve.Constants.CancelReserveResult;
