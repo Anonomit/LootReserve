@@ -950,9 +950,9 @@ local activeSessionChanges =
                 region:SetShown(active);
             elseif action == "DropDown" then
                 if active then
-                    UIDropDownMenu_DisableDropDown(region);
+                    LootReserve.LibDD:UIDropDownMenu_DisableDropDown(region);
                 else
-                    UIDropDownMenu_EnableDropDown(region);
+                    LootReserve.LibDD:UIDropDownMenu_EnableDropDown(region);
                 end
             elseif action == "Disable" then
                 region:SetEnabled(not active);
@@ -1018,12 +1018,12 @@ function LootReserve.Server:SessionReset()
 end
 
 function LootReserve.Server:RollEnded()
-    if UIDROPDOWNMENU_OPEN_MENU then
+    if L_UIDROPDOWNMENU_OPEN_MENU then
         for _, panel in ipairs({ "PanelReserves", "PanelReservesLockdown", "PanelRolls", "PanelRollsLockdown" }) do
             local list = self.Window[panel].Scroll.Container;
             if list and list.Frames then
                 for _, frame in ipairs(list.Frames) do
-                    if UIDROPDOWNMENU_OPEN_MENU == frame.Menu then
+                    if L_UIDROPDOWNMENU_OPEN_MENU == frame.Menu then
                         CloseMenus();
                         return;
                     end
@@ -1060,8 +1060,8 @@ function LootReserve.Server:LoadNewSessionSettings()
 
     local function setDropDownValue(dropDown, value)
         if dropDown.init then dropDown:init(); end
-        ToggleDropDownMenu(nil, nil, dropDown);
-        UIDropDownMenu_SetSelectedValue(dropDown, value);
+        LootReserve.LibDD:ToggleDropDownMenu(nil, nil, dropDown);
+        LootReserve.LibDD:UIDropDownMenu_SetSelectedValue(dropDown, value);
         CloseMenus();
     end
 

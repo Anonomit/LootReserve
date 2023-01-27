@@ -27,7 +27,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
     list.AddCustomFrame:Hide();
 
     local function cleanupFrame(frame)
-        if UIDROPDOWNMENU_OPEN_MENU == frame.ConditionsFrame.ClassMaskMenu then
+        if L_UIDROPDOWNMENU_OPEN_MENU == frame.ConditionsFrame.ClassMaskMenu then
             CloseMenus();
         end
         frame.ConditionsFrame.Limit.EditBox:ClearFocus();

@@ -84,16 +84,6 @@
 		</Scripts>
 	</Frame>
 	<Frame name="LootReserveServerImportOptionTemplate" virtual="true" inherits="UIDropDownMenuTemplate">
-		<KeyValues>
-			<!--
-			<KeyValue key="name" type="string" value="Option" />
-			<KeyValue key="field" type="string" value="Field" />
-			<KeyValue key="index" type="number" value="1" />
-			<KeyValue key="values" type="string" value="A|B|C" />
-			<KeyValue key="width" type="number" value="100" />
-			<KeyValue key="justify" type="string" value="LEFT" />
-			-->
-		</KeyValues>
 		<Size y="32" />
 		<Anchors>
 			<Anchor point="TOPLEFT" relativePoint="TOPLEFT" />
@@ -128,11 +118,11 @@
 
 					self.Header:SetText(self.name or "");
 					if self.width then
-						UIDropDownMenu_SetWidth(self, math.max(self.width, self.Header:GetStringWidth()));
+						--[[LootReserve.LibDD:--]]UIDropDownMenu_SetWidth(self, math.max(self.width, self.Header:GetStringWidth()));
 					end
-					UIDropDownMenu_JustifyText(self, self.justify or "LEFT");
-					UIDropDownMenu_Initialize(self, function(frame, level, menuList)
-						local info = UIDropDownMenu_CreateInfo();
+					--[[LootReserve.LibDD:--]]UIDropDownMenu_JustifyText(self, self.justify or "LEFT");
+					--[[LootReserve.LibDD:--]]UIDropDownMenu_Initialize(self, function(frame, level, menuList)
+						local info = --[[LootReserve.LibDD:--]]UIDropDownMenu_CreateInfo();
 						info.minWidth = self:GetWidth() - 40;
 						info.func = function(info)
 							if self.index then
@@ -140,13 +130,13 @@
 							else
 								LootReserve.Server.Import[self.field] = info.value;
 							end
-							UIDropDownMenu_SetSelectedValue(self, info.value);
+							--[[LootReserve.LibDD:--]]UIDropDownMenu_SetSelectedValue(self, info.value);
 							C_Timer.After(0, function() LootReserve.Server.Import:InputOptionsUpdated(); end);
 						end
 						for _, option in ipairs(options) do
 							info.text = option.name;
 							info.value = option.value;
-							UIDropDownMenu_AddButton(info);
+							--[[LootReserve.LibDD:--]]UIDropDownMenu_AddButton(info);
 							info.checked = false;
 						end
 					end);
@@ -156,13 +146,13 @@
 					else
 						value = LootReserve.Server.Import[self.field];
 					end
-					UIDropDownMenu_SetText(self, GetOptionName(value));
+					--[[LootReserve.LibDD:--]]UIDropDownMenu_SetText(self, GetOptionName(value));
 					self.selectedValue = value;
 				end
 			</OnLoad>
 			<OnSizeChanged>
 				if not self.width then
-					UIDropDownMenu_SetWidth(self, self:GetWidth() - 50);
+					--[[LootReserve.LibDD:--]]UIDropDownMenu_SetWidth(self, self:GetWidth() - 50);
 				end
 			</OnSizeChanged>
 		</Scripts>

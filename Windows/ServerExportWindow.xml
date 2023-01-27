@@ -16,7 +16,7 @@
 				<Scripts>
 					<OnClick>
 						if LootReserve.Server.Export.PendingRollsExportTextUpdate then
-						  LootReserve.Server.Export.PendingRollsExportTextUpdate:Cancel();
+							LootReserve.Server.Export.PendingRollsExportTextUpdate:Cancel();
 						end
 						LootReserve.Server.Export:UpdateReservesExportText();
 					</OnClick>
@@ -30,7 +30,7 @@
 				<Scripts>
 					<OnClick>
 						if LootReserve.Server.Export.PendingRollsExportTextUpdate then
-						  LootReserve.Server.Export.PendingRollsExportTextUpdate:Cancel();
+							LootReserve.Server.Export.PendingRollsExportTextUpdate:Cancel();
 						end
 						LootReserve.Server.Export:UpdateRollsExportText(true);
 					</OnClick>
@@ -44,7 +44,7 @@
 				<Scripts>
 					<OnClick>
 						if LootReserve.Server.Export.PendingRollsExportTextUpdate then
-						  LootReserve.Server.Export.PendingRollsExportTextUpdate:Cancel();
+							LootReserve.Server.Export.PendingRollsExportTextUpdate:Cancel();
 						end
 						LootReserve.Server.Export:UpdateRollsExportText();
 					</OnClick>

@@ -445,12 +445,12 @@
 				</Texture>
 			</Layer>
 		</Layers>
-		<Frames>
-			<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
-		</Frames>
 		<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD" />
 		<Scripts>
 			<OnLoad>
+				self.Menu = LootReserve.LibDD:Create_UIDropDownMenu(nil, self);
+				self.Menu:Hide();
+				
 				self:SetPushedTextOffset(1, -1);
 			</OnLoad>
 			<OnMouseDown>
