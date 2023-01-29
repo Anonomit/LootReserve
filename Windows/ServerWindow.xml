@@ -413,9 +413,6 @@
 				</Layers>
 				<Scripts>
 					<OnLoad>
-						self.Menu = LootReserve.LibDD:Create_UIDropDownMenu(nil, self);
-						self.Menu:Hide();
-						
 						self.UpdateTooltip = function(self)
 							GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 							if self:GetParent().Historical then
@@ -1093,6 +1090,12 @@
 				</Scripts>
 			</Frame>
 		</Frames>
+		<Scripts>
+			<OnLoad inherit="prepend">
+				self.Menu = LootReserve.LibDD:Create_UIDropDownMenu(nil, self);
+				self.Menu:Hide();
+			</OnLoad>
+		</Scripts>
 	</Frame>
 	<Button name="LootReserveTradeFrameAutoButton" inherits="UIPanelButtonTemplate" parent="TradeFrame" hidden="true">
 		<Size x="168" />
