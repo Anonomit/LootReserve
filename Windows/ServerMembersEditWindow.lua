@@ -4,7 +4,7 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
     if not self.Window:IsShown() then return; end
 
     self.Window.Header.Name:SetWidth(LootReserve:IsCrossRealm() and 300 or 200);
-    self.Window:SetResizeBounds(LootReserve:IsCrossRealm() and 650 or 550, 150);
+    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 650 or 550, 150);
 
     local list = self.Window.Scroll.Container;
     list.Frames = list.Frames or { };
@@ -173,6 +173,6 @@ function LootReserve.Server.MembersEdit:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetText("LootReserve Host - Players");
-    self.Window:SetResizeBounds(LootReserve:IsCrossRealm() and 650 or 550, 150);
+    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 650 or 550, 150);
     self:UpdateMembersList();
 end

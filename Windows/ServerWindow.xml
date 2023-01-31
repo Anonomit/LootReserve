@@ -803,7 +803,7 @@
 										end
 									end
 								elseif CheckInteractDistance(unit, 2) then
-									C_Container.PickupContainerItem(bag, slot);
+									LootReserve:PickupContainerItem(bag, slot);
 									DropItemOnUnit(unit);
 									C_Timer.After(1, function() ClearCursor(); end);
 								elseif LootReserve:CanUseDBMLocator(unit) then
@@ -1117,7 +1117,7 @@
 						end
 						local bag, slot = LootReserve:GetBagSlot(item);
 						if bag and slot then
-							C_Container.PickupContainerItem(bag, slot);
+							LootReserve:PickupContainerItem(bag, slot);
 							ClickTradeButton(i);
 							i = i + 1;
 						end
@@ -1608,12 +1608,12 @@
 										end
 										local bagMenus = { };
 										for bag = 0, 4 do
-											local slots = C_Container.GetContainerNumSlots(bag);
+											local slots = LootReserve:GetContainerNumSlots(bag);
 											if slots > 0 then
 												local bagMenu = { };
 												table.insert(bagMenus, bagMenu);
 												for slot = 1, slots do
-													local containerInfo = C_Container.GetContainerItemInfo(bag, slot);
+													local containerInfo = LootReserve:GetContainerItemInfo(bag, slot);
 													if containerInfo and (not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot)) then
 														table.insert(bagMenu, MakeItem(containerInfo.stackCount, LootReserve.ItemCache:Item(containerInfo.hyperlink), containerInfo.iconFileID));
 													end

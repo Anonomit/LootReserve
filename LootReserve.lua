@@ -201,6 +201,52 @@ function LootReserve:RegisterEvent(...)
     end
 end
 
+function LootReserve:SetResizeBounds(frame, minWidth, minHeight, maxWidth, maxHeight)
+    if frame.SetResizeBounds then
+        frame:SetResizeBounds(minWidth, minHeight, maxWidth, maxHeight);
+    else
+        if minWidth or minHeight then
+            frame:SetMinResize(minWidth, minHeight);
+        end
+        if maxWidth or maxHeight then
+            frame:SetMaxResize(maxWidth, maxHeight);
+        end
+    end
+end
+
+function LootReserve:GetContainerItemInfo(bag, slot)
+    local containerInfo;
+    if C_Container then
+        containerInfo = C_Container.GetContainerItemInfo(bag, slot);
+    else
+        local icon, itemCount, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID, isBound = GetContainerItemInfo(bag, slot);
+        if itemLink then
+            containerInfo = {
+                iconFileID = icon,
+                stackCount = itemCount,
+                isLocked   = locked,
+                quality    = quality,
+                isReadable = readable,
+                hasLoot    = lootable,
+                hyperlink  = itemLink,
+                isFiltered = isFiltered,
+                hasNoValue = noValue,
+                itemID     = itemID,
+                isBound    = isBound,
+            };
+        end
+    end
+    return containerInfo;
+end
+
+function LootReserve:GetContainerNumSlots(bag)
+    return C_Container and C_Container.GetContainerNumSlots(bag) or GetContainerNumSlots(bag);
+end
+
+function LootReserve:PickupContainerItem(bag, slot)
+    return C_Container and C_Container.PickupContainerItem(bag, slot) or PickupContainerItem(bag, slot);
+end
+
 function LootReserve:OpenMenu(menu, menuContainer, anchor)
     if L_UIDROPDOWNMENU_OPEN_MENU == menuContainer then
         CloseMenus();
@@ -667,7 +713,7 @@ function LootReserve:IsTradeableItem(bag, slot)
 end
 
 local function CacheBagSlot(self, bag, slot, i)
-    local containerInfo = C_Container.GetContainerItemInfo(bag, slot);
+    local containerInfo = LootReserve:GetContainerItemInfo(bag, slot);
     if containerInfo then
         if i then
             table.insert(self.BagCache, i, {bag = bag, slot = slot, item = self.ItemCache:Item(containerInfo.hyperlink), quantity = containerInfo.stackCount, locked = containerInfo.isLocked});
@@ -700,7 +746,7 @@ local function CheckBagCache(self)
     if not self.BagCache then
         self.BagCache = { };
         for bag = 0, NUM_BAG_SLOTS do
-            for slot = 1, C_Container.GetContainerNumSlots(bag) do
+            for slot = 1, LootReserve:GetContainerNumSlots(bag) do
                 CacheBagSlot(self, bag, slot);
             end
         end
@@ -815,7 +861,7 @@ end
 function LootReserve:PutItemInTrade(bag, slot)
     for i = 1, 6 do
         if not GetTradePlayerItemInfo(i) then
-            C_Container.PickupContainerItem(bag, slot);
+            self:PickupContainerItem(bag, slot);
             ClickTradeButton(i);
             return true;
         end

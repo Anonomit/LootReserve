@@ -70,7 +70,7 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     frame.DurationFrame:SetHeight(math.max(durationHeight, 0.00001));
 
     frame:SetHeight(90 + durationHeight);
-    frame:SetResizeBounds(300, 90 + durationHeight, 1000, 90 + durationHeight);
+    LootReserve:SetResizeBounds(frame, 300, 90 + durationHeight, 1000, 90 + durationHeight);
 
     frame:Show();
 
