@@ -5,6 +5,58 @@ LootReserve.Server.Import.SkipNotInRaid    = false;
 LootReserve.Server.Import.MatchItemNames   = false;
 LootReserve.Server.Import.Columns          = { };
 
+function LootReserve.Server.Import:InitDropDown(dropdown)
+    local self = dropdown
+    local options = { };
+    for _, text in ipairs({ strsplit("$", self.values) }) do
+        local name, value = strsplit("=", text);
+        value = value or name;
+        value = tonumber(value) or value;
+        value = value == "\\t" and "\t" or value;
+        table.insert(options, { name = name, value = value });
+    end
+    local function GetOptionName(value)
+        for _, option in ipairs(options) do
+            if option.value == value then
+                return option.name;
+            end
+        end
+    end
+
+    self.Header:SetText(self.name or "");
+    if self.width then
+        LootReserve.LibDD:UIDropDownMenu_SetWidth(self, math.max(self.width, self.Header:GetStringWidth()));
+    end
+    LootReserve.LibDD:UIDropDownMenu_JustifyText(self, self.justify or "LEFT");
+    LootReserve.LibDD:UIDropDownMenu_Initialize(self, function(frame, level, menuList)
+        local info = LootReserve.LibDD:UIDropDownMenu_CreateInfo();
+        info.minWidth = self:GetWidth() - 40;
+        info.func = function(info)
+            if self.index then
+                LootReserve.Server.Import[self.field][self.index] = info.value;
+            else
+                LootReserve.Server.Import[self.field] = info.value;
+            end
+            LootReserve.LibDD:UIDropDownMenu_SetSelectedValue(self, info.value);
+            C_Timer.After(0, function() LootReserve.Server.Import:InputOptionsUpdated(); end);
+        end
+        for _, option in ipairs(options) do
+            info.text = option.name;
+            info.value = option.value;
+            LootReserve.LibDD:UIDropDownMenu_AddButton(info);
+            info.checked = false;
+        end
+    end);
+    local value;
+    if self.index then
+        value = LootReserve.Server.Import[self.field][self.index];
+    else
+        value = LootReserve.Server.Import[self.field];
+    end
+    LootReserve.LibDD:UIDropDownMenu_SetText(self, GetOptionName(value));
+    self.selectedValue = value;
+end
+
 local function ParseCSVLine(line, sep)
     local res = { };
     local pos = 1;
@@ -176,7 +228,7 @@ function LootReserve.Server.Import:InputUpdated()
     self:InputOptionsUpdated();
 
     self.Separator = self.Separator or ",";
-    self.Window.InputOptions.Input.Separator:init();
+    self:InitDropDown(self.Window.InputOptions.Input.Separator);
     self.Window.InputOptions.Input.UseHeaders:SetChecked(self.UseHeaders);
 end
 
@@ -279,7 +331,29 @@ function LootReserve.Server.Import:InputOptionsUpdated()
         last = i;
         local frame = list.Columns[i];
         while not frame do
-            frame = CreateFrame("Frame", nil, list, "LootReserveServerImportOptionColumnTemplate");
+            frame = LootReserve.LibDD:Create_UIDropDownMenu(nil, list);
+            table.insert(list.Columns, frame);
+            
+            frame.field   = "Columns";
+            frame.values  = "|cFF808080Unused|r=Unused$Player$Item$Count$Class$Extra Reserves$Roll Bonus$Do Not Reserve";
+            frame.width   = 75;
+            frame.justify = "LEFT";
+            
+            frame:SetHeight(32);
+            
+            frame.Header = frame:CreateFontString(nil, nil, "GameFontNormalSmall");
+            frame.Header:SetPoint("BOTTOMLEFT", frame, "TOPLEFT", 25, 0);
+            
+            frame.Rows = CreateFrame("Frame", nil, frame);
+            frame.Rows:SetClipsChildren(true);
+            frame.Rows:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 25, 0);
+            frame.Rows:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -25, 0);
+            frame.Rows:SetPoint("BOTTOM", list);
+            frame.Rows.Text = frame.Rows:CreateFontString(nil, nil, "GameFontWhiteSmall");
+            frame.Rows.Text:SetJustifyH("LEFT");
+            frame.Rows.Text:SetJustifyV("TOP");
+            frame.Rows.Text:SetPoint("TOPLEFT", frame.Rows);
+            
             if #list.Columns == 1 then
                 frame:SetPoint("TOPLEFT", list, "TOPLEFT", -10, -12);
             else
@@ -289,7 +363,7 @@ function LootReserve.Server.Import:InputOptionsUpdated()
         end
         frame.name = self.Headers and #self.Headers >= i and self.Headers[i] or format("Column %d", i);
         frame.index = i;
-        frame:init();
+        self:InitDropDown(frame);
         frame:Show();
 
         local rows = "";

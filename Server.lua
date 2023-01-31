@@ -821,9 +821,9 @@ function LootReserve.Server:Startup()
     
     -- Hook all existing dropdown buttons
     local list, index = 1, 1
-    while _G["DropDownList"..list] do
-        while _G["DropDownList"..list.."Button"..index] do
-            _G["DropDownList"..list.."Button"..index]:HookScript("OnEnter", OnTooltipEnter)
+    while _G["L_DropDownList"..list] do
+        while _G["L_DropDownList"..list.."Button"..index] do
+            _G["L_DropDownList"..list.."Button"..index]:HookScript("OnEnter", OnTooltipEnter)
             index = index + 1
         end
         list = list + 1
@@ -831,7 +831,7 @@ function LootReserve.Server:Startup()
     
     -- Hook all future dropdown buttons
     hooksecurefunc("CreateFrame", function(frameType, name, _, template, _, ...)
-        if frameType == "Button" and name and type(name) == "string" and name:find("DropDownList%d+Button%d+") and template == "UIDropDownMenuButtonTemplate" then
+        if frameType == "Button" and name and type(name) == "string" and name:find("L_DropDownList%d+Button%d+") and template == "L_UIDropDownMenuButtonTemplate" then
             _G[name]:HookScript("OnEnter", OnTooltipEnter)
         end
     end)

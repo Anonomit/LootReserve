@@ -473,10 +473,11 @@
 				<Anchors>
 					<Anchor point="RIGHT" relativeKey="$parent.Header" relativePoint="RIGHT" />
 				</Anchors>
-				<Frames>
-					<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
-				</Frames>
 				<Scripts>
+					<OnLoad>
+						self.Menu = LootReserve.LibDD:Create_UIDropDownMenu(nil, self);
+						self.Menu:Hide();
+					</OnLoad>
 					<OnClick>
 						if LootReserve.Server.CurrentSession then
 							LootReserve.Server.Export.Window:SetShown(not LootReserve.Server.Export.Window:IsShown());

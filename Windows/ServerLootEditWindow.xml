@@ -86,12 +86,6 @@
 							</OnClick>
 						</Scripts>
 					</Button>
-					<Frame parentKey="ClassMaskMenu" inherits="UIDropDownMenuTemplate" hidden="true">
-						<KeyValues>
-							<KeyValue key="point" type="string" value="TOPRIGHT" />
-							<KeyValue key="relativePoint" type="string" value="BOTTOMRIGHT" />
-						</KeyValues>
-					</Frame>
 					<Button parentKey="State" inherits="UIMenuButtonStretchTemplate">
 						<Size y="20" />
 						<Anchors>
@@ -308,6 +302,11 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
+						self.ClassMaskMenu = LootReserve.LibDD:Create_UIDropDownMenu(nil, self);
+						self.ClassMaskMenu:Hide();
+						self.ClassMaskMenu.point = "TOPRIGHT";
+						self.ClassMaskMenu.relativePoint = "BOTTOMRIGHT";
+						
 						self.Update = function(self)
 							self:SetWidth(math.max(self.ClassMask:IsShown() and self.ClassMask:GetWidth() or 0, (self.State:IsShown() and self.State:GetWidth() or 0) + math.max(self.Limit:IsShown() and self.Limit:GetWidth() or 0, self.LimitNoHover:GetWidth() + 10)) - 6);
 						end
@@ -337,9 +336,9 @@
 				end
 			</OnLoad>
 			<OnUpdate>
-				local hovered = self:IsMouseOver() and self:GetParent():GetParent():IsMouseOver() and not UIDROPDOWNMENU_OPEN_MENU and not LootReserve.Server.LootEdit.FocusedEditBox
-				                or UIDROPDOWNMENU_OPEN_MENU == self.ConditionsFrame.ClassMaskMenu
-				                or self.ConditionsFrame.Limit.EditBox:HasFocus();
+				local hovered = self:IsMouseOver() and self:GetParent():GetParent():IsMouseOver() and not L_UIDROPDOWNMENU_OPEN_MENU and not LootReserve.Server.LootEdit.FocusedEditBox
+												or L_UIDROPDOWNMENU_OPEN_MENU == self.ConditionsFrame.ClassMaskMenu
+												or self.ConditionsFrame.Limit.EditBox:HasFocus();
 				if self.hovered ~= hovered then
 					self.hovered = hovered;
 					local r, g, b = self:GetBackdropBorderColor();
@@ -496,10 +495,12 @@
 							<Anchor point="RIGHT" relativeKey="$parent.ButtonAdd" relativePoint="LEFT" x="-5" />
 						</Anchors>
 					</ScrollFrame>
-					<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
 				</Frames>
 				<Scripts>
 					<OnLoad>
+						self.Menu = LootReserve.LibDD:Create_UIDropDownMenu(nil, self);
+						self.Menu:Hide();
+						
 						self.Icon.SetTexture = function(self, texture)
 							self.Texture:SetTexture(texture);
 						end

@@ -400,10 +400,14 @@
 						</Texture>
 					</Layer>
 				</Layers>
-				<Frames>
-					<Frame parentKey="Menu" inherits="UIDropDownMenuTemplate" hidden="true" />
-				</Frames>
 				<Scripts>
+					<OnLoad>
+						self.Menu = LootReserve.LibDD:Create_UIDropDownMenu(nil, self);
+						self.Menu:Hide();
+						
+						self.Text:SetPoint("CENTER");
+						-- self:SetPushedTextOffset(1, -1);
+					</OnLoad>
 					<OnClick>
 						local menu = {
 							{ text = "Reserve as", isTitle = true },
@@ -440,10 +444,6 @@
 							LootReserve:OpenMenu(menu, self.Menu, self);
 						end
 					</OnClick>
-					<OnLoad>
-						self.Text:SetPoint("CENTER");
-						-- self:SetPushedTextOffset(1, -1);
-					</OnLoad>
 					<OnEnter>
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 						GameTooltip:SetText("Reserver");
@@ -451,20 +451,20 @@
 						GameTooltip:Show();
 					</OnEnter>
 					<OnLeave function="GameTooltip_Hide" />
-		  	</Scripts>
+				</Scripts>
 			</Button>
 			<Button parentKey="OptOut" inherits="UIPanelButtonTemplate" text="Opt Out" frameLevel="100" hidden="true">
 				<Size x="80" y="19" />
-		  	<Anchors>
-		  		<Anchor point="TOPRIGHT" x="-25" y="-1" />
-		  	</Anchors>
-		  	<Scripts>
-		  		<OnClick>
-		  			LootReserve.Client:OptOut();
-		  			if not LootReserve.Client.Masquerade then
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-25" y="-1" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootReserve.Client:OptOut();
+						if not LootReserve.Client.Masquerade then
     					LootReserve.Client.Window:Hide();
     				end
-		  		</OnClick>
+					</OnClick>
 					<OnEnter>
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 						GameTooltip:SetText("Opt Out");
@@ -472,17 +472,17 @@
 						GameTooltip:Show();
 					</OnEnter>
 					<OnLeave function="GameTooltip_Hide" />
-		  	</Scripts>
+				</Scripts>
 			</Button>
 			<Button parentKey="OptIn" inherits="UIPanelButtonTemplate" text="Opt In " frameLevel="100" hidden="true">
 				<Size x="80" y="19" />
-		  	<Anchors>
-		  		<Anchor point="TOPRIGHT" x="-25" y="-1" />
-		  	</Anchors>
-		  	<Scripts>
-		  		<OnClick>
-		  			LootReserve.Client:OptIn();
-		  		</OnClick>
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-25" y="-1" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootReserve.Client:OptIn();
+					</OnClick>
 					<OnEnter>
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 						GameTooltip:SetText("Opt In");
@@ -490,7 +490,7 @@
 						GameTooltip:Show();
 					</OnEnter>
 					<OnLeave function="GameTooltip_Hide" />
-		  	</Scripts>
+				</Scripts>
 			</Button>
 			<StatusBar parentKey="Duration" inherits="LootReserveDurationStatusBar">
 				<KeyValues>
@@ -584,7 +584,7 @@
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 				if LootReserve.Client:HasRemainingReserves() and not LootReserve.Client:IsOptedOut() and not LootReserve.Client:IsOptPending() then
-				  LootReserve:PrintMessage("You have %d |4reserve:reserves; remaining. Click the Opt Out button if you are done reserving.", tostring(LootReserve.Client:GetRemainingReserves()));
+					LootReserve:PrintMessage("You have %d |4reserve:reserves; remaining. Click the Opt Out button if you are done reserving.", tostring(LootReserve.Client:GetRemainingReserves()));
 				end
 				if LootReserve.Client.Settings.ShowReopenHint then
 					LootReserve:PrintMessage("Reserves window can be reopened through the minimap icon or by typing  |cFFFFD200/reserve|r");

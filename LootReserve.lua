@@ -13,6 +13,7 @@ LootReserve.EventFrame:Show();
 
 LootReserve.LibRangeCheck = LibStub("LibRangeCheck-2.0");
 LootReserve.ItemCache     = LibStub("ItemCache");
+LootReserve.LibDD         = LibStub("LibUIDropDownMenu-4.0");
 
 LootReserveCharacterSave =
 {
@@ -201,7 +202,7 @@ function LootReserve:RegisterEvent(...)
 end
 
 function LootReserve:OpenMenu(menu, menuContainer, anchor)
-    if UIDROPDOWNMENU_OPEN_MENU == menuContainer then
+    if L_UIDROPDOWNMENU_OPEN_MENU == menuContainer then
         CloseMenus();
         return;
     end
@@ -232,14 +233,14 @@ function LootReserve:OpenMenu(menu, menuContainer, anchor)
         end
     end
     FixMenu(menu);
-    EasyMenu(menu, menuContainer, anchor, 0, 0, "MENU");
+    LootReserve.LibDD:EasyMenu(menu, menuContainer, anchor, 0, 0, "MENU");
 end
 
 function LootReserve:OpenSubMenu(...)
     for submenu = 1, select("#", ...) do
         local arg1 = select(submenu, ...);
         local opened = false;
-        for i = 1, UIDROPDOWNMENU_MAXBUTTONS do
+        for i = 1, L_UIDROPDOWNMENU_MAXBUTTONS do
             local button = _G["DropDownList"..submenu.."Button"..i];
             if button and button.arg1 == arg1 then
                 local arrow = _G[button:GetName().."ExpandArrow"];
