@@ -273,15 +273,15 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         end
         return name:upper();
     end
-    local function getSortingSource(reserve)
-        if LootReserve:IsLootingItem(reserve.Item) then
+    local function getSortingSourceHelper(item)
+        if LootReserve:IsLootingItem(item) then
             return 0;
         end
         local customIndex = 0;
         for itemID, conditions in pairs(self.CurrentSession.ItemConditions) do
             if conditions.Custom then
                 customIndex = customIndex + 1;
-                if itemID == reserve.Item then
+                if itemID == item then
                     return customIndex;
                 end
             end
@@ -291,7 +291,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
                 for childIndex, child in ipairs(category.Children) do
                     if child.Loot then
                         for lootIndex, loot in ipairs(child.Loot) do
-                            if loot == reserve.Item then
+                            if loot == item then
                                 return id * 10000 + childIndex * 100 + lootIndex;
                             end
                         end
@@ -300,6 +300,14 @@ function LootReserve.Server:UpdateReserveList(lockdown)
             end
         end
         return 100000000;
+    end
+    local sourceMemo = { };
+    local function getSortingSource(reserve)
+        local item = reserve.Item;
+        if not sourceMemo[item] then
+            sourceMemo[item] = getSortingSourceHelper(item);
+        end
+        return sourceMemo[item];
     end
     local function getSortingLooter(reserve)
         if LootReserve:IsLootingItem(reserve.Item) then

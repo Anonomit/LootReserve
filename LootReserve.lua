@@ -1182,7 +1182,7 @@ function LootReserve:Ordered_old(tbl, sorter)
     return orderedNext, tbl, nil;
 end
 
-function LootReserve:Ordered(tbl, sorter)
+local function OrderedHelper(tbl, sorter)
     local __orderedIndex = { };
     for key in pairs(tbl) do
         table.insert(__orderedIndex, key);
@@ -1194,13 +1194,30 @@ function LootReserve:Ordered(tbl, sorter)
     else
         table.sort(__orderedIndex);
     end
-
-    local i = 0;
+    
+    local i;
+    local function reset()
+        i = 0;
+    end
     local function orderedNext(t)
         i = i + 1;
         return __orderedIndex[i], t[__orderedIndex[i]];
     end
-
+    
+    return orderedNext, reset;
+end
+local orderedMemos  = setmetatable({ }, { __mode = "k" });
+function LootReserve:Ordered(tbl, sorter)
+    if not orderedMemos[tbl] then
+        orderedMemos[tbl] = setmetatable({ }, { __mode = "k" });
+    end
+    if not orderedMemos[tbl][sorter or ""] then
+        orderedMemos[tbl][sorter or ""] = {OrderedHelper(tbl, sorter)};
+    end
+    
+    local orderedNext, reset = unpack(orderedMemos[tbl][sorter or ""]);
+    reset();
+    
     return orderedNext, tbl, nil;
 end
 
