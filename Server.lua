@@ -1185,6 +1185,10 @@ function LootReserve.Server:UpdateGroupMembers()
                 };
                 self.MembersEdit:UpdateMembersList();
             end
+            -- Add class info to players who are missing it
+            if not self.CurrentSession.Members[name].Class then
+                self.CurrentSession.Members[name].Class = select(3, LootReserve:UnitClass(index));
+            end
         end);
     end
     self:UpdateReserveList();
