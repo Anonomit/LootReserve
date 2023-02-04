@@ -305,11 +305,19 @@ function LootReserve:GetContainerItemInfo(bag, slot)
 end
 
 function LootReserve:GetContainerNumSlots(bag)
-    return C_Container and C_Container.GetContainerNumSlots(bag) or GetContainerNumSlots(bag);
+    if C_Container and C_Container.PickupContainerItem then
+        return C_Container.GetContainerNumSlots(bag);
+    else
+        return GetContainerNumSlots(bag);
+    end
 end
 
 function LootReserve:PickupContainerItem(bag, slot)
-    return C_Container and C_Container.PickupContainerItem(bag, slot) or PickupContainerItem(bag, slot);
+    if C_Container and C_Container.PickupContainerItem then
+        return C_Container.PickupContainerItem(bag, slot);
+    else
+        return PickupContainerItem(bag, slot);
+    end
 end
 
 function LootReserve:OpenMenu(menu, menuContainer, anchor)
