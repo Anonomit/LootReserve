@@ -30,7 +30,7 @@ LootReserve.Data =
                 { Name = "My Reserves", Reserves = "my" },
                 { Name = "All Reserves", Reserves = "all" },
                 { Name = "|TInterface\\AddOns\\LootReserve\\Assets\\Textures\\FavoriteWhite:16:16:0:-1:32:32:7:25:2:20|t Favorites", Favorites = true },
-                { Name = "|TInterface\\Common\\UI-SearchBox-Icon:16:16:2:-2|t Search Results", Search = true },
+                { Name = "|TInterface\\Common\\UI-SearchBox-Icon:16:16:2:-2|t Search Results", SearchResults = true },
             },
         },
         [-50] = {

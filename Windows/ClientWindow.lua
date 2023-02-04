@@ -272,7 +272,7 @@ function LootReserve.Client:UpdateLootList()
                 end
             end
         end
-    elseif self.SelectedCategory and self.SelectedCategory.Search and filter then
+    elseif self.SelectedCategory and self.SelectedCategory.SearchResults and filter then
         local alreadyFoundIDs = { };
         for itemID, conditions in pairs(self.ItemConditions) do
             if itemID ~= 0 and conditions.Custom and not alreadyFoundIDs[itemID] then
