@@ -232,6 +232,7 @@ end
 
 -- SessionInfo
 function LootReserve.Comm:BroadcastSessionInfo(starting)
+    LootReserve:NotifyListeners("RESERVES");
     local session = LootReserve.Server.CurrentSession;
     if session.Settings.Blind then
         for player in pairs(session.Members) do

@@ -2223,6 +2223,7 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
     else
         LootReserve.Comm:BroadcastReserveInfo(itemID, reserve.Players);
     end
+    LootReserve:NotifyListeners("RESERVES");
 
     -- Send chat messages
     if self.CurrentSession.Settings.ChatFallback then
@@ -2378,6 +2379,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
     else
         LootReserve.Comm:BroadcastReserveInfo(itemID, reserve.Players);
     end
+    LootReserve:NotifyListeners("RESERVES");
 
     -- Remove the item entirely if all reserves were cancelled
     if #reserve.Players == 0 then

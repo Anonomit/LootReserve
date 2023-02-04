@@ -45,6 +45,9 @@ LootReserveGlobalSave =
 };
 
 LootReserve.BagCache = nil;
+LootReserve.Listeners = {
+    RESERVES = { },
+};
 
 StaticPopupDialogs["LOOTRESERVE_GENERIC_ERROR"] =
 {
@@ -136,6 +139,68 @@ function LootReserve:OnEnable()
 end
 
 function LootReserve:OnDisable()
+end
+
+-- Other addons may use this to be notified of things that happen in LootReserve.
+-- Return value is boolean, whether registration succeeded.
+function LootReserve:RegisterListener(category, id, callback)
+    local success, result = pcall(function()
+        if not category or not self.Listeners[category] then return false; end
+        self.Listeners[category][id] = callback;
+        return true;
+    end);
+    return result or false;
+end
+
+function LootReserve:UnregisterListener(category, id)
+    local success, result = pcall(function()
+        if not category or not self.Listeners[category] then return false; end
+        self.Listeners[category][id] = nil;
+        return true;
+    end);
+    return result or false;
+end
+
+-- Other addons may use this to request data manually.
+-- Return value is boolean, whether the notification was successful.
+function LootReserve:PromptListener(category, id)
+    if id then
+        return self:NotifyListeners(category, id);
+    end
+    return false;
+end
+
+function LootReserve:NotifyListeners(category, whiteID)
+    local GetPackage;
+    if category == "RESERVES" then
+        local pkg;
+        GetPackage = function()
+            if not pkg then
+                pkg = { };
+                local session = LootReserve.Server.CurrentSession;
+                if session then
+                    for member, memberData in pairs(session.Members) do
+                        pkg[member] = { };
+                        for _, reserve in ipairs(memberData.ReservedItems) do
+                            table.insert(pkg[member], reserve)
+                        end
+                    end
+                end
+            end
+            return pkg;
+        end
+    end
+    
+    local success = false;
+    if GetPackage then
+        for id, callback in pairs(self.Listeners.RESERVES) do
+            if not whiteID or id == whiteID then
+                pcall(function() callback(GetPackage()); end);
+                success = true;
+            end
+        end
+    end
+    return success;
 end
 
 function LootReserve:ShowError(fmt, ...)
