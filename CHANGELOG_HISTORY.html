@@ -1,3 +1,24 @@
+<h1>2023-02-05</h1>
+<h3>Features</h3>
+<ul>
+  <li>Added support for external listeners.</li>
+  <ul>
+    <li><code>LootReserve:RegisterListener("RESERVES", id, callback)</code> to have lootreserve run that callback when it has a reserves update.</li>
+    <li><code>LootReserve:UnregisterListener("RESERVES", id)</code> to to stop getting updates about reserves.</li>
+    <li><code>LootReserve:PromptListener("RESERVES", id)</code> to get an update manually.</li>
+  </ul>
+</ul>
+<h3>Fixes</h3>
+<ul>
+  <li>Classic Era and Season of Mastery should once again be fully functional.</li>
+  <li>Implemented LibUIDropDownMenu-4.0 so lootreserve no longer contributes to blizzard's dropdownmenu problems (avoids group finder error).</li>
+  <li>Using the search bar in the reserves window once again automatically switches you to the Search tab.</li>
+  <li>Fixed host window delay when many reserves were being sorted by boss.</li>
+  <li>After importing reserves without class info, LootReserve should learn the characters' classes once they join the group.</li>
+</ul>
+
+
+<p>&nbsp;</p>
 <h1>2023-01-28</h1>
 <p>&nbsp;MANDATORY UPDATE</p>
 <h3>Fixes</h3>
