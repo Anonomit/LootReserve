@@ -1,4 +1,9 @@
 
+LootReserve.Server.Export.reservesExportHeaderText    = "Player,Class,ExtraReserves,RollBonus,Item,Count";
+LootReserve.Server.Export.reservesExportFormatPattern = "\n%s,%s,%d,%d,%d,%d";
+LootReserve.Server.Export.rollsExportHeaderText       = "Time,Item ID,Item Name,Winner,Reserved,Disenchanted,Reason";
+LootReserve.Server.Export.rollsExportFormatPattern    = "\n%d,%d,%d,%s,%s,%d,%s";
+
 
 function LootReserve.Server.Export:UpdateReservesExportText()
     local members = LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Members or LootReserve.Server.NewSessionSettings.ImportedMembers;
@@ -10,10 +15,10 @@ function LootReserve.Server.Export:UpdateReservesExportText()
                 counts[itemID] = (counts[itemID] or 0) + 1;
             end
             for itemID, count in pairs(counts) do
-                text = text .. format("\n%s,%s,%d,%d,%d,%d", player, member.Class and select(2, LootReserve:GetClassInfo(member.Class)) or "", member.ReservesDelta, member.RollBonus[itemID], itemID, count);
+                text = text .. format(self.reservesExportFormatPattern, player, member.Class and select(2, LootReserve:GetClassInfo(member.Class)) or "", member.ReservesDelta, member.RollBonus[itemID], itemID, count);
             end
         end
-        text = "Player,Class,ExtraReserves,RollBonus,Item,Count" .. text;
+        text = self.reservesExportHeaderText .. text;
     end
     self:SetText(text);
 end
@@ -58,7 +63,7 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
                         end
                         
                         for winner in pairs(winners) do
-                            text = text .. format("\n%d,%d,%d,%s,%s,%d,%s",
+                            text = text .. format(self.rollsExportFormatPattern,
                                 roll.StartTime,
                                 roll.Item:GetID(),
                                 roll.Item:GetName(),
@@ -76,7 +81,7 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
         if #missing > 0 then
             text = format("Loading item names...\nRemaining: %d\n\nInstall/Update ItemCache to remember the item database between sessions...", #missing);
         elseif text ~= "" then
-            text = "Time,Item ID,Item Name,Winner,Reserved,Disenchanted,Reason" .. text;
+            text = self.rollsExportHeaderText .. text;
         end
     end
     
