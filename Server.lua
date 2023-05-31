@@ -940,6 +940,13 @@ function LootReserve.Server:PrepareLootTracking()
     
     local function AddRecentLoot(item)
         if self.Settings.RecentLootBlacklist[item:GetID()] or LootReserve.Data.RecentLootBlacklist[item:GetID()] then return; end
+        if not item:IsCached() then
+            if item:Exists() then
+                item:OnCache(AddRecentLoot)
+            end
+            return
+        end
+        
         if item:GetQuality() < self.Settings.MinimumLootQuality then return; end
         if item:GetStackSize() > 1 then
             LootReserve:TableRemove(self.RecentLoot, item);
@@ -954,6 +961,15 @@ function LootReserve.Server:PrepareLootTracking()
         while #self.RecentLoot > self.Settings.MaxRecentLoot do
             table.remove(self.RecentLoot, 1);
         end
+        
+        -- try to get the tooltip to cache
+        if not LootReserve.TooltipScanner then
+            LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
+            LootReserve.TooltipScanner:Hide();
+        end
+        LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
+        LootReserve.TooltipScanner:SetHyperlink(item:GetString());
+        LootReserve.TooltipScanner:Hide();
     end
     
     local function AddLootToTrackingList(looter, item, count)
