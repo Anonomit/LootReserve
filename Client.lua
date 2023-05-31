@@ -196,7 +196,33 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
             end
             self.PendingOpen = false;
         end);
-
+        
+        -- Auto need on reserved items during group loot (when multireserves disabled)
+        LootReserve:RegisterEvent("START_LOOT_ROLL", function(rollID)
+            if not self.SessionServer or self.Multireserve or not self.Settings.RollRequestAutoRollReserved then return; end
+            
+            local link = GetLootRollItemLink(rollID);
+            if not link then return; end
+            
+            local item = LootReserve.ItemCache:Item(link);
+            
+            local token;
+            if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
+                token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
+            end
+            local itemID = token and token:GetID() or item:GetID();
+            if self:IsItemReservedByMe(itemID, true) then
+                LootReserve:PrintMessage("Automatically rolling Need on reserved item: %s", item:GetLink());
+                if not self.Settings.RollRequestAutoRollNotified then
+                    LootReserve:PrintError("Automatic rolling on reserved items can be disabled in Settings.");
+                    self.Settings.RollRequestAutoRollNotified = true;
+                end
+                RollOnLoot(rollID, 1);
+                ConfirmLootRoll(rollID, 1);
+                StaticPopup_Hide("CONFIRM_LOOT_ROLL");
+            end
+        end);
+        
         local function OnTooltipSetHyperlink(tooltip)
             if self.SessionServer and not LootReserve:IsMe(self.SessionServer) then
                 local name, link = tooltip:GetItem();

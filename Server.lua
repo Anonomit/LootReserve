@@ -1121,10 +1121,10 @@ function LootReserve.Server:PrepareLootTracking()
     
     -- Announce reserves when a group loot roll starts
     LootReserve:RegisterEvent("START_LOOT_ROLL", function(rollID)
-        if not self.CurrentSession then return end
+        if not self.CurrentSession then return; end
         
         local link = GetLootRollItemLink(rollID);
-        if not link then return end
+        if not link then return; end
         
         local item = LootReserve.ItemCache:Item(link);
         
