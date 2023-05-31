@@ -403,7 +403,9 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
 
     LootReserve.Client:UpdateCategories();
     LootReserve.Client:UpdateLootList();
-    if acceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
+    if LootReserve.Client.SkipOpen then
+        LootReserve.Client.SkipOpen = false;
+    elseif acceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
         if UnitAffectingCombat("player") then
             LootReserve.Client.PendingOpen = true;
         else

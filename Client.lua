@@ -45,6 +45,7 @@ LootReserve.Client =
     PendingItems             = { },
     PendingOpt               = nil,
     PendingOpen              = false,
+    SkipOpen                 = false,
     ServerSearchTimeoutTime  = nil,
     DurationUpdateRegistered = false,
     SessionEventsRegistered  = false,
