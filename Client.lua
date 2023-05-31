@@ -94,12 +94,18 @@ function LootReserve.Client:Load()
                 else
                     window:SetShown(not window:IsShown());
                 end
+            elseif button == "MiddleButton" then
+                LootReserve.Client.Settings.LibDBIcon.hide = true;
+                LibStub("LibDBIcon-1.0"):Hide("LootReserve");
+                CloseMenus(); -- close options menu if it's open
             end
         end,
         OnTooltipShow = function(tooltip)
             tooltip:SetText("LootReserve", HIGHLIGHT_FONT_COLOR.r, HIGHLIGHT_FONT_COLOR.g, HIGHLIGHT_FONT_COLOR.b, 1);
             tooltip:AddLine(format("Left-Click: Open %s Window", self.Settings.SwapLDBButtons and "Host" or "Reserves"));
             tooltip:AddLine(format("Right-Click: Open %s Window", self.Settings.SwapLDBButtons and "Reserves" or "Host"));
+            tooltip:AddLine("Middle-Click: Hide Minimap Button");
+            tooltip:AddLine("(Toggle icon visibility in Reserves window)");
         end,
     }), self.Settings.LibDBIcon);
 end
