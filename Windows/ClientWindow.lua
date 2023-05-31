@@ -195,7 +195,7 @@ function LootReserve.Client:UpdateLootList()
         list.ContentHeight = list.ContentHeight + frame:GetHeight();
     end
 
-    local function matchesFilter(item, filter)
+    local function matchesFilter(item, reserve, filter)
         filter = (filter or "");
         if #filter == 0 then
             return true;
@@ -206,6 +206,14 @@ function LootReserve.Client:UpdateLootList()
         end
         if item:GetSearchName():find(filter, 1, true) then
             return true;
+        end
+        
+        if reserve then
+            for _, player in pairs(reserve) do
+                if string.find(LootReserve:SimplifyNameLower(player), filter, 1, true) then
+                    return true;
+                end
+            end
         end
 
         return false;
@@ -279,7 +287,7 @@ function LootReserve.Client:UpdateLootList()
                 local match = false;
                 local item = LootReserve.ItemCache:Item(itemID);
                 if item:IsCached() then
-                    if matchesFilter(item, filter) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                    if matchesFilter(item, self.ItemReserves[itemID], filter) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                         createFrame(item, "Custom Item");
                         alreadyFoundIDs[itemID] = true;
                         match = true;
@@ -291,7 +299,7 @@ function LootReserve.Client:UpdateLootList()
                     for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                         local reward = LootReserve.ItemCache:Item(rewardID);
                         if reward:IsCached() then
-                            if item:IsCached() and matchesFilter(reward, filter) then
+                            if item:IsCached() and matchesFilter(reward, self.ItemReserves[rewardID], filter) then
                                 createFrame(item, "Custom Item");
                                 alreadyFoundIDs[itemID] = true;
                                 break;
@@ -312,7 +320,7 @@ function LootReserve.Client:UpdateLootList()
                                 local match = false;
                                 local item = LootReserve.ItemCache:Item(itemID);
                                 if item:IsCached() then
-                                    if matchesFilter(item, filter) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                                    if matchesFilter(item, self.ItemReserves[itemID], filter) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                                         createFrame(item, format("%s > %s", category.Name, child.Name));
                                         alreadyFoundIDs[itemID] = true;
                                         match = true;
@@ -324,7 +332,7 @@ function LootReserve.Client:UpdateLootList()
                                     for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                                         local reward = LootReserve.ItemCache:Item(rewardID);
                                         if reward:IsCached() then
-                                            if item:IsCached() and matchesFilter(reward, filter) then
+                                            if item:IsCached() and matchesFilter(reward, self.ItemReserves[rewardID], filter) then
                                                 createFrame(item, format("%s > %s", category.Name, child.Name));
                                                 alreadyFoundIDs[itemID] = true;
                                                 break;
