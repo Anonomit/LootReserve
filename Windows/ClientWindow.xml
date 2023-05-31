@@ -363,7 +363,7 @@
 							{ text = "Show For Unusable Items", checked = LootReserve.Client.Settings.RollRequestShowUnusable, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShowUnusable = checked; end },
 							{ text = "Consider BoE Items Usable", checked = LootReserve.Client.Settings.RollRequestShowUnusableBoE, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShowUnusableBoE = checked; end },
 							{ text = "Glow Only For Reserved Items", checked = LootReserve.Client.Settings.RollRequestGlowOnlyReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestGlowOnlyReserved = checked; end },
-							{ text = "Auto Roll Reserved Items", checked = LootReserve.Client.Settings.RollRequestAutoRollReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestAutoRollReserved = checked; end },
+							{ text = "Auto Roll on Reserved Items", checked = LootReserve.Client.Settings.RollRequestAutoRollReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestAutoRollReserved = checked; end },
 							{ text = "Open Example Popup", func = function() LootReserve.Client:RollRequested(LootReserve:Me(), LootReserve.ItemCache:Item(18582), { LootReserve:Me() }, true, 30, 30, "Test Spec", false, true); end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Roll Reactions", isTitle = true },
