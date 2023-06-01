@@ -365,8 +365,10 @@ function LootReserve:OpenSubMenu(...)
                 local arrow = _G[button:GetName().."ExpandArrow"];
                 if arrow then
                     local Click = arrow:GetScript("OnMouseDown");
-                    Click(arrow, "LButton");
-                    opened = true;
+                    if Click then
+                        Click(arrow, "LButton");
+                        opened = true;
+                    end
                     break;
                 end
             end
