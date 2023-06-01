@@ -218,8 +218,41 @@ function LootReserve.Client:UpdateLootList()
 
         return false;
     end
+    
+    local function getSortingSourceHelper(item)
+        local customIndex = 0;
+        for itemID, conditions in pairs(self.ItemConditions) do
+            if conditions.Custom then
+                customIndex = customIndex + 1;
+                if itemID == item:GetID() then
+                    return customIndex;
+                end
+            end
+        end
+        for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
+            if category.Children and (not self.SessionServer or LootReserve:Contains(self.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
+                for childIndex, child in ipairs(category.Children) do
+                    if child.Loot then
+                        for lootIndex, loot in ipairs(child.Loot) do
+                            if loot == item:GetID() then
+                                return id * 10000 + childIndex * 100 + lootIndex;
+                            end
+                        end
+                    end
+                end
+            end
+        end
+        return 100000000;
+    end
+    local sourceMemo = { };
+    local function getSortingSource(item)
+        if not sourceMemo[item] then
+            sourceMemo[item] = getSortingSourceHelper(item);
+        end
+        return sourceMemo[item];
+    end
 
-    local function sortByItemName(_, _, aItemID, bItemID)
+    local function sortBySource(_, _, aItemID, bItemID)
         aItem = LootReserve.ItemCache:Item(aItemID);
         bItem = LootReserve.ItemCache:Item(bItemID);
         if not aItem or not aItem:GetInfo() then
@@ -228,11 +261,23 @@ function LootReserve.Client:UpdateLootList()
         if not bItem or not bItem:GetInfo() then
             return false;
         end
-        return aItem:GetName() < bItem:GetName();
+        return getSortingSource(aItem) < getSortingSource(bItem);
     end
 
+    -- local function sortByItemName(_, _, aItemID, bItemID)
+    --     aItem = LootReserve.ItemCache:Item(aItemID);
+    --     bItem = LootReserve.ItemCache:Item(bItemID);
+    --     if not aItem or not aItem:GetInfo() then
+    --         return false;
+    --     end
+    --     if not bItem or not bItem:GetInfo() then
+    --         return false;
+    --     end
+    --     return aItem:GetName() < bItem:GetName();
+    -- end
+
     if self.SelectedCategory and self.SelectedCategory.Reserves and self.SessionServer then
-        for itemID in LootReserve:Ordered(self.ItemReserves, sortByItemName) do
+        for itemID in LootReserve:Ordered(self.ItemReserves, sortBySource) do
             local item = LootReserve.ItemCache:Item(itemID);
             if self.SelectedCategory.Reserves == "my" and self:IsItemReservedByMe(itemID) then
                 createFrame(item);
@@ -246,7 +291,7 @@ function LootReserve.Client:UpdateLootList()
     elseif self.SelectedCategory and self.SelectedCategory.Favorites then
         for _, favorites in ipairs({ self.CharacterFavorites, self.GlobalFavorites }) do
             local first = true;
-            for itemID in LootReserve:Ordered(favorites, sortByItemName) do
+            for itemID in LootReserve:Ordered(favorites, sortBySource) do
                 local conditions = self.ItemConditions[itemID];
                 if itemID ~= 0 and (not self.LootCategories or LootReserve.Data:IsItemInCategories(itemID, self.LootCategories) or conditions and conditions.Custom) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                     if first then
