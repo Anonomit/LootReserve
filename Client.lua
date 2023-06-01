@@ -206,7 +206,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
         
         -- Auto need on reserved items during group loot (when multireserves disabled)
         LootReserve:RegisterEvent("START_LOOT_ROLL", function(rollID)
-            if not self.SessionServer or self.Multireserve or not self.Settings.RollRequestAutoRollReserved then return; end
+            if not self.SessionServer or self.Multireserve > 1 or not self.Settings.RollRequestAutoRollReserved then return; end
             
             local link = GetLootRollItemLink(rollID);
             if not link then return; end
@@ -214,8 +214,11 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
             local item = LootReserve.ItemCache:Item(link);
             
             local token;
-            if not self.ReservableIDs[item:GetID()] and self.ReservableRewardIDs[item:GetID()] then
-                token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
+            if not self:IsItemReserved(itemID) then
+                token = LootReserve.Data:GetToken(item:GetID());
+                if token then
+                    token = LootReserve.ItemCache:Item(token);
+                end
             end
             local itemID = token and token:GetID() or item:GetID();
             if self:IsItemReservedByMe(itemID, true) then
