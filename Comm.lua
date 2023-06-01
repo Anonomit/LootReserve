@@ -34,19 +34,24 @@ local Opcodes =
 local LAST_UNCOMPRESSED_OPCODE = Opcodes.Hello;
 local MAX_UNCOMPRESSED_SIZE = 20;
 
+local COMM_DEBUG_SHOW_MESSAGES = false;
+local COMM_DEBUG_CANCEL_BYPASS = false;
+
 local function ThrottlingError()
     LootReserve:ShowError("There was an error when reading session host's communications.|n|nIf both your and the host's addons are up to date, then this is likely due to Blizzard's excessive addon communication throttling which results in some messages outright not being delivered.|n|nWait a few seconds and click \"Search For Host\" in LootReserve client window's settings menu to request up to date information from the host.");
 end
 
 function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
-    -- local opKey;
-    -- for k, v in pairs(Opcodes) do
-    --     if v == opcode then
-    --         opKey = k;
-    --         break;
-    --     end
-    -- end
-    -- LootReserve:debug(channel, target, opKey or opcode, ...);
+    if COMM_DEBUG_SHOW_MESSAGES then
+        local opKey;
+        for k, v in pairs(Opcodes) do
+            if v == opcode then
+                opKey = k;
+                break;
+            end
+        end
+        LootReserve:debug("Sending", channel, target, opKey or opcode, ...);
+    end
     
     local message = "";
     for _, part in ipairs({ ... }) do
@@ -68,7 +73,7 @@ function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
         message = length .. "|" .. message;
     end
     
-    if channel ~= "WHISPER" or target and LootReserve:IsMe(target) then
+    if not COMM_DEBUG_CANCEL_BYPASS and (channel ~= "WHISPER" or target and LootReserve:IsMe(target)) then
         local length
         local message = message
         if opcode > LAST_UNCOMPRESSED_OPCODE then
@@ -123,7 +128,18 @@ function LootReserve.Comm:StartListening()
 
                     sender = LootReserve:Player(sender);
                     LootReserve.Server:SetAddonUser(sender, true);
-                    if not LootReserve:IsMe(sender) then
+                    
+                    if COMM_DEBUG_SHOW_MESSAGES then
+                        local opKey;
+                        for k, v in pairs(Opcodes) do
+                            if v == opcode then
+                                opKey = k;
+                                break;
+                            end
+                        end
+                        LootReserve:debug("Received", channel, target, opKey or opcode, strsplit("|", message));
+                    end
+                    if COMM_DEBUG_CANCEL_BYPASS or not LootReserve:IsMe(sender) then
                         handler(sender, strsplit("|", message));
                     end
                 end
