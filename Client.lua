@@ -51,10 +51,65 @@ LootReserve.Client =
     SessionEventsRegistered  = false,
     CategoryFlashing         = false,
     
-    PendingLootListUpdate    = nil,
+    PendingLootListUpdate = nil,
 
     SelectedCategory = nil,
+    
+    RollOnLoot = nil,
 };
+
+
+StaticPopupDialogs["LOOTRESERVE_CONFIRM_NEED_ROLL_RESERVED_ITEM"] =
+{
+    text         = "Are you sure you want to roll Need?|n|n%s has been reserved by:|n%s.",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self, data)
+        LootReserve.Client.RollOnLoot(data.rollID, 1);
+    end,
+};
+
+
+function LootReserve.Client:Init()
+    local function LootReserveRollOnLoot(rollID, rollType, ...)
+        if not self.SessionServer then return; end
+        
+        if rollType ~= 1 then return; end
+        
+        local link = GetLootRollItemLink(rollID);
+        if not link then return; end
+        
+        local item = LootReserve.ItemCache:Item(link);
+        
+        local token;
+        if not self:IsItemReserved(itemID) then
+            token = LootReserve.Data:GetToken(item:GetID());
+            if token then
+                token = LootReserve.ItemCache:Item(token);
+            end
+        end
+        local itemID = token and token:GetID() or item:GetID();
+        if self:IsItemReserved(itemID) and not self:IsItemReservedByMe(itemID, true) then
+            local reservesText = LootReserve:FormatReservesTextColored(LootReserve.Client:GetItemReservers(itemID));
+            StaticPopup_Show("LOOTRESERVE_CONFIRM_NEED_ROLL_RESERVED_ITEM", item:GetLink(), reservesText, {rollID = rollID});
+            return true;
+        end
+    end
+    
+    self.RollOnLoot = _G.RollOnLoot
+    _G.RollOnLoot = function(...)
+        local args = {...};
+        local success, result = pcall(function() LootReserveRollOnLoot(unpack(args)) end);
+        if not success or not result then
+            self.RollOnLoot(...)
+        end
+    end
+end
+LootReserve.Client:Init();
+
 
 function LootReserve.Client:Load()
     LootReserveCharacterSave.Client = LootReserveCharacterSave.Client or { };
@@ -227,11 +282,12 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
                     LootReserve:PrintError("Automatic rolling on reserved items can be disabled in Settings.");
                     self.Settings.RollRequestAutoRollNotified = true;
                 end
-                RollOnLoot(rollID, 1);
+                self.RollOnLoot(rollID, 1);
                 ConfirmLootRoll(rollID, 1);
                 StaticPopup_Hide("CONFIRM_LOOT_ROLL");
             end
         end);
+        
         
         local function OnTooltipSetHyperlink(tooltip)
             if self.SessionServer and not LootReserve:IsMe(self.SessionServer) then
