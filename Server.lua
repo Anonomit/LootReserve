@@ -1312,10 +1312,10 @@ function LootReserve.Server:PrepareSession()
         self.ChatFallbackRegistered = true;
         
         local prefixString     = "^([!¡]+)"
-        local reservesStrings  = {"^([!¡]*)reserve[sd](.*)"};
+        local reservesStrings  = {"^([!¡]*)reserve[sdr](.*)"};
         local myResStrings     = {"^([!¡]*)myreserve[sd]", "^([!¡]*)myreserve", "^([!¡]*)myres"};
         local optStrings       = {"^([!¡]*)opt%s*(in)", "^([!¡]*)opt%s*(out)"};
-        local cancelStrings    = {"^([!¡]*)cancelreserve(.*)", "^([!¡]*)cancelres(.*)", "^([!¡]*)cancel(.*)", "^([!¡]*)unreserve(.*)", "^([!¡]*)unres(.*)", "^([!¡]*)rescancel(.*)", "^([!¡]*)reservecancel(.*)"};
+        local cancelStrings    = {"^([!¡]*)cancelreserve(.*)", "^([!¡]*)cancelres(.*)", "^([!¡]*)cancel(.*)", "^([!¡]*)unreserve(.*)", "^([!¡]*)unres(.*)", "^([!¡]*)rescancel(.*)", "^([!¡]*)reservecancel(.*)", "^([!¡]*)remove(.*)"};
         local reserveStrings   = {"^([!¡]*)reserve(.*)", "^([!¡]*)res(.*)"};
         
         local greedyResStrings = {"^[!¡]+(.*)"};
