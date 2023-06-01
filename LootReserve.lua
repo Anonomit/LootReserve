@@ -360,11 +360,12 @@ function LootReserve:OpenSubMenu(...)
         local arg1 = select(submenu, ...);
         local opened = false;
         for i = 1, L_UIDROPDOWNMENU_MAXBUTTONS do
-            local button = _G["DropDownList"..submenu.."Button"..i];
+            local button = _G["L_DropDownList"..submenu.."Button"..i];
             if button and button.arg1 == arg1 then
                 local arrow = _G[button:GetName().."ExpandArrow"];
                 if arrow then
-                    arrow:Click();
+                    local Click = arrow:GetScript("OnMouseDown");
+                    Click(arrow, "LButton");
                     opened = true;
                     break;
                 end
