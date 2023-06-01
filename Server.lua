@@ -1439,7 +1439,7 @@ function LootReserve.Server:PrepareSession()
                     if self.Settings.ChatReservesListLimit == LootReserve.Constants.ChatReservesListLimit.None or count <= self.Settings.ChatReservesListLimit then
                         self:SendReservesList(sender);
                     else
-                        LootReserve:SendChatMessage(format("Too many items to send at once. You may enter up to %d item%s at a time to see reserves on those items. This limit is in place due to the game's chat throttling. Whisper: !reserves ItemLinkOrName", self.Settings.ChatReservesListLimit, self.Settings.ChatReservesListLimit == 1 and "" or "s"), "WHISPER", sender);
+                        LootReserve:SendChatMessage(format("Too many items to send at once. This limit is in place due to the game's chat throttling. You can use !myreserves instead, or enter up to %d item%s at a time to see reserves on those items. Whisper: !reserves ItemLinkOrName", self.Settings.ChatReservesListLimit, self.Settings.ChatReservesListLimit == 1 and "" or "s"), "WHISPER", sender);
                         self:SendSupportString(sender, true);
                     end
                 end
