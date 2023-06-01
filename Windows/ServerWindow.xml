@@ -1325,6 +1325,7 @@
 						for _, name in ipairs(disenchantersList) do
 							table.insert(addDisenchantersMenu, { text = LootReserve:ColoredPlayer(name), func = function(info)
 								table.insert(LootReserve.Server.Settings.Disenchanters, name);
+								table.insert(LootReserve.Server.Settings.RollDisenchanters, name);
 								LootReserve:ReopenMenu(self, "#disenchanters");
 							end });
 						end
