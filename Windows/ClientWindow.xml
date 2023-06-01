@@ -260,6 +260,7 @@
 								self:Hide();
 								self:GetParent().Set:Show();
 								PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
+								LootReserve.Client:UpdateLootList();
 							</OnClick>
 							<OnEnter>
 								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
