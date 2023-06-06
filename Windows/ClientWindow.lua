@@ -195,7 +195,7 @@ function LootReserve.Client:UpdateLootList()
         list.ContentHeight = list.ContentHeight + frame:GetHeight();
     end
 
-    local function matchesFilter(item, reserve, filter)
+    local function matchesFilter(item, reserve, filter, sourceCategory, sourceChild)
         filter = (filter or "");
         if #filter == 0 then
             return true;
@@ -205,6 +205,15 @@ function LootReserve.Client:UpdateLootList()
             return true;
         end
         if item:GetSearchName():find(filter, 1, true) then
+            return true;
+        end
+        if LootReserve.ItemCache:FormatSearchText(LootReserve:GetItemDescription(item:GetID(), true) or ""):find(filter, 1, true) then
+            return true;
+        end
+        if sourceCategory and LootReserve.ItemCache:FormatSearchText(sourceCategory):find(filter, 1, true) then
+            return true;
+        end
+        if sourceChild and LootReserve.ItemCache:FormatSearchText(sourceChild):find(filter, 1, true) then
             return true;
         end
         
@@ -365,7 +374,7 @@ function LootReserve.Client:UpdateLootList()
                                 local match = false;
                                 local item = LootReserve.ItemCache:Item(itemID);
                                 if item:IsCached() then
-                                    if matchesFilter(item, self.ItemReserves[itemID], filter) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
+                                    if matchesFilter(item, self.ItemReserves[itemID], filter, category.Name, child.Name) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                                         createFrame(item, format("%s > %s", category.Name, child.Name));
                                         alreadyFoundIDs[itemID] = true;
                                         match = true;
@@ -377,7 +386,7 @@ function LootReserve.Client:UpdateLootList()
                                     for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                                         local reward = LootReserve.ItemCache:Item(rewardID);
                                         if reward:IsCached() then
-                                            if item:IsCached() and matchesFilter(reward, self.ItemReserves[rewardID], filter) then
+                                            if item:IsCached() and matchesFilter(reward, self.ItemReserves[rewardID], filter, category.Name, child.Name) then
                                                 createFrame(item, format("%s > %s", category.Name, child.Name));
                                                 alreadyFoundIDs[itemID] = true;
                                                 break;

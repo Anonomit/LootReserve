@@ -90,7 +90,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
         list.ContentHeight = list.ContentHeight + frame:GetHeight();
     end
 
-    local function matchesFilter(item, filter)
+    local function matchesFilter(item, filter, sourceCategory, sourceChild)
         filter = (filter or "");
         if #filter == 0 then
             return true;
@@ -100,6 +100,15 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             return true;
         end
         if string.find(item:GetSearchName(), filter, 1, true) then
+            return true;
+        end
+        if LootReserve.ItemCache:FormatSearchText(LootReserve:GetItemDescription(item:GetID(), true) or ""):find(filter, 1, true) then
+            return true;
+        end
+        if sourceCategory and LootReserve.ItemCache:FormatSearchText(sourceCategory):find(filter, 1, true) then
+            return true;
+        end
+        if sourceChild and LootReserve.ItemCache:FormatSearchText(sourceChild):find(filter, 1, true) then
             return true;
         end
 
@@ -152,7 +161,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                                 local match = false;
                                 local item = LootReserve.ItemCache:Item(itemID);
                                 if item:IsCached() then
-                                    if matchesFilter(item, filter) then
+                                    if matchesFilter(item, filter, category.Name, child.Name) then
                                         createFrame(item, format("%s > %s", category.Name, child.Name));
                                         match = true;
                                     end
@@ -163,7 +172,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                                     for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
                                         local reward = LootReserve.ItemCache:Item(rewardID);
                                         if reward:IsCached() then
-                                            if item:IsCached() and matchesFilter(reward, filter) then
+                                            if item:IsCached() and matchesFilter(reward, filter, category.Name, child.Name) then
                                                 createFrame(item, format("%s > %s", category.Name, child.Name));
                                                 break;
                                             end
