@@ -386,10 +386,6 @@ function LootReserve.ItemConditions:IsItemVisibleOnClient(itemID)
 end
 
 function LootReserve.ItemConditions:IsItemReservableOnClient(itemID)
-    local tokenID = LootReserve.Data:GetToken(itemID);
-    if tokenID and not self:IsItemReservableOnClient(tokenID) then
-        return false;
-    end
     local canReserve, conditionResult = self:TestPlayer(LootReserve.Client.Masquerade or LootReserve:Me(), itemID, false);
     return canReserve;
 end

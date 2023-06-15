@@ -85,7 +85,7 @@ function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
                 message = message and LibDeflate:DecompressDeflate(message);
             end
         end
-        C_Timer.After(0, function() self.Handlers[opcode](LootReserve:Me(), strsplit("|", message)) end);
+        C_Timer.After(0, function() self.Handlers[opcode](LootReserve:Me(), strsplit("|", message)); end);
     end
 
     message = opcode .. "|" .. message;

@@ -55,7 +55,9 @@ function LootReserve.Client:UpdateReserveStatus()
         local item = frame.Item;
         local tokenID = LootReserve.Data:GetToken(item:GetID());
         if tokenID then
-            item = LootReserve.ItemCache:Item(tokenID);
+            if not (LootReserve.Client.SessionServer and not LootReserve.Client.ReservableIDs[tokenID]) then
+                item = LootReserve.ItemCache:Item(tokenID);
+            end
         end
         if item:GetID() ~= 0 then
             local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(self:GetItemReservers(item:GetID()), self.Masquerade or LootReserve:Me());
@@ -174,7 +176,12 @@ function LootReserve.Client:UpdateLootList()
             frame.Link = link;
 
             local tokenID = LootReserve.Data:GetToken(item:GetID());
-            local conditions = self.ItemConditions[tokenID or item:GetID()];
+            local conditions;
+            if LootReserve.Client.SessionServer and not LootReserve.Client.ReservableIDs[tokenID] then
+                conditions = self.ItemConditions[item:GetID()];
+            else
+                conditions = self.ItemConditions[tokenID];
+            end
             if conditions and conditions.Limit and conditions.Limit ~= 0 then
                 source = format("|cFFFF0000(Max %d |4reserve:reserves;) |r%s", conditions.Limit, source or description or "");
             end

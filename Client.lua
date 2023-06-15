@@ -42,6 +42,7 @@ LootReserve.Client =
     CharacterFavorites = { },
     GlobalFavorites    = { },
 
+    ReservableIDs            = { },
     PendingItems             = { },
     PendingOpt               = nil,
     PendingOpen              = false,
@@ -214,6 +215,45 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
     self.Equip = equip;
     self.Blind = blind;
     self.Multireserve = multireserve;
+    
+    -- Cache the list of items players can reserve
+    table.wipe(self.ReservableIDs);
+    for itemID, conditions in pairs(self.ItemConditions) do
+        if itemID ~= 0 and conditions.Custom then
+            if LootReserve.ItemConditions:TestServer(itemID) then
+                self.ReservableIDs[itemID] = true;
+            end
+        end
+    end
+    local rewardIDs = { };
+    local hiddenIDs = { };
+    for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
+        if category.Children and (not self.LootCategories or LootReserve:Contains(self.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
+            for _, child in ipairs(category.Children) do
+                if child.Loot then
+                    for _, itemID in ipairs(child.Loot) do
+                        if itemID ~= 0 then
+                            if LootReserve.ItemConditions:TestServer(itemID) then
+                                if LootReserve.Data:IsTokenReward(itemID) then
+                                    table.insert(rewardIDs, itemID);
+                                else
+                                    self.ReservableIDs[itemID] = true;
+                                end
+                            else
+                                hiddenIDs[itemID] = true;
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    for _, rewardID in ipairs(rewardIDs) do
+        local tokenID = LootReserve.Data:GetToken(rewardID);
+        if not self.ReservableIDs[tokenID] and not hiddenIDs[itemID] then
+            self.ReservableIDs[rewardID] = true;
+        end
+    end
 
     if self.MaxDuration ~= 0 and not self.DurationUpdateRegistered then
         self.DurationUpdateRegistered = true;
@@ -306,6 +346,9 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
 
                 local itemID = LootReserve.ItemCache:Item(link):GetID();
                 local tokenID = LootReserve.Data:GetToken(itemID);
+                if LootReserve.Client.SessionServer and not LootReserve.Client.ReservableIDs[tokenID] then
+                    tokenID = nil;
+                end
                 if #self:GetItemReservers(tokenID or itemID) > 0 then
                     local reservesText = LootReserve:FormatReservesTextColored(self:GetItemReservers(tokenID or itemID));
                     tooltip:AddLine("|TInterface\\BUTTONS\\UI-GroupLoot-Dice-Up:32:32:0:-4|t Reserved by " .. reservesText, 1, 1, 1);
@@ -363,10 +406,10 @@ function LootReserve.Client:GetMaxReserves()
 end
 
 function LootReserve.Client:IsItemReserved(itemID)
-    return #self:GetItemReservers(LootReserve.Data:GetToken(itemID) or itemID) > 0;
+    return #self:GetItemReservers(itemID) > 0;
 end
 function LootReserve.Client:IsItemReservedByMe(itemID, bypassMasquerade)
-    for _, player in ipairs(self:GetItemReservers(LootReserve.Data:GetToken(itemID) or itemID)) do
+    for _, player in ipairs(self:GetItemReservers(itemID)) do
         if LootReserve:IsSamePlayer(not bypassMasquerade and LootReserve.Client.Masquerade or LootReserve:Me(), player) then
             return true;
         end
@@ -375,7 +418,7 @@ function LootReserve.Client:IsItemReservedByMe(itemID, bypassMasquerade)
 end
 function LootReserve.Client:GetItemReservers(itemID)
     if not self.SessionServer then return { }; end
-    return self.ItemReserves[LootReserve.Data:GetToken(itemID) or itemID] or { };
+    return self.ItemReserves[itemID] or { };
 end
 
 function LootReserve.Client:IsItemPending(itemID)
@@ -390,6 +433,9 @@ function LootReserve.Client:Reserve(itemID)
     if not self.AcceptingReserves then return; end
     
     local tokenID = LootReserve.Data:GetToken(itemID);
+    if not self.ReservableIDs[tokenID] then
+        tokenID = nil;
+    end
     if tokenID then
         LootReserve.Client:SetItemPending(tokenID, true);
     end
@@ -404,6 +450,9 @@ function LootReserve.Client:CancelReserve(itemID)
     if not self.AcceptingReserves then return; end
     
     local tokenID = LootReserve.Data:GetToken(itemID);
+    if not self.ReservableIDs[tokenID] then
+        tokenID = nil;
+    end
     if tokenID then
         LootReserve.Client:SetItemPending(tokenID, true);
     end

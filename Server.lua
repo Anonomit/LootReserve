@@ -1696,15 +1696,17 @@ function LootReserve.Server:PrepareSession()
             if LootReserve.ItemConditions:TestServer(itemID) then
                 self.ReservableIDs[itemID] = true;
                 if LootReserve.Data:IsToken(itemID) then
-                    for _, reward in pairs(LootReserve.Data:GetTokenRewards(itemID)) do
-                        if LootReserve.ItemConditions:TestServer(reward) then
-                            self.ReservableRewardIDs[reward] = true;
+                    for _, rewardID in pairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                        if LootReserve.ItemConditions:TestServer(rewardID) then
+                            self.ReservableRewardIDs[rewardID] = true;
                         end
                     end
                 end
             end
         end
     end
+    local rewardIDs = { };
+    local hiddenIDs = { };
     for id, category in pairs(LootReserve.Data.Categories) do
         if category.Children and (not self.CurrentSession.Settings.LootCategories or LootReserve:Contains(self.CurrentSession.Settings.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
             for _, child in ipairs(category.Children) do
@@ -1712,21 +1714,31 @@ function LootReserve.Server:PrepareSession()
                     for _, itemID in ipairs(child.Loot) do
                         if itemID ~= 0 then
                             if LootReserve.ItemConditions:TestServer(itemID) then
-                                if not LootReserve.Data:IsTokenReward(itemID) then
+                                if LootReserve.Data:IsTokenReward(itemID) then
+                                    table.insert(rewardIDs, itemID);
+                                else
                                     self.ReservableIDs[itemID] = true;
                                 end
                                 if LootReserve.Data:IsToken(itemID) then
-                                    for _, reward in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
-                                        if LootReserve.ItemConditions:TestServer(reward) then
-                                            self.ReservableRewardIDs[reward] = true;
+                                    for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                                        if LootReserve.ItemConditions:TestServer(rewardID) then
+                                            self.ReservableRewardIDs[rewardID] = true;
                                         end
                                     end
                                 end
+                            else
+                                hiddenIDs[itemID] = true;
                             end
                         end
                     end
                 end
             end
+        end
+    end
+    for _, rewardID in ipairs(rewardIDs) do
+        local tokenID = LootReserve.Data:GetToken(rewardID);
+        if not self.ReservableIDs[tokenID] and not hiddenIDs[tokenID] then
+            self.ReservableIDs[rewardID] = true;
         end
     end
     
