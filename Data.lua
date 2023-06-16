@@ -14,11 +14,54 @@ ClassMask id
 12 - 2048 - Demon Hunter
 --]]
 
+
+
+--[[
+Wrath loot tables depend on this setting
+Changing it demands a new required addon version
+
+TBC:
+    2.1: Initial
+    2.2: S1 arena gear available from tokens
+    2.3: S2 arena gear available from tokens
+    2.5: S3 arena gear available from tokens
+
+Wrath:
+    3.0: Amani War Bear removed from ZA
+    3.1: Naxxramas / EoE / OS
+    3.2: Ulduar
+    3.3: ToC
+--]]
+local EXPANSION_PHASE = 3.2;
+
+
 local hidden = { Hidden = true };
 
--- Faction restrictions on equipment should only apply in classic
 local factionAlliance = { Faction = "Alliance" };
 local factionHorde    = { Faction = "Horde" };
+
+
+local function Squish(t)
+    local result = { };
+    for k in pairs(t) do
+        table.insert(result, k);
+    end
+    table.sort(result);
+    for i, k in ipairs(result) do
+        result[i] = t[k];
+    end
+    return result;
+end
+
+local function ConcatenateIf(t1, bool, t2)
+    if bool then
+        for _, v in ipairs(t2) do
+            table.insert(t1, v);
+        end
+    end
+    return t1;
+end
+
 
 LootReserve.Data =
 {
@@ -26,7 +69,7 @@ LootReserve.Data =
     {
         [-100] = {
             Children =
-            {
+            Squish{
                 { Name = "My Reserves", Reserves = "my" },
                 { Name = "All Reserves", Reserves = "all" },
                 { Name = "|TInterface\\AddOns\\LootReserve\\Assets\\Textures\\FavoriteWhite:16:16:0:-1:32:32:7:25:2:20|t Favorites", Favorites = true },
@@ -37,7 +80,7 @@ LootReserve.Data =
             Name = "Custom",
             Custom = true,
             Children =
-            {
+            Squish{
                 { Name = "Edited Items", Edited = true },
                 { Name = "Custom Items", Custom = true },
             },
@@ -49,7 +92,7 @@ LootReserve.Data =
             NameShort = "MC",
             Expansion = 0,
             Children =
-            {
+            Squish{
                 {
                     Name = "Lucifron",
                     Loot =
@@ -167,21 +210,60 @@ LootReserve.Data =
                         20951, 0,
                     },
                 },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Recipes",
+                    Name = "Tailoring",
+                    IndentType = 1,
                     Loot =
                     {
                         18265, 21371, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
                         18252, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
                         18264, 0,
+                    },
+                },
+                {
+                    Name = "Engineering",
+                    IndentType = 1,
+                    Loot =
+                    {
                         18292, 18291, 18290, 0,
+                    },
+                },
+                {
+                    Name = "Alchemy",
+                    IndentType = 1,
+                    Loot =
+                    {
                         18257, 0,
+                    },
+                },
+                {
+                    Name = "Enchanting",
+                    IndentType = 1,
+                    Loot =
+                    {
                         18259, 18260, 0,
                     },
                 },
                 { Separator = true },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         17182, 0,
@@ -193,10 +275,10 @@ LootReserve.Data =
         },
         [1020] = {
             Name = "Onyxia",
-            NameShort = "Ony",
+            NameShort = "Ony 40",
             Expansion = 0,
             Children =
-            {
+            Squish{
                 {
                     Name = "Onyxia",
                     Loot =
@@ -210,13 +292,15 @@ LootReserve.Data =
                         15410, 0,
                     },
                 },
-                -- {
-                --     Name = " + Quest Rewards",
-                --     Loot =
-                --     {
-                --         18404, 18403, 18406, 0,
-                --     },
-                -- },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        18404, 18403, 18406, 0,
+                    },
+                },
             },
         },
         [1030] = {
@@ -224,7 +308,7 @@ LootReserve.Data =
             NameShort = "BWL",
             Expansion = 0,
             Children =
-            {
+            Squish{
                 {
                     Name = "Razorgore the Untamed",
                     Loot =
@@ -323,14 +407,15 @@ LootReserve.Data =
                         18562, 0,
                     },
                 },
-                -- { Separator = true },
-                -- {
-                --     Name = " + Quest Rewards",
-                --     Loot =
-                --     {
-                --         19383, 19384, 19366, 0,
-                --     },
-                -- },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        19383, 19384, 19366, 0,
+                    },
+                },
             },
         },
         [1040] = {
@@ -338,7 +423,7 @@ LootReserve.Data =
             NameShort = "ZG",
             Expansion = 0,
             Children =
-            {
+            Squish{
                 {
                     Name = "High Priestess Jeklik",
                     Loot =
@@ -383,7 +468,8 @@ LootReserve.Data =
                 },
                 { Name = "Edge of Madness", Header = true },
                 {
-                    Name = " - Gri'lek",
+                    Name = "Gri'lek",
+                    IndentType = 1,
                     Loot =
                     {
                         19939, 0,
@@ -391,7 +477,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Hazza'rah",
+                    Name = "Hazza'rah",
+                    IndentType = 1,
                     Loot =
                     {
                         19942, 0,
@@ -399,7 +486,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Renataki",
+                    Name = "Renataki",
+                    IndentType = 1,
                     Loot =
                     {
                         19940, 0,
@@ -407,7 +495,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Wushoolay",
+                    Name = "Wushoolay",
+                    IndentType = 1,
                     Loot =
                     {
                         19941, 0,
@@ -481,7 +570,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Set Pieces",
+                    Name = "Set Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         19826, 19832, 19845, 0,
@@ -496,7 +586,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         19950, 19949, 19948, 0,
@@ -510,7 +601,7 @@ LootReserve.Data =
             NameShort = "AQ20",
             Expansion = 0,
             Children =
-            {
+            Squish{
                 {
                     Name = "Kurinnaxx",
                     Loot =
@@ -586,13 +677,6 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Enchants",
-                    Loot =
-                    {
-                        20728, 20729, 20727, 20730, 20731, 20734, 20736, 0,
-                    },
-                },
-                {
                     Name = "Class books",
                     Loot =
                     {
@@ -600,8 +684,19 @@ LootReserve.Data =
                     },
                 },
                 { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Enchanting",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        20728, 20729, 20727, 20730, 20731, 20734, 20736, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         21504, 21507, 21505, 21506, 0,
@@ -620,7 +715,7 @@ LootReserve.Data =
             NameShort = "AQ40",
             Expansion = 0,
             Children =
-            {
+            Squish{
                 {
                     Name = "The Prophet Skeram",
                     Loot =
@@ -642,7 +737,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Kri Killed Last",
+                    Name = "Kri Killed Last",
+                    IndentType = 1,
                     Loot =
                     {
                         21680, 0,
@@ -651,7 +747,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Yauj Killed Last",
+                    Name = "Yauj Killed Last",
+                    IndentType = 1,
                     Loot =
                     {
                         21686, 21682, 21684, 21683, 0,
@@ -659,7 +756,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Vem Killed Last",
+                    Name = "Vem Killed Last",
+                    IndentType = 1,
                     Loot =
                     {
                         21689, 21691, 21688, 0,
@@ -763,8 +861,11 @@ LootReserve.Data =
                         21762, 21156, 0,
                     },
                 },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Enchants",
+                    Name = "Enchanting",
+                    IndentType = 1,
                     Loot =
                     {
                         20728, 20729, 20727, 20730, 20731, 20734, 20736, 0,
@@ -772,7 +873,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 2.5 Pieces",
+                    Name = "Tier 2.5 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         21331, 21389, 21370, 21364, 21374, 0,
@@ -786,7 +888,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         21712, 21710, 21709, 0,
@@ -798,10 +901,10 @@ LootReserve.Data =
         },
         [1070] = {
             Name = "Naxxramas",
-            NameShort = "Naxx",
+            NameShort = "Naxx 40",
             Expansion = 0,
             Children =
-            {
+            Squish{
                 {
                     Name = "Anub'Rekhan",
                     Loot =
@@ -976,7 +1079,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 3 Pieces",
+                    Name = "Tier 3 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         22519, 22503, 22511, 0,
@@ -1006,7 +1110,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         23207, 23206, 0,
@@ -1021,7 +1126,7 @@ LootReserve.Data =
             NameShort = "Kara",
             Expansion = 1,
             Children =
-            {
+            Squish{
                 {
                     Name = "Attumen the Huntsman",
                     Loot =
@@ -1035,21 +1140,24 @@ LootReserve.Data =
                 },
                 { Name = "Servant Quarters", Header = true },
                 {
-                    Name = " - Rokad the Ravager",
+                    Name = "Rokad the Ravager",
+                    IndentType = 1,
                     Loot =
                     {
                         30684, 30685, 30686, 30687, 0,
                     },
                 },
                 {
-                    Name = " - Shadikith the Glider",
+                    Name = "Shadikith the Glider",
+                    IndentType = 1,
                     Loot =
                     {
                         30680, 30681, 30682, 30683, 0,
                     },
                 },
                 {
-                    Name = " - Hyakiss the Lurker",
+                    Name = "Hyakiss the Lurker",
+                    IndentType = 1,
                     Loot =
                     {
                         30675, 30676, 30677, 30678, 0,
@@ -1085,7 +1193,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - The Wizard of Oz",
+                    Name = "The Wizard of Oz",
+                    IndentType = 1,
                     Loot =
                     {
                         28586, 28585, 0,
@@ -1093,7 +1202,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - The Big Bad Wolf",
+                    Name = "The Big Bad Wolf",
+                    IndentType = 1,
                     Loot =
                     {
                         28583, 0,
@@ -1102,7 +1212,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Romulo and Julianne",
+                    Name = "Romulo and Julianne",
+                    IndentType = 1,
                     Loot =
                     {
                         28578, 0,
@@ -1185,15 +1296,32 @@ LootReserve.Data =
                     {
                         30642, 30668, 30673, 30644, 30674, 30643, 30641, 0,
                         30666, 30667, 0,
-                        21903, 21904, 0,
-                        22545, 0,
-                        23857, 23864, 23862, 23865, 0,
+                        -- 23857, 23864, 23862, 23865, 0,
                         21882, 0,
                     },
                 },
                 { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = " + Tier 4 Pieces",
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        21903, 21904, 0,
+                    },
+                },
+                {
+                    Name = "Enchanting",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        22545, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Tier 4 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         29065, 29067, 29072, 29048, 29032, 29034, 29039, 0,
@@ -1204,8 +1332,9 @@ LootReserve.Data =
                         29081, 29076, 28963, 0,
                     },
                 },
-                {
-                    Name = " + Season 1 Pieces",
+                EXPANSION_PHASE >= 2.2 and {
+                    Name = "Season 1 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         31614, 27703, 27880, 25834, 27470, 31397, 26000, 0,
@@ -1215,7 +1344,7 @@ LootReserve.Data =
                         24545, 31410, 27708, 31376, 28137, 28127, 0,
                         28331, 25855, 24553, 30187, 0,
                     },
-                },
+                } or nil,
             },
         },
         [2020] = {
@@ -1223,7 +1352,7 @@ LootReserve.Data =
             NameShort = "Gruul",
             Expansion = 1,
             Children =
-            {
+            Squish{
                 {
                     Name = "High King Maulgar",
                     Loot =
@@ -1246,7 +1375,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 4 Pieces",
+                    Name = "Tier 4 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         29064, 29070, 29075, 29047, 29037, 29031, 29043, 0,
@@ -1257,8 +1387,9 @@ LootReserve.Data =
                         29083, 29078, 28966, 0,
                     },
                 },
-                {
-                    Name = " + Season 1 Pieces",
+                EXPANSION_PHASE >= 2.2 and {
+                    Name = "Season 1 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         31619, 27706, 27883, 25832, 27473, 31407, 25999, 0,
@@ -1268,7 +1399,7 @@ LootReserve.Data =
                         24547, 31411, 27709, 31377, 28138, 28128, 0,
                         28332, 25858, 24555, 30201, 0,
                     },
-                },
+                } or nil,
             },
         },
         [2030] = {
@@ -1276,7 +1407,7 @@ LootReserve.Data =
             NameShort = "Mag",
             Expansion = 1,
             Children =
-            {
+            Squish{
                 {
                     Name = "Magtheridon",
                     Loot =
@@ -1292,7 +1423,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 4 Pieces",
+                    Name = "Tier 4 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         29071, 29066, 29062, 29045, 29038, 29033, 29029, 0,
@@ -1300,30 +1432,33 @@ LootReserve.Data =
                         29082, 29077, 28964, 0,
                     },
                 },
-                {
-                    Name = " + Season 1 Pieces",
+                EXPANSION_PHASE >= 2.2 and {
+                    Name = "Season 1 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         31613, 27702, 27879, 25831, 27469, 31396, 25997, 0,
                         24544, 31413, 27711, 31379, 28140, 28130, 0,
                         28334, 25856, 24552, 30200, 0,
                     },
+                } or nil,
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        28791, 28790, 28793, 28792, 0,
+                    },
                 },
-                -- {
-                --     Name = " + Quest Rewards",
-                --     Loot =
-                --     {
-                --         28791, 28790, 28793, 28792, 0,
-                --     },
-                -- },
             },
         },
+        
         [2040] = {
             Name = "Serpentshrine Cavern",
             NameShort = "SSC",
             Expansion = 1,
             Children =
-            {
+            Squish{
                 {
                     Name = "Hydross the Unstable",
                     Loot =
@@ -1397,18 +1532,36 @@ LootReserve.Data =
                         32897, 0,
                     },
                 },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Patterns",
+                    Name = "Tailoring",
+                    IndentType = 1,
                     Loot =
                     {
                         30280, 30282, 30283, 30281, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
                         30308, 30304, 30305, 30307, 30306, 30301, 30303, 30302, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
                         30322, 30323, 30321, 30324, 0,
-                    }
+                    },
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 5 Pieces",
+                    Name = "Tier 5 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         30130, 30135, 30124, 30145, 30189, 30165, 30170, 0,
@@ -1422,8 +1575,9 @@ LootReserve.Data =
                         30141, 30206, 30212, 0,
                     },
                 },
-                {
-                    Name = " + Season 2 Pieces",
+                EXPANSION_PHASE >= 2.3 and {
+                    Name = "Season 2 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         32021, 31993, 32040, 31998, 32010, 32030, 32005, 0,
@@ -1436,7 +1590,7 @@ LootReserve.Data =
                         30488, 32016, 32035, 31988, 32057, 31968, 0,
                         31962, 32048, 31974, 31980, 0,
                     },
-                },
+                } or nil,
             },
         },
         [2050] = {
@@ -1444,7 +1598,7 @@ LootReserve.Data =
             NameShort = "TK",
             Expansion = 1,
             Children =
-            {
+            Squish{
                 {
                     Name = "Al'ar",
                     Loot =
@@ -1497,18 +1651,35 @@ LootReserve.Data =
                         32897,
                     }
                 },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Patterns",
+                    Name = "Tailoring",
+                    IndentType = 1,
                     Loot =
                     {
                         30280, 30282, 30283, 30281, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
                         30308, 30304, 30305, 30307, 30306, 30301, 30303, 30302, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
                         30322, 30323, 30321, 30324, 0,
-                    }
+                    },
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 5 Pieces",
+                    Name = "Tier 5 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         30127, 30133, 30138, 30149, 30168, 30173, 30194, 0,
@@ -1519,8 +1690,9 @@ LootReserve.Data =
                         30139, 30196, 30214, 0,
                     },
                 },
-                {
-                    Name = " + Season 2 Pieces",
+                EXPANSION_PHASE >= 2.3 and{
+                    Name = "Season 2 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         32024, 31996, 32043, 32001, 32013, 32033, 32008, 0,
@@ -1530,9 +1702,10 @@ LootReserve.Data =
                         30486, 32019, 32038, 31991, 32060, 31972, 0,
                         31960, 32050, 31977, 31982, 0,
                     },
-                },
+                } or nil,
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         30018, 30017, 30007, 30015, 0,
@@ -1545,7 +1718,7 @@ LootReserve.Data =
             NameShort = "Hyjal",
             Expansion = 1,
             Children =
-            {
+            Squish{
                 {
                     Name = "Rage Winterchill",
                     Loot =
@@ -1601,19 +1774,44 @@ LootReserve.Data =
                         32428, 32897, 0,
                     },
                 },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Patterns",
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        32754, 32755, 32753, 32752, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        32744, 32745, 32746, 32747, 32750, 32751, 32748, 32749, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        32738, 32739, 32736, 32737, 0,
+                    },
+                },
+                {
+                    Name = "Jewelcrafting",
+                    IndentType = 1,
                     Loot =
                     {
                         32296, 32307, 32289, 32285, 32303, 32297, 32298, 32295, 0,
-                        32754, 32755, 32753, 32752, 0,
-                        32744, 32745, 32746, 32747, 32750, 32751, 32748, 32749, 0,
-                        32738, 32739, 32736, 32737, 0,
                     },
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 6 Pieces",
+                    Name = "Tier 6 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         30982, 30983, 30985, 31060, 31061, 31050, 0,
@@ -1624,8 +1822,9 @@ LootReserve.Data =
                         31027, 31056, 31037, 31040, 31039, 0,
                     },
                 },
-                {
-                    Name = " + Season 3 Pieces",
+                EXPANSION_PHASE >= 2.5 and {
+                    Name = "Season 3 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         33723, 33696, 33750, 33717, 33744, 33676, 33684, 0,
@@ -1635,7 +1834,7 @@ LootReserve.Data =
                         33730, 33666, 33713, 33740, 33708, 0,
                         33701, 33758, 33691, 33768, 33672, 0,
                     },
-                },
+                } or nil,
             },
         },
         [2070] = {
@@ -1643,7 +1842,7 @@ LootReserve.Data =
             NameShort = "BT",
             Expansion = 1,
             Children =
-            {
+            Squish{
                 {
                     Name = "High Warlord Naj'entus",
                     Loot =
@@ -1739,18 +1938,36 @@ LootReserve.Data =
                         32428, 32897, 0,
                     },
                 },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Patterns",
+                    Name = "Tailoring",
+                    IndentType = 1,
                     Loot =
                     {
                         32754, 32755, 32753, 32752, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
                         32744, 32745, 32746, 32747, 32750, 32751, 32748, 32749, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
                         32738, 32739, 32736, 32737, 0,
                     },
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 6 Pieces",
+                    Name = "Tier 6 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         30996, 30997, 30998, 31069, 31070, 31054, 0,
@@ -1764,8 +1981,9 @@ LootReserve.Data =
                         31028, 31057, 31041, 31042, 31043, 0,
                     },
                 },
-                {
-                    Name = " + Season 3 Pieces",
+                EXPANSION_PHASE >= 2.5 and {
+                    Name = "Season 3 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         33726, 33699, 33753, 33720, 33747, 33679, 33682, 0,
@@ -1778,7 +1996,7 @@ LootReserve.Data =
                         33664, 33711, 33738, 33706, 0,
                         33704, 33760, 33694, 33771, 33675, 0,
                     },
-                },
+                } or nil,
             },
         },
         [2080] = {
@@ -1786,7 +2004,7 @@ LootReserve.Data =
             NameShort = "ZA",
             Expansion = 1,
             Children =
-            {
+            Squish{
                 {
                     Name = "Akil'zon",
                     Loot =
@@ -1848,7 +2066,8 @@ LootReserve.Data =
                 { Separator = true },
                 { Name = "Timed Chests", Header = true },
                 {
-                    Name = " - First Prisoner Saved",
+                    Name = "First Prisoner Saved",
+                    IndentType = 1,
                     Loot =
                     {
                         33489, 33480, 33971, 33483, 33805, 33481, 0,
@@ -1856,34 +2075,35 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Second Prisoner Saved",
+                    Name = "Second Prisoner Saved",
+                    IndentType = 1,
                     Loot =
                     {
                         33494, 33490, 33495, 33493, 33492, 33491, 0,
                     },
                 },
                 {
-                    Name = " - Third Prisoner Saved",
+                    Name = "Third Prisoner Saved",
+                    IndentType = 1,
                     Loot =
                     {
                         33497, 33498, 33496, 33500, 33499, 0,
                     },
                 },
-                -- {
-                --     Name = " - Fourth Prisoner Saved",
-                --     Loot =
-                --     {
-                --         -- Mount doesn't drop anymore. Chest appears to now drop items from one or more other chests
-                --         -- 33809, 0,
-                --     },
-                -- },
+                EXPANSION_PHASE < 3.0 and {
+                    Name = " - Fourth Prisoner Saved",
+                    Loot =
+                    {
+                        33809, 0,
+                    },
+                } or nil,
                 { Separator = true },
                 {
                     Name = "Trash",
                     Loot =
                     {
                         33865, 0,
-                        33930, 33932, 33931, 33933, 0,
+                        -- 33930, 33932, 33931, 33933, 0,
                         33993, 0,
                     },
                 },
@@ -1894,7 +2114,7 @@ LootReserve.Data =
             NameShort = "SWP",
             Expansion = 1,
             Children =
-            {
+            Squish{
                 {
                     Name = "Kalecgos",
                     Loot =
@@ -1966,20 +2186,52 @@ LootReserve.Data =
                         34664, 0,
                     },
                 },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Patterns",
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        35204, 35206, 35205, 35207, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        35212, 35216, 35213, 35217, 35214, 35218, 35215, 35219, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        35208, 35210, 35209, 35211, 0,
+                    },
+                },
+                {
+                    Name = "Engineering",
+                    IndentType = 1,
                     Loot =
                     {
                         35186, 35189, 35197, 35190, 35191, 35192, 35193, 35194, 35187, 35195, 35196, 0,
-                        35204, 35206, 35205, 35207, 0,
-                        35212, 35216, 35213, 35217, 35214, 35218, 35215, 35219, 0,
-                        35208, 35210, 35209, 35211, 0,
+                    },
+                },
+                {
+                    Name = "Jewelcrafting",
+                    IndentType = 1,
+                    Loot =
+                    {
                         35198, 35201, 35199, 35202, 35200, 35203, 0,
                     },
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 6 Pieces",
+                    Name = "Tier 6 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         34431, 34432, 34433, 34434, 34435, 34436, 0,
@@ -1994,7 +2246,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " + Sunmote Exchanges",
+                    Name = "Sunmote Exchanges",
+                    IndentType = 2,
                     Loot =
                     {
                         34405, 34393, 34399, 34406, 34386, 0,
@@ -2006,15 +2259,15 @@ LootReserve.Data =
             },
         },
         
+        
         -- Wrath of the Lich King
         -- Naxxramas
-        --[[
-        [3010] = {
+        [3010] = EXPANSION_PHASE <= 3.1 and {
             Name = "Naxxramas 10",
             NameShort = "Naxx 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Anub'Rekhan",
                     Loot =
@@ -2168,7 +2421,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 7 Pieces",
+                    Name = "Tier 7 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         39631, 39637, 39642, 39518, 39529, 39499, 0,
@@ -2186,23 +2440,21 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         44658, 44657, 44659, 44660, 0,
                     },
                 },
             },
-        },
-        --]]
+        } or nil,
         [3011] = {
-            -- Name = "Naxxramas 25",
-            -- NameShort = "Naxx 25",
-            Name = "Naxxramas",
-            NameShort = "Naxx",
+            Name = EXPANSION_PHASE <= 3.1 and "Naxxramas 25" or "Naxxramas",
+            NameShort = EXPANSION_PHASE <= 3.1 and "Naxx 25" or "Naxx",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Anub'Rekhan",
                     Loot =
@@ -2358,7 +2610,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 7 Pieces",
+                    Name = "Tier 7 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         40573, 40578, 40584, 40450, 40459, 40424, 0,
@@ -2376,7 +2629,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         44661, 44662, 44664, 44665, 0,
@@ -2386,13 +2640,12 @@ LootReserve.Data =
         },
         
         -- Eye of Eternity
-        --[[
-        [3020] = {
+        [3020] = EXPANSION_PHASE <= 3.1 and {
             Name = "Eye of Eternity 10",
-            NameShort = "Eye 10",
+            NameShort = "EoE 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Malygos",
                     Loot =
@@ -2404,16 +2657,13 @@ LootReserve.Data =
                     },
                 },
             },
-        },
-        --]]
+        } or nil,
         [3021] = {
-            -- Name = "Eye of Eternity 25",
-            -- NameShort = "Eye 25",
-            Name = "Eye of Eternity",
-            NameShort = "Eye",
+            Name = EXPANSION_PHASE <= 3.1 and "Eye of Eternity 25" or "Eye of Eternity",
+            NameShort = EXPANSION_PHASE <= 3.1 and "EoE 25" or "EoE",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Malygos",
                     Loot =
@@ -2427,13 +2677,12 @@ LootReserve.Data =
         },
         
         -- The Obsidian Sanctum
-        --[[
-        [3030] = {
+        [3030] = EXPANSION_PHASE <= 3.1 and {
             Name = "The Obsidian Sanctum 10",
             NameShort = "OS 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Sartharion",
                     Loot =
@@ -2446,7 +2695,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - One Drake Left",
+                    Name = "One Drake Left",
+                    IndentType = 1,
                     Loot =
                     {
                         43990, 43991, 43989, 0,
@@ -2454,7 +2704,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Two Drakes Left",
+                    Name = "Two Drakes Left",
+                    IndentType = 1,
                     Loot =
                     {
                         43995, 43998, 43996, 43994, 0,
@@ -2462,7 +2713,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Three Drakes Left",
+                    Name = "Three Drakes Left",
+                    IndentType = 1,
                     Loot =
                     {
                         43986, 0,
@@ -2470,7 +2722,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 7 Pieces",
+                    Name = "Tier 7 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         39632, 39634, 39639, 39519, 39530, 39500, 0,
@@ -2479,14 +2732,13 @@ LootReserve.Data =
                     },
                 },
             },
-        },
-        --]]
-        [3029] = {
+        } or nil,
+        [3029] = EXPANSION_PHASE > 3.1 and {
             Name = "The Obsidian Sanctum 10",
             NameShort = "OS 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Sartharion",
                     Loot =
@@ -2499,14 +2751,16 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - One Drake Left",
+                    Name = "One Drake Left",
+                    IndentType = 1,
                     Loot =
                     {
                         44002, 44003, 44004, 44000, 0,
                     },
                 },
                 {
-                    Name = " - Two Drakes Left",
+                    Name = "Two Drakes Left",
+                    IndentType = 1,
                     Loot =
                     {
                         44008, 44007, 44011, 44006, 0,
@@ -2514,7 +2768,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Three Drakes Left",
+                    Name = "Three Drakes Left",
+                    IndentType = 1,
                     Loot =
                     {
                         43986, 0,
@@ -2522,7 +2777,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 7 Pieces",
+                    Name = "Tier 7 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         40570, 40575, 40580, 40445, 40454, 40420, 0,
@@ -2531,13 +2787,13 @@ LootReserve.Data =
                     },
                 },
             },
-        },
+        } or nil,
         [3031] = {
             Name = "The Obsidian Sanctum 25",
             NameShort = "OS 25",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Sartharion",
                     Loot =
@@ -2550,14 +2806,16 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - One Drake Left",
+                    Name = "One Drake Left",
+                    IndentType = 1,
                     Loot =
                     {
                         44002, 44003, 44004, 44000, 0,
                     },
                 },
                 {
-                    Name = " - Two Drakes Left",
+                    Name = "Two Drakes Left",
+                    IndentType = 1,
                     Loot =
                     {
                         44008, 44007, 44011, 44006, 0,
@@ -2565,7 +2823,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Three Drakes Left",
+                    Name = "Three Drakes Left",
+                    IndentType = 1,
                     Loot =
                     {
                         43954, 0,
@@ -2573,7 +2832,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 7 Pieces",
+                    Name = "Tier 7 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         40570, 40575, 40580, 40445, 40454, 40420, 0,
@@ -2585,12 +2845,12 @@ LootReserve.Data =
         },
         
         -- Ulduar
-        [3040] = {
+        [3040] = EXPANSION_PHASE <= 3.2 and {
             Name = "Ulduar 10",
             NameShort = "Uld 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Flame Leviathan",
                     Loot =
@@ -2601,7 +2861,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - All Defences Active",
+                    Name = "All Defences Active",
+                    IndentType = 1,
                     Loot =
                     {
                         45293, 45300, 45295, 0,
@@ -2637,7 +2898,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Heart Broken",
+                    Name = "Heart Broken",
+                    IndentType = 1,
                     Loot =
                     {
                         45869, 45867, 0,
@@ -2656,7 +2918,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Steelbreaker Last",
+                    Name = "Steelbreaker Last",
+                    IndentType = 1,
                     Loot =
                     {
                         45455, 0,
@@ -2703,7 +2966,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Unbroken Cache",
+                    Name = "Unbroken Cache",
+                    IndentType = 1,
                     Loot =
                     {
                         45888, 0,
@@ -2720,7 +2984,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Sif Present",
+                    Name = "Sif Present",
+                    IndentType = 1,
                     Loot =
                     {
                         45928, 0,
@@ -2739,7 +3004,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - All Elders Alive",
+                    Name = "All Elders Alive",
+                    IndentType = 1,
                     Loot =
                     {
                         45943, 0,
@@ -2758,7 +3024,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Self Destruct Activated",
+                    Name = "Self Destruct Activated",
+                    IndentType = 1,
                     Loot =
                     {
                         45993, 45989, 45982, 45988, 0,
@@ -2776,7 +3043,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Saronite Animus Defeated",
+                    Name = "Saronite Animus Defeated",
+                    IndentType = 1,
                     Loot =
                     {
                         46034, 0,
@@ -2795,7 +3063,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - One or Fewer Keepers",
+                    Name = "One or Fewer Keepers",
+                    IndentType = 1,
                     Loot =
                     {
                         46068, 46095, 0,
@@ -2804,7 +3073,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - No Keepers",
+                    Name = "No Keepers",
+                    IndentType = 1,
                     Loot =
                     {
                         46312, 0,
@@ -2820,19 +3090,44 @@ LootReserve.Data =
                         46351, 46350, 46342, 46339, 0,
                     },
                 },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Patterns",
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45104, 45102, 45105, 45103, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45100, 45094, 45096, 45095, 45101, 45098, 45099, 45097, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
                     Loot =
                     {
                         45089, 45088, 45092, 45090, 45093, 45091, 0,
-                        45100, 45094, 45096, 45095, 45101, 45098, 45099, 45097, 0,
-                        45104, 45102, 45105, 45103, 0,
+                    },
+                },
+                {
+                    Name = "Enchanting",
+                    IndentType = 1,
+                    Loot =
+                    {
                         46027, 46348, 0,
                     },
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 8 Pieces",
+                    Name = "Tier 8 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         45371, 45379, 45384, 45388, 45394, 45420, 0,
@@ -2853,20 +3148,21 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         46321, 46323, 46320, 46322, 0,
                     },
                 },
             },
-        },
-        [3041] = {
-            Name = "Ulduar 25",
-            NameShort = "Uld 25",
+        } or nil,
+        [3039] = EXPANSION_PHASE > 3.2 and {
+            Name = "Ulduar 10",
+            NameShort = "Uld 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Flame Leviathan",
                     Loot =
@@ -2878,7 +3174,334 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - All Defences Active",
+                    Name = "All Defences Active",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45293, 45300, 45295, 0,
+                        45297, 0,
+                        45296, 0,
+                    },
+                },
+                {
+                    Name = "Ignis the Furnace Master",
+                    Loot =
+                    {
+                        45186, 45185, 45162, 45164, 45187, 45167, 45161, 45166, 0,
+                        45157, 45168, 45158, 0,
+                        45169, 45165, 45171, 45170, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "Razorscale",
+                    Loot =
+                    {
+                        45150, 45146, 45149, 45141, 45151, 45143, 45140, 45139, 0,
+                        45138, 45148, 0,
+                        45510, 45144, 45142, 45147, 45137, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "XT-002 Deconstructor",
+                    Loot =
+                    {
+                        45253, 45258, 45260, 45259, 45249, 45251, 45252, 45248, 0,
+                        45250, 45247, 0,
+                        45254, 45255, 45246, 45256, 45257, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "Heart Broken",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45869, 45867, 0,
+                        45871, 0,
+                        45868, 45870, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "The Iron Council",
+                    Loot =
+                    {
+                        45240, 45238, 45237, 45232, 45227, 45239, 45226, 45225, 45228, 0,
+                        45224, 45193, 45236, 45235, 0,
+                        45233, 45234, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "Steelbreaker Last",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45455, 0,
+                        45447, 45456, 0,
+                        45449, 45448, 0,
+                    },
+                },
+                {
+                    Name = "Kologarn",
+                    Loot =
+                    {
+                        45272, 45275, 45273, 45265, 45274, 45264, 45269, 45268, 45267, 0,
+                        45262, 45263, 0,
+                        45270, 45271, 45266, 45261, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "Algalon the Observer",
+                    Loot =
+                    {
+                        46045, 46050, 46043, 46049, 46044, 46037, 46039, 46041, 0,
+                        46042, 46047, 46040, 46048, 46046, 46038, 46051, 0,
+                        46052, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Auriaya",
+                    Loot =
+                    {
+                        45435, 45441, 45439, 45325, 45440, 45320, 45334, 45434, 0,
+                        45319, 45326, 45438, 0,
+                        45436, 45437, 45315, 45327, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "Hodir",
+                    Loot =
+                    {
+                        45632, 45633, 45634, 0,
+                        45453, 45454, 45452, 0,
+                        45451, 0,
+                        45450, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "Unbroken Cache",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45888, 0,
+                        45876, 45886, 45887, 45877, 0,
+                    },
+                },
+                {
+                    Name = "Thorim",
+                    Loot =
+                    {
+                        45638, 45639, 45640, 0,
+                        45468, 45467, 0,
+                        45469, 45466, 0,
+                        45463, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "Sif Present",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45928, 0,
+                        45933, 45931, 45929, 0,
+                        45930, 0,
+                    },
+                },
+                {
+                    Name = "Freya",
+                    Loot =
+                    {
+                        45653, 45654, 45655, 0,
+                        45483, 45482, 45481, 0,
+                        45480, 45479, 0,
+                        46110, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "All Elders Alive",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45943, 0,
+                        45945, 45946, 0,
+                        45947, 45294, 0,
+                    },
+                },
+                {
+                    Name = "Mimiron",
+                    Loot =
+                    {
+                        45641, 45642, 45643, 0,
+                        45492, 45491, 0,
+                        45493, 45490, 0,
+                        45489, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "Self Destruct Activated",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45993, 45989, 45982, 45988, 0,
+                        45990, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "General Vezax",
+                    Loot =
+                    {
+                        45514, 45508, 45512, 45504, 45513, 45502, 45505, 45501, 0,
+                        45503, 45515, 45507, 0,
+                        45509, 45145, 45498, 45511, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "Saronite Animus Defeated",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        46034, 0,
+                        46032, 0,
+                        46036, 46035, 46033, 0,
+                    },
+                },
+                {
+                    Name = "Yogg-Saron",
+                    Loot =
+                    {
+                        45656, 45657, 45658, 0,
+                        45532, 45523, 45524, 45531, 0,
+                        45529, 45525, 45530, 45522, 0,
+                        45527, 45521, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "One or Fewer Keepers",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        46068, 46095, 0,
+                        46096, 0,
+                        46097, 46067, 0,
+                    },
+                },
+                {
+                    Name = "No Keepers",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        46312, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Trash",
+                    Loot =
+                    {
+                        45549, 45547, 45548, 45543, 45544, 45542, 0,
+                        45541, 45540, 45539, 45538, 0,
+                        45605, 0,
+                    },
+                },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
+                {
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45104, 45102, 45105, 45103, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45100, 45094, 45096, 45095, 45101, 45098, 45099, 45097, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45089, 45088, 45092, 45090, 45093, 45091, 0,
+                    },
+                },
+                {
+                    Name = "Enchanting",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        46027, 46348, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Tier 8 Pieces",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        46154, 46173, 46178, 46168, 46193, 46137, 0,
+                        46146, 46162, 46141, 46198, 46205, 46206, 0,
+                        46123, 46111, 46118, 46130, 46159, 46186, 46194, 0,
+                        46156, 46175, 46180, 46172, 46197, 46140, 0,
+                        46151, 46166, 46143, 46201, 46209, 46212, 0,
+                        46125, 46115, 46120, 46129, 46161, 46184, 46191, 0,
+                        46153, 46176, 46181, 46170, 46195, 46139, 0,
+                        46150, 46169, 46144, 46202, 46208, 46210, 0,
+                        46126, 46116, 46121, 46133, 46160, 46185, 46192, 0,
+                        46155, 46174, 46179, 46163, 46188, 46135, 0,
+                        46148, 46164, 46142, 46199, 46200, 46207, 0,
+                        46124, 46113, 46119, 46132, 46158, 46183, 46189, 0,
+                        46152, 46177, 46182, 46165, 46190, 46136, 0,
+                        46149, 46167, 46145, 46203, 46204, 46211, 0,
+                        46127, 46117, 46122, 46134, 46157, 46187, 46196, 0,
+                    },
+                },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        46321, 46323, 46320, 46322, 0,
+                    },
+                },
+            },
+        } or nil,
+        [3041] = {
+            Name = "Ulduar 25",
+            NameShort = "Uld 25",
+            Expansion = 2,
+            Children =
+            Squish{
+                {
+                    Name = "Flame Leviathan",
+                    Loot =
+                    {
+                        45117, 45119, 45108, 45118, 45109, 45107, 45111, 0,
+                        45116, 45113, 45106, 45112, 0,
+                        45114, 45115, 45110, 45086, 0,
+                        45038, 0,
+                    },
+                },
+                {
+                    Name = "All Defences Active",
+                    IndentType = 1,
                     Loot =
                     {
                         45135, 45136, 45134, 0,
@@ -2917,7 +3540,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Heart Broken",
+                    Name = "Heart Broken",
+                    IndentType = 1,
                     Loot =
                     {
                         45446, 45444, 45445, 0,
@@ -2937,7 +3561,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Steelbreaker Last",
+                    Name = "Steelbreaker Last",
+                    IndentType = 1,
                     Loot =
                     {
                         45245, 45244, 45241, 0,
@@ -2989,7 +3614,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Unbroken Cache",
+                    Name = "Unbroken Cache",
+                    IndentType = 1,
                     Loot =
                     {
                         45462, 45460, 0,
@@ -3009,7 +3635,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Sif Present",
+                    Name = "Sif Present",
+                    IndentType = 1,
                     Loot =
                     {
                         45473, 45474, 45472, 0,
@@ -3029,7 +3656,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - All Elders Alive",
+                    Name = "All Elders Alive",
+                    IndentType = 1,
                     Loot =
                     {
                         45488, 45487, 0,
@@ -3049,7 +3677,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Self Destruct Activated",
+                    Name = "Self Destruct Activated",
+                    IndentType = 1,
                     Loot =
                     {
                         45497, 45663, 0,
@@ -3069,7 +3698,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - Saronite Animus Defeated",
+                    Name = "Saronite Animus Defeated",
+                    IndentType = 1,
                     Loot =
                     {
                         45520, 45519, 0,
@@ -3089,19 +3719,23 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - One or Fewer Keepers",
+                    Name = "One or Fewer Keepers",
+                    IndentType = 1,
                     Loot =
                     {
                         45537, 45536, 0,
                         45534, 45535, 0,
                         45533, 0,
+                        unpack(EXPANSION_PHASE <= 3.2 and {} or {45038, 0,}),
                     },
                 },
                 {
-                    Name = " - No Keepers",
+                    Name = "No Keepers",
+                    IndentType = 1,
                     Loot =
                     {
                         45693, 0,
+                        unpack(EXPANSION_PHASE <= 3.2 and {} or {45038, 0,}),
                     },
                 },
                 { Separator = true },
@@ -3114,19 +3748,44 @@ LootReserve.Data =
                         45605, 0,
                     },
                 },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Patterns",
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45104, 45102, 45105, 45103, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        45100, 45094, 45096, 45095, 45101, 45098, 45099, 45097, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
                     Loot =
                     {
                         45089, 45088, 45092, 45090, 45093, 45091, 0,
-                        45100, 45094, 45096, 45095, 45101, 45098, 45099, 45097, 0,
-                        45104, 45102, 45105, 45103, 0,
+                    },
+                },
+                {
+                    Name = "Enchanting",
+                    IndentType = 1,
+                    Loot =
+                    {
                         46027, 46348, 0,
                     },
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 8 Pieces",
+                    Name = "Tier 8 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         46154, 46173, 46178, 46168, 46193, 46137, 0,
@@ -3147,7 +3806,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         45618, 45614, 45588, 45608, 0,
@@ -3158,123 +3818,256 @@ LootReserve.Data =
         },
         
         -- Trial of the Crusader
-        [3050] = {
+        [3051] = {
             Name = "Trial of the Crusader 10",
-            NameShort = "TotC 10",
+            NameShort = "ToC 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
+                { Name = "The Beasts of Northrend", Header = true },
                 {
-                    Name = "The Beasts of Northrend",
+                    Name = "Normal",
+                    IndentType = 1,
                     Loot =
                     {
+                        -- Alliance
                         47617, 47613, 47608, 47616, 47610, 47611, 47609, 47615, 47614, 0,
                         47607, 47578, 0,
                         47612, 0,
+                        
+                        -- Horde
+                        47855, 47857, 47853, 47860, 47850, 47852, 47851, 47859, 47858, 0,
+                        47849, 47854, 0,
+                        47856, 0,
                     },
                 },
                 {
-                    Name = "Lord Jaraxxus",
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
-                        47663, 47620, 47669, 47621, 49235, 47683, 47680, 47711, 0,
-                        47619, 47679, 47618, 47703, 0,
-                        47676, 0,
-                    },
-                },
-                {
-                    Name = "Faction Champions",
-                    Loot =
-                    {
-                        47721, 47719, 47718, 47717, 47720, 0,
-                        47728, 47727, 47726, 47725, 0,
-                        47724, 0,
-                    },
-                },
-                {
-                    Name = "The Twin Val'kyr",
-                    Loot =
-                    {
-                        47745, 49231, 47746, 47739, 47744, 47738, 0,
-                        47747, 47700, 0,
-                        47742, 47736, 47737, 47743, 47740, 0,
-                    },
-                },
-                {
-                    Name = "Anub'arak",
-                    Loot =
-                    {
-                        47838, 47837, 47832, 47813, 47829, 47811, 47836, 47830, 0,
-                        47810, 47814, 47808, 47809, 47816, 47834, 47815, 47835, 47812, 47741, 0,
-                    },
-                },
-                { Separator = true },
-                {
-                    Name = "Patterns",
-                    Loot =
-                    {
-                        47556, 0,
-                        47622, 47623, 47627, 47626, 47624, 47625, 0,
-                        47629, 47635, 47631, 47630, 47628, 47634, 47632, 47633, 0,
-                        47654, 47655, 47656, 47657, 0,
-                    },
-                },
-            },
-        },
-        [3051] = {
-            Name = "Trial of the Crusader 10 Heroic",
-            NameShort = "TotC 10 Heroic",
-            Expansion = 2,
-            Children =
-            {
-                {
-                    Name = "The Beasts of Northrend",
-                    Loot =
-                    {
+                        -- Alliance
                         47921, 47923, 47919, 47926, 47916, 47918, 47917, 47924, 47925, 0,
                         47915, 47920, 0,
                         47922, 0,
+                        
+                        -- Horde
+                        47994, 47996, 47992, 47999, 47989, 47991, 47990, 47998, 47997, 0,
+                        47988, 47993, 0,
+                        47995, 0,
                     },
                 },
                 {
-                    Name = "Lord Jaraxxus",
+                    Name = "Combined",
+                    IndentType = 1,
                     Loot =
                     {
+                        -- Alliance
+                        47617, 47921, 47613, 47923, 47608, 47919, 47616, 47926, 47610, 47916, 47611, 47918, 47609, 47917, 47615, 47924, 47614, 47925, 0,
+                        47607, 47915, 47578, 47920, 0,
+                        47612, 47922, 0,
+                        
+                        -- Horde
+                        47855, 47994, 47857, 47996, 47853, 47992, 47860, 47999, 47850, 47989, 47852, 47991, 47851, 47990, 47859, 47998, 47858, 47997, 0,
+                        47849, 47988, 47854, 47993, 0,
+                        47856, 47995, 0,
+                    },
+                },
+                { Name = "Lord Jaraxxus", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
+                        47663, 47620, 47669, 47621, 49235, 47683, 47680, 47711, 0,
+                        47619, 47679, 47618, 47703, 0,
+                        47676, 0,
+                        
+                        -- Horde
+                        47861, 47865, 47863, 47866, 49236, 47867, 47869, 47870, 0,
+                        47872, 47864, 47862, 47868, 0,
+                        47871, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
                         47927, 47931, 47929, 47932, 49238, 47933, 47935, 47937, 0,
                         47930, 47939, 47928, 47934, 0,
                         47938, 0,
+                        
+                        -- Horde
+                        48000, 48004, 48002, 48005, 49237, 48006, 48008, 48009, 0,
+                        48011, 48003, 48001, 48007, 0,
+                        48010, 0,
                     },
                 },
                 {
-                    Name = "Faction Champions",
+                    Name = "Combined",
+                    IndentType = 1,
                     Loot =
                     {
+                        -- Alliance
+                        47663, 47927, 47620, 47931, 47669, 47929, 47621, 47932, 49235, 49238, 47683, 47933, 47680, 47935, 47711, 47937, 0,
+                        47619, 47930, 47679, 47939, 47618, 47928, 47703, 47934, 0,
+                        47676, 47938, 0,
+                        
+                        -- Horde
+                        47861, 48000, 47865, 48004, 47863, 48002, 47866, 48005, 49236, 49237, 47867, 48006, 47869, 48008, 47870, 48009, 0,
+                        47872, 48011, 47864, 48003, 47862, 48001, 47868, 48007, 0,
+                        47871, 48010, 0,
+                    },
+                },
+                { Name = "Faction Champions", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
+                        47721, 47719, 47718, 47717, 47720, 0,
+                        47728, 47727, 47726, 47725, 0,
+                        47724, 0,
+                        
+                        -- Horde
+                        47873, 47878, 47875, 47876, 47877, 0,
+                        47880, 47882, 47879, 47881, 0,
+                        47874, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
                         47940, 47945, 47942, 47943, 47944, 0,
                         47947, 47949, 47946, 47948, 0,
                         47941, 0,
+                        
+                        -- Horde
+                        48012, 48017, 48014, 48015, 48016, 0,
+                        48019, 48021, 48018, 48020, 0,
+                        48013, 0,
                     },
                 },
                 {
-                    Name = "The Twin Val'kyr",
+                    Name = "Combined",
+                    IndentType = 1,
                     Loot =
                     {
+                        -- Alliance
+                        47721, 47940, 47719, 47945, 47718, 47942, 47717, 47943, 47720, 47944, 0,
+                        47728, 47947, 47727, 47949, 47726, 47946, 47725, 47948, 0,
+                        47724, 47941, 0,
+                        
+                        -- Horde
+                        47873, 48012, 47878, 48017, 47875, 48014, 47876, 48015, 47877, 48016, 0,
+                        47880, 48019, 47882, 48021, 47879, 48018, 47881, 48020, 0,
+                        47874, 48013, 0,
+                    },
+                },
+                { Name = "The Twin Val'kyr", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
+                        47745, 49231, 47746, 47739, 47744, 47738, 0,
+                        47747, 47700, 0,
+                        47742, 47736, 47737, 47743, 47740, 0,
+                        
+                        -- Horde
+                        47889, 49232, 47891, 47887, 47893, 47885, 0,
+                        47890, 47888, 0,
+                        47913, 47886, 47884, 47892, 47883, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
                         47956, 49234, 47959, 47954, 47961, 47952, 0,
                         47957, 47955, 0,
                         47958, 47953, 47951, 47960, 47950, 0,
+                        
+                        -- Horde
+                        48028, 49233, 48034, 48026, 48038, 48024, 0,
+                        48030, 48027, 0,
+                        48032, 48025, 48023, 48036, 48022, 0,
                     },
                 },
                 {
-                    Name = "Anub'arak",
+                    Name = "Combined",
+                    IndentType = 1,
                     Loot =
                     {
+                        -- Alliance
+                        47745, 47956, 49231, 49234, 47746, 47959, 47739, 47954, 47744, 47961, 47738, 47952, 0,
+                        47747, 47957, 47700, 47955, 0,
+                        47742, 47958, 47736, 47953, 47737, 47951, 47743, 47960, 47740, 47950, 0,
+                        
+                        -- Horde
+                        47889, 48028, 49232, 49233, 47891, 48034, 47887, 48026, 47893, 48038, 47885, 48024, 0,
+                        47890, 48030, 47888, 48027, 0,
+                        47913, 48032, 47886, 48025, 47884, 48023, 47892, 48036, 47883, 48022, 0,
+                    },
+                },
+                { Name = "Anub'arak", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
+                        47838, 47837, 47832, 47813, 47829, 47811, 47836, 47830, 0,
+                        47810, 47814, 47808, 47809, 47816, 47834, 47815, 47835, 47812, 47741, 0,
+                        
+                        -- Horde
+                        47906, 47909, 47904, 47897, 47901, 47896, 47902, 47908, 0,
+                        47899, 47903, 47898, 47894, 47905, 47911, 47900, 47910, 47895, 47907, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
                         47974, 47977, 47972, 47965, 47969, 47964, 47976, 47970, 0,
                         47967, 47971, 47966, 47962, 47973, 47979, 47968, 47978, 47963, 47975, 0,
+                        
+                        -- Horde
+                        48051, 48054, 48049, 48042, 48046, 48041, 48047, 48053, 0,
+                        48044, 48048, 48043, 48039, 48050, 48056, 48045, 48055, 48040, 48052, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
+                        47838, 47974, 47837, 47977, 47832, 47972, 47813, 47965, 47829, 47969, 47811, 47964, 47836, 47976, 47830, 47970, 0,
+                        47810, 47967, 47814, 47971, 47808, 47966, 47809, 47962, 47816, 47973, 47834, 47979, 47815, 47968, 47835, 47978, 47812, 47963, 47741, 47975, 0,
+                        
+                        -- Horde
+                        47906, 48051, 47909, 48054, 47904, 48049, 47897, 48042, 47901, 48046, 47896, 48041, 47902, 48047, 47908, 48053, 0,
+                        47899, 48044, 47903, 48048, 47898, 48043, 47894, 48039, 47905, 48050, 47911, 48056, 47900, 48045, 47910, 48055, 47895, 48040, 47907, 48052, 0,
                     },
                 },
                 { Separator = true },
-                { Name = "Tribute Chest", Header = true },
+                { Name = "Tribute Chest (Heroic only)", Header = true },
                 {
-                    Name = " - 1-24 Attempts left",
+                    Name = "1-24 Attempts left",
+                    IndentType = 1,
                     Loot =
                     {
                         47242, 0,
@@ -3282,110 +4075,81 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - 25-44 Attempts left",
+                    Name = "25-44 Attempts left",
+                    IndentType = 1,
                     Loot =
                     {
-                        48712, 48714, 48709, 48708, 48710, 48713, 48711, 0,
+                        -- Alliance
+                        48708, 48709, 48712, 48713, 48710, 48714, 48711, 0,
+                        
+                        -- Horde
+                        48701, 48693, 48703, 48695, 48705, 48699, 48697, 0,
                     },
                 },
                 {
-                    Name = " - 45-49 Attempts left",
+                    Name = "45-49 Attempts left",
+                    IndentType = 1,
                     Loot =
                     {
                         47242, 0,
                     },
                 },
                 {
-                    Name = " - 50 Attempts left",
+                    Name = "50 Attempts left",
+                    IndentType = 1,
                     Loot =
                     {
+                        -- Alliance
                         49044, 0,
-                        48671, 48672, 48674, 48673, 48675, 0,
+                        48672, 48671, 48674, 48673, 48675, 0,
+                        
+                        -- Horde
+                        49046, 0,
+                        48667, 48666, 48669, 48668, 48670, 0,
                     },
                 },
                 { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Patterns",
+                    Name = "Tailoring",
+                    IndentType = 1,
                     Loot =
                     {
-                        47556, 0,
-                        47622, 47623, 47627, 47626, 47624, 47625, 0,
-                        47629, 47635, 47631, 47630, 47628, 47634, 47632, 47633, 0,
+                        -- Alliance
                         47654, 47655, 47656, 47657, 0,
-                    },
-                },
-            },
-        },
-        [3052] = {
-            Name = "Trial of the Crusader 25",
-            NameShort = "TotC 25",
-            Expansion = 2,
-            Children =
-            {
-                {
-                    Name = "The Beasts of Northrend",
-                    Loot =
-                    {
-                        47242, 0,
-                        46992, 46972, 46974, 46988, 46960, 46990, 46962, 46961, 46985, 0,
-                        46970, 46976, 46959, 0,
-                        46979, 46958, 46963, 0,
+                        
+                        -- Horde
+                        47639, 47638, 47637, 47636, 0,
                     },
                 },
                 {
-                    Name = "Lord Jaraxxus",
+                    Name = "Leatherworking",
+                    IndentType = 1,
                     Loot =
                     {
-                        47242, 0,
-                        47051, 47000, 47055, 47056, 46999, 47057, 47052, 46997, 0,
-                        47042, 47043, 47223, 47041, 0,
-                        47053, 46996, 46994, 0,
-                    },
-                },
-                {
-                    Name = "Faction Champions",
-                    Loot =
-                    {
-                        47242, 0,
-                        47081, 47092, 47094, 47071, 47073, 47083, 47090, 47082, 47093, 47072, 0,
-                        47089, 47070, 47080, 0,
-                        47069, 47079, 0,
-                    },
-                },
-                {
-                    Name = "The Twin Val'kyr",
-                    Loot =
-                    {
-                        47242, 0,
-                        47126, 47141, 47107, 47140, 47106, 47142, 47108, 47121, 0,
-                        47116, 47105, 47139, 47115, 0,
-                        47138, 47104, 47114, 0,
-                    },
-                },
-                {
-                    Name = "Anub'arak",
-                    Loot =
-                    {
-                        47242, 0,
-                        47203, 47235, 47187, 47194, 47151, 47186, 47204, 47152, 47184, 47234, 47195, 47150, 0,
-                        47225, 47183, 47054, 47149, 47182, 0,
-                        47148, 47193, 47233, 0,
-                    },
-                },
-                { Separator = true },
-                {
-                    Name = "Patterns",
-                    Loot =
-                    {
-                        47556, 0,
-                        47622, 47623, 47627, 47626, 47624, 47625, 0,
+                        -- Alliance
                         47629, 47635, 47631, 47630, 47628, 47634, 47632, 47633, 0,
-                        47654, 47655, 47656, 47657, 0,
+                        
+                        -- Horde
+                        47646, 47647, 47648, 47649, 47650, 47651, 47652, 47653, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
+                        47622, 47623, 47627, 47626, 47624, 47625, 0,
+                        
+                        -- Horde
+                        47640, 47641, 47642, 47643, 47644, 47645, 0,
                     },
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 9 Pieces",
+                    Name = "Tier 9 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         -- Alliance
@@ -3416,106 +4180,403 @@ LootReserve.Data =
             },
         },
         [3053] = {
-            Name = "Trial of the Crusader 25 Heroic",
-            NameShort = "TotC 25 Heroic",
+            Name = "Trial of the Crusader 25",
+            NameShort = "ToC 25",
             Expansion = 2,
             Children =
-            {
+            Squish{
+                { Name = "The Beasts of Northrend", Header = true },
                 {
-                    Name = "The Beasts of Northrend",
+                    Name = "Normal",
+                    IndentType = 1,
                     Loot =
                     {
                         47242, 0,
+                        
+                        -- Alliance
                         46993, 46973, 46975, 46989, 46965, 46991, 46968, 46967, 46986, 0,
                         46971, 46977, 46966, 0,
                         46980, 46969, 46964, 0,
+                        
+                        -- Horde
+                        47264, 47258, 47259, 47262, 47251, 47265, 47254, 47253, 47263, 0,
+                        47257, 47256, 47252, 0,
+                        47261, 47255, 47260, 0,
                     },
                 },
                 {
-                    Name = "Lord Jaraxxus",
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         47242, 0,
+                        
+                        -- Alliance
+                        46992, 46972, 46974, 46988, 46960, 46990, 46962, 46961, 46985, 0,
+                        46970, 46976, 46959, 0,
+                        46979, 46958, 46963, 0,
+                        
+                        -- Horde
+                        47425, 47419, 47420, 47423, 47412, 47426, 47415, 47414, 47424, 0,
+                        47418, 47417, 47413, 0,
+                        47422, 47416, 47421, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        47242, 0,
+                        
+                        -- Alliance
+                        46993, 46992, 46973, 46972, 46975, 46974, 46989, 46988, 46965, 46960, 46991, 46990, 46968, 46962, 46967, 46961, 46986, 46985, 0,
+                        46971, 46970, 46977, 46976, 46966, 46959, 0,
+                        46980, 46979, 46969, 46958, 46964, 46963, 0,
+                        
+                        -- Horde
+                        47264, 47425, 47258, 47419, 47259, 47420, 47262, 47423, 47251, 47412, 47265, 47426, 47254, 47415, 47253, 47414, 47263, 47424, 0,
+                        47257, 47418, 47256, 47417, 47252, 47413, 0,
+                        47261, 47422, 47255, 47416, 47260, 47421, 0,
+                    },
+                },
+                { Name = "Lord Jaraxxus", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        47242, 0,
+                        
+                        -- Alliance
                         47062, 47004, 47066, 47068, 47002, 47067, 47061, 47003, 0,
                         47063, 47060, 47224, 47059, 0,
                         47064, 47001, 46995, 0,
+                        
+                        -- Horde
+                        47274, 47270, 47277, 47280, 47268, 47279, 47273, 47269, 0,
+                        47275, 47272, 47278, 47271, 0,
+                        47276, 47266, 47267, 0,
                     },
                 },
                 {
-                    Name = "Faction Champions",
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         47242, 0,
+                        
+                        -- Alliance
+                        47051, 47000, 47055, 47056, 46999, 47057, 47052, 46997, 0,
+                        47042, 47043, 47223, 47041, 0,
+                        47053, 46996, 46994, 0,
+                        
+                        -- Horde
+                        47435, 47431, 47438, 47441, 47429, 47440, 47434, 47430, 0,
+                        47436, 47433, 47439, 47432, 0,
+                        47437, 47427, 47428, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        47242, 0,
+                        
+                        -- Alliance
+                        47062, 47051, 47004, 47000, 47066, 47055, 47068, 47056, 47002, 46999, 47067, 47057, 47061, 47052, 47003, 46997, 0,
+                        47063, 47042, 47060, 47043, 47224, 47223, 47059, 47041, 0,
+                        47064, 47053, 47001, 46996, 46995, 46994, 0,
+                        
+                        -- Horde
+                        47274, 47435, 47270, 47431, 47277, 47438, 47280, 47441, 47268, 47429, 47279, 47440, 47273, 47434, 47269, 47430, 0,
+                        47275, 47436, 47272, 47433, 47278, 47439, 47271, 47432, 0,
+                        47276, 47437, 47266, 47427, 47267, 47428, 0,
+                    },
+                },
+                { Name = "Faction Champions", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        47242, 0,
+                        
+                        -- Alliance
                         47084, 47097, 47096, 47077, 47074, 47087, 47099, 47086, 47098, 47076, 0,
                         47095, 47075, 47088, 0,
                         47078, 47085, 0,
+                        
+                        -- Horde
+                        47286, 47293, 47292, 47284, 47281, 47289, 47295, 47288, 47294, 47283, 0,
+                        47291, 47282, 47290, 0,
+                        47285, 47287, 0,
                     },
                 },
                 {
-                    Name = "The Twin Val'kyr",
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         47242, 0,
+                        
+                        -- Alliance
+                        47081, 47092, 47094, 47071, 47073, 47083, 47090, 47082, 47093, 47072, 0,
+                        47089, 47070, 47080, 0,
+                        47069, 47079, 0,
+                        
+                        -- Horde
+                        47447, 47454, 47453, 47445, 47442, 47450, 47456, 47449, 47455, 47444, 0,
+                        47452, 47443, 47451, 0,
+                        47446, 47448, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        47242, 0,
+                        
+                        -- Alliance
+                        47084, 47081, 47097, 47092, 47096, 47094, 47077, 47071, 47074, 47073, 47087, 47083, 47099, 47090, 47086, 47082, 47098, 47093, 47076, 47072, 0,
+                        47095, 47089, 47075, 47070, 47088, 47080, 0,
+                        47078, 47069, 47085, 47079, 0,
+                        
+                        -- Horde
+                        47286, 47447, 47293, 47454, 47292, 47453, 47284, 47445, 47281, 47442, 47289, 47450, 47295, 47456, 47288, 47449, 47294, 47455, 47283, 47444, 0,
+                        47291, 47452, 47282, 47443, 47290, 47451, 0,
+                        47285, 47446, 47287, 47448, 0,
+                    },
+                },
+                { Name = "The Twin Val'kyr", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        47242, 0,
+                        
+                        -- Alliance
                         47129, 47143, 47112, 47145, 47109, 47147, 47111, 47132, 0,
                         47133, 47110, 47144, 47131, 0,
                         47146, 47113, 47130, 0,
+                        
+                        -- Horde
+                        47301, 47306, 47308, 47299, 47296, 47310, 47298, 47304, 0,
+                        47307, 47305, 47297, 47303, 0,
+                        47309, 47300, 47302, 0,
                     },
                 },
                 {
-                    Name = "Anub'arak",
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         47242, 0,
+                        
+                        -- Alliance
+                        47126, 47141, 47107, 47140, 47106, 47142, 47108, 47121, 0,
+                        47116, 47105, 47139, 47115, 0,
+                        47138, 47104, 47114, 0,
+                        
+                        -- Horde
+                        47462, 47467, 47469, 47460, 47457, 47471, 47459, 47465, 0,
+                        47468, 47466, 47458, 47464, 0,
+                        47470, 47461, 47463, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        47242, 0,
+                        
+                        -- Alliance
+                        47129, 47126, 47143, 47141, 47112, 47107, 47145, 47140, 47109, 47106, 47147, 47142, 47111, 47108, 47132, 47121, 0,
+                        47133, 47116, 47110, 47105, 47144, 47139, 47131, 47115, 0,
+                        47146, 47138, 47113, 47104, 47130, 47114, 0,
+                        
+                        -- Horde
+                        47301, 47462, 47306, 47467, 47308, 47469, 47299, 47460, 47296, 47457, 47310, 47471, 47298, 47459, 47304, 47465, 0,
+                        47307, 47468, 47305, 47466, 47297, 47458, 47303, 47464, 0,
+                        47309, 47470, 47300, 47461, 47302, 47463, 0,
+                    },
+                },
+                { Name = "Anub'arak", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        47242, 0,
+                        
+                        -- Alliance
                         47208, 47236, 47189, 47205, 47155, 47190, 47209, 47153, 47191, 47240, 47207, 47154, 0,
                         47238, 47192, 47237, 47157, 47188, 0,
                         47156, 47206, 47239, 0,
+                        
+                        -- Horde
+                        47324, 47326, 47317, 47321, 47313, 47318, 47325, 47311, 47319, 47330, 47323, 47312, 0,
+                        47328, 47320, 47315, 47327, 47316, 0,
+                        47314, 47322, 47329, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        47242, 0,
+                        
+                        -- Alliance
+                        47203, 47235, 47187, 47194, 47151, 47186, 47204, 47152, 47184, 47234, 47195, 47150, 0,
+                        47225, 47183, 47054, 47149, 47182, 0,
+                        47148, 47193, 47233, 0,
+                        
+                        -- Horde
+                        47485, 47487, 47478, 47482, 47474, 47479, 47486, 47472, 47480, 47492, 47484, 47473, 0,
+                        47490, 47481, 47476, 47489, 47477, 0,
+                        47475, 47483, 47491, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        47242, 0,
+                        
+                        -- Alliance
+                        47208, 47203, 47236, 47235, 47189, 47187, 47205, 47194, 47155, 47151, 47190, 47186, 47209, 47204, 47153, 47152, 47191, 47184, 47240, 47234, 47207, 47195, 47154, 47150, 0,
+                        47238, 47225, 47192, 47183, 47237, 47054, 47157, 47149, 47188, 47182, 0,
+                        47156, 47148, 47206, 47193, 47239, 47233, 0,
+                        
+                        -- Horde
+                        47324, 47485, 47326, 47487, 47317, 47478, 47321, 47482, 47313, 47474, 47318, 47479, 47325, 47486, 47311, 47472, 47319, 47480, 47330, 47492, 47323, 47484, 47312, 47473, 0,
+                        47328, 47490, 47320, 47481, 47315, 47476, 47327, 47489, 47316, 47477, 0,
+                        47314, 47475, 47322, 47483, 47329, 47491, 0,
                     },
                 },
                 { Separator = true },
-                { Name = "Tribute Chest", Header = true },
+                { Name = "Tribute Chest (Heroic only)", Header = true },
                 {
-                    Name = " - 1-24 Attempts left",
+                    Name = "1-24 Attempts left",
+                    IndentType = 1,
                     Loot =
                     {
                         47557, 47558, 47559, 0,
                     },
                 },
                 {
-                    Name = " - 25-44 Attempts left",
+                    Name = "25-44 Attempts left",
+                    IndentType = 1,
                     Loot =
                     {
-                        47506, 47526, 47517, 47519, 47524, 47515, 47521, 0,
+                        -- Alliance
+                        47517, 47524, 47526, 47519, 47515, 47506, 47521, 0,
+                        
+                        -- Horde
+                        47518, 47525, 47528, 47520, 47516, 47513, 47523, 0,
                     },
                 },
                 {
-                    Name = " - 45-49 Attempts left",
+                    Name = "45-49 Attempts left",
+                    IndentType = 1,
                     Loot =
                     {
                         47557, 47558, 47559, 0,
                     },
                 },
                 {
-                    Name = " - 50 Attempts left",
+                    Name = "50 Attempts left",
+                    IndentType = 1,
                     Loot =
                     {
+                        -- Alliance
                         49096, 0,
-                        47552, 47553, 47547, 47545, 47549, 0,
+                        47553, 47552, 47547, 47545, 47549, 0,
+                        
+                        -- Horde
+                        49098, 0,
+                        47554, 47551, 47548, 47546, 47550, 0,
                     },
                 },
                 { Separator = true },
+                { Name = "Recipes", Header = true },
                 {
-                    Name = "Patterns",
+                    Name = "Tailoring",
+                    IndentType = 1,
                     Loot =
                     {
-                        47556, 0,
-                        47622, 47623, 47627, 47626, 47624, 47625, 0,
-                        47629, 47635, 47631, 47630, 47628, 47634, 47632, 47633, 0,
+                        -- Alliance
                         47654, 47655, 47656, 47657, 0,
+                        
+                        -- Horde
+                        47639, 47638, 47637, 47636, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
+                        47629, 47635, 47631, 47630, 47628, 47634, 47632, 47633, 0,
+                        
+                        -- Horde
+                        47646, 47647, 47648, 47649, 47650, 47651, 47652, 47653, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        -- Alliance
+                        47622, 47623, 47627, 47626, 47624, 47625, 0,
+                        
+                        -- Horde
+                        47640, 47641, 47642, 47643, 47644, 47645, 0,
                     },
                 },
                 { Separator = true },
+                { Name = "Tier 9 Pieces", Header = true },
                 {
-                    Name = " + Tier 9 Pieces",
+                    Name = "Normal",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        -- Alliance
+                        47778, 47781, 47779, 47782, 47780, 0,
+                        47984, 47987, 47986, 47983, 47985, 0, 48078, 48081, 48080, 48077, 48079, 0,
+                        48225, 48227, 48223, 48224, 48226, 0,
+                        48257, 48259, 48255, 48256, 48258, 0,
+                        48430, 48454, 48450, 48452, 48446, 0, 48378, 48380, 48376, 48377, 48379, 0,
+                        48540, 48542, 48538, 48539, 48541, 0, 48483, 48485, 48481, 48482, 48484, 0,
+                        47754, 47757, 47756, 47753, 47755, 0,
+                        48134, 48137, 48136, 48133, 48135, 0, 48164, 48167, 48166, 48163, 48165, 0, 48211, 48208, 48209, 48212, 48210, 0,
+                        48287, 48289, 48285, 48286, 48288, 0, 48318, 48320, 48316, 48317, 48319, 0, 48348, 48350, 48346, 48347, 48349, 0,
+                        48577, 48579, 48575, 48576, 48578, 0, 48639, 48637, 48641, 48640, 48638, 0, 48609, 48611, 48607, 48608, 48610, 0,
+                        
+                        -- Horde
+                        47804, 47807, 47806, 47803, 47805, 0,
+                        48065, 48062, 48063, 48066, 48064, 0, 48095, 48092, 48093, 48096, 48094, 0,
+                        48240, 48238, 48242, 48241, 48239, 0,
+                        48272, 48270, 48274, 48273, 48271, 0,
+                        48463, 48465, 48461, 48462, 48464, 0, 48393, 48395, 48391, 48392, 48394, 0,
+                        48555, 48553, 48557, 48556, 48554, 0, 48498, 48496, 48500, 48499, 48497, 0,
+                        47771, 47768, 47769, 47772, 47770, 0,
+                        48151, 48148, 48149, 48152, 48150, 0, 48181, 48178, 48179, 48182, 48180, 0, 48194, 48197, 48196, 48193, 48195, 0,
+                        48302, 48304, 48300, 48301, 48303, 0, 48333, 48331, 48335, 48334, 48332, 0, 48363, 48361, 48365, 48364, 48362, 0,
+                        48592, 48590, 48594, 48593, 48591, 0, 48659, 48661, 48657, 48658, 48660, 0, 48624, 48622, 48626, 48625, 48623, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 2,
                     Loot =
                     {
                         -- Alliance
@@ -3543,6 +4604,36 @@ LootReserve.Data =
                         48587, 48585, 48589, 48588, 48586, 0, 48649, 48647, 48651, 48650, 48648, 0, 48619, 48621, 48617, 48618, 48620, 0,
                     },
                 },
+                {
+                    Name = "Combined",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        -- Alliance
+                        47778, 47789, 47781, 47792, 47779, 47791, 47782, 47788, 47780, 47790, 0,
+                        47984, 48035, 47987, 48029, 47986, 48031, 47983, 48037, 47985, 48033, 0, 48078, 48085, 48081, 48082, 48080, 48083, 48077, 48086, 48079, 48084, 0,
+                        48225, 48230, 48227, 48228, 48223, 48232, 48224, 48231, 48226, 48229, 0,
+                        48257, 48262, 48259, 48260, 48255, 48264, 48256, 48263, 48258, 48261, 0,
+                        48430, 48433, 48454, 48455, 48450, 48451, 48452, 48453, 48446, 48447, 0, 48378, 48383, 48380, 48381, 48376, 48385, 48377, 48384, 48379, 48382, 0,
+                        48540, 48545, 48542, 48543, 48538, 48547, 48539, 48546, 48541, 48544, 0, 48483, 48488, 48485, 48486, 48481, 48490, 48482, 48489, 48484, 48487, 0,
+                        47754, 47761, 47757, 47758, 47756, 47759, 47753, 47762, 47755, 47760, 0,
+                        48134, 48141, 48137, 48138, 48136, 48139, 48133, 48142, 48135, 48140, 0, 48164, 48171, 48167, 48168, 48166, 48169, 48163, 48172, 48165, 48170, 0, 48211, 48204, 48208, 48207, 48209, 48206, 48212, 48203, 48210, 48205, 0,
+                        48287, 48292, 48289, 48290, 48285, 48294, 48286, 48293, 48288, 48291, 0, 48318, 48323, 48320, 48321, 48316, 48325, 48317, 48324, 48319, 48322, 0, 48348, 48353, 48350, 48351, 48346, 48355, 48347, 48354, 48349, 48352, 0,
+                        48577, 48582, 48579, 48580, 48575, 48584, 48576, 48583, 48578, 48581, 0, 48639, 48644, 48637, 48646, 48641, 48642, 48640, 48643, 48638, 48645, 0, 48609, 48614, 48611, 48612, 48607, 48616, 48608, 48615, 48610, 48613, 0,
+                        
+                        -- Horde
+                        47804, 47796, 47807, 47793, 47806, 47794, 47803, 47797, 47805, 47795, 0,
+                        48065, 48058, 48062, 48061, 48063, 48060, 48066, 48057, 48064, 48059, 0, 48095, 48088, 48092, 48091, 48093, 48090, 48096, 48087, 48094, 48089, 0,
+                        48240, 48235, 48238, 48237, 48242, 48233, 48241, 48234, 48239, 48236, 0,
+                        48272, 48267, 48270, 48269, 48274, 48265, 48273, 48266, 48271, 48268, 0,
+                        48463, 48468, 48465, 48470, 48461, 48466, 48462, 48467, 48464, 48469, 0, 48393, 48398, 48395, 48400, 48391, 48396, 48392, 48397, 48394, 48399, 0,
+                        48555, 48550, 48553, 48552, 48557, 48548, 48556, 48549, 48554, 48551, 0, 48498, 48493, 48496, 48495, 48500, 48491, 48499, 48492, 48497, 48494, 0,
+                        47771, 47764, 47768, 47767, 47769, 47766, 47772, 47763, 47770, 47765, 0,
+                        48151, 48144, 48148, 48147, 48149, 48146, 48152, 48143, 48150, 48145, 0, 48181, 48174, 48178, 48177, 48179, 48176, 48182, 48173, 48180, 48175, 0, 48194, 48201, 48197, 48198, 48196, 48199, 48193, 48202, 48195, 48200, 0,
+                        48302, 48307, 48304, 48309, 48300, 48305, 48301, 48306, 48303, 48308, 0, 48333, 48328, 48331, 48330, 48335, 48326, 48334, 48327, 48332, 48329, 0, 48363, 48358, 48361, 48360, 48365, 48356, 48364, 48357, 48362, 48359, 0,
+                        48592, 48587, 48590, 48585, 48594, 48589, 48593, 48588, 48591, 48586, 0, 48659, 48649, 48661, 48647, 48657, 48651, 48658, 48650, 48660, 48648, 0, 48624, 48619, 48622, 48621, 48626, 48617, 48625, 48618, 48623, 48620, 0,
+                    },
+                },
             },
         },
         
@@ -3552,7 +4643,7 @@ LootReserve.Data =
             NameShort = "Ony 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Onyxia",
                     Loot =
@@ -3567,7 +4658,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         49485, 49486, 49487, 0,
@@ -3580,7 +4672,7 @@ LootReserve.Data =
             NameShort = "Ony 25",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Onyxia",
                     Loot =
@@ -3595,7 +4687,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Quest Rewards",
+                    Name = "Quest Rewards",
+                    IndentType = 2,
                     Loot =
                     {
                         49485, 49486, 49487, 0,
@@ -3605,12 +4698,13 @@ LootReserve.Data =
         },
         
         -- Icecrown Citadel
+        --[[
         [3070] = {
             Name = "Icecrown Citadel 10",
             NameShort = "ICC 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Lord Marrowgar",
                     Loot =
@@ -3729,14 +4823,27 @@ LootReserve.Data =
                 },
             },
         },
+        --]]
         [3071] = {
-            Name = "Icecrown Citadel 10 Heroic",
-            NameShort = "ICC 10 Heroic",
+            Name = "Icecrown Citadel 10",
+            NameShort = "ICC 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
+                { Name = "Lord Marrowgar", Header = true },
                 {
-                    Name = "Lord Marrowgar",
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50773, 50774, 50762, 50775, 50772, 0,
+                        50764, 50763, 50339, 0,
+                        50771, 50761, 50759, 50760, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         51930, 51929, 51935, 51928, 51931, 0,
@@ -3746,7 +4853,30 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Lady Deathwhisper",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50773, 51930, 50774, 51929, 50762, 51935, 50775, 51928, 50772, 51931, 0,
+                        50764, 51933, 50763, 51934, 50339, 50346, 0,
+                        50771, 51932, 50761, 51936, 50759, 51938, 50760, 51937, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "Lady Deathwhisper", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50785, 50782, 50780, 50778, 50783, 50777, 50784, 50779, 50786, 0,
+                        50342, 0,
+                        50781, 50776, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         51918, 51921, 51923, 51925, 51920, 51926, 51919, 51924, 51917, 0,
@@ -3756,7 +4886,30 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Icecrown Gunship Battle",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50785, 51918, 50782, 51921, 50780, 51923, 50778, 51925, 50783, 51920, 50777, 51926, 50784, 51919, 50779, 51924, 50786, 51917, 0,
+                        50342, 50343, 0,
+                        50781, 51922, 50776, 51927, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "Icecrown Gunship Battle", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50795, 50797, 50792, 50789, 50796, 50788, 0,
+                        50791, 50790, 50340, 0,
+                        50793, 50787, 50794, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         51908, 51906, 51911, 51914, 51907, 51915, 0,
@@ -3766,7 +4919,30 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Deathbringer Saurfang",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50795, 51908, 50797, 51906, 50792, 51911, 50789, 51914, 50796, 51907, 50788, 51915, 0,
+                        50791, 51912, 50790, 51913, 50340, 50345, 0,
+                        50793, 51910, 50787, 51916, 50794, 51909, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "Deathbringer Saurfang", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50807, 50804, 50799, 50806, 50800, 50801, 50802, 50808, 0,
+                        50809, 50803, 0,
+                        50798, 50805, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         52027, 52026, 52025, 0,
@@ -3777,7 +4953,31 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Festergut",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52027, 52026, 52025, 0,
+                        50807, 51896, 50804, 51899, 50799, 51904, 50806, 51897, 50800, 51903, 50801, 51902, 50802, 51901, 50808, 51895, 0,
+                        50809, 51894, 50803, 51900, 0,
+                        50798, 51905, 50805, 51898, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "Festergut", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50988, 50990, 50985, 50858, 50812, 50967, 50811, 0,
+                        50859, 50852, 50986, 0,
+                        50810, 50966, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         51883, 51882, 51885, 51889, 51891, 51886, 51892, 0,
@@ -3787,7 +4987,30 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Rotface",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50988, 51883, 50990, 51882, 50985, 51885, 50858, 51889, 50812, 51891, 50967, 51886, 50811, 51892, 0,
+                        50859, 51888, 50852, 51890, 50986, 51884, 0,
+                        50810, 51893, 50966, 51887, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "Rotface", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        51007, 51005, 51009, 51002, 51006, 51000, 0,
+                        51008, 51001, 0,
+                        51003, 51004, 50998, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         51872, 51874, 51870, 51877, 51873, 51879, 0,
@@ -3797,7 +5020,30 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Professor Putricide",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        51007, 51872, 51005, 51874, 51009, 51870, 51002, 51877, 51006, 51873, 51000, 51879, 0,
+                        51008, 51871, 51001, 51878, 0,
+                        51003, 51876, 51004, 51875, 50998, 51881, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "Professor Putricide", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        51020, 51017, 51013, 51015, 51019, 51014, 51018, 0,
+                        51012, 51016, 50341, 0,
+                        51011, 51010, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         52027, 52026, 52025, 0,
@@ -3808,7 +5054,31 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Blood Prince Council",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52027, 52026, 52025, 0,
+                        51020, 51859, 51017, 51862, 51013, 51866, 51015, 51864, 51019, 51860, 51014, 51865, 51018, 51861, 0,
+                        51012, 51867, 51016, 51863, 50341, 50344, 0,
+                        51011, 51868, 51010, 51869, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "Blood Prince Council", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        51379, 51380, 51023, 51325, 51383, 51025, 0,
+                        51382, 51381, 51024, 0,
+                        51021, 51022, 51326, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         51851, 51850, 51856, 51853, 51847, 51854, 0,
@@ -3818,7 +5088,30 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Blood-Queen Lana'thel",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        51379, 51851, 51380, 51850, 51023, 51856, 51325, 51853, 51383, 51847, 51025, 51854, 0,
+                        51382, 51848, 51381, 51849, 51024, 51855, 0,
+                        51021, 51858, 51022, 51857, 51326, 51852, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "Blood-Queen Lana'thel", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        51554, 51552, 51550, 51551, 51386, 51556, 51555, 0,
+                        51548, 51387, 0,
+                        51384, 51385, 51553, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         52027, 52026, 52025, 0,
@@ -3829,7 +5122,31 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Valithria Dreamwalker",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52027, 52026, 52025, 0,
+                        51554, 51837, 51552, 51839, 51550, 51841, 51551, 51840, 51386, 51844, 51556, 51835, 51555, 51836, 0,
+                        51548, 51842, 51387, 51843, 0,
+                        51384, 51846, 51385, 51845, 51553, 51838, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "Valithria Dreamwalker", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        51777, 51585, 51565, 51583, 51566, 51586, 51563, 51564, 0,
+                        51584, 0,
+                        51562, 51582, 51561, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         51823, 51825, 51830, 51827, 51829, 51824, 51832, 51831, 0,
@@ -3839,7 +5156,30 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Sindragosa",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        51777, 51823, 51585, 51825, 51565, 51830, 51583, 51827, 51566, 51829, 51586, 51824, 51563, 51832, 51564, 51831, 0,
+                        51584, 51826, 0,
+                        51562, 51833, 51582, 51828, 51561, 51834, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "Sindragosa", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        51790, 51783, 51789, 51792, 51785, 51782, 51786, 51787, 0,
+                        51779, 0,
+                        51784, 51788, 51791, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         52027, 52026, 52025, 0,
@@ -3850,11 +5190,43 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "The Lich King",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52027, 52026, 52025, 0,
+                        51790, 51813, 51783, 51820, 51789, 51814, 51792, 51811, 51785, 51818, 51782, 51821, 51786, 51817, 51787, 51816, 0,
+                        51779, 51822, 0,
+                        51784, 51819, 51788, 51815, 51791, 51812, 0,
+                        49908, 0,
+                    },
+                },
+                { Name = "The Lich King", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        51801, 51803, 51800, 51795, 51798, 51796, 51799, 51797, 51802, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         52027, 52026, 52025, 0,
                         51941, 51939, 51942, 51947, 51944, 51946, 51943, 51945, 51940, 0,
+                        49908, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52027, 52026, 52025, 0,
+                        51801, 51941, 51803, 51939, 51800, 51942, 51795, 51947, 51798, 51944, 51796, 51946, 51799, 51943, 51797, 51945, 51802, 51940, 0,
                         49908, 0,
                     },
                 },
@@ -3870,7 +5242,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 10 Pieces",
+                    Name = "Tier 10 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         51208, 51205, 51206, 51209, 51207, 0,
@@ -3887,12 +5260,13 @@ LootReserve.Data =
                 },
             },
         },
+        --[[
         [3072] = {
             Name = "Icecrown Citadel 25",
             NameShort = "ICC 25",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Lord Marrowgar",
                     Loot =
@@ -4038,7 +5412,8 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
-                    Name = " + Tier 10 Pieces",
+                    Name = "Tier 10 Pieces",
+                    IndentType = 2,
                     Loot =
                     {
                         51208, 51205, 51206, 51209, 51207, 0,
@@ -4055,14 +5430,29 @@ LootReserve.Data =
                 },
             },
         },
+        --]]
         [3073] = {
-            Name = "Icecrown Citadel 25 Heroic",
-            NameShort = "ICC 25 Heroic",
+            Name = "Icecrown Citadel 25",
+            NameShort = "ICC 25",
             Expansion = 2,
             Children =
-            {
+            Squish{
+                { Name = "Lord Marrowgar", Header = true },
                 {
-                    Name = "Lord Marrowgar",
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        49978, 49979, 49950, 49952, 49980, 49951, 49960, 49964, 0,
+                        49975, 49949, 49977, 49967, 0,
+                        49968, 50415, 49976, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         50613, 50615, 50607, 50605, 50617, 50606, 50611, 50612, 0,
@@ -4073,7 +5463,33 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Lady Deathwhisper",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        49978, 50613, 49979, 50615, 49950, 50607, 49952, 50605, 49980, 50617, 49951, 50606, 49960, 50611, 49964, 50612, 0,
+                        49975, 50609, 49949, 50604, 49977, 50614, 49967, 50610, 0,
+                        49968, 50608, 50415, 50709, 49976, 50616, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                { Name = "Lady Deathwhisper", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        49991, 49994, 49987, 49996, 49988, 49993, 49986, 49995, 49983, 0,
+                        49989, 49985, 49990, 0,
+                        49982, 49992, 50034, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         50643, 50651, 50646, 50649, 50645, 50652, 50640, 50650, 50639, 0,
@@ -4084,7 +5500,33 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Icecrown Gunship Battle",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        49991, 50643, 49994, 50651, 49987, 50646, 49996, 50649, 49988, 50645, 49993, 50652, 49986, 50640, 49995, 50650, 49983, 50639, 0,
+                        49989, 50647, 49985, 50642, 49990, 50644, 0,
+                        49982, 50641, 49992, 50648, 50034, 50638, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                { Name = "Icecrown Gunship Battle", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50006, 50011, 50001, 50009, 50000, 50003, 50002, 50010, 0,
+                        49998, 50005, 50008, 49999, 50359, 50352, 0,
+                        50411, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         50661, 50663, 50656, 50665, 50655, 50660, 50659, 50667, 0,
@@ -4095,7 +5537,34 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Deathbringer Saurfang",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50006, 50661, 50011, 50663, 50001, 50656, 50009, 50665, 50000, 50655, 50003, 50660, 50002, 50659, 50010, 50667, 0,
+                        49998, 50653, 50005, 50658, 50008, 50664, 49999, 50657, 50359, 50366, 50352, 50349, 0,
+                        50411, 50654, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                { Name = "Deathbringer Saurfang", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52027, 52026, 52025, 0,
+                        50333, 50015, 0,
+                        50014, 50362, 0,
+                        50412, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         52030, 52029, 52028, 0,
@@ -4108,29 +5577,109 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Festergut",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52030, 52029, 52028, 0,
+                        52027, 52026, 52025, 0,
+                        50333, 50670, 50015, 50671, 0,
+                        50014, 50668, 50362, 50363, 0,
+                        50412, 50672, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                { Name = "Festergut", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50063, 50056, 50062, 50042, 50041, 50059, 50038, 50064, 50413, 50060, 50037, 50036, 0,
+                        50061, 50414, 0,
+                        50035, 50040, 0,
+                        49908, 0,
+                        50274, 50226, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         50702, 50694, 50699, 50697, 50696, 50698, 50689, 50703, 50688, 50701, 50690, 50691, 0,
                         50700, 50693, 0,
                         50692, 50695, 0,
                         49908, 0,
-                        50226, 50274, 0,
+                        50274, 50226, 0,
                     },
                 },
                 {
-                    Name = "Rotface",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50063, 50702, 50056, 50694, 50062, 50699, 50042, 50697, 50041, 50696, 50059, 50698, 50038, 50689, 50064, 50703, 50413, 50688, 50060, 50701, 50037, 50690, 50036, 50691, 0,
+                        50061, 50700, 50414, 50693, 0,
+                        50035, 50692, 50040, 50695, 0,
+                        49908, 0,
+                        50274, 50226, 0,
+                    },
+                },
+                { Name = "Rotface", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50032, 50026, 50021, 50022, 50030, 50020, 50024, 50027, 0,
+                        50019, 50023, 50025, 50353, 0,
+                        50028, 50016, 50033, 0,
+                        49908, 0,
+                        50274, 50231, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         50686, 50679, 50675, 50673, 50687, 50674, 50681, 50680, 0,
                         50677, 50682, 50678, 50348, 0,
                         50685, 50676, 50684, 0,
                         49908, 0,
-                        50231, 50274, 0,
+                        50274, 50231, 0,
                     },
                 },
                 {
-                    Name = "Professor Putricide",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50032, 50686, 50026, 50679, 50021, 50675, 50022, 50673, 50030, 50687, 50020, 50674, 50024, 50681, 50027, 50680, 0,
+                        50019, 50677, 50023, 50682, 50025, 50678, 50353, 50348, 0,
+                        50028, 50685, 50016, 50676, 50033, 50684, 0,
+                        50274, 50231, 0,
+                    },
+                },
+                { Name = "Professor Putricide", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52027, 52026, 52025, 0,
+                        50067, 50069, 0,
+                        50351, 0,
+                        50179, 50068, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         52030, 52029, 52028, 0,
@@ -4143,7 +5692,35 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Blood Prince Council",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52030, 52029, 52028, 0,
+                        52027, 52026, 52025, 0,
+                        50067, 50707, 50069, 50705, 0,
+                        50351, 50706, 0,
+                        50179, 50708, 50068, 50704, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                { Name = "Blood Prince Council", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50172, 50176, 50073, 50171, 50177, 50071, 50072, 50175, 50075, 0,
+                        50074, 50174, 50170, 0,
+                        50173, 50184, 49919, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         50717, 50722, 50713, 50715, 50723, 50711, 50712, 50721, 50716, 0,
@@ -4154,7 +5731,33 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Blood-Queen Lana'thel",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50172, 50717, 50176, 50722, 50073, 50713, 50171, 50715, 50177, 50723, 50071, 50711, 50072, 50712, 50175, 50721, 50075, 50716, 0,
+                        50074, 50718, 50174, 50720, 50170, 50714, 0,
+                        50173, 50719, 50184, 50710, 49919, 50603, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                { Name = "Blood-Queen Lana'thel", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52027, 52026, 52025, 0,
+                        50182, 50180, 50354, 0,
+                        50178, 50181, 50065, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         52030, 52029, 52028, 0,
@@ -4166,7 +5769,34 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Valithria Dreamwalker",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52030, 52029, 52028, 0,
+                        52027, 52026, 52025, 0,
+                        50182, 50724, 50180, 50728, 50354, 50726, 0,
+                        50178, 50727, 50181, 50725, 50065, 50729, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                { Name = "Valithria Dreamwalker", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50418, 50417, 50202, 50188, 50187, 50199, 50192, 50416, 50190, 0,
+                        50205, 50195, 50185, 50186, 0,
+                        50183, 50472, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         50629, 50630, 50626, 50619, 50620, 50623, 50624, 50632, 50625, 0,
@@ -4177,7 +5807,33 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Sindragosa",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        50418, 50629, 50417, 50630, 50202, 50626, 50188, 50619, 50187, 50620, 50199, 50623, 50192, 50624, 50416, 50632, 50190, 50625, 0,
+                        50205, 50628, 50195, 50627, 50185, 50622, 50186, 50618, 0, 
+                        50183, 50621, 50472, 50631, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                { Name = "Sindragosa", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52027, 52026, 52025, 0,
+                        50421, 50424, 50360, 50361, 0,
+                        50423, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         52030, 52029, 52028, 0,
@@ -4189,12 +5845,51 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "The Lich King",
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52030, 52029, 52028, 0,
+                        52027, 52026, 52025, 0,
+                        50421, 50633, 50424, 50636, 50360, 50365, 50361, 50364, 0,
+                        50423, 50635, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                { Name = "The Lich King", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52027, 52026, 52025, 0,
+                        50426, 50427, 50070, 50012, 50428, 49997, 50425, 50429, 49981, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         52030, 52029, 52028, 0,
                         52027, 52026, 52025, 0,
                         50736, 50732, 50730, 50737, 50734, 50738, 50735, 50731, 50733, 0,
+                        50818, 0,
+                        49908, 0,
+                        50274, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        52030, 52029, 52028, 0,
+                        52027, 52026, 52025, 0,
+                        50426, 50736, 50427, 50732, 50070, 50730, 50012, 50737, 50428, 50734, 49997, 50738, 50425, 50735, 50429, 50731, 49981, 50733, 0,
                         50818, 0,
                         49908, 0,
                         50274, 0,
@@ -4211,32 +5906,69 @@ LootReserve.Data =
                     },
                 },
                 { Separator = true },
+                { Name = "Tier 10 Pieces", Header = true },
                 {
-                    Name = " + Tier 10 Pieces",
+                    Name = "Normal",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        51208, 51205, 51206, 51209, 51207, 0,
+                        51178, 51175, 51176, 51179, 51177, 0, 51184, 51182, 51180, 51183, 51181, 0,
+                        51187, 51185, 51189, 51188, 51186, 0,
+                        51153, 51151, 51150, 51154, 51152, 0,
+                        51218, 51215, 51219, 51217, 51216, 0, 51212, 51210, 51214, 51213, 51211, 0,
+                        51133, 51130, 51134, 51132, 51131, 0, 51127, 51125, 51129, 51128, 51126, 0,
+                        51158, 51155, 51156, 51159, 51157, 0,
+                        51137, 51135, 51139, 51138, 51136, 0, 51149, 51147, 51145, 51148, 51146, 0, 51143, 51140, 51141, 51144, 51142, 0,
+                        51192, 51194, 51190, 51191, 51193, 0, 51202, 51204, 51200, 51201, 51203, 0, 51197, 51199, 51195, 51196, 51198, 0,
+                        51167, 51166, 51165, 51169, 51168, 0, 51173, 51170, 51174, 51172, 51171, 0, 51162, 51160, 51164, 51163, 51161, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 2,
                     Loot =
                     {
                         51231, 51234, 51233, 51230, 51232, 0,
-                        51261, 51264, 51263, 51260, 51262, 51255, 51257, 51259, 51256, 51258, 0,
+                        51261, 51264, 51263, 51260, 51262, 0, 51255, 51257, 51259, 51256, 51258, 0,
                         51252, 51254, 51250, 51251, 51253, 0,
                         51286, 51288, 51289, 51285, 51287, 0,
-                        51221, 51224, 51220, 51222, 51223, 51227, 51229, 51225, 51226, 51228, 0,
-                        51306, 51309, 51305, 51307, 51308, 51312, 51314, 51310, 51311, 51313, 0,
+                        51221, 51224, 51220, 51222, 51223, 0, 51227, 51229, 51225, 51226, 51228, 0,
+                        51306, 51309, 51305, 51307, 51308, 0, 51312, 51314, 51310, 51311, 51313, 0,
                         51281, 51284, 51283, 51280, 51282, 0,
-                        51302, 51304, 51300, 51301, 51303, 51290, 51292, 51294, 51291, 51293, 51296, 51299, 51298, 51295, 51297, 0,
-                        51247, 51245, 51249, 51248, 51246, 51237, 51235, 51239, 51238, 51236, 51242, 51240, 51244, 51243, 51241, 0,
-                        51272, 51273, 51274, 51270, 51271, 51266, 51269, 51265, 51267, 51268, 51277, 51279, 51275, 51276, 51278, 0,
+                        51302, 51304, 51300, 51301, 51303, 0, 51290, 51292, 51294, 51291, 51293, 0, 51296, 51299, 51298, 51295, 51297, 0,
+                        51247, 51245, 51249, 51248, 51246, 0, 51237, 51235, 51239, 51238, 51236, 0, 51242, 51240, 51244, 51243, 51241, 0,
+                        51272, 51273, 51274, 51270, 51271, 0, 51266, 51269, 51265, 51267, 51268, 0, 51277, 51279, 51275, 51276, 51278, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        51208, 51231, 51205, 51234, 51206, 51233, 51209, 51230, 51207, 51232, 0,
+                        51178, 51261, 51175, 51264, 51176, 51263, 51179, 51260, 51177, 51262, 0, 51184, 51255, 51182, 51257, 51180, 51259, 51183, 51256, 51181, 51258, 0,
+                        51187, 51252, 51185, 51254, 51189, 51250, 51188, 51251, 51186, 51253, 0,
+                        51153, 51286, 51151, 51288, 51150, 51289, 51154, 51285, 51152, 51287, 0,
+                        51218, 51221, 51215, 51224, 51219, 51220, 51217, 51222, 51216, 51223, 0, 51212, 51227, 51210, 51229, 51214, 51225, 51213, 51226, 51211, 51228, 0,
+                        51133, 51306, 51130, 51309, 51134, 51305, 51132, 51307, 51131, 51308, 0, 51127, 51312, 51125, 51314, 51129, 51310, 51128, 51311, 51126, 51313, 0,
+                        51158, 51281, 51155, 51284, 51156, 51283, 51159, 51280, 51157, 51282, 0,
+                        51137, 51302, 51135, 51304, 51139, 51300, 51138, 51301, 51136, 51303, 0, 51149, 51290, 51147, 51292, 51145, 51294, 51148, 51291, 51146, 51293, 0, 51143, 51296, 51140, 51299, 51141, 51298, 51144, 51295, 51142, 51297, 0,
+                        51192, 51247, 51194, 51245, 51190, 51249, 51191, 51248, 51193, 51246, 0, 51202, 51237, 51204, 51235, 51200, 51239, 51201, 51238, 51203, 51236, 0, 51197, 51242, 51199, 51240, 51195, 51244, 51196, 51243, 51198, 51241, 0,
+                        51167, 51272, 51166, 51273, 51165, 51274, 51169, 51270, 51168, 51271, 0, 51173, 51266, 51170, 51269, 51174, 51265, 51172, 51267, 51171, 51268, 0, 51162, 51277, 51160, 51279, 51164, 51275, 51163, 51276, 51161, 51278, 0,
                     },
                 },
             },
         },
         
         -- The Ruby Sanctum
+        --[[
         [3080] = {
             Name = "The Ruby Sanctum 10",
             NameShort = "RS 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Halion",
                     Loot =
@@ -4247,28 +5979,50 @@ LootReserve.Data =
                 },
             },
         },
+        --]]
         [3081] = {
-            Name = "The Ruby Sanctum 10 Heroic",
-            NameShort = "RS 10 Heroic",
+            Name = "The Ruby Sanctum 10",
+            NameShort = "RS 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
+                { Name = "Halion", Header = true },
                 {
-                    Name = "Halion",
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        53118, 53114, 53117, 53113, 53119, 53112, 53121, 53111, 0,
+                        53115, 53103, 53116, 53110, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         54562, 54561, 54560, 54566, 54558, 54559, 54565, 54564, 0,
                         54556, 54557, 54563, 54567, 0,
                     },
                 },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        53118, 54562, 53114, 54561, 53117, 54560, 53113, 54566, 53119, 54558, 53112, 54559, 53121, 54565, 53111, 54564, 0,
+                        53115, 54556, 53103, 54557, 53116, 54563, 53110, 54567, 0,
+                    },
+                },
             },
         },
+        --[[
         [3082] = {
             Name = "The Ruby Sanctum 25",
             NameShort = "RS 25",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 {
                     Name = "Halion",
                     Loot =
@@ -4279,18 +6033,39 @@ LootReserve.Data =
                 },
             },
         },
+        --]]
         [3083] = {
-            Name = "The Ruby Sanctum 25 Heroic",
-            NameShort = "RS 25 Heroic",
+            Name = "The Ruby Sanctum 25",
+            NameShort = "RS 25",
             Expansion = 2,
             Children =
-            {
+            Squish{
+                { Name = "Halion", Header = true },
                 {
-                    Name = "Halion",
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        53486, 53134, 53126, 53488, 53127, 53125, 53487, 53129, 0,
+                        53489, 53132, 53490, 53133, 54572, 54573, 54571, 54569, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
                     Loot =
                     {
                         54582, 54584, 54580, 54587, 54577, 54578, 54586, 54579, 0,
                         54583, 54581, 54585, 54576, 54588, 54589, 54591, 54590, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        53486, 54582, 53134, 54584, 53126, 54580, 53488, 54587, 53127, 54577, 53125, 54578, 53487, 54586, 53129, 54579, 0,
+                        53489, 54583, 53132, 54581, 53490, 54585, 53133, 54576, 54572, 54588, 54573, 54589, 54571, 54591, 54569, 54590, 0,
                     },
                 },
             },
@@ -4302,10 +6077,11 @@ LootReserve.Data =
             NameShort = "VoA 10",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 { Name = "Archavon the Stone Watcher", Header = true },
                 {
-                    Name = " - PvE Sets",
+                    Name = "PvE Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         39497, 39500, 39498, 0,
@@ -4321,7 +6097,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvP Sets",
+                    Name = "PvP Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         42001, 42015, 42003, 0,
@@ -4339,7 +6116,8 @@ LootReserve.Data =
                 { Separator = true },
                 { Name = "Emalon the Storm Watcher", Header = true },
                 {
-                    Name = " - PvE Sets",
+                    Name = "PvE Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         45419, 45420, 0,
@@ -4357,7 +6135,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvP Sets",
+                    Name = "PvP Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         42016, 42004, 0,
@@ -4393,7 +6172,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvE Sets",
+                    Name = "PvE Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         -- Alliance
@@ -4422,7 +6202,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvP Sets",
+                    Name = "PvP Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         42017, 42005, 0,
@@ -4458,7 +6239,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvE Sets",
+                    Name = "PvE Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         50240, 50242, 0,
@@ -4474,7 +6256,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvP Sets",
+                    Name = "PvP Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         42018, 42006, 0,
@@ -4495,10 +6278,11 @@ LootReserve.Data =
             NameShort = "VoA 25",
             Expansion = 2,
             Children =
-            {
+            Squish{
                 { Name = "Archavon the Stone Watcher", Header = true },
                 {
-                    Name = " - PvE Sets",
+                    Name = "PvE Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         40423, 40420, 40422, 0,
@@ -4514,7 +6298,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvP Sets",
+                    Name = "PvP Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         41997, 42016, 42004, 0,
@@ -4532,7 +6317,8 @@ LootReserve.Data =
                 { Separator = true },
                 { Name = "Emalon the Storm Watcher", Header = true },
                 {
-                    Name = " - PvE Sets",
+                    Name = "PvE Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         46135, 46139, 0,
@@ -4548,7 +6334,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvP Sets",
+                    Name = "PvP Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         42017, 42005, 0,
@@ -4583,7 +6370,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvE Sets",
+                    Name = "PvE Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         -- Alliance
@@ -4612,7 +6400,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvP Sets",
+                    Name = "PvP Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         42018, 42006, 0,
@@ -4647,7 +6436,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvE Sets",
+                    Name = "PvE Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         51209, 51207, 0,
@@ -4663,7 +6453,8 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = " - PvP Sets",
+                    Name = "PvP Sets",
+                    IndentType = 1,
                     Loot =
                     {
                         51537, 51539, 0,
@@ -4738,8 +6529,9 @@ LootReserve.Data =
         [21138] = 8730,
     },
     TokenMap = {
-        Tokens  = { },
-        Rewards = { },
+        Tokens        = { },
+        Rewards       = { },
+        HeroicMirrors = { },
     },
 };
 
@@ -4762,7 +6554,7 @@ local function ApplyClassRestriction(itemID, classMask)
     end
 end
 
--- Faction restrictions on equipment should only apply in classic
+
 local function ApplyFactionRestriction(itemID, faction)
     if LootReserve.Data.ItemConditions[itemID] then
         LootReserve.Data.ItemConditions[itemID] = LootReserve:Deepcopy(LootReserve.Data.ItemConditions[itemID]);
@@ -4874,10 +6666,10 @@ do
     
     
     -- Karazhan trash
-    HideItem(23857);
-    HideItem(23864);
-    HideItem(23862);
-    HideItem(23865);
+    -- HideItem(23857);
+    -- HideItem(23864);
+    -- HideItem(23862);
+    -- HideItem(23865);
     HideItem(21882);
     
     -- Magtheridon's gem bag
@@ -4886,7 +6678,7 @@ do
     -- Ashes of A'lar
     HideItem(32458);
     
-    -- Trade items
+    -- TBC Trade items
     HideItem(32897);
     HideItem(32428);
     HideItem(34664);
@@ -4895,7 +6687,7 @@ do
     HideItem(32837);
     HideItem(32838);
     
-    -- Trash gems
+    -- TBC Trash gems
     HideItem(32228);
     HideItem(32231);
     HideItem(32229);
@@ -4905,11 +6697,10 @@ do
     
     -- Zul'Aman trash
     HideItem(33865);
-    HideItem(33930);
-    HideItem(33932);
-    HideItem(33931);
-    HideItem(33933);
-    HideItem(33993);
+    -- HideItem(33930);
+    -- HideItem(33932);
+    -- HideItem(33931);
+    -- HideItem(33933);
     
     -- Thoridal
     HideItem(34334);
@@ -4930,37 +6721,1219 @@ do
     
     -- Shadowfrost Shard
     HideItem(50274);
-    
 end
 
 
 -- Class Restricted Items
-
--- Atiesh splinters should have a class mask since they cannot be traded
-ApplyClassRestriction(22726, 1424);
-
--- Hand of Rag items
-ApplyClassRestriction(17204, 1091);
-ApplyClassRestriction(17203, 1091);
-
--- Shadowfrost Shards should have a class mask since they cannot be traded
-ApplyClassRestriction(50274, 35);
-
+do
+    -- Atiesh splinters should have a class mask since they cannot be traded
+    ApplyClassRestriction(22726, 1424);
+    
+    -- Hand of Rag items
+    ApplyClassRestriction(17204, 1091);
+    ApplyClassRestriction(17203, 1091);
+    
+    -- Shadowfrost Shards should have a class mask since they cannot be traded
+    ApplyClassRestriction(50274, 35);
+end
 
 
 -- Faction Restricted Items
+do
+    -- Head of Onyxia
+    ApplyFactionRestriction(18422, "Horde");
+    ApplyFactionRestriction(18423, "Alliance");
+    
+    -- Head of Nefarian
+    ApplyFactionRestriction(19002, "Horde");
+    ApplyFactionRestriction(19003, "Alliance");
+    
+    -- Magtheridon's Head
+    ApplyFactionRestriction(32385, "Alliance");
+    ApplyFactionRestriction(32386, "Horde");
+    
+    
+    
+    -- ToC Sets
+    -- Normal
+    ApplyFactionRestriction(47778, "Alliance")
+    ApplyFactionRestriction(47781, "Alliance")
+    ApplyFactionRestriction(47779, "Alliance")
+    ApplyFactionRestriction(47782, "Alliance")
+    ApplyFactionRestriction(47780, "Alliance")
+    ApplyFactionRestriction(47984, "Alliance")
+    ApplyFactionRestriction(47987, "Alliance")
+    ApplyFactionRestriction(47986, "Alliance")
+    ApplyFactionRestriction(47983, "Alliance")
+    ApplyFactionRestriction(47985, "Alliance")
+    ApplyFactionRestriction(48078, "Alliance")
+    ApplyFactionRestriction(48081, "Alliance")
+    ApplyFactionRestriction(48080, "Alliance")
+    ApplyFactionRestriction(48077, "Alliance")
+    ApplyFactionRestriction(48079, "Alliance")
+    ApplyFactionRestriction(48225, "Alliance")
+    ApplyFactionRestriction(48227, "Alliance")
+    ApplyFactionRestriction(48223, "Alliance")
+    ApplyFactionRestriction(48224, "Alliance")
+    ApplyFactionRestriction(48226, "Alliance")
+    ApplyFactionRestriction(48257, "Alliance")
+    ApplyFactionRestriction(48259, "Alliance")
+    ApplyFactionRestriction(48255, "Alliance")
+    ApplyFactionRestriction(48256, "Alliance")
+    ApplyFactionRestriction(48258, "Alliance")
+    ApplyFactionRestriction(48430, "Alliance")
+    ApplyFactionRestriction(48454, "Alliance")
+    ApplyFactionRestriction(48450, "Alliance")
+    ApplyFactionRestriction(48452, "Alliance")
+    ApplyFactionRestriction(48446, "Alliance")
+    ApplyFactionRestriction(48378, "Alliance")
+    ApplyFactionRestriction(48380, "Alliance")
+    ApplyFactionRestriction(48376, "Alliance")
+    ApplyFactionRestriction(48377, "Alliance")
+    ApplyFactionRestriction(48379, "Alliance")
+    ApplyFactionRestriction(48540, "Alliance")
+    ApplyFactionRestriction(48542, "Alliance")
+    ApplyFactionRestriction(48538, "Alliance")
+    ApplyFactionRestriction(48539, "Alliance")
+    ApplyFactionRestriction(48541, "Alliance")
+    ApplyFactionRestriction(48483, "Alliance")
+    ApplyFactionRestriction(48485, "Alliance")
+    ApplyFactionRestriction(48481, "Alliance")
+    ApplyFactionRestriction(48482, "Alliance")
+    ApplyFactionRestriction(48484, "Alliance")
+    ApplyFactionRestriction(47754, "Alliance")
+    ApplyFactionRestriction(47757, "Alliance")
+    ApplyFactionRestriction(47756, "Alliance")
+    ApplyFactionRestriction(47753, "Alliance")
+    ApplyFactionRestriction(47755, "Alliance")
+    ApplyFactionRestriction(48134, "Alliance")
+    ApplyFactionRestriction(48137, "Alliance")
+    ApplyFactionRestriction(48136, "Alliance")
+    ApplyFactionRestriction(48133, "Alliance")
+    ApplyFactionRestriction(48135, "Alliance")
+    ApplyFactionRestriction(48164, "Alliance")
+    ApplyFactionRestriction(48167, "Alliance")
+    ApplyFactionRestriction(48166, "Alliance")
+    ApplyFactionRestriction(48163, "Alliance")
+    ApplyFactionRestriction(48165, "Alliance")
+    ApplyFactionRestriction(48211, "Alliance")
+    ApplyFactionRestriction(48208, "Alliance")
+    ApplyFactionRestriction(48209, "Alliance")
+    ApplyFactionRestriction(48212, "Alliance")
+    ApplyFactionRestriction(48210, "Alliance")
+    ApplyFactionRestriction(48287, "Alliance")
+    ApplyFactionRestriction(48289, "Alliance")
+    ApplyFactionRestriction(48285, "Alliance")
+    ApplyFactionRestriction(48286, "Alliance")
+    ApplyFactionRestriction(48288, "Alliance")
+    ApplyFactionRestriction(48318, "Alliance")
+    ApplyFactionRestriction(48320, "Alliance")
+    ApplyFactionRestriction(48316, "Alliance")
+    ApplyFactionRestriction(48317, "Alliance")
+    ApplyFactionRestriction(48319, "Alliance")
+    ApplyFactionRestriction(48348, "Alliance")
+    ApplyFactionRestriction(48350, "Alliance")
+    ApplyFactionRestriction(48346, "Alliance")
+    ApplyFactionRestriction(48347, "Alliance")
+    ApplyFactionRestriction(48349, "Alliance")
+    ApplyFactionRestriction(48577, "Alliance")
+    ApplyFactionRestriction(48579, "Alliance")
+    ApplyFactionRestriction(48575, "Alliance")
+    ApplyFactionRestriction(48576, "Alliance")
+    ApplyFactionRestriction(48578, "Alliance")
+    ApplyFactionRestriction(48639, "Alliance")
+    ApplyFactionRestriction(48637, "Alliance")
+    ApplyFactionRestriction(48641, "Alliance")
+    ApplyFactionRestriction(48640, "Alliance")
+    ApplyFactionRestriction(48638, "Alliance")
+    ApplyFactionRestriction(48609, "Alliance")
+    ApplyFactionRestriction(48611, "Alliance")
+    ApplyFactionRestriction(48607, "Alliance")
+    ApplyFactionRestriction(48608, "Alliance")
+    ApplyFactionRestriction(48610, "Alliance")
+    
+    ApplyFactionRestriction(47804, "Horde")
+    ApplyFactionRestriction(47807, "Horde")
+    ApplyFactionRestriction(47806, "Horde")
+    ApplyFactionRestriction(47803, "Horde")
+    ApplyFactionRestriction(47805, "Horde")
+    ApplyFactionRestriction(48065, "Horde")
+    ApplyFactionRestriction(48062, "Horde")
+    ApplyFactionRestriction(48063, "Horde")
+    ApplyFactionRestriction(48066, "Horde")
+    ApplyFactionRestriction(48064, "Horde")
+    ApplyFactionRestriction(48095, "Horde")
+    ApplyFactionRestriction(48092, "Horde")
+    ApplyFactionRestriction(48093, "Horde")
+    ApplyFactionRestriction(48096, "Horde")
+    ApplyFactionRestriction(48094, "Horde")
+    ApplyFactionRestriction(48240, "Horde")
+    ApplyFactionRestriction(48238, "Horde")
+    ApplyFactionRestriction(48242, "Horde")
+    ApplyFactionRestriction(48241, "Horde")
+    ApplyFactionRestriction(48239, "Horde")
+    ApplyFactionRestriction(48272, "Horde")
+    ApplyFactionRestriction(48270, "Horde")
+    ApplyFactionRestriction(48274, "Horde")
+    ApplyFactionRestriction(48273, "Horde")
+    ApplyFactionRestriction(48271, "Horde")
+    ApplyFactionRestriction(48463, "Horde")
+    ApplyFactionRestriction(48465, "Horde")
+    ApplyFactionRestriction(48461, "Horde")
+    ApplyFactionRestriction(48462, "Horde")
+    ApplyFactionRestriction(48464, "Horde")
+    ApplyFactionRestriction(48393, "Horde")
+    ApplyFactionRestriction(48395, "Horde")
+    ApplyFactionRestriction(48391, "Horde")
+    ApplyFactionRestriction(48392, "Horde")
+    ApplyFactionRestriction(48394, "Horde")
+    ApplyFactionRestriction(48555, "Horde")
+    ApplyFactionRestriction(48553, "Horde")
+    ApplyFactionRestriction(48557, "Horde")
+    ApplyFactionRestriction(48556, "Horde")
+    ApplyFactionRestriction(48554, "Horde")
+    ApplyFactionRestriction(48498, "Horde")
+    ApplyFactionRestriction(48496, "Horde")
+    ApplyFactionRestriction(48500, "Horde")
+    ApplyFactionRestriction(48499, "Horde")
+    ApplyFactionRestriction(48497, "Horde")
+    ApplyFactionRestriction(47771, "Horde")
+    ApplyFactionRestriction(47768, "Horde")
+    ApplyFactionRestriction(47769, "Horde")
+    ApplyFactionRestriction(47772, "Horde")
+    ApplyFactionRestriction(47770, "Horde")
+    ApplyFactionRestriction(48151, "Horde")
+    ApplyFactionRestriction(48148, "Horde")
+    ApplyFactionRestriction(48149, "Horde")
+    ApplyFactionRestriction(48152, "Horde")
+    ApplyFactionRestriction(48150, "Horde")
+    ApplyFactionRestriction(48181, "Horde")
+    ApplyFactionRestriction(48178, "Horde")
+    ApplyFactionRestriction(48179, "Horde")
+    ApplyFactionRestriction(48182, "Horde")
+    ApplyFactionRestriction(48180, "Horde")
+    ApplyFactionRestriction(48194, "Horde")
+    ApplyFactionRestriction(48197, "Horde")
+    ApplyFactionRestriction(48196, "Horde")
+    ApplyFactionRestriction(48193, "Horde")
+    ApplyFactionRestriction(48195, "Horde")
+    ApplyFactionRestriction(48302, "Horde")
+    ApplyFactionRestriction(48304, "Horde")
+    ApplyFactionRestriction(48300, "Horde")
+    ApplyFactionRestriction(48301, "Horde")
+    ApplyFactionRestriction(48303, "Horde")
+    ApplyFactionRestriction(48333, "Horde")
+    ApplyFactionRestriction(48331, "Horde")
+    ApplyFactionRestriction(48335, "Horde")
+    ApplyFactionRestriction(48334, "Horde")
+    ApplyFactionRestriction(48332, "Horde")
+    ApplyFactionRestriction(48363, "Horde")
+    ApplyFactionRestriction(48361, "Horde")
+    ApplyFactionRestriction(48365, "Horde")
+    ApplyFactionRestriction(48364, "Horde")
+    ApplyFactionRestriction(48362, "Horde")
+    ApplyFactionRestriction(48592, "Horde")
+    ApplyFactionRestriction(48590, "Horde")
+    ApplyFactionRestriction(48594, "Horde")
+    ApplyFactionRestriction(48593, "Horde")
+    ApplyFactionRestriction(48591, "Horde")
+    ApplyFactionRestriction(48659, "Horde")
+    ApplyFactionRestriction(48661, "Horde")
+    ApplyFactionRestriction(48657, "Horde")
+    ApplyFactionRestriction(48658, "Horde")
+    ApplyFactionRestriction(48660, "Horde")
+    ApplyFactionRestriction(48624, "Horde")
+    ApplyFactionRestriction(48622, "Horde")
+    ApplyFactionRestriction(48626, "Horde")
+    ApplyFactionRestriction(48625, "Horde")
+    ApplyFactionRestriction(48623, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(47789, "Alliance")
+    ApplyFactionRestriction(47792, "Alliance")
+    ApplyFactionRestriction(47791, "Alliance")
+    ApplyFactionRestriction(47788, "Alliance")
+    ApplyFactionRestriction(47790, "Alliance")
+    ApplyFactionRestriction(48035, "Alliance")
+    ApplyFactionRestriction(48029, "Alliance")
+    ApplyFactionRestriction(48031, "Alliance")
+    ApplyFactionRestriction(48037, "Alliance")
+    ApplyFactionRestriction(48033, "Alliance")
+    ApplyFactionRestriction(48085, "Alliance")
+    ApplyFactionRestriction(48082, "Alliance")
+    ApplyFactionRestriction(48083, "Alliance")
+    ApplyFactionRestriction(48086, "Alliance")
+    ApplyFactionRestriction(48084, "Alliance")
+    ApplyFactionRestriction(48230, "Alliance")
+    ApplyFactionRestriction(48228, "Alliance")
+    ApplyFactionRestriction(48232, "Alliance")
+    ApplyFactionRestriction(48231, "Alliance")
+    ApplyFactionRestriction(48229, "Alliance")
+    ApplyFactionRestriction(48262, "Alliance")
+    ApplyFactionRestriction(48260, "Alliance")
+    ApplyFactionRestriction(48264, "Alliance")
+    ApplyFactionRestriction(48263, "Alliance")
+    ApplyFactionRestriction(48261, "Alliance")
+    ApplyFactionRestriction(48433, "Alliance")
+    ApplyFactionRestriction(48455, "Alliance")
+    ApplyFactionRestriction(48451, "Alliance")
+    ApplyFactionRestriction(48453, "Alliance")
+    ApplyFactionRestriction(48447, "Alliance")
+    ApplyFactionRestriction(48383, "Alliance")
+    ApplyFactionRestriction(48381, "Alliance")
+    ApplyFactionRestriction(48385, "Alliance")
+    ApplyFactionRestriction(48384, "Alliance")
+    ApplyFactionRestriction(48382, "Alliance")
+    ApplyFactionRestriction(48545, "Alliance")
+    ApplyFactionRestriction(48543, "Alliance")
+    ApplyFactionRestriction(48547, "Alliance")
+    ApplyFactionRestriction(48546, "Alliance")
+    ApplyFactionRestriction(48544, "Alliance")
+    ApplyFactionRestriction(48488, "Alliance")
+    ApplyFactionRestriction(48486, "Alliance")
+    ApplyFactionRestriction(48490, "Alliance")
+    ApplyFactionRestriction(48489, "Alliance")
+    ApplyFactionRestriction(48487, "Alliance")
+    ApplyFactionRestriction(47761, "Alliance")
+    ApplyFactionRestriction(47758, "Alliance")
+    ApplyFactionRestriction(47759, "Alliance")
+    ApplyFactionRestriction(47762, "Alliance")
+    ApplyFactionRestriction(47760, "Alliance")
+    ApplyFactionRestriction(48141, "Alliance")
+    ApplyFactionRestriction(48138, "Alliance")
+    ApplyFactionRestriction(48139, "Alliance")
+    ApplyFactionRestriction(48142, "Alliance")
+    ApplyFactionRestriction(48140, "Alliance")
+    ApplyFactionRestriction(48171, "Alliance")
+    ApplyFactionRestriction(48168, "Alliance")
+    ApplyFactionRestriction(48169, "Alliance")
+    ApplyFactionRestriction(48172, "Alliance")
+    ApplyFactionRestriction(48170, "Alliance")
+    ApplyFactionRestriction(48204, "Alliance")
+    ApplyFactionRestriction(48207, "Alliance")
+    ApplyFactionRestriction(48206, "Alliance")
+    ApplyFactionRestriction(48203, "Alliance")
+    ApplyFactionRestriction(48205, "Alliance")
+    ApplyFactionRestriction(48292, "Alliance")
+    ApplyFactionRestriction(48290, "Alliance")
+    ApplyFactionRestriction(48294, "Alliance")
+    ApplyFactionRestriction(48293, "Alliance")
+    ApplyFactionRestriction(48291, "Alliance")
+    ApplyFactionRestriction(48323, "Alliance")
+    ApplyFactionRestriction(48321, "Alliance")
+    ApplyFactionRestriction(48325, "Alliance")
+    ApplyFactionRestriction(48324, "Alliance")
+    ApplyFactionRestriction(48322, "Alliance")
+    ApplyFactionRestriction(48353, "Alliance")
+    ApplyFactionRestriction(48351, "Alliance")
+    ApplyFactionRestriction(48355, "Alliance")
+    ApplyFactionRestriction(48354, "Alliance")
+    ApplyFactionRestriction(48352, "Alliance")
+    ApplyFactionRestriction(48582, "Alliance")
+    ApplyFactionRestriction(48580, "Alliance")
+    ApplyFactionRestriction(48584, "Alliance")
+    ApplyFactionRestriction(48583, "Alliance")
+    ApplyFactionRestriction(48581, "Alliance")
+    ApplyFactionRestriction(48644, "Alliance")
+    ApplyFactionRestriction(48646, "Alliance")
+    ApplyFactionRestriction(48642, "Alliance")
+    ApplyFactionRestriction(48643, "Alliance")
+    ApplyFactionRestriction(48645, "Alliance")
+    ApplyFactionRestriction(48614, "Alliance")
+    ApplyFactionRestriction(48612, "Alliance")
+    ApplyFactionRestriction(48616, "Alliance")
+    ApplyFactionRestriction(48615, "Alliance")
+    ApplyFactionRestriction(48613, "Alliance")
+    
+    ApplyFactionRestriction(47796, "Horde")
+    ApplyFactionRestriction(47793, "Horde")
+    ApplyFactionRestriction(47794, "Horde")
+    ApplyFactionRestriction(47797, "Horde")
+    ApplyFactionRestriction(47795, "Horde")
+    ApplyFactionRestriction(48058, "Horde")
+    ApplyFactionRestriction(48061, "Horde")
+    ApplyFactionRestriction(48060, "Horde")
+    ApplyFactionRestriction(48057, "Horde")
+    ApplyFactionRestriction(48059, "Horde")
+    ApplyFactionRestriction(48088, "Horde")
+    ApplyFactionRestriction(48091, "Horde")
+    ApplyFactionRestriction(48090, "Horde")
+    ApplyFactionRestriction(48087, "Horde")
+    ApplyFactionRestriction(48089, "Horde")
+    ApplyFactionRestriction(48235, "Horde")
+    ApplyFactionRestriction(48237, "Horde")
+    ApplyFactionRestriction(48233, "Horde")
+    ApplyFactionRestriction(48234, "Horde")
+    ApplyFactionRestriction(48236, "Horde")
+    ApplyFactionRestriction(48267, "Horde")
+    ApplyFactionRestriction(48269, "Horde")
+    ApplyFactionRestriction(48265, "Horde")
+    ApplyFactionRestriction(48266, "Horde")
+    ApplyFactionRestriction(48268, "Horde")
+    ApplyFactionRestriction(48468, "Horde")
+    ApplyFactionRestriction(48470, "Horde")
+    ApplyFactionRestriction(48466, "Horde")
+    ApplyFactionRestriction(48467, "Horde")
+    ApplyFactionRestriction(48469, "Horde")
+    ApplyFactionRestriction(48398, "Horde")
+    ApplyFactionRestriction(48400, "Horde")
+    ApplyFactionRestriction(48396, "Horde")
+    ApplyFactionRestriction(48397, "Horde")
+    ApplyFactionRestriction(48399, "Horde")
+    ApplyFactionRestriction(48550, "Horde")
+    ApplyFactionRestriction(48552, "Horde")
+    ApplyFactionRestriction(48548, "Horde")
+    ApplyFactionRestriction(48549, "Horde")
+    ApplyFactionRestriction(48551, "Horde")
+    ApplyFactionRestriction(48493, "Horde")
+    ApplyFactionRestriction(48495, "Horde")
+    ApplyFactionRestriction(48491, "Horde")
+    ApplyFactionRestriction(48492, "Horde")
+    ApplyFactionRestriction(48494, "Horde")
+    ApplyFactionRestriction(47764, "Horde")
+    ApplyFactionRestriction(47767, "Horde")
+    ApplyFactionRestriction(47766, "Horde")
+    ApplyFactionRestriction(47763, "Horde")
+    ApplyFactionRestriction(47765, "Horde")
+    ApplyFactionRestriction(48144, "Horde")
+    ApplyFactionRestriction(48147, "Horde")
+    ApplyFactionRestriction(48146, "Horde")
+    ApplyFactionRestriction(48143, "Horde")
+    ApplyFactionRestriction(48145, "Horde")
+    ApplyFactionRestriction(48174, "Horde")
+    ApplyFactionRestriction(48177, "Horde")
+    ApplyFactionRestriction(48176, "Horde")
+    ApplyFactionRestriction(48173, "Horde")
+    ApplyFactionRestriction(48175, "Horde")
+    ApplyFactionRestriction(48201, "Horde")
+    ApplyFactionRestriction(48198, "Horde")
+    ApplyFactionRestriction(48199, "Horde")
+    ApplyFactionRestriction(48202, "Horde")
+    ApplyFactionRestriction(48200, "Horde")
+    ApplyFactionRestriction(48307, "Horde")
+    ApplyFactionRestriction(48309, "Horde")
+    ApplyFactionRestriction(48305, "Horde")
+    ApplyFactionRestriction(48306, "Horde")
+    ApplyFactionRestriction(48308, "Horde")
+    ApplyFactionRestriction(48328, "Horde")
+    ApplyFactionRestriction(48330, "Horde")
+    ApplyFactionRestriction(48326, "Horde")
+    ApplyFactionRestriction(48327, "Horde")
+    ApplyFactionRestriction(48329, "Horde")
+    ApplyFactionRestriction(48358, "Horde")
+    ApplyFactionRestriction(48360, "Horde")
+    ApplyFactionRestriction(48356, "Horde")
+    ApplyFactionRestriction(48357, "Horde")
+    ApplyFactionRestriction(48359, "Horde")
+    ApplyFactionRestriction(48587, "Horde")
+    ApplyFactionRestriction(48585, "Horde")
+    ApplyFactionRestriction(48589, "Horde")
+    ApplyFactionRestriction(48588, "Horde")
+    ApplyFactionRestriction(48586, "Horde")
+    ApplyFactionRestriction(48649, "Horde")
+    ApplyFactionRestriction(48647, "Horde")
+    ApplyFactionRestriction(48651, "Horde")
+    ApplyFactionRestriction(48650, "Horde")
+    ApplyFactionRestriction(48648, "Horde")
+    ApplyFactionRestriction(48619, "Horde")
+    ApplyFactionRestriction(48621, "Horde")
+    ApplyFactionRestriction(48617, "Horde")
+    ApplyFactionRestriction(48618, "Horde")
+    ApplyFactionRestriction(48620, "Horde")
+    
+    -- ToC Patterns
+    ApplyFactionRestriction(47654, "Alliance")
+    ApplyFactionRestriction(47655, "Alliance")
+    ApplyFactionRestriction(47656, "Alliance")
+    ApplyFactionRestriction(47657, "Alliance")
+    ApplyFactionRestriction(47629, "Alliance")
+    ApplyFactionRestriction(47635, "Alliance")
+    ApplyFactionRestriction(47631, "Alliance")
+    ApplyFactionRestriction(47630, "Alliance")
+    ApplyFactionRestriction(47628, "Alliance")
+    ApplyFactionRestriction(47634, "Alliance")
+    ApplyFactionRestriction(47632, "Alliance")
+    ApplyFactionRestriction(47633, "Alliance")
+    ApplyFactionRestriction(47622, "Alliance")
+    ApplyFactionRestriction(47623, "Alliance")
+    ApplyFactionRestriction(47627, "Alliance")
+    ApplyFactionRestriction(47626, "Alliance")
+    ApplyFactionRestriction(47624, "Alliance")
+    ApplyFactionRestriction(47625, "Alliance")
+    
+    ApplyFactionRestriction(47639, "Horde")
+    ApplyFactionRestriction(47638, "Horde")
+    ApplyFactionRestriction(47637, "Horde")
+    ApplyFactionRestriction(47636, "Horde")
+    ApplyFactionRestriction(47646, "Horde")
+    ApplyFactionRestriction(47647, "Horde")
+    ApplyFactionRestriction(47648, "Horde")
+    ApplyFactionRestriction(47649, "Horde")
+    ApplyFactionRestriction(47650, "Horde")
+    ApplyFactionRestriction(47651, "Horde")
+    ApplyFactionRestriction(47652, "Horde")
+    ApplyFactionRestriction(47653, "Horde")
+    ApplyFactionRestriction(47640, "Horde")
+    ApplyFactionRestriction(47641, "Horde")
+    ApplyFactionRestriction(47642, "Horde")
+    ApplyFactionRestriction(47643, "Horde")
+    ApplyFactionRestriction(47644, "Horde")
+    ApplyFactionRestriction(47645, "Horde")
+    
+    -- ToC 10 Alliance
+    
+    -- The Beasts of Northrend
+    -- Normal
+    ApplyFactionRestriction(47617, "Alliance")
+    ApplyFactionRestriction(47613, "Alliance")
+    ApplyFactionRestriction(47608, "Alliance")
+    ApplyFactionRestriction(47616, "Alliance")
+    ApplyFactionRestriction(47610, "Alliance")
+    ApplyFactionRestriction(47611, "Alliance")
+    ApplyFactionRestriction(47609, "Alliance")
+    ApplyFactionRestriction(47615, "Alliance")
+    ApplyFactionRestriction(47614, "Alliance")
+    ApplyFactionRestriction(47607, "Alliance")
+    ApplyFactionRestriction(47578, "Alliance")
+    ApplyFactionRestriction(47612, "Alliance")
+    
+    -- Heroic
+    ApplyFactionRestriction(47921, "Alliance")
+    ApplyFactionRestriction(47923, "Alliance")
+    ApplyFactionRestriction(47919, "Alliance")
+    ApplyFactionRestriction(47926, "Alliance")
+    ApplyFactionRestriction(47916, "Alliance")
+    ApplyFactionRestriction(47918, "Alliance")
+    ApplyFactionRestriction(47917, "Alliance")
+    ApplyFactionRestriction(47924, "Alliance")
+    ApplyFactionRestriction(47925, "Alliance")
+    ApplyFactionRestriction(47915, "Alliance")
+    ApplyFactionRestriction(47920, "Alliance")
+    ApplyFactionRestriction(47922, "Alliance")
+    
+    -- Lord Jaraxxus
+    -- Normal
+    ApplyFactionRestriction(47663, "Alliance")
+    ApplyFactionRestriction(47620, "Alliance")
+    ApplyFactionRestriction(47669, "Alliance")
+    ApplyFactionRestriction(47621, "Alliance")
+    ApplyFactionRestriction(49235, "Alliance")
+    ApplyFactionRestriction(47683, "Alliance")
+    ApplyFactionRestriction(47680, "Alliance")
+    ApplyFactionRestriction(47711, "Alliance")
+    ApplyFactionRestriction(47619, "Alliance")
+    ApplyFactionRestriction(47679, "Alliance")
+    ApplyFactionRestriction(47618, "Alliance")
+    ApplyFactionRestriction(47703, "Alliance")
+    ApplyFactionRestriction(47676, "Alliance")
+    
+    -- Heroic
+    ApplyFactionRestriction(47927, "Alliance")
+    ApplyFactionRestriction(47931, "Alliance")
+    ApplyFactionRestriction(47929, "Alliance")
+    ApplyFactionRestriction(47932, "Alliance")
+    ApplyFactionRestriction(49238, "Alliance")
+    ApplyFactionRestriction(47933, "Alliance")
+    ApplyFactionRestriction(47935, "Alliance")
+    ApplyFactionRestriction(47937, "Alliance")
+    ApplyFactionRestriction(47930, "Alliance")
+    ApplyFactionRestriction(47939, "Alliance")
+    ApplyFactionRestriction(47928, "Alliance")
+    ApplyFactionRestriction(47934, "Alliance")
+    ApplyFactionRestriction(47938, "Alliance")
+    
+    -- Faction Champions
+    -- Normal
+    ApplyFactionRestriction(47721, "Alliance")
+    ApplyFactionRestriction(47719, "Alliance")
+    ApplyFactionRestriction(47718, "Alliance")
+    ApplyFactionRestriction(47717, "Alliance")
+    ApplyFactionRestriction(47720, "Alliance")
+    ApplyFactionRestriction(47728, "Alliance")
+    ApplyFactionRestriction(47727, "Alliance")
+    ApplyFactionRestriction(47726, "Alliance")
+    ApplyFactionRestriction(47725, "Alliance")
+    ApplyFactionRestriction(47724, "Alliance")
+    
+    -- Heroic
+    ApplyFactionRestriction(47940, "Alliance")
+    ApplyFactionRestriction(47945, "Alliance")
+    ApplyFactionRestriction(47942, "Alliance")
+    ApplyFactionRestriction(47943, "Alliance")
+    ApplyFactionRestriction(47944, "Alliance")
+    ApplyFactionRestriction(47947, "Alliance")
+    ApplyFactionRestriction(47949, "Alliance")
+    ApplyFactionRestriction(47946, "Alliance")
+    ApplyFactionRestriction(47948, "Alliance")
+    ApplyFactionRestriction(47941, "Alliance")
+    
+    -- The Twin Val'kyr
+    -- Normal
+    ApplyFactionRestriction(47745, "Alliance")
+    ApplyFactionRestriction(49231, "Alliance")
+    ApplyFactionRestriction(47746, "Alliance")
+    ApplyFactionRestriction(47739, "Alliance")
+    ApplyFactionRestriction(47744, "Alliance")
+    ApplyFactionRestriction(47738, "Alliance")
+    ApplyFactionRestriction(47747, "Alliance")
+    ApplyFactionRestriction(47700, "Alliance")
+    ApplyFactionRestriction(47742, "Alliance")
+    ApplyFactionRestriction(47736, "Alliance")
+    ApplyFactionRestriction(47737, "Alliance")
+    ApplyFactionRestriction(47743, "Alliance")
+    ApplyFactionRestriction(47740, "Alliance")
+    
+    -- Heroic
+    ApplyFactionRestriction(47956, "Alliance")
+    ApplyFactionRestriction(49234, "Alliance")
+    ApplyFactionRestriction(47959, "Alliance")
+    ApplyFactionRestriction(47954, "Alliance")
+    ApplyFactionRestriction(47961, "Alliance")
+    ApplyFactionRestriction(47952, "Alliance")
+    ApplyFactionRestriction(47957, "Alliance")
+    ApplyFactionRestriction(47955, "Alliance")
+    ApplyFactionRestriction(47958, "Alliance")
+    ApplyFactionRestriction(47953, "Alliance")
+    ApplyFactionRestriction(47951, "Alliance")
+    ApplyFactionRestriction(47960, "Alliance")
+    ApplyFactionRestriction(47950, "Alliance")
+    
+    -- Anub'arak
+    -- Normal
+    ApplyFactionRestriction(47838, "Alliance")
+    ApplyFactionRestriction(47837, "Alliance")
+    ApplyFactionRestriction(47832, "Alliance")
+    ApplyFactionRestriction(47813, "Alliance")
+    ApplyFactionRestriction(47829, "Alliance")
+    ApplyFactionRestriction(47811, "Alliance")
+    ApplyFactionRestriction(47836, "Alliance")
+    ApplyFactionRestriction(47830, "Alliance")
+    ApplyFactionRestriction(47810, "Alliance")
+    ApplyFactionRestriction(47814, "Alliance")
+    ApplyFactionRestriction(47808, "Alliance")
+    ApplyFactionRestriction(47809, "Alliance")
+    ApplyFactionRestriction(47816, "Alliance")
+    ApplyFactionRestriction(47834, "Alliance")
+    ApplyFactionRestriction(47815, "Alliance")
+    ApplyFactionRestriction(47835, "Alliance")
+    ApplyFactionRestriction(47812, "Alliance")
+    ApplyFactionRestriction(47741, "Alliance")
+    
+    -- Heroic
+    ApplyFactionRestriction(47974, "Alliance")
+    ApplyFactionRestriction(47977, "Alliance")
+    ApplyFactionRestriction(47972, "Alliance")
+    ApplyFactionRestriction(47965, "Alliance")
+    ApplyFactionRestriction(47969, "Alliance")
+    ApplyFactionRestriction(47964, "Alliance")
+    ApplyFactionRestriction(47976, "Alliance")
+    ApplyFactionRestriction(47970, "Alliance")
+    ApplyFactionRestriction(47967, "Alliance")
+    ApplyFactionRestriction(47971, "Alliance")
+    ApplyFactionRestriction(47966, "Alliance")
+    ApplyFactionRestriction(47962, "Alliance")
+    ApplyFactionRestriction(47973, "Alliance")
+    ApplyFactionRestriction(47979, "Alliance")
+    ApplyFactionRestriction(47968, "Alliance")
+    ApplyFactionRestriction(47978, "Alliance")
+    ApplyFactionRestriction(47963, "Alliance")
+    ApplyFactionRestriction(47975, "Alliance")
+    
+    -- Tribute Chest
+    ApplyFactionRestriction(48712, "Alliance")
+    ApplyFactionRestriction(48714, "Alliance")
+    ApplyFactionRestriction(48709, "Alliance")
+    ApplyFactionRestriction(48708, "Alliance")
+    ApplyFactionRestriction(48710, "Alliance")
+    ApplyFactionRestriction(48713, "Alliance")
+    ApplyFactionRestriction(48711, "Alliance")
+    ApplyFactionRestriction(49044, "Alliance")
+    ApplyFactionRestriction(48671, "Alliance")
+    ApplyFactionRestriction(48672, "Alliance")
+    ApplyFactionRestriction(48674, "Alliance")
+    ApplyFactionRestriction(48673, "Alliance")
+    ApplyFactionRestriction(48675, "Alliance")
+    
+    -- ToC 10 Horde
+    
+    -- The Beasts of Northrend
+    -- Normal
+    ApplyFactionRestriction(47855, "Horde")
+    ApplyFactionRestriction(47857, "Horde")
+    ApplyFactionRestriction(47853, "Horde")
+    ApplyFactionRestriction(47860, "Horde")
+    ApplyFactionRestriction(47850, "Horde")
+    ApplyFactionRestriction(47852, "Horde")
+    ApplyFactionRestriction(47851, "Horde")
+    ApplyFactionRestriction(47859, "Horde")
+    ApplyFactionRestriction(47858, "Horde")
+    ApplyFactionRestriction(47849, "Horde")
+    ApplyFactionRestriction(47854, "Horde")
+    ApplyFactionRestriction(47856, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(47994, "Horde")
+    ApplyFactionRestriction(47996, "Horde")
+    ApplyFactionRestriction(47992, "Horde")
+    ApplyFactionRestriction(47999, "Horde")
+    ApplyFactionRestriction(47989, "Horde")
+    ApplyFactionRestriction(47991, "Horde")
+    ApplyFactionRestriction(47990, "Horde")
+    ApplyFactionRestriction(47998, "Horde")
+    ApplyFactionRestriction(47997, "Horde")
+    ApplyFactionRestriction(47988, "Horde")
+    ApplyFactionRestriction(47993, "Horde")
+    ApplyFactionRestriction(47995, "Horde")
+    
+    -- Lord Jaraxxus
+    -- Normal
+    ApplyFactionRestriction(47861, "Horde")
+    ApplyFactionRestriction(47865, "Horde")
+    ApplyFactionRestriction(47863, "Horde")
+    ApplyFactionRestriction(47866, "Horde")
+    ApplyFactionRestriction(49236, "Horde")
+    ApplyFactionRestriction(47867, "Horde")
+    ApplyFactionRestriction(47869, "Horde")
+    ApplyFactionRestriction(47870, "Horde")
+    ApplyFactionRestriction(47872, "Horde")
+    ApplyFactionRestriction(47864, "Horde")
+    ApplyFactionRestriction(47862, "Horde")
+    ApplyFactionRestriction(47868, "Horde")
+    ApplyFactionRestriction(47871, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(48000, "Horde")
+    ApplyFactionRestriction(48004, "Horde")
+    ApplyFactionRestriction(48002, "Horde")
+    ApplyFactionRestriction(48005, "Horde")
+    ApplyFactionRestriction(49237, "Horde")
+    ApplyFactionRestriction(48006, "Horde")
+    ApplyFactionRestriction(48008, "Horde")
+    ApplyFactionRestriction(48009, "Horde")
+    ApplyFactionRestriction(48011, "Horde")
+    ApplyFactionRestriction(48003, "Horde")
+    ApplyFactionRestriction(48001, "Horde")
+    ApplyFactionRestriction(48007, "Horde")
+    ApplyFactionRestriction(48010, "Horde")
+    
+    -- Faction Champions
+    -- Normal
+    ApplyFactionRestriction(47873, "Horde")
+    ApplyFactionRestriction(47878, "Horde")
+    ApplyFactionRestriction(47875, "Horde")
+    ApplyFactionRestriction(47876, "Horde")
+    ApplyFactionRestriction(47877, "Horde")
+    ApplyFactionRestriction(47880, "Horde")
+    ApplyFactionRestriction(47882, "Horde")
+    ApplyFactionRestriction(47879, "Horde")
+    ApplyFactionRestriction(47881, "Horde")
+    ApplyFactionRestriction(47874, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(48012, "Horde")
+    ApplyFactionRestriction(48017, "Horde")
+    ApplyFactionRestriction(48014, "Horde")
+    ApplyFactionRestriction(48015, "Horde")
+    ApplyFactionRestriction(48016, "Horde")
+    ApplyFactionRestriction(48019, "Horde")
+    ApplyFactionRestriction(48021, "Horde")
+    ApplyFactionRestriction(48018, "Horde")
+    ApplyFactionRestriction(48020, "Horde")
+    ApplyFactionRestriction(48013, "Horde")
+    
+    -- The Twin Val'kyr
+    -- Normal
+    ApplyFactionRestriction(47889, "Horde")
+    ApplyFactionRestriction(49232, "Horde")
+    ApplyFactionRestriction(47891, "Horde")
+    ApplyFactionRestriction(47887, "Horde")
+    ApplyFactionRestriction(47893, "Horde")
+    ApplyFactionRestriction(47885, "Horde")
+    ApplyFactionRestriction(47890, "Horde")
+    ApplyFactionRestriction(47888, "Horde")
+    ApplyFactionRestriction(47913, "Horde")
+    ApplyFactionRestriction(47886, "Horde")
+    ApplyFactionRestriction(47884, "Horde")
+    ApplyFactionRestriction(47892, "Horde")
+    ApplyFactionRestriction(47883, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(48028, "Horde")
+    ApplyFactionRestriction(49233, "Horde")
+    ApplyFactionRestriction(48034, "Horde")
+    ApplyFactionRestriction(48026, "Horde")
+    ApplyFactionRestriction(48038, "Horde")
+    ApplyFactionRestriction(48024, "Horde")
+    ApplyFactionRestriction(48030, "Horde")
+    ApplyFactionRestriction(48027, "Horde")
+    ApplyFactionRestriction(48032, "Horde")
+    ApplyFactionRestriction(48025, "Horde")
+    ApplyFactionRestriction(48023, "Horde")
+    ApplyFactionRestriction(48036, "Horde")
+    ApplyFactionRestriction(48022, "Horde")
+    
+    -- Anub'arak
+    -- Normal
+    ApplyFactionRestriction(47906, "Horde")
+    ApplyFactionRestriction(47909, "Horde")
+    ApplyFactionRestriction(47904, "Horde")
+    ApplyFactionRestriction(47897, "Horde")
+    ApplyFactionRestriction(47901, "Horde")
+    ApplyFactionRestriction(47896, "Horde")
+    ApplyFactionRestriction(47902, "Horde")
+    ApplyFactionRestriction(47908, "Horde")
+    ApplyFactionRestriction(47899, "Horde")
+    ApplyFactionRestriction(47903, "Horde")
+    ApplyFactionRestriction(47898, "Horde")
+    ApplyFactionRestriction(47894, "Horde")
+    ApplyFactionRestriction(47905, "Horde")
+    ApplyFactionRestriction(47911, "Horde")
+    ApplyFactionRestriction(47900, "Horde")
+    ApplyFactionRestriction(47910, "Horde")
+    ApplyFactionRestriction(47895, "Horde")
+    ApplyFactionRestriction(47907, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(48051, "Horde")
+    ApplyFactionRestriction(48054, "Horde")
+    ApplyFactionRestriction(48049, "Horde")
+    ApplyFactionRestriction(48042, "Horde")
+    ApplyFactionRestriction(48046, "Horde")
+    ApplyFactionRestriction(48041, "Horde")
+    ApplyFactionRestriction(48047, "Horde")
+    ApplyFactionRestriction(48053, "Horde")
+    ApplyFactionRestriction(48044, "Horde")
+    ApplyFactionRestriction(48048, "Horde")
+    ApplyFactionRestriction(48043, "Horde")
+    ApplyFactionRestriction(48039, "Horde")
+    ApplyFactionRestriction(48050, "Horde")
+    ApplyFactionRestriction(48056, "Horde")
+    ApplyFactionRestriction(48045, "Horde")
+    ApplyFactionRestriction(48055, "Horde")
+    ApplyFactionRestriction(48040, "Horde")
+    ApplyFactionRestriction(48052, "Horde")
+    
+    -- Tribute Chest
+    ApplyFactionRestriction(48703, "Horde")
+    ApplyFactionRestriction(48699, "Horde")
+    ApplyFactionRestriction(48693, "Horde")
+    ApplyFactionRestriction(48701, "Horde")
+    ApplyFactionRestriction(48697, "Horde")
+    ApplyFactionRestriction(48705, "Horde")
+    ApplyFactionRestriction(48695, "Horde")
+    ApplyFactionRestriction(49046, "Horde")
+    ApplyFactionRestriction(48669, "Horde")
+    ApplyFactionRestriction(48668, "Horde")
+    ApplyFactionRestriction(48670, "Horde")
+    ApplyFactionRestriction(48666, "Horde")
+    ApplyFactionRestriction(48667, "Horde")
+    
+    -- ToGC 25 Alliance
+    
+    -- The Beasts of Northrend
+    -- Normal
+    ApplyFactionRestriction(46993, "Alliance")
+    ApplyFactionRestriction(46973, "Alliance")
+    ApplyFactionRestriction(46975, "Alliance")
+    ApplyFactionRestriction(46989, "Alliance")
+    ApplyFactionRestriction(46965, "Alliance")
+    ApplyFactionRestriction(46991, "Alliance")
+    ApplyFactionRestriction(46968, "Alliance")
+    ApplyFactionRestriction(46967, "Alliance")
+    ApplyFactionRestriction(46986, "Alliance")
+    ApplyFactionRestriction(46971, "Alliance")
+    ApplyFactionRestriction(46977, "Alliance")
+    ApplyFactionRestriction(46966, "Alliance")
+    ApplyFactionRestriction(46980, "Alliance")
+    ApplyFactionRestriction(46969, "Alliance")
+    ApplyFactionRestriction(46964, "Alliance")
+    
+    -- Heroic
+    ApplyFactionRestriction(46992, "Alliance")
+    ApplyFactionRestriction(46972, "Alliance")
+    ApplyFactionRestriction(46974, "Alliance")
+    ApplyFactionRestriction(46988, "Alliance")
+    ApplyFactionRestriction(46960, "Alliance")
+    ApplyFactionRestriction(46990, "Alliance")
+    ApplyFactionRestriction(46962, "Alliance")
+    ApplyFactionRestriction(46961, "Alliance")
+    ApplyFactionRestriction(46985, "Alliance")
+    ApplyFactionRestriction(46970, "Alliance")
+    ApplyFactionRestriction(46976, "Alliance")
+    ApplyFactionRestriction(46959, "Alliance")
+    ApplyFactionRestriction(46979, "Alliance")
+    ApplyFactionRestriction(46958, "Alliance")
+    ApplyFactionRestriction(46963, "Alliance")
+    
+    -- Lord Jaraxxus
+    -- Normal
+    ApplyFactionRestriction(47062, "Alliance")
+    ApplyFactionRestriction(47004, "Alliance")
+    ApplyFactionRestriction(47066, "Alliance")
+    ApplyFactionRestriction(47068, "Alliance")
+    ApplyFactionRestriction(47002, "Alliance")
+    ApplyFactionRestriction(47067, "Alliance")
+    ApplyFactionRestriction(47061, "Alliance")
+    ApplyFactionRestriction(47003, "Alliance")
+    ApplyFactionRestriction(47063, "Alliance")
+    ApplyFactionRestriction(47060, "Alliance")
+    ApplyFactionRestriction(47224, "Alliance")
+    ApplyFactionRestriction(47059, "Alliance")
+    ApplyFactionRestriction(47064, "Alliance")
+    ApplyFactionRestriction(47001, "Alliance")
+    ApplyFactionRestriction(46995, "Alliance")
+    
+    -- Heroic
+    ApplyFactionRestriction(47051, "Alliance")
+    ApplyFactionRestriction(47000, "Alliance")
+    ApplyFactionRestriction(47055, "Alliance")
+    ApplyFactionRestriction(47056, "Alliance")
+    ApplyFactionRestriction(46999, "Alliance")
+    ApplyFactionRestriction(47057, "Alliance")
+    ApplyFactionRestriction(47052, "Alliance")
+    ApplyFactionRestriction(46997, "Alliance")
+    ApplyFactionRestriction(47042, "Alliance")
+    ApplyFactionRestriction(47043, "Alliance")
+    ApplyFactionRestriction(47223, "Alliance")
+    ApplyFactionRestriction(47041, "Alliance")
+    ApplyFactionRestriction(47053, "Alliance")
+    ApplyFactionRestriction(46996, "Alliance")
+    ApplyFactionRestriction(46994, "Alliance")
+    
+    -- Faction Champions
+    -- Normal
+    ApplyFactionRestriction(47084, "Alliance")
+    ApplyFactionRestriction(47097, "Alliance")
+    ApplyFactionRestriction(47096, "Alliance")
+    ApplyFactionRestriction(47077, "Alliance")
+    ApplyFactionRestriction(47074, "Alliance")
+    ApplyFactionRestriction(47087, "Alliance")
+    ApplyFactionRestriction(47099, "Alliance")
+    ApplyFactionRestriction(47086, "Alliance")
+    ApplyFactionRestriction(47098, "Alliance")
+    ApplyFactionRestriction(47076, "Alliance")
+    ApplyFactionRestriction(47095, "Alliance")
+    ApplyFactionRestriction(47075, "Alliance")
+    ApplyFactionRestriction(47088, "Alliance")
+    ApplyFactionRestriction(47078, "Alliance")
+    ApplyFactionRestriction(47085, "Alliance")
+    
+    -- Heroic
+    ApplyFactionRestriction(47081, "Alliance")
+    ApplyFactionRestriction(47092, "Alliance")
+    ApplyFactionRestriction(47094, "Alliance")
+    ApplyFactionRestriction(47071, "Alliance")
+    ApplyFactionRestriction(47073, "Alliance")
+    ApplyFactionRestriction(47083, "Alliance")
+    ApplyFactionRestriction(47090, "Alliance")
+    ApplyFactionRestriction(47082, "Alliance")
+    ApplyFactionRestriction(47093, "Alliance")
+    ApplyFactionRestriction(47072, "Alliance")
+    ApplyFactionRestriction(47089, "Alliance")
+    ApplyFactionRestriction(47070, "Alliance")
+    ApplyFactionRestriction(47080, "Alliance")
+    ApplyFactionRestriction(47069, "Alliance")
+    ApplyFactionRestriction(47079, "Alliance")
+    
+    -- The Twin Val'kyr
+    -- Normal
+    ApplyFactionRestriction(47129, "Alliance")
+    ApplyFactionRestriction(47143, "Alliance")
+    ApplyFactionRestriction(47112, "Alliance")
+    ApplyFactionRestriction(47145, "Alliance")
+    ApplyFactionRestriction(47109, "Alliance")
+    ApplyFactionRestriction(47147, "Alliance")
+    ApplyFactionRestriction(47111, "Alliance")
+    ApplyFactionRestriction(47132, "Alliance")
+    ApplyFactionRestriction(47133, "Alliance")
+    ApplyFactionRestriction(47110, "Alliance")
+    ApplyFactionRestriction(47144, "Alliance")
+    ApplyFactionRestriction(47131, "Alliance")
+    ApplyFactionRestriction(47146, "Alliance")
+    ApplyFactionRestriction(47113, "Alliance")
+    ApplyFactionRestriction(47130, "Alliance")
+    
+    -- Heroic
+    ApplyFactionRestriction(47126, "Alliance")
+    ApplyFactionRestriction(47141, "Alliance")
+    ApplyFactionRestriction(47107, "Alliance")
+    ApplyFactionRestriction(47140, "Alliance")
+    ApplyFactionRestriction(47106, "Alliance")
+    ApplyFactionRestriction(47142, "Alliance")
+    ApplyFactionRestriction(47108, "Alliance")
+    ApplyFactionRestriction(47121, "Alliance")
+    ApplyFactionRestriction(47116, "Alliance")
+    ApplyFactionRestriction(47105, "Alliance")
+    ApplyFactionRestriction(47139, "Alliance")
+    ApplyFactionRestriction(47115, "Alliance")
+    ApplyFactionRestriction(47138, "Alliance")
+    ApplyFactionRestriction(47104, "Alliance")
+    ApplyFactionRestriction(47114, "Alliance")
+    
+    -- Anub'arak
+    -- Normal
+    ApplyFactionRestriction(47208, "Alliance")
+    ApplyFactionRestriction(47236, "Alliance")
+    ApplyFactionRestriction(47189, "Alliance")
+    ApplyFactionRestriction(47205, "Alliance")
+    ApplyFactionRestriction(47155, "Alliance")
+    ApplyFactionRestriction(47190, "Alliance")
+    ApplyFactionRestriction(47209, "Alliance")
+    ApplyFactionRestriction(47153, "Alliance")
+    ApplyFactionRestriction(47191, "Alliance")
+    ApplyFactionRestriction(47240, "Alliance")
+    ApplyFactionRestriction(47207, "Alliance")
+    ApplyFactionRestriction(47154, "Alliance")
+    ApplyFactionRestriction(47238, "Alliance")
+    ApplyFactionRestriction(47192, "Alliance")
+    ApplyFactionRestriction(47237, "Alliance")
+    ApplyFactionRestriction(47157, "Alliance")
+    ApplyFactionRestriction(47188, "Alliance")
+    ApplyFactionRestriction(47156, "Alliance")
+    ApplyFactionRestriction(47206, "Alliance")
+    ApplyFactionRestriction(47239, "Alliance")
+    
+    -- Heroic
+    ApplyFactionRestriction(47203, "Alliance")
+    ApplyFactionRestriction(47235, "Alliance")
+    ApplyFactionRestriction(47187, "Alliance")
+    ApplyFactionRestriction(47194, "Alliance")
+    ApplyFactionRestriction(47151, "Alliance")
+    ApplyFactionRestriction(47186, "Alliance")
+    ApplyFactionRestriction(47204, "Alliance")
+    ApplyFactionRestriction(47152, "Alliance")
+    ApplyFactionRestriction(47184, "Alliance")
+    ApplyFactionRestriction(47234, "Alliance")
+    ApplyFactionRestriction(47195, "Alliance")
+    ApplyFactionRestriction(47150, "Alliance")
+    ApplyFactionRestriction(47225, "Alliance")
+    ApplyFactionRestriction(47183, "Alliance")
+    ApplyFactionRestriction(47054, "Alliance")
+    ApplyFactionRestriction(47149, "Alliance")
+    ApplyFactionRestriction(47182, "Alliance")
+    ApplyFactionRestriction(47148, "Alliance")
+    ApplyFactionRestriction(47193, "Alliance")
+    ApplyFactionRestriction(47233, "Alliance")
+    
+    -- Tribute
+    ApplyFactionRestriction(47506, "Alliance")
+    ApplyFactionRestriction(47526, "Alliance")
+    ApplyFactionRestriction(47517, "Alliance")
+    ApplyFactionRestriction(47519, "Alliance")
+    ApplyFactionRestriction(47524, "Alliance")
+    ApplyFactionRestriction(47515, "Alliance")
+    ApplyFactionRestriction(47521, "Alliance")
+    ApplyFactionRestriction(49096, "Alliance")
+    ApplyFactionRestriction(47552, "Alliance")
+    ApplyFactionRestriction(47553, "Alliance")
+    ApplyFactionRestriction(47547, "Alliance")
+    ApplyFactionRestriction(47545, "Alliance")
+    ApplyFactionRestriction(47549, "Alliance")
+    
+    -- ToGC 25 Horde
+    
+    -- The Beasts of Northrend
+    -- Normal
+    ApplyFactionRestriction(47264, "Horde")
+    ApplyFactionRestriction(47258, "Horde")
+    ApplyFactionRestriction(47259, "Horde")
+    ApplyFactionRestriction(47262, "Horde")
+    ApplyFactionRestriction(47251, "Horde")
+    ApplyFactionRestriction(47265, "Horde")
+    ApplyFactionRestriction(47254, "Horde")
+    ApplyFactionRestriction(47253, "Horde")
+    ApplyFactionRestriction(47263, "Horde")
+    ApplyFactionRestriction(47257, "Horde")
+    ApplyFactionRestriction(47256, "Horde")
+    ApplyFactionRestriction(47252, "Horde")
+    ApplyFactionRestriction(47261, "Horde")
+    ApplyFactionRestriction(47255, "Horde")
+    ApplyFactionRestriction(47260, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(47425, "Horde")
+    ApplyFactionRestriction(47419, "Horde")
+    ApplyFactionRestriction(47420, "Horde")
+    ApplyFactionRestriction(47423, "Horde")
+    ApplyFactionRestriction(47412, "Horde")
+    ApplyFactionRestriction(47426, "Horde")
+    ApplyFactionRestriction(47415, "Horde")
+    ApplyFactionRestriction(47414, "Horde")
+    ApplyFactionRestriction(47424, "Horde")
+    ApplyFactionRestriction(47418, "Horde")
+    ApplyFactionRestriction(47417, "Horde")
+    ApplyFactionRestriction(47413, "Horde")
+    ApplyFactionRestriction(47422, "Horde")
+    ApplyFactionRestriction(47416, "Horde")
+    ApplyFactionRestriction(47421, "Horde")
+    
+    -- Lord Jaraxxus
+    -- Normal
+    ApplyFactionRestriction(47274, "Horde")
+    ApplyFactionRestriction(47270, "Horde")
+    ApplyFactionRestriction(47277, "Horde")
+    ApplyFactionRestriction(47280, "Horde")
+    ApplyFactionRestriction(47268, "Horde")
+    ApplyFactionRestriction(47279, "Horde")
+    ApplyFactionRestriction(47273, "Horde")
+    ApplyFactionRestriction(47269, "Horde")
+    ApplyFactionRestriction(47275, "Horde")
+    ApplyFactionRestriction(47272, "Horde")
+    ApplyFactionRestriction(47278, "Horde")
+    ApplyFactionRestriction(47271, "Horde")
+    ApplyFactionRestriction(47276, "Horde")
+    ApplyFactionRestriction(47266, "Horde")
+    ApplyFactionRestriction(47267, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(47435, "Horde")
+    ApplyFactionRestriction(47431, "Horde")
+    ApplyFactionRestriction(47438, "Horde")
+    ApplyFactionRestriction(47441, "Horde")
+    ApplyFactionRestriction(47429, "Horde")
+    ApplyFactionRestriction(47440, "Horde")
+    ApplyFactionRestriction(47434, "Horde")
+    ApplyFactionRestriction(47430, "Horde")
+    ApplyFactionRestriction(47436, "Horde")
+    ApplyFactionRestriction(47433, "Horde")
+    ApplyFactionRestriction(47439, "Horde")
+    ApplyFactionRestriction(47432, "Horde")
+    ApplyFactionRestriction(47437, "Horde")
+    ApplyFactionRestriction(47427, "Horde")
+    ApplyFactionRestriction(47428, "Horde")
+    
+    -- Faction Champions
+    -- Normal
+    ApplyFactionRestriction(47286, "Horde")
+    ApplyFactionRestriction(47293, "Horde")
+    ApplyFactionRestriction(47292, "Horde")
+    ApplyFactionRestriction(47284, "Horde")
+    ApplyFactionRestriction(47281, "Horde")
+    ApplyFactionRestriction(47289, "Horde")
+    ApplyFactionRestriction(47295, "Horde")
+    ApplyFactionRestriction(47288, "Horde")
+    ApplyFactionRestriction(47294, "Horde")
+    ApplyFactionRestriction(47283, "Horde")
+    ApplyFactionRestriction(47291, "Horde")
+    ApplyFactionRestriction(47282, "Horde")
+    ApplyFactionRestriction(47290, "Horde")
+    ApplyFactionRestriction(47285, "Horde")
+    ApplyFactionRestriction(47287, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(47447, "Horde")
+    ApplyFactionRestriction(47454, "Horde")
+    ApplyFactionRestriction(47453, "Horde")
+    ApplyFactionRestriction(47445, "Horde")
+    ApplyFactionRestriction(47442, "Horde")
+    ApplyFactionRestriction(47450, "Horde")
+    ApplyFactionRestriction(47456, "Horde")
+    ApplyFactionRestriction(47449, "Horde")
+    ApplyFactionRestriction(47455, "Horde")
+    ApplyFactionRestriction(47444, "Horde")
+    ApplyFactionRestriction(47452, "Horde")
+    ApplyFactionRestriction(47443, "Horde")
+    ApplyFactionRestriction(47451, "Horde")
+    ApplyFactionRestriction(47446, "Horde")
+    ApplyFactionRestriction(47448, "Horde")
+    
+    -- The Twin Val'kyr
+    -- Normal
+    ApplyFactionRestriction(47301, "Horde")
+    ApplyFactionRestriction(47306, "Horde")
+    ApplyFactionRestriction(47308, "Horde")
+    ApplyFactionRestriction(47299, "Horde")
+    ApplyFactionRestriction(47296, "Horde")
+    ApplyFactionRestriction(47310, "Horde")
+    ApplyFactionRestriction(47298, "Horde")
+    ApplyFactionRestriction(47304, "Horde")
+    ApplyFactionRestriction(47307, "Horde")
+    ApplyFactionRestriction(47305, "Horde")
+    ApplyFactionRestriction(47297, "Horde")
+    ApplyFactionRestriction(47303, "Horde")
+    ApplyFactionRestriction(47309, "Horde")
+    ApplyFactionRestriction(47300, "Horde")
+    ApplyFactionRestriction(47302, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(47462, "Horde")
+    ApplyFactionRestriction(47467, "Horde")
+    ApplyFactionRestriction(47469, "Horde")
+    ApplyFactionRestriction(47460, "Horde")
+    ApplyFactionRestriction(47457, "Horde")
+    ApplyFactionRestriction(47471, "Horde")
+    ApplyFactionRestriction(47459, "Horde")
+    ApplyFactionRestriction(47465, "Horde")
+    ApplyFactionRestriction(47468, "Horde")
+    ApplyFactionRestriction(47466, "Horde")
+    ApplyFactionRestriction(47458, "Horde")
+    ApplyFactionRestriction(47464, "Horde")
+    ApplyFactionRestriction(47470, "Horde")
+    ApplyFactionRestriction(47461, "Horde")
+    ApplyFactionRestriction(47463, "Horde")
+    
+    -- Anub'arak
+    -- Normal
+    ApplyFactionRestriction(47324, "Horde")
+    ApplyFactionRestriction(47326, "Horde")
+    ApplyFactionRestriction(47317, "Horde")
+    ApplyFactionRestriction(47321, "Horde")
+    ApplyFactionRestriction(47313, "Horde")
+    ApplyFactionRestriction(47318, "Horde")
+    ApplyFactionRestriction(47325, "Horde")
+    ApplyFactionRestriction(47311, "Horde")
+    ApplyFactionRestriction(47319, "Horde")
+    ApplyFactionRestriction(47330, "Horde")
+    ApplyFactionRestriction(47323, "Horde")
+    ApplyFactionRestriction(47312, "Horde")
+    ApplyFactionRestriction(47328, "Horde")
+    ApplyFactionRestriction(47320, "Horde")
+    ApplyFactionRestriction(47315, "Horde")
+    ApplyFactionRestriction(47327, "Horde")
+    ApplyFactionRestriction(47316, "Horde")
+    ApplyFactionRestriction(47314, "Horde")
+    ApplyFactionRestriction(47322, "Horde")
+    ApplyFactionRestriction(47329, "Horde")
+    
+    -- Heroic
+    ApplyFactionRestriction(47485, "Horde")
+    ApplyFactionRestriction(47487, "Horde")
+    ApplyFactionRestriction(47478, "Horde")
+    ApplyFactionRestriction(47482, "Horde")
+    ApplyFactionRestriction(47474, "Horde")
+    ApplyFactionRestriction(47479, "Horde")
+    ApplyFactionRestriction(47486, "Horde")
+    ApplyFactionRestriction(47472, "Horde")
+    ApplyFactionRestriction(47480, "Horde")
+    ApplyFactionRestriction(47492, "Horde")
+    ApplyFactionRestriction(47484, "Horde")
+    ApplyFactionRestriction(47473, "Horde")
+    ApplyFactionRestriction(47490, "Horde")
+    ApplyFactionRestriction(47481, "Horde")
+    ApplyFactionRestriction(47476, "Horde")
+    ApplyFactionRestriction(47489, "Horde")
+    ApplyFactionRestriction(47477, "Horde")
+    ApplyFactionRestriction(47475, "Horde")
+    ApplyFactionRestriction(47483, "Horde")
+    ApplyFactionRestriction(47491, "Horde")
+    
+    -- Tribute
+    ApplyFactionRestriction(47513, "Horde")
+    ApplyFactionRestriction(47528, "Horde")
+    ApplyFactionRestriction(47518, "Horde")
+    ApplyFactionRestriction(47520, "Horde")
+    ApplyFactionRestriction(47523, "Horde")
+    ApplyFactionRestriction(47525, "Horde")
+    ApplyFactionRestriction(47516, "Horde")
+    
+    ApplyFactionRestriction(49098, "Horde")
+    ApplyFactionRestriction(47548, "Horde")
+    ApplyFactionRestriction(47546, "Horde")
+    ApplyFactionRestriction(47550, "Horde")
+    ApplyFactionRestriction(47551, "Horde")
+    ApplyFactionRestriction(47554, "Horde")
+end
 
--- Head of Onyxia
-ApplyFactionRestriction(18422, "Horde");
-ApplyFactionRestriction(18423, "Alliance");
-
--- Head of Nefarian
-ApplyFactionRestriction(19002, "Horde");
-ApplyFactionRestriction(19003, "Alliance");
-
--- Magtheridon's Head
-ApplyFactionRestriction(32385, "Alliance");
-ApplyFactionRestriction(32386, "Horde");
 
 -- Classic only restrictions
 if LootReserve:GetCurrentExpansion() == 0 then
@@ -5058,10 +8031,9 @@ local tokenMap = {
     -- Ony
     
     -- Can't add mature black dragon sinew because it's a token reward in MC
-    -- Can't add Head of Onyxia since there are Alliance and Horde versions
     -- Head of Onyxia
-    -- [18423] = {18404, 18403, 18406},
-    -- [18422] = {18404, 18403, 18406},
+    [18423] = UnitFactionGroup("player") == "Alliance" and {18404, 18403, 18406} or nil,
+    [18422] = UnitFactionGroup("player") == "Horde"    and {18404, 18403, 18406} or nil,
     
     
     -- Ony/BWL
@@ -5072,10 +8044,9 @@ local tokenMap = {
     
     -- BWL
     
-    -- Can't add Head of Nefarian since there are Alliance and Horde versions
     -- Head of Nefarian
-    -- [19003] = {19383, 19384, 19366},
-    -- [19002] = {19383, 19384, 19366},
+    [19003] = UnitFactionGroup("player") == "Alliance" and {19383, 19384, 19366} or nil,
+    [19002] = UnitFactionGroup("player") == "Horde"    and {19383, 19384, 19366} or nil,
     
     
     -- ZG
@@ -5206,69 +8177,68 @@ local tokenMap = {
     -- Kara
     
     -- Gloves of the Fallen Champion
-    [29757] = {29065, 29067, 29072, 29048, 29032, 29034, 29039, --[[PVP]] 31614, 27703, 27880, 25834, 27470, 31397, 26000},
+    [29757] = ConcatenateIf({29065, 29067, 29072, 29048, 29032, 29034, 29039}, EXPANSION_PHASE >= 2.2, {31614, 27703, 27880, 25834, 27470, 31397, 26000}),
     -- Gloves of the Fallen Defender
-    [29758] = {29017, 29020, 29055, 29057, 29090, 29092, 29097, --[[PVP]] 24549, 31409, 27707, 31375, 28136, 28126},
+    [29758] = ConcatenateIf({29017, 29020, 29055, 29057, 29090, 29092, 29097}, EXPANSION_PHASE >= 2.2, {24549, 31409, 27707, 31375, 28136, 28126}),
     -- Gloves of the Fallen Hero
-    [29756] = {29085, 29080, 28968, --[[PVP]] 28335, 25857, 24556, 30188},
+    [29756] = ConcatenateIf({29085, 29080, 28968}, EXPANSION_PHASE >= 2.2, {28335, 25857, 24556, 30188}),
     -- Helm of the Fallen Champion
-    [29760] = {29061, 29068, 29073, 29044, 29028, 29035, 29040, --[[PVP]] 31616, 27704, 27881, 25830, 27471, 31400, 25998},
+    [29760] = ConcatenateIf({29061, 29068, 29073, 29044, 29028, 29035, 29040}, EXPANSION_PHASE >= 2.2, {31616, 27704, 27881, 25830, 27471, 31400, 25998}),
     -- Helm of the Fallen Defender
-    [29761] = {29011, 29021, 29049, 29058, 29086, 29093, 29098, --[[PVP]] 24545, 31410, 27708, 31376, 28137, 28127},
+    [29761] = ConcatenateIf({29011, 29021, 29049, 29058, 29086, 29093, 29098}, EXPANSION_PHASE >= 2.2, {24545, 31410, 27708, 31376, 28137, 28127}),
     -- Helm of the Fallen Hero
-    [29759] = {29081, 29076, 28963, --[[PVP]] 28331, 25855, 24553, 30187},
+    [29759] = ConcatenateIf({29081, 29076, 28963}, EXPANSION_PHASE >= 2.2, {28331, 25855, 24553, 30187}),
     
     
     -- Gruul
     
     -- Pauldrons of the Fallen Champion
-    [29763] = {29064, 29070, 29075, 29047, 29037, 29031, 29043, --[[PVP]] 31619, 27706, 27883, 25832, 27473, 31407, 25999},
+    [29763] = ConcatenateIf({29064, 29070, 29075, 29047, 29037, 29031, 29043}, EXPANSION_PHASE >= 2.2, {31619, 27706, 27883, 25832, 27473, 31407, 25999}),
     -- Pauldrons of the Fallen Defender
-    [29764] = {29016, 29023, 29054, 29060, 29100, 29095, 29089, --[[PVP]] 24546, 31412, 27710, 31378, 28139, 28129},
+    [29764] = ConcatenateIf({29016, 29023, 29054, 29060, 29100, 29095, 29089}, EXPANSION_PHASE >= 2.2, {24546, 31412, 27710, 31378, 28139, 28129}),
     -- Pauldrons of the Fallen Hero
-    [29762] = {29084, 29079, 28967, --[[PVP]] 28333, 25854, 24554, 30186},
+    [29762] = ConcatenateIf({29084, 29079, 28967}, EXPANSION_PHASE >= 2.2, {28333, 25854, 24554, 30186}),
     -- Leggings of the Fallen Champion
-    [29766] = {29074, 29063, 29069, 29046, 29030, 29036, 29042, --[[PVP]] 31618, 27705, 27882, 25833, 27472, 31406, 26001},
+    [29766] = ConcatenateIf({29074, 29063, 29069, 29046, 29030, 29036, 29042}, EXPANSION_PHASE >= 2.2, {31618, 27705, 27882, 25833, 27472, 31406, 26001}),
     -- Leggings of the Fallen Defender
-    [29767] = {29022, 29015, 29059, 29053, 29094, 29099, 29088, --[[PVP]] 24547, 31411, 27709, 31377, 28138, 28128},
+    [29767] = ConcatenateIf({29022, 29015, 29059, 29053, 29094, 29099, 29088}, EXPANSION_PHASE >= 2.2, {24547, 31411, 27709, 31377, 28138, 28128}),
     -- Leggings of the Fallen Hero
-    [29765] = {29083, 29078, 28966, --[[PVP]] 28332, 25858, 24555, 30201},
+    [29765] = ConcatenateIf({29083, 29078, 28966}, EXPANSION_PHASE >= 2.2, {28332, 25858, 24555, 30201}),
     
     
     -- Mag
     
-    -- Can't add Magtheridon's Head since there are Alliance and Horde versions
-    -- [32385] = {28791, 28790, 28793, 28792},
-    -- [32386] = {28791, 28790, 28793, 28792},
+    [32385] = UnitFactionGroup("player") == "Alliance" and {28791, 28790, 28793, 28792} or nil,
+    [32386] = UnitFactionGroup("player") == "Horde"    and {28791, 28790, 28793, 28792} or nil,
     
     -- Chestguard of the Fallen Champion
-    [29754] = {29071, 29066, 29062, 29045, 29038, 29033, 29029, --[[PVP]] 31613, 27702, 27879, 25831, 27469, 31396, 25997},
+    [29754] = ConcatenateIf({29071, 29066, 29062, 29045, 29038, 29033, 29029}, EXPANSION_PHASE >= 2.2, {31613, 27702, 27879, 25831, 27469, 31396, 25997}),
     -- Chestguard of the Fallen Defender
-    [29753] = {29012, 29019, 29050, 29056, 29087, 29091, 29096, --[[PVP]] 24544, 31413, 27711, 31379, 28140, 28130},
+    [29753] = ConcatenateIf({29012, 29019, 29050, 29056, 29087, 29091, 29096}, EXPANSION_PHASE >= 2.2, {24544, 31413, 27711, 31379, 28140, 28130}),
     -- Chestguard of the Fallen Hero
-    [29755] = {29082, 29077, 28964, --[[PVP]] 28334, 25856, 24552, 30200},
+    [29755] = ConcatenateIf({29082, 29077, 28964}, EXPANSION_PHASE >= 2.2, {28334, 25856, 24552, 30200}),
     
     
     -- SSC
     
     -- Gloves of the Vanquished Champion
-    [30239] = {30130, 30135, 30124, 30145, 30189, 30165, 30170, --[[PVP]] 32021, 31993, 32040, 31998, 32010, 32030, 32005},
+    [30239] = ConcatenateIf({30130, 30135, 30124, 30145, 30189, 30165, 30170}, EXPANSION_PHASE >= 2.3, {32021, 31993, 32040, 31998, 32010, 32030, 32005}),
     -- Gloves of the Vanquished Defender
-    [30240] = {30114, 30119, 30160, 30151, 30223, 30217, 30232, --[[PVP]] 30487, 32015, 32034, 31987, 32056, 31967},
+    [30240] = ConcatenateIf({30114, 30119, 30160, 30151, 30223, 30217, 30232}, EXPANSION_PHASE >= 2.3, {30487, 32015, 32034, 31987, 32056, 31967}),
     -- Gloves of the Vanquished Hero
-    [30241] = {30140, 30205, 30211, --[[PVP]] 31961, 32049, 31973, 31981},
+    [30241] = ConcatenateIf({30140, 30205, 30211}, EXPANSION_PHASE >= 2.3, {31961, 32049, 31973, 31981}),
     -- Leggings of the Vanquished Champion
-    [30245] = {30132, 30137, 30126, 30148, 30172, 30167, 30192, --[[PVP]] 32023, 31995, 32042, 32000, 32012, 32032, 32007},
+    [30245] = ConcatenateIf({30132, 30137, 30126, 30148, 30172, 30167, 30192}, EXPANSION_PHASE >= 2.3, {32023, 31995, 32042, 32000, 32012, 32032, 32007}),
     -- Leggings of the Vanquished Defender
-    [30246] = {30121, 30116, 30153, 30162, 30229, 30220, 30234, --[[PVP]] 30489, 32017, 32036, 31989, 32058, 31969},
+    [30246] = ConcatenateIf({30121, 30116, 30153, 30162, 30229, 30220, 30234}, EXPANSION_PHASE >= 2.3, {30489, 32017, 32036, 31989, 32058, 31969}),
     -- Leggings of the Vanquished Hero
-    [30247] = {30142, 30207, 30213, --[[PVP]] 31963, 32051, 31975, 31983},
+    [30247] = ConcatenateIf({30142, 30207, 30213}, EXPANSION_PHASE >= 2.3, {31963, 32051, 31975, 31983}),
     -- Helm of the Vanquished Champion
-    [30242] = {30125, 30136, 30131, 30146, 30166, 30171, 30190, --[[PVP]] 32022, 31997, 32041, 31999, 32011, 32031, 32006},
+    [30242] = ConcatenateIf({30125, 30136, 30131, 30146, 30166, 30171, 30190}, EXPANSION_PHASE >= 2.3, {32022, 31997, 32041, 31999, 32011, 32031, 32006}),
     -- Helm of the Vanquished Defender
-    [30243] = {30120, 30115, 30161, 30152, 30228, 30219, 30233, --[[PVP]] 30488, 32016, 32035, 31988, 32057, 31968},
+    [30243] = ConcatenateIf({30120, 30115, 30161, 30152, 30228, 30219, 30233}, EXPANSION_PHASE >= 2.3, {30488, 32016, 32035, 31988, 32057, 31968}),
     -- Helm of the Vanquished Hero
-    [30244] = {30141, 30206, 30212, --[[PVP]] 31962, 32048, 31974, 31980},
+    [30244] = ConcatenateIf({30141, 30206, 30212}, EXPANSION_PHASE >= 2.3, {31962, 32048, 31974, 31980}),
     
     
     -- TK
@@ -5276,55 +8246,60 @@ local tokenMap = {
     -- Verdant Sphere
     [32405] = {30018, 30017, 30007, 30015},
     -- Pauldrons of the Vanquished Champion
-    [30248] = {30127, 30133, 30138, 30149, 30168, 30173, 30194, --[[PVP]] 32024, 31996, 32043, 32001, 32013, 32033, 32008},
+    [30248] = ConcatenateIf({30127, 30133, 30138, 30149, 30168, 30173, 30194}, EXPANSION_PHASE >= 2.3, {32024, 31996, 32043, 32001, 32013, 32033, 32008}),
     -- Pauldrons of the Vanquished Defender
-    [30249] = {30117, 30122, 30154, 30163, 30221, 30230, 30235, --[[PVP]] 30490, 32018, 32037, 31990, 32059, 31971},
+    [30249] = ConcatenateIf({30117, 30122, 30154, 30163, 30221, 30230, 30235}, EXPANSION_PHASE >= 2.3, {30490, 32018, 32037, 31990, 32059, 31971}),
     -- Pauldrons of the Vanquished Hero
-    [30250] = {30143, 30210, 30215, --[[PVP]] 31964, 32047, 31976, 31979},
+    [30250] = ConcatenateIf({30143, 30210, 30215}, EXPANSION_PHASE >= 2.3, {31964, 32047, 31976, 31979}),
     -- Chestguard of the Vanquished Champion
-    [30236] = {30123, 30129, 30134, 30144, 30164, 30169, 30185, --[[PVP]] 32020, 31992, 32039, 32002, 32009, 32029, 32004},
+    [30236] = ConcatenateIf({30123, 30129, 30134, 30144, 30164, 30169, 30185}, EXPANSION_PHASE >= 2.3, {32020, 31992, 32039, 32002, 32009, 32029, 32004}),
     -- Chestguard of the Vanquished Defender
-    [30237] = {30113, 30118, 30150, 30159, 30216, 30222, 30231, --[[PVP]] 30486, 32019, 32038, 31991, 32060, 31972},
+    [30237] = ConcatenateIf({30113, 30118, 30150, 30159, 30216, 30222, 30231}, EXPANSION_PHASE >= 2.3, {30486, 32019, 32038, 31991, 32060, 31972}),
     -- Chestguard of the Vanquished Hero
-    [30238] = {30139, 30196, 30214, --[[PVP]] 31960, 32050, 31977, 31982},
+    [30238] = ConcatenateIf({30139, 30196, 30214}, EXPANSION_PHASE >= 2.3, {31960, 32050, 31977, 31982}),
     
     
     -- Hyjal
     
     -- Gloves of the Forgotten Conqueror
-    [31092] = {30982, 30983, 30985, 31060, 31061, 31050, --[[PVP]] 33723, 33696, 33750, 33717, 33744, 33676, 33684},
+    [31092] = ConcatenateIf({30982, 30983, 30985, 31060, 31061, 31050}, EXPANSION_PHASE >= 2.5, {33723, 33696, 33750, 33717, 33744, 33676, 33684}),
     -- Gloves of the Forgotten Protector
-    [31094] = {30969, 30970, 31001, 31007, 31008, 31011, --[[PVP]] 33729, 33665, 33712, 33739, 33707},
+    [31094] = ConcatenateIf({30969, 30970, 31001, 31007, 31008, 31011}, EXPANSION_PHASE >= 2.5, {33729, 33665, 33712, 33739, 33707}),
     -- Gloves of the Forgotten Vanquisher
-    [31093] = {31026, 31055, 31032, 31034, 31035, --[[PVP]] 33700, 33759, 33690, 33767, 33671},
+    [31093] = ConcatenateIf({31026, 31055, 31032, 31034, 31035}, EXPANSION_PHASE >= 2.5, {33700, 33759, 33690, 33767, 33671}),
     -- Helm of the Forgotten Conqueror
-    [31097] = {30987, 30988, 30989, 31063, 31064, 31051, --[[PVP]] 33724, 33697, 33751, 33718, 33745, 33677, 33683},
+    [31097] = ConcatenateIf({30987, 30988, 30989, 31063, 31064, 31051}, EXPANSION_PHASE >= 2.5, {33724, 33697, 33751, 33718, 33745, 33677, 33683}),
     -- Helm of the Forgotten Protector
-    [31095] = {30972, 30974, 31003, 31012, 31014, 31015, --[[PVP]] 33730, 33666, 33713, 33740, 33708},
+    [31095] = ConcatenateIf({30972, 30974, 31003, 31012, 31014, 31015}, EXPANSION_PHASE >= 2.5, {33730, 33666, 33713, 33740, 33708}),
     -- Helm of the Forgotten Vanquisher
-    [31096] = {31027, 31056, 31037, 31040, 31039, --[[PVP]] 33701, 33758, 33691, 33768, 33672},
+    [31096] = ConcatenateIf({31027, 31056, 31037, 31040, 31039}, EXPANSION_PHASE >= 2.5, {33701, 33758, 33691, 33768, 33672}),
     
     
     -- BT
     
     -- Pauldrons of the Forgotten Conqueror
-    [31101] = {30996, 30997, 30998, 31069, 31070, 31054, --[[PVP]] 33726, 33699, 33753, 33720, 33747, 33679, 33682},
+    [31101] = ConcatenateIf({30996, 30997, 30998, 31069, 31070, 31054}, EXPANSION_PHASE >= 2.5, {33726, 33699, 33753, 33720, 33747, 33679, 33682}),
     -- Pauldrons of the Forgotten Protector
-    [31103] = {30979, 30980, 31006, 31022, 31023, 31024, --[[PVP]] 33732, 33668, 33715, 33742, 33710},
+    [31103] = ConcatenateIf({30979, 30980, 31006, 31022, 31023, 31024}, EXPANSION_PHASE >= 2.5, {33732, 33668, 33715, 33742, 33710}),
     -- Pauldrons of the Forgotten Vanquisher
-    [31102] = {31030, 31059, 31047, 31048, 31049, --[[PVP]] 33703, 33757, 33693, 33770, 33674},
+    [31102] = ConcatenateIf({31030, 31059, 31047, 31048, 31049}, EXPANSION_PHASE >= 2.5, {33703, 33757, 33693, 33770, 33674}),
     -- Leggings of the Forgotten Conqueror
-    [31098] = {30993, 30994, 30995, 31067, 31068, 31053, --[[PVP]] 33725, 33698, 33752, 33719, 33746, 33678, 33686},
+    [31098] = ConcatenateIf({30993, 30994, 30995, 31067, 31068, 31053}, EXPANSION_PHASE >= 2.5, {33725, 33698, 33752, 33719, 33746, 33678, 33686}),
     -- Leggings of the Forgotten Protector
-    [31100] = {30977, 30978, 31005, 31019, 31020, 31021, --[[PVP]] 33731, 33667, 33714, 33741, 33709},
+    [31100] = ConcatenateIf({30977, 30978, 31005, 31019, 31020, 31021}, EXPANSION_PHASE >= 2.5, {33731, 33667, 33714, 33741, 33709}),
     -- Leggings of the Forgotten Vanquisher
-    [31099] = {31029, 31058, 31044, 31045, 31046, --[[PVP]] 33702, 33761, 33692, 33769, 33673},
+    [31099] = ConcatenateIf({31029, 31058, 31044, 31045, 31046}, EXPANSION_PHASE >= 2.5, {33702, 33761, 33692, 33769, 33673}),
     -- Chestguard of the Forgotten Conqueror
-    [31089] = {30990, 30991, 30992, 31065, 31066, 31052, --[[PVP]] 33722, 33695, 33749, 33721, 33748, 33680, 33685},
+    [31089] = ConcatenateIf({30990, 30991, 30992, 31065, 31066, 31052}, EXPANSION_PHASE >= 2.5, {33722, 33695, 33749, 33721, 33748, 33680, 33685}),
     -- Chestguard of the Forgotten Protector
-    [31091] = {30975, 30976, 31004, 31016, 31017, 31018, --[[PVP]] 33664, 33711, 33738, 33706},
+    [31091] = ConcatenateIf({30975, 30976, 31004, 31016, 31017, 31018}, EXPANSION_PHASE >= 2.5, {33664, 33711, 33738, 33706}),
     -- Chestguard of the Forgotten Vanquisher
-    [31090] = {31028, 31057, 31041, 31042, 31043, --[[PVP]] 33704, 33760, 33694, 33771, 33675},
+    [31090] = ConcatenateIf({31028, 31057, 31041, 31042, 31043}, EXPANSION_PHASE >= 2.5, {33704, 33760, 33694, 33771, 33675}),
+    
+    
+    -- ZA
+    
+    [33865] = {33993}, -- Mojo
     
     
     -- SWP
@@ -5388,7 +8363,7 @@ local tokenMap = {
     -- Naxx 10
     
     -- Key to the Focusing Iris
-    -- [44569] = {44658, 44657, 44659, 44660},
+    [44569] = {44658, 44657, 44659, 44660},
     
     -- Spaulders of the Lost Conqueror
     [40622] = {39631, 39637, 39642, 39518, 39529, 39499},
@@ -5541,12 +8516,130 @@ local tokenMap = {
     [45658] = {46127, 46117, 46122, 46134, 46157, 46187, 46196},
     
     
+    -- ToC 10/25
+    
+    -- Trophy of the Crusade
+    [47242] = {
+        -- Alliance
+        47778, 47781, 47779, 47782, 47780,
+        47984, 47987, 47986, 47983, 47985, 48078, 48081, 48080, 48077, 48079,
+        48225, 48227, 48223, 48224, 48226,
+        48257, 48259, 48255, 48256, 48258,
+        48430, 48454, 48450, 48452, 48446, 48378, 48380, 48376, 48377, 48379,
+        48540, 48542, 48538, 48539, 48541, 48483, 48485, 48481, 48482, 48484,
+        47754, 47757, 47756, 47753, 47755,
+        48134, 48137, 48136, 48133, 48135, 48164, 48167, 48166, 48163, 48165, 48211, 48208, 48209, 48212, 48210,
+        48287, 48289, 48285, 48286, 48288, 48318, 48320, 48316, 48317, 48319, 48348, 48350, 48346, 48347, 48349,
+        48577, 48579, 48575, 48576, 48578, 48639, 48637, 48641, 48640, 48638, 48609, 48611, 48607, 48608, 48610,
+        
+        -- Horde
+        47804, 47807, 47806, 47803, 47805,
+        48065, 48062, 48063, 48066, 48064, 48095, 48092, 48093, 48096, 48094,
+        48240, 48238, 48242, 48241, 48239,
+        48272, 48270, 48274, 48273, 48271,
+        48463, 48465, 48461, 48462, 48464, 48393, 48395, 48391, 48392, 48394,
+        48555, 48553, 48557, 48556, 48554, 48498, 48496, 48500, 48499, 48497,
+        47771, 47768, 47769, 47772, 47770,
+        48151, 48148, 48149, 48152, 48150, 48181, 48178, 48179, 48182, 48180, 48194, 48197, 48196, 48193, 48195,
+        48302, 48304, 48300, 48301, 48303, 48333, 48331, 48335, 48334, 48332, 48363, 48361, 48365, 48364, 48362,
+        48592, 48590, 48594, 48593, 48591, 48659, 48661, 48657, 48658, 48660, 48624, 48622, 48626, 48625, 48623,
+    },
+    
+    -- Regalia of the Grand Conqueror
+    [47557] = {
+        -- Alliance
+        47789, 47792, 47791, 47788, 47790,
+        48035, 48029, 48031, 48037, 48033, 48085, 48082, 48083, 48086, 48084,
+        48582, 48580, 48584, 48583, 48581, 48644, 48646, 48642, 48643, 48645, 48614, 48612, 48616, 48615, 48613,
+        
+        -- Horde
+        47796, 47793, 47794, 47797, 47795,
+        48058, 48061, 48060, 48057, 48059, 48088, 48091, 48090, 48087, 48089,
+        48587, 48585, 48589, 48588, 48586, 48649, 48647, 48651, 48650, 48648, 48619, 48621, 48617, 48618, 48620,
+    },
+    
+    -- Regalia of the Grand Protector
+    [47558] = {
+        -- Alliance
+        48262, 48260, 48264, 48263, 48261,
+        48433, 48455, 48451, 48453, 48447, 48383, 48381, 48385, 48384, 48382,
+        48292, 48290, 48294, 48293, 48291, 48323, 48321, 48325, 48324, 48322, 48353, 48351, 48355, 48354, 48352,
+        
+        -- Horde
+        48267, 48269, 48265, 48266, 48268,
+        48468, 48470, 48466, 48467, 48469, 48398, 48400, 48396, 48397, 48399,
+        48307, 48309, 48305, 48306, 48308, 48328, 48330, 48326, 48327, 48329, 48358, 48360, 48356, 48357, 48359,
+    },
+    
+    -- Regalia of the Grand Vanquisher
+    [47559] = {
+        -- Alliance
+        48230, 48228, 48232, 48231, 48229,
+        48545, 48543, 48547, 48546, 48544, 48488, 48486, 48490, 48489, 48487,
+        47761, 47758, 47759, 47762, 47760,
+        48141, 48138, 48139, 48142, 48140, 48171, 48168, 48169, 48172, 48170, 48204, 48207, 48206, 48203, 48205,
+        
+        -- Horde
+        48235, 48237, 48233, 48234, 48236,
+        48550, 48552, 48548, 48549, 48551, 48493, 48495, 48491, 48492, 48494,
+        47764, 47767, 47766, 47763, 47765,
+        48144, 48147, 48146, 48143, 48145, 48174, 48177, 48176, 48173, 48175, 48201, 48198, 48199, 48202, 48200,
+    },
+    
+    
     -- Onyxia 10/25
     
     [49644] = {49485, 49486, 49487}, -- Head of Onyxia
     
     [49294] = {36919, 36922, 36931, 36928, 36934, 36925}, -- Ashen Sack of Gems
     
+    
+    -- ICC 10/25
+    
+    -- Conqueror' Mark of Sanctification (Normal)
+    [52027] = {
+        51208, 51205, 51206, 51209, 51207,
+        51178, 51175, 51176, 51179, 51177, 51184, 51182, 51180, 51183, 51181,
+        51167, 51166, 51165, 51169, 51168, 51173, 51170, 51174, 51172, 51171, 51162, 51160, 51164, 51163, 51161,
+    },
+    
+    -- Protector' Mark of Sanctification (Normal)
+    [52026] = {
+        51153, 51151, 51150, 51154, 51152,
+        51218, 51215, 51219, 51217, 51216, 51212, 51210, 51214, 51213, 51211,
+        51192, 51194, 51190, 51191, 51193, 51202, 51204, 51200, 51201, 51203, 51197, 51199, 51195, 51196, 51198,
+    },
+    
+    -- Vanquisher' Mark of Sanctification (Normal)
+    [52025] = {
+        51187, 51185, 51189, 51188, 51186,
+        51133, 51130, 51134, 51132, 51131, 51127, 51125, 51129, 51128, 51126,
+        51158, 51155, 51156, 51159, 51157,
+        51137, 51135, 51139, 51138, 51136, 51149, 51147, 51145, 51148, 51146, 51143, 51140, 51141, 51144, 51142,
+    },
+    
+    
+    -- Conqueror' Mark of Sanctification (Heroic)
+    [52030] = {
+        51231, 51234, 51233, 51230, 51232,
+        51261, 51264, 51263, 51260, 51262, 51255, 51257, 51259, 51256, 51258,
+        51272, 51273, 51274, 51270, 51271, 51266, 51269, 51265, 51267, 51268, 51277, 51279, 51275, 51276, 51278,
+    },
+    
+    -- Protector' Mark of Sanctification (Heroic)
+    [52029] = {
+        51286, 51288, 51289, 51285, 51287,
+        51221, 51224, 51220, 51222, 51223, 51227, 51229, 51225, 51226, 51228,
+        51247, 51245, 51249, 51248, 51246, 51237, 51235, 51239, 51238, 51236, 51242, 51240, 51244, 51243, 51241,
+    },
+    
+    -- Vanquisher' Mark of Sanctification (Heroic)
+    [52028] = {
+        51252, 51254, 51250, 51251, 51253,
+        51306, 51309, 51305, 51307, 51308, 51312, 51314, 51310, 51311, 51313,
+        51281, 51284, 51283, 51280, 51282,
+        51302, 51304, 51300, 51301, 51303, 51290, 51292, 51294, 51291, 51293, 51296, 51299, 51298, 51295, 51297,
+    },
 };
 
 for token, rewards in pairs(tokenMap) do
@@ -5554,6 +8647,624 @@ for token, rewards in pairs(tokenMap) do
     for _, reward in ipairs(rewards) do
         LootReserve.Data.TokenMap.Tokens[reward] = token;
     end
+end
+
+
+local heroicMirrors = {
+    -- ToC 10
+    [47617] = 47921, -- Icehowl Cinch
+    [47613] = 47923, -- Shoulderpads of the Glacial Wilds
+    [47608] = 47919, -- Acidmaw Boots
+    [47616] = 47926, -- Shoulderguards of the Spirit Walker
+    [47610] = 47916, -- Armbands of the Northern Stalker
+    [47611] = 47918, -- Dreadscale Armguards
+    [47609] = 47917, -- Gauntlets of Rising Anger
+    [47615] = 47924, -- Belt of the Frozen Reach
+    [47614] = 47925, -- Girdle of the Impaler
+    [47607] = 47915, -- Collar of Ceaseless Torment
+    [47578] = 47920, -- Carnivorous Band
+    [47612] = 47922, -- Rod of Imprisoned Souls
+    [47855] = 47994, -- Icehowl Binding
+    [47857] = 47996, -- Pauldrons of the Glacial Wilds
+    [47853] = 47992, -- Acidmaw Treads
+    [47860] = 47999, -- Pauldrons of the Spirit Walker
+    [47850] = 47989, -- Bracers of the Northern Stalker
+    [47852] = 47991, -- Dreadscale Bracers
+    [47851] = 47990, -- Gauntlets of Mounting Anger
+    [47859] = 47998, -- Belt of the Impaler
+    [47858] = 47997, -- Girdle of the Frozen Reach
+    [47849] = 47988, -- Collar of Unending Torment
+    [47854] = 47993, -- Gormok's Band
+    [47856] = 47995, -- Scepter of Imprisoned Souls
+    [47663] = 47927, -- Felspark Bindings
+    [47620] = 47931, -- Leggings of the Demonic Messenger
+    [47669] = 47929, -- Belt of the Winter Solstice
+    [47621] = 47932, -- Girdle of the Farseer
+    [49235] = 49238, -- Boots of Tortured Space
+    [47683] = 47933, -- Sentinel Scouting Greaves
+    [47680] = 47935, -- Armguards of the Nether Lord
+    [47711] = 47937, -- Girdle of the Nether Champion
+    [47619] = 47930, -- Amulet of Binding Elements
+    [47679] = 47939, -- Endurance of the Infernal
+    [47618] = 47928, -- Firestorm Ring
+    [47703] = 47934, -- Planestalker Signet
+    [47676] = 47938, -- Dirk of the Night Watch
+    [47861] = 48000, -- Felspark Bracers
+    [47865] = 48004, -- Legwraps of the Demonic Messenger
+    [47863] = 48002, -- Belt of the Bloodhoof Emissary
+    [47866] = 48005, -- Darkspear Ritual Binding
+    [49236] = 49237, -- Sabatons of Tortured Space
+    [47867] = 48006, -- Warsong Poacher's Greaves
+    [47869] = 48008, -- Armplates of the Nether Lord
+    [47870] = 48009, -- Belt of the Nether Champion
+    [47872] = 48011, -- Fortitude of the Infernal
+    [47864] = 48003, -- Pendant of Binding Elements
+    [47862] = 48001, -- Firestorm Band
+    [47868] = 48007, -- Planestalker Band
+    [47871] = 48010, -- Orcish Deathblade
+    [47721] = 47940, -- Sandals of the Silver Magus
+    [47719] = 47945, -- Gloves of the Silver Assassin
+    [47718] = 47942, -- Helm of the Silver Ranger
+    [47717] = 47943, -- Faceplate of the Silver Champion
+    [47720] = 47944, -- Pauldrons of the Silver Defender
+    [47728] = 47947, -- Binding Light
+    [47727] = 47949, -- Fervor of the Frostborn
+    [47726] = 47946, -- Talisman of Volatile Power
+    [47725] = 47948, -- Victor's Call
+    [47724] = 47941, -- Blade of the Silver Disciple
+    [47873] = 48012, -- Sunreaver Magus' Sandals
+    [47878] = 48017, -- Sunreaver Assassin's Gloves
+    [47875] = 48014, -- Sunreaver Ranger's Helm
+    [47876] = 48015, -- Sunreaver Champion's Faceplate
+    [47877] = 48016, -- Sunreaver Defender's Pauldrons
+    [47880] = 48019, -- Binding Stone
+    [47882] = 48021, -- Eitrigg's Oath
+    [47879] = 48018, -- Fetish of Volatile Power
+    [47881] = 48020, -- Vengeance of the Forsaken
+    [47874] = 48013, -- Sunreaver Disciple's Blade
+    [47745] = 47956, -- Gloves of Looming Shadow
+    [49231] = 49234, -- Boots of the Grieving Soul
+    [47746] = 47959, -- Helm of the Snowy Grotto
+    [47739] = 47954, -- Armor of Shifting Shadows
+    [47744] = 47961, -- Gloves of the Azure Prophet
+    [47738] = 47952, -- Sabatons of the Lingering Vortex
+    [47747] = 47957, -- Darkbane Pendant
+    [47700] = 47955, -- Loop of the Twin Val'kyr
+    [47742] = 47958, -- Chalice of Benedictus
+    [47736] = 47953, -- Icefall Blade
+    [47737] = 47951, -- Reckoning
+    [47743] = 47960, -- Enlightenment
+    [47740] = 47950, -- The Diplomat
+    [47889] = 48028, -- Looming Shadow Wraps
+    [49232] = 49233, -- Sandals of the Grieving Soul
+    [47891] = 48034, -- Helm of the High Mesa
+    [47887] = 48026, -- Vest of Shifting Shadows
+    [47893] = 48038, -- Sen'jin Ritualist Gloves
+    [47885] = 48024, -- Greaves of the Lingering Vortex
+    [47890] = 48030, -- Darkbane Amulet
+    [47888] = 48027, -- Band of the Twin Val'kyr
+    [47913] = 48032, -- Lightbane Focus
+    [47886] = 48025, -- Nemesis Blade
+    [47884] = 48023, -- Edge of Agony
+    [47892] = 48036, -- Illumination
+    [47883] = 48022, -- Widebarrel Flintlock
+    [47838] = 47974, -- Vestments of the Sleepless
+    [47837] = 47977, -- Cinch of the Undying
+    [47832] = 47972, -- Spaulders of the Snow Bandit
+    [47813] = 47965, -- Helmet of the Crypt Lord
+    [47829] = 47969, -- Pauldrons of the Timeless Hunter
+    [47811] = 47964, -- Chestguard of the Warden
+    [47836] = 47976, -- Legplates of the Immortal Spider
+    [47830] = 47970, -- Legplates of the Silver Hand
+    [47810] = 47967, -- Crusader's Glory
+    [47814] = 47971, -- Westfall Saber
+    [47808] = 47966, -- The Lion's Maw
+    [47809] = 47962, -- Argent Resolve
+    [47816] = 47973, -- The Grinder
+    [47834] = 47979, -- Fordragon Blades
+    [47815] = 47968, -- Cold Convergence
+    [47835] = 47978, -- Bulwark of the Royal Guard
+    [47812] = 47963, -- Vigilant Ward
+    [47741] = 47975, -- Baelgun's Heavy Crossbow
+    [47906] = 48051, -- Robes of the Sleepless
+    [47909] = 48054, -- Belt of the Eternal
+    [47904] = 48049, -- Shoulderpads of the Snow Bandit
+    [47897] = 48042, -- Helm of the Crypt Lord
+    [47901] = 48046, -- Pauldrons of the Shadow Hunter
+    [47896] = 48041, -- Stoneskin Chestplate
+    [47902] = 48047, -- Legplates of Redeemed Blood, Legplates of the Redeemed Blood Knight
+    [47908] = 48053, -- Sunwalker Legguards
+    [47899] = 48044, -- Ardent Guard
+    [47903] = 48048, -- Forsaken Bonecarver
+    [47898] = 48043, -- Frostblade Hatchet
+    [47894] = 48039, -- Mace of the Earthborn Chieftain
+    [47905] = 48050, -- Blackhorn Bludgeon
+    [47911] = 48056, -- Anguish
+    [47900] = 48045, -- Perdition
+    [47910] = 48055, -- Aegis of the Coliseum
+    [47895] = 48040, -- Pride of the Kor'kron
+    [47907] = 48052, -- Darkmaw Crossbow
+    
+    -- ToC 25
+    [46993] = 46992, -- Flowing Vestments of Ascent
+    [46973] = 46972, -- Cord of the Tenebrous Mist
+    [46975] = 46974, -- Leggings of the Broken Beast
+    [46989] = 46988, -- Boots of the Unrelenting Storm
+    [46965] = 46960, -- Breastplate of Cruel Intent
+    [46991] = 46990, -- Belt of the Ice Burrower
+    [46968] = 46962, -- Chestplate of the Towering Monstrosity
+    [46967] = 46961, -- Boneshatter Armplates
+    [46986] = 46985, -- Boots of the Courageous
+    [46971] = 46970, -- Drape of the Untamed Predator
+    [46977] = 46976, -- Shawl of the Refreshing Winds
+    [46966] = 46959, -- Band of the Violent Temperment
+    [46980] = 46979, -- Blade of Tarasque
+    [46969] = 46958, -- Steel Bladebreaker
+    [46964] = 46963, -- Crystal Plated Vanguard
+    [47264] = 47425, -- Flowing Robes of Ascent
+    [47258] = 47419, -- Belt of the Tenebrous Mist
+    [47259] = 47420, -- Legwraps of the Broken Beast
+    [47262] = 47423, -- Boots of the Harsh Winter
+    [47251] = 47412, -- Cuirass of Cruel Intent
+    [47265] = 47426, -- Binding of the Ice Burrower
+    [47254] = 47415, -- Hauberk of the Towering Monstrosity
+    [47253] = 47414, -- Boneshatter Vambraces
+    [47263] = 47424, -- Sabatons of the Courageous
+    [47257] = 47418, -- Cloak of the Untamed Predator
+    [47256] = 47417, -- Drape of the Refreshing Winds
+    [47252] = 47413, -- Ring of the Violent Temperament
+    [47261] = 47422, -- Barb of Tarasque
+    [47255] = 47416, -- Stygian Bladebreaker
+    [47260] = 47421, -- Forlorn Barrier
+    [47062] = 47051, -- Leggings of the Soothing Touch
+    [47004] = 47000, -- Cuirass of Calamitous Fate
+    [47066] = 47055, -- Bracers of the Autumn Willow
+    [47068] = 47056, -- Bracers of Cloudy Omen
+    [47002] = 46999, -- Bloodbath Belt
+    [47067] = 47057, -- Legplates of Failing Light
+    [47061] = 47052, -- Legguards of Feverish Dedication
+    [47003] = 46997, -- Dawnbreaker Greaves
+    [47063] = 47042, -- Pride of the Eredar
+    [47060] = 47043, -- Charge of the Demon Lord
+    [47224] = 47223, -- Ring of the Darkmender
+    [47059] = 47041, -- Solace of the Defeated
+    [47064] = 47053, -- Symbol of Transgression
+    [47001] = 46996, -- Lionhead Slasher
+    [46995] = 46994, -- Talonstrike
+    [47274] = 47435, -- Pants of the Soothing Touch
+    [47270] = 47431, -- Vest of Calamitous Fate
+    [47277] = 47438, -- Bindings of the Autumn Willow
+    [47280] = 47441, -- Wristwraps of Cloudy Omen
+    [47268] = 47429, -- Bloodbath Girdle
+    [47279] = 47440, -- Leggings of Failing Light
+    [47273] = 47434, -- Legplates of Feverish Dedication
+    [47269] = 47430, -- Dawnbreaker Sabatons
+    [47275] = 47436, -- Pride of the Demon Lord
+    [47272] = 47433, -- Charge of the Eredar
+    [47278] = 47439, -- Circle of the Darkmender
+    [47271] = 47432, -- Solace of the Fallen
+    [47276] = 47437, -- Talisman of Heedless Sins
+    [47266] = 47427, -- Blood Fury
+    [47267] = 47428, -- Death's Head Crossbow
+    [47084] = 47081, -- Cord of Biting Cold
+    [47097] = 47092, -- Boots of the Mourning Widow
+    [47096] = 47094, -- Vestments of the Shattered Fellowship
+    [47077] = 47071, -- Treads of the Icewalker
+    [47074] = 47073, -- Bracers of the Untold Massacre
+    [47087] = 47083, -- Legguards of Concealed Hatred
+    [47099] = 47090, -- Boots of Tremoring Earth
+    [47086] = 47082, -- Chestplate of the Frostborn Hero
+    [47098] = 47093, -- Vambraces of the Broken Bond
+    [47076] = 47072, -- Girdle of Bloodied Scars
+    [47095] = 47089, -- Cloak of Displacement
+    [47075] = 47070, -- Ring of Callous Aggression
+    [47088] = 47080, -- Satrina's Impeding Scarab
+    [47078] = 47069, -- Justicebringer
+    [47085] = 47079, -- Bastion of Purity
+    [47286] = 47447, -- Belt of Biting Cold
+    [47293] = 47454, -- Sandals of the Mourning Widow
+    [47292] = 47453, -- Robes of the Shattered Fellowship
+    [47284] = 47445, -- Icewalker Treads
+    [47281] = 47442, -- Bracers of the Silent Massacre
+    [47289] = 47450, -- Leggings of Concealed Hatred
+    [47295] = 47456, -- Sabatons of Tremoring Earth
+    [47288] = 47449, -- Chestplate of the Frostwolf Hero
+    [47294] = 47455, -- Bracers of the Broken Bond
+    [47283] = 47444, -- Belt of Bloodied Scars
+    [47291] = 47452, -- Shroud of Displacement
+    [47282] = 47443, -- Band of Callous Aggression
+    [47290] = 47451, -- Juggernaut's Vitality
+    [47285] = 47446, -- Dual-blade Butcher
+    [47287] = 47448, -- Bastion of Resolve
+    [47129] = 47126, -- Skyweaver Robes
+    [47143] = 47141, -- Bindings of Dark Essence
+    [47112] = 47107, -- Belt of the Merciless Killer
+    [47145] = 47140, -- Cord of Pale Thorns
+    [47109] = 47106, -- Sabatons of Ruthless Judgment
+    [47147] = 47142, -- Breastplate of the Frozen Lake
+    [47111] = 47108, -- Bracers of the Shieldmaiden
+    [47132] = 47121, -- Legguards of Ascension
+    [47133] = 47116, -- The Arbiter's Muse
+    [47110] = 47105, -- The Executioner's Malice
+    [47144] = 47139, -- Wail of the Val'kyr
+    [47131] = 47115, -- Death's Verdict
+    [47146] = 47138, -- Chalice of Searing Light
+    [47113] = 47104, -- Twin Spike
+    [47130] = 47114, -- Lupine Longstaff
+    [47301] = 47462, -- Skyweaver Vestments
+    [47306] = 47467, -- Dark Essence Bindings
+    [47308] = 47469, -- Belt of Pale Thorns
+    [47299] = 47460, -- Belt of the Pitiless Killer
+    [47296] = 47457, -- Greaves of Ruthless Judgment
+    [47310] = 47471, -- Chestplate of the Frozen Lake
+    [47298] = 47459, -- Armguards of the Shieldmaiden
+    [47304] = 47465, -- Legplates of Ascension
+    [47307] = 47468, -- Cry of the Val'kyr
+    [47305] = 47466, -- Legionnaire's Gorget
+    [47297] = 47458, -- The Executioner's Vice
+    [47303] = 47464, -- Death's Choice
+    [47309] = 47470, -- Mystifying Charm
+    [47300] = 47461, -- Gouge of the Frigid Heart
+    [47302] = 47463, -- Twin's Pact
+    [47208] = 47203, -- Armbands of the Ashen Saint
+    [47236] = 47235, -- Gloves of the Lifeless Touch
+    [47189] = 47187, -- Leggings of the Deepening Void
+    [47205] = 47194, -- Footpads of the Icy Floe
+    [47155] = 47151, -- Bracers of Dark Determination
+    [47190] = 47186, -- Legwraps of the Awakening
+    [47209] = 47204, -- Chestguard of Flowing Elements
+    [47153] = 47152, -- Belt of Deathly Dominion
+    [47191] = 47184, -- Legguards of the Lurking Threat
+    [47240] = 47234, -- Gloves of Bitter Reprisal
+    [47207] = 47195, -- Belt of the Forgotten Martyr
+    [47154] = 47150, -- Greaves of the 7th Legion
+    [47238] = 47225, -- Maiden's Favor
+    [47192] = 47183, -- Strength of the Nerub
+    [47237] = 47054, -- Band of Deplorable Violence
+    [47157] = 47149, -- Signet of the Traitor King
+    [47188] = 47182, -- Reign of the Unliving
+    [47156] = 47148, -- Stormpike Cleaver
+    [47206] = 47193, -- Misery's End
+    [47239] = 47233, -- Archon Glaive
+    [47324] = 47485, -- Bindings of the Ashen Saint
+    [47326] = 47487, -- Handwraps of the Lifeless Touch
+    [47317] = 47478, -- Breeches of the Deepening Void
+    [47321] = 47482, -- Boots of the Icy Floe
+    [47313] = 47474, -- Armbands of Dark Determination
+    [47318] = 47479, -- Leggings of the Awakening
+    [47325] = 47486, -- Cuirass of Flowing Elements
+    [47311] = 47472, -- Waistguard of Deathly Dominion
+    [47319] = 47480, -- Leggings of the Lurking Threat
+    [47330] = 47492, -- Gauntlets of Bitter Reprisal
+    [47323] = 47484, -- Girdle of the Forgotten Martyr
+    [47312] = 47473, -- Greaves of the Saronite Citadel
+    [47328] = 47490, -- Maiden's Adoration
+    [47320] = 47481, -- Might of the Nerub
+    [47315] = 47476, -- Band of the Traitor King
+    [47327] = 47489, -- Lurid Manifestation
+    [47316] = 47477, -- Reign of the Dead
+    [47314] = 47475, -- Hellscream Slicer
+    [47322] = 47483, -- Suffering's End
+    [47329] = 47491, -- Hellion Glaive
+    
+    -- ICC 10
+    [50773] = 51930, -- Cord of the Patronizing Practitioner
+    [50774] = 51929, -- Coldwraith Bracers
+    [50762] = 51935, -- Linked Scourge Vertebrae
+    [50775] = 51928, -- Corrupted Silverplate Leggings
+    [50772] = 51931, -- Ancient Skeletal Boots
+    [50764] = 51933, -- Shawl of Nerubian Silk
+    [50763] = 51934, -- Marrowgar's Scratching Choker
+    [50339] = 50346, -- Sliver of Pure Ice
+    [50771] = 51932, -- Frost Needle
+    [50761] = 51936, -- Citadel Enforcer's Claymore
+    [50759] = 51938, -- Bone Warden's Splitter
+    [50760] = 51937, -- Bonebreaker Scepter
+    [50785] = 51918, -- Bracers of Dark Blessings
+    [50782] = 51921, -- Sister's Handshrouds
+    [50780] = 51923, -- Chestguard of the Frigid Noose
+    [50778] = 51925, -- Soulthief's Braided Belt
+    [50783] = 51920, -- Boots of the Frozen Seed
+    [50777] = 51926, -- Handgrips of Frost and Sleet
+    [50784] = 51919, -- Deathspeaker Disciple's Belt
+    [50779] = 51924, -- Deathspeaker Zealot's Helm
+    [50786] = 51917, -- Ghoul Commander's Cuirass
+    [50342] = 50343, -- Whispering Fanged Skull
+    [50781] = 51922, -- Scourgelord's Baton
+    [50776] = 51927, -- Njorndar Bone Bow
+    [50795] = 51908, -- Cord of Dark Suffering
+    [50797] = 51906, -- Ice-Reinforced Vrykul Helm
+    [50792] = 51911, -- Pauldrons of Lost Hope
+    [50789] = 51914, -- Icecrown Rampart Bracers
+    [50796] = 51907, -- Bracers of Pale Illumination
+    [50788] = 51915, -- Bone Drake's Enameled Boots
+    [50791] = 51912, -- Saronite Gargoyle Cloak
+    [50790] = 51913, -- Abomination's Bloody Ring
+    [50340] = 50345, -- Muradin's Spyglass
+    [50793] = 51910, -- Midnight Sun
+    [50787] = 51916, -- Frost Giant's Cleaver
+    [50794] = 51909, -- Neverending Winter
+    [50807] = 51896, -- Thaumaturge's Crackling Cowl
+    [50804] = 51899, -- Icecrown Spire Sandals
+    [50799] = 51904, -- Scourge Stranglers
+    [50806] = 51897, -- Leggings of Unrelenting Blood
+    [50800] = 51903, -- Hauberk of a Thousand Cuts
+    [50801] = 51902, -- Blade-Scored Carapace
+    [50802] = 51901, -- Gargoyle Spit Bracers
+    [50808] = 51895, -- Deathforged Legplates
+    [50809] = 51894, -- Soulcleave Pendant
+    [50803] = 51900, -- Saurfang's Cold-Forged Band
+    [50798] = 51905, -- Ramaladni's Blade of Culling
+    [50805] = 51898, -- Mag'hari Chieftain's Staff
+    [50988] = 51883, -- Bloodstained Surgeon's Shoulderguards
+    [50990] = 51882, -- Kilt of Untreated Wounds
+    [50985] = 51885, -- Wrists of Septic Shock
+    [50858] = 51889, -- Plague-Soaked Leather Leggings
+    [50812] = 51891, -- Taldron's Long Neglected Boots
+    [50967] = 51886, -- Festergut's Gaseous Gloves
+    [50811] = 51892, -- Festering Fingerguards
+    [50859] = 51888, -- Cloak of Many Skins
+    [50852] = 51890, -- Precious's Putrid Collar
+    [50986] = 51884, -- Signet of Putrefaction
+    [50810] = 51893, -- Gutbuster
+    [50966] = 51887, -- Abracadaver
+    [51007] = 51872, -- Ether-Soaked Bracers
+    [51005] = 51874, -- Gloves of Broken Fingers
+    [51009] = 51870, -- Chestguard of the Failed Experiment
+    [51002] = 51877, -- Taldron's Short-Sighted Helm
+    [51006] = 51873, -- Shuffling Shoes
+    [51000] = 51879, -- Flesh-Shaper's Gurney Strap
+    [51008] = 51871, -- Choker of Filthy Diamonds
+    [51001] = 51878, -- Rotface's Rupturing Ring
+    [51003] = 51876, -- Abomination Knuckles
+    [51004] = 51875, -- Lockjaw
+    [50998] = 51881, -- Shaft of Glacial Ice
+    [51020] = 51859, -- Shoulders of Ruinous Senility
+    [51017] = 51862, -- Cauterized Cord
+    [51013] = 51866, -- Discarded Bag of Entrails
+    [51015] = 51864, -- Shoulderpads of the Morbid Ritual
+    [51019] = 51860, -- Rippling Flesh Kilt
+    [51014] = 51865, -- Scalpel-Sharpening Shoulderguards
+    [51018] = 51861, -- Chestplate of Septic Stitches
+    [51012] = 51867, -- Infected Choker
+    [51016] = 51863, -- Pendant of Split Veins
+    [50341] = 50344, -- Unidentifiable Organ
+    [51011] = 51868, -- Flesh-Carving Scalpel
+    [51010] = 51869, -- The Facelifter
+    [51379] = 51851, -- Bloodsoul Raiment
+    [51380] = 51850, -- Pale Corpse Boots
+    [51023] = 51856, -- Taldaram's Soft Slippers
+    [51325] = 51853, -- Blood-Drinker's Girdle
+    [51383] = 51847, -- Spaulders of the Blood Princes
+    [51025] = 51854, -- Battle-Maiden's Legguards
+    [51382] = 51848, -- Heartsick Mender's Cape
+    [51381] = 51849, -- Cerise Coiled Ring
+    [51024] = 51855, -- Thrice Fanged Signet
+    [51021] = 51858, -- Soulbreaker
+    [51022] = 51857, -- Hersir's Greatspear
+    [51326] = 51852, -- Wand of Ruby Claret
+    [51554] = 51837, -- Cowl of Malefic Repose
+    [51552] = 51839, -- Shoulderpads of the Searing Kiss
+    [51550] = 51841, -- Ivory-Inlaid Leggings
+    [51551] = 51840, -- Chestguard of Siphoned Elements
+    [51386] = 51844, -- Throatrender Handguards
+    [51556] = 51835, -- Veincrusher Gauntlets
+    [51555] = 51836, -- Tightening Waistband
+    [51548] = 51842, -- Collar of Haughty Disdain
+    [51387] = 51843, -- Seal of the Twilight Queen
+    [51384] = 51846, -- Bloodsipper
+    [51385] = 51845, -- Stakethrower
+    [51553] = 51838, -- Lana'thel's Bloody Nail
+    [51777] = 51823, -- Leggings of the Refracted Mind
+    [51585] = 51825, -- Sister Svalna's Spangenhelm
+    [51565] = 51830, -- Skinned Whelp Shoulders
+    [51583] = 51827, -- Stormbringer Gloves
+    [51566] = 51829, -- Legguards of the Twisted Dream
+    [51586] = 51824, -- Emerald Saint's Spaulders
+    [51563] = 51832, -- Taiga Bindings
+    [51564] = 51831, -- Ironrope Belt of Ymirjar
+    [51584] = 51826, -- Lich Wrappings
+    [51562] = 51833, -- Oxheart
+    [51582] = 51828, -- Sister Svalna's Aether Staff
+    [51561] = 51834, -- Dreamhunter's Carbine
+    [51790] = 51813, -- Robes of Azure Downfall
+    [51783] = 51820, -- Vambraces of the Frost Wyrm Queen
+    [51789] = 51814, -- Icicle Shapers
+    [51792] = 51811, -- Shoulderguards of Crystalline Bone
+    [51785] = 51818, -- Wyrmwing Treads
+    [51782] = 51821, -- Etched Dragonbone Girdle
+    [51786] = 51817, -- Legplates of Aetheric Strife
+    [51787] = 51816, -- Scourge Fanged Stompers
+    [51779] = 51822, -- Rimetooth Pendant
+    [51784] = 51819, -- Splintershard
+    [51788] = 51815, -- Bleak Coldarra Carver
+    [51791] = 51812, -- Lost Pavise of the Blue Flight
+    [51801] = 51941, -- Pugius, Fist of Defiance
+    [51803] = 51939, -- Tel'thas, Dagger of the Blood King
+    [51800] = 51942, -- Stormfury, Black Blade of the Betrayer
+    [51795] = 51947, -- Troggbane, Axe of the Frostborne King
+    [51798] = 51944, -- Valius, Gavel of the Lightbringer
+    [51796] = 51946, -- Warmace of Menethil
+    [51799] = 51943, -- Halion, Staff of Forgotten Love
+    [51797] = 51945, -- Tainted Twig of Nordrassil
+    [51802] = 51940, -- Windrunner's Heartseeker
+    
+    -- ICC 25
+    [49978] = 50613, -- Crushing Coldwraith Belt
+    [49979] = 50615, -- Handguards of Winter's Respite
+    [49950] = 50607, -- Frostbitten Fur Boots
+    [49952] = 50605, -- Snowserpent Mail Helm
+    [49980] = 50617, -- Rusted Bonespike Pauldrons
+    [49951] = 50606, -- Gendarme's Cuirass
+    [49960] = 50611, -- Bracers of Dark Reckoning
+    [49964] = 50612, -- Legguards of Lost Hope
+    [49975] = 50609, -- Bone Sentinel's Amulet
+    [49949] = 50604, -- Band of the Bone Colossus
+    [49977] = 50614, -- Loop of the Endless Labyrinth
+    [49967] = 50610, -- Marrowgar's Frigid Eye
+    [49968] = 50608, -- Frozen Bonespike
+    [50415] = 50709, -- Bryntroll, the Bone Arbiter
+    [49976] = 50616, -- Bulwark of Smouldering Steel
+    [49991] = 50643, -- Shoulders of Mercy Killing
+    [49994] = 50651, -- The Lady's Brittle Bracers
+    [49987] = 50646, -- Cultist's Bloodsoaked Spaulders
+    [49996] = 50649, -- Deathwhisper Raiment
+    [49988] = 50645, -- Leggings of Northern Lights
+    [49993] = 50652, -- Necrophotic Greaves
+    [49986] = 50640, -- Broken Ram Skull Helm
+    [49995] = 50650, -- Fallen Lord's Handguards
+    [49983] = 50639, -- Blood-Soaked Saronite Stompers
+    [49989] = 50647, -- Ahn'kahar Onyx Neckguard
+    [49985] = 50642, -- Juggernaut Band
+    [49990] = 50644, -- Ring of Maddening Whispers
+    [49982] = 50641, -- Heartpierce
+    [49992] = 50648, -- Nibelung
+    [50034] = 50638, -- Zod's Repeating Longbow
+    [50006] = 50661, -- Corp'rethar Ceremonial Crown
+    [50011] = 50663, -- Gunship Captain's Mittens
+    [50001] = 50656, -- Ikfirus's Sack of Wonder
+    [50009] = 50665, -- Boots of Unnatural Growth
+    [50000] = 50655, -- Scourge Hunter's Vambraces
+    [50003] = 50660, -- Boneguard Commander's Pauldrons
+    [50002] = 50659, -- Polar Bear Claw Bracers
+    [50010] = 50667, -- Waistband of Righteous Fury
+    [49998] = 50653, -- Shadowvault Slayer's Cloak
+    [50005] = 50658, -- Amulet of the Silent Eulogy
+    [50008] = 50664, -- Ring of Rapid Ascent
+    [49999] = 50657, -- Skeleton Lord's Circle
+    [50359] = 50366, -- Althor's Abacus
+    [50352] = 50349, -- Corpse Tongue Coin
+    [50411] = 50654, -- Scourgeborne Waraxe
+    [50333] = 50670, -- Toskk's Maximized Wristguards
+    [50015] = 50671, -- Belt of the Blood Nova
+    [50014] = 50668, -- Greatcloak of the Turned Champion
+    [50362] = 50363, -- Deathbringer's Will
+    [50412] = 50672, -- Bloodvenom Blade
+    [50063] = 50702, -- Lingering Illness
+    [50056] = 50694, -- Plaguebringer's Stained Pants
+    [50062] = 50699, -- Plague Scientist's Boots
+    [50042] = 50697, -- Gangrenous Leggings
+    [50041] = 50696, -- Leather of Stitched Scourge Parts
+    [50059] = 50698, -- Horrific Flesh Epaulets
+    [50038] = 50689, -- Carapace of Forgotten Kings
+    [50064] = 50703, -- Unclean Surgical Gloves
+    [50413] = 50688, -- Nerub'ar Stalker's Cord
+    [50060] = 50701, -- Faceplate of the Forgotten
+    [50037] = 50690, -- Fleshrending Gauntlets
+    [50036] = 50691, -- Belt of Broken Bones
+    [50061] = 50700, -- Holiday's Grace
+    [50414] = 50693, -- Might of Blight
+    [50035] = 50692, -- Black Bruise
+    [50040] = 50695, -- Distant Land
+    [50032] = 50686, -- Death Surgeon's Sleeves
+    [50026] = 50679, -- Helm of the Elder Moon
+    [50021] = 50675, -- Aldriana's Gloves of Secrecy
+    [50022] = 50673, -- Dual-Bladed Pauldrons
+    [50030] = 50687, -- Bloodsunder's Bracers
+    [50020] = 50674, -- Raging Behemoth's Shoulderplates
+    [50024] = 50681, -- Blightborne Warplate
+    [50027] = 50680, -- Rot-Resistant Breastplate
+    [50019] = 50677, -- Winding Sheet
+    [50023] = 50682, -- Bile-Encrusted Medallion
+    [50025] = 50678, -- Seal of Many Mouths
+    [50353] = 50348, -- Dislodged Foreign Object
+    [50028] = 50685, -- Trauma
+    [50016] = 50676, -- Rib Spreader
+    [50033] = 50684, -- Corpse-Impaling Spike
+    [50067] = 50707, -- Astrylian's Sutured Cinch
+    [50069] = 50705, -- Professor's Bloodied Smock
+    [50351] = 50706, -- Tiny Abomination in a Jar
+    [50179] = 50708, -- Last Word
+    [50068] = 50704, -- Rigormortis
+    [50172] = 50717, -- Sanguine Silk Robes
+    [50176] = 50722, -- San'layn Ritualist Gloves
+    [50073] = 50713, -- Geistlord's Punishment Sack
+    [50171] = 50715, -- Shoulders of Frost-Tipped Thorns
+    [50177] = 50723, -- Mail of Crimson Coins
+    [50071] = 50711, -- Treads of the Wasteland
+    [50072] = 50712, -- Landsoul's Horned Greathelm
+    [50175] = 50721, -- Crypt Keeper's Bracers
+    [50075] = 50716, -- Taldaram's Plated Fists
+    [50074] = 50718, -- Royal Crimson Cloak
+    [50174] = 50720, -- Incarnadine Band of Mending
+    [50170] = 50714, -- Valanar's Other Signet Ring
+    [50173] = 50719, -- Shadow Silk Spindle
+    [50184] = 50710, -- Keleseth's Seducer
+    [49919] = 50603, -- Cryptmaker
+    [50182] = 50724, -- Blood Queen's Crimson Choker
+    [50180] = 50728, -- Lana'thel's Chain of Flagellation
+    [50354] = 50726, -- Bauble of True Blood
+    [50178] = 50727, -- Bloodfall
+    [50181] = 50725, -- Dying Light
+    [50065] = 50729, -- Icecrown Glacial Wall
+    [50418] = 50629, -- Robe of the Waking Nightmare
+    [50417] = 50630, -- Bracers of Eternal Dreaming
+    [50202] = 50626, -- Snowstorm Helm
+    [50188] = 50619, -- Anub'ar Stalker's Gloves
+    [50187] = 50620, -- Coldwraith Links
+    [50199] = 50623, -- Leggings of Dying Candles
+    [50192] = 50624, -- Scourge Reaver's Legplates
+    [50416] = 50632, -- Boots of the Funeral March
+    [50190] = 50625, -- Grinning Skull Greatboots
+    [50205] = 50628, -- Frostbinder's Shredded Cape
+    [50195] = 50627, -- Noose of Malachite
+    [50185] = 50622, -- Devium's Eternally Cold Ring
+    [50186] = 50618, -- Frostbrood Sapphire Ring
+    [50183] = 50621, -- Lungbreaker
+    [50472] = 50631, -- Nightmare Ender
+    [50421] = 50633, -- Sindragosa's Cruel Claw
+    [50424] = 50636, -- Memory of Malygos
+    [50360] = 50365, -- Phylactery of the Nameless Lich
+    [50361] = 50364, -- Sindragosa's Flawless Fang
+    [50423] = 50635, -- Sundial of Eternal Dusk
+    [50426] = 50736, -- Heaven's Fall, Kryss of a Thousand Lies
+    [50427] = 50732, -- Bloodsurge, Kel'Thuzad's Blade of Agony
+    [50070] = 50730, -- Glorenzelg, High-Blade of the Silver Hand
+    [50012] = 50737, -- Havoc's Call, Blade of Lordaeron Kings
+    [50428] = 50734, -- Royal Scepter of Terenas II
+    [49997] = 50738, -- Mithrios, Bronzebeard's Legacy
+    [50425] = 50735, -- Oathbinder, Charge of the Ranger-General
+    [50429] = 50731, -- Archus, Greatstaff of Antonidas
+    [49981] = 50733, -- Fal'inrush, Defender of Quel'thalas
+    
+    -- RS 10
+    [53118] = 54562, -- Misbegotten Belt
+    [53114] = 54561, -- Gloaming Sark
+    [53117] = 54560, -- Changeling Gloves
+    [53113] = 54566, -- Twilight Scale Shoulders
+    [53119] = 54558, -- Boots of Divided Being
+    [53112] = 54559, -- Bracers of the Heir
+    [53121] = 54565, -- Surrogate Belt
+    [53111] = 54564, -- Scion's Treads
+    [53115] = 54556, -- Abduction's Cover
+    [53103] = 54557, -- Baltharus' Gift
+    [53116] = 54563, -- Saviana's Tribute
+    [53110] = 54567, -- Zarithrian's Offering
+    
+    -- RS 25
+    [53486] = 54582, -- Bracers of Fiery Night
+    [53134] = 54584, -- Phaseshifter's Bracers
+    [53126] = 54580, -- Umbrage Armbands
+    [53488] = 54587, -- Split Shape Belt
+    [53127] = 54577, -- Returning Footfalls
+    [53125] = 54578, -- Apocalypse's Advance
+    [53487] = 54586, -- Foreshadow Steps
+    [53129] = 54579, -- Treads of Impending Resurrection
+    [53489] = 54583, -- Cloak of Burning Dusk
+    [53132] = 54581, -- Penumbra Pendant
+    [53490] = 54585, -- Ring of Phased Regeneration
+    [53133] = 54576, -- Signet of Twilight
+    [54572] = 54588, -- Charred Twilight Scale
+    [54573] = 54589, -- Glowing Twilight Scale
+    [54571] = 54591, -- Petrified Twilight Scale
+    [54569] = 54590, -- Sharpened Twilight Scale
+};
+
+for normal, heroic in pairs(heroicMirrors) do
+    LootReserve.Data.TokenMap.HeroicMirrors[normal] = true;
+    
+    LootReserve.Data.TokenMap.Rewards[heroic] = {normal};
+    LootReserve.Data.TokenMap.Tokens[normal]  = heroic;
 end
 
 
@@ -5617,4 +9328,7 @@ function LootReserve.Data:IsToken(itemID)
 end
 function LootReserve.Data:IsTokenReward(itemID)
     return self:GetToken(itemID) ~= nil;
+end
+function LootReserve.Data:IsHeroicMirror(itemID)
+    return self.TokenMap.HeroicMirrors[itemID] or false;
 end

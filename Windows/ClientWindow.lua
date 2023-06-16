@@ -169,7 +169,7 @@ function LootReserve.Client:UpdateLootList()
             if source then
                 source = format("%s%s", usable and "" or "|cFFFF2020", source);
             end
-            local description = format("%s%s", usable and "" or "|cFFFF2020", LootReserve:GetItemDescription(item:GetID()) or "");
+            local description = format("%s%s", usable and "" or "|cFFFF2020", LootReserve:GetItemDescription(item:GetID(), LootReserve.Data:IsHeroicMirror(item:GetID())) or "");
             local name, link, texture = item:GetNameLinkTexture();
             frame.Link = link;
 

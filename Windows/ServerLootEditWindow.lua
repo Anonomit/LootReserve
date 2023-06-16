@@ -68,7 +68,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             frame:SetHeight(44);
             frame:Show();
 
-            local description = LootReserve:GetItemDescription(item:GetID());
+            local description = LootReserve:GetItemDescription(item:GetID(), LootReserve.Data:IsHeroicMirror(item:GetID())) or "";
             local name, link, texture = item:GetNameLinkTexture();
 
             frame.Link = link;
