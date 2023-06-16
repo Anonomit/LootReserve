@@ -143,9 +143,13 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                 end
             end
         end
+        local parentCategoryName = "";
         for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
             if category.Children and (not LootReserve.Server.NewSessionSettings.LootCategories or LootReserve:Contains(LootReserve.Server.NewSessionSettings.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for _, child in ipairs(category.Children) do
+                    if child.Name and child.IndentType ~= 1 then
+                        parentCategoryName = child.Name;
+                    end
                     if child.Loot then
                         for _, itemID in ipairs(child.Loot) do
                             if itemID ~= 0 then
@@ -153,7 +157,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                                 local item = LootReserve.ItemCache:Item(itemID);
                                 if item:IsCached() then
                                     if matchesFilter(item, filter) then
-                                        createFrame(item, format("%s > %s", category.Name, child.Name));
+                                        createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
                                         match = true;
                                     end
                                 else
@@ -164,7 +168,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                                         local reward = LootReserve.ItemCache:Item(rewardID);
                                         if reward:IsCached() then
                                             if item:IsCached() and matchesFilter(reward, filter) then
-                                                createFrame(item, format("%s > %s", category.Name, child.Name));
+                                                createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
                                                 break;
                                             end
                                         else
@@ -245,6 +249,7 @@ function LootReserve.Server.LootEdit:UpdateCategories()
     local list = self.Window.Categories.Scroll.Container;
     list.Frames = list.Frames or { };
     list.LastIndex = 0;
+    list.ContentHeight = 0;
 
     local function createButton(id, category)
         list.LastIndex = list.LastIndex + 1;
@@ -255,14 +260,6 @@ function LootReserve.Server.LootEdit:UpdateCategories()
                 category.Children and "LootReserveCategoryListHeaderTemplate" or
                 category.Header and "LootReserveCategoryListSubheaderTemplate" or
                 "LootReserveCategoryListButtonTemplate");
-
-            if #list.Frames == 0 then
-                frame:SetPoint("TOPLEFT", list, "TOPLEFT");
-                frame:SetPoint("TOPRIGHT", list, "TOPRIGHT");
-            else
-                frame:SetPoint("TOPLEFT", list.Frames[#list.Frames], "BOTTOMLEFT", 0, 0);
-                frame:SetPoint("TOPRIGHT", list.Frames[#list.Frames], "BOTTOMRIGHT", 0, 0);
-            end
             table.insert(list.Frames, frame);
             frame = list.Frames[list.LastIndex];
         end
@@ -274,7 +271,7 @@ function LootReserve.Server.LootEdit:UpdateCategories()
         if category.Separator then
             frame:EnableMouse(false);
         else
-            frame.Text:SetText(category.Name);
+            frame.Text:SetText(category.IndentType == 1 and (" - " .. category.Name) or category.IndentType == 2 and (" + " .. category.Name) or category.Name);
             if category.Children or category.Header then
                 frame:EnableMouse(false);
             else
@@ -310,6 +307,14 @@ function LootReserve.Server.LootEdit:UpdateCategories()
         else
             frame:Hide();
             frame:SetHeight(0.00001);
+        end
+        
+        if frame:GetHeight() > 1 then
+            frame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
+            frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
+            list.ContentHeight = list.ContentHeight + frame:GetHeight();
+        else
+            frame:ClearAllPoints();
         end
     end
 

@@ -189,10 +189,14 @@ function LootReserve.Client:UpdateLootList()
             frame.Favorite:SetShown(frame.hovered or frame.Favorite.Unset:IsShown());
             frame.ItemFrame.Name:SetPoint("TOPRIGHT", frame.ItemFrame, "TOPRIGHT", frame.Favorite:IsShown() and -20 or 0, 0);
         end
-
-        frame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
-        frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
-        list.ContentHeight = list.ContentHeight + frame:GetHeight();
+        
+        if frame:GetHeight() > 1 then
+            frame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
+            frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
+            list.ContentHeight = list.ContentHeight + frame:GetHeight();
+        else
+            frame:ClearAllPoints();
+        end
     end
 
     local function matchesFilter(item, reserve, filter)
@@ -356,9 +360,13 @@ function LootReserve.Client:UpdateLootList()
                 end
             end
         end
+        local parentCategoryName = "";
         for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
             if category.Children and (not self.LootCategories or LootReserve:Contains(self.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for _, child in ipairs(category.Children) do
+                    if child.Name and child.IndentType ~= 1 then
+                        parentCategoryName = child.Name;
+                    end
                     if child.Loot then
                         for _, itemID in ipairs(child.Loot) do
                             if itemID ~= 0 and not alreadyFoundIDs[itemID] then
@@ -366,7 +374,7 @@ function LootReserve.Client:UpdateLootList()
                                 local item = LootReserve.ItemCache:Item(itemID);
                                 if item:IsCached() then
                                     if matchesFilter(item, self.ItemReserves[itemID], filter) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
-                                        createFrame(item, format("%s > %s", category.Name, child.Name));
+                                        createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
                                         alreadyFoundIDs[itemID] = true;
                                         match = true;
                                     end
@@ -378,7 +386,7 @@ function LootReserve.Client:UpdateLootList()
                                         local reward = LootReserve.ItemCache:Item(rewardID);
                                         if reward:IsCached() then
                                             if item:IsCached() and matchesFilter(reward, self.ItemReserves[rewardID], filter) then
-                                                createFrame(item, format("%s > %s", category.Name, child.Name));
+                                                createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
                                                 alreadyFoundIDs[itemID] = true;
                                                 break;
                                             end
@@ -478,6 +486,7 @@ function LootReserve.Client:UpdateCategories()
     local list = self.Window.Categories.Scroll.Container;
     list.Frames = list.Frames or { };
     list.LastIndex = 0;
+    list.ContentHeight = 0;
 
     local function createButton(id, category, expansion)
         list.LastIndex = list.LastIndex + 1;
@@ -489,14 +498,6 @@ function LootReserve.Client:UpdateCategories()
                 category.Children and "LootReserveCategoryListHeaderTemplate" or
                 category.Header and "LootReserveCategoryListSubheaderTemplate" or
                 "LootReserveCategoryListButtonTemplate");
-
-            if #list.Frames == 0 then
-                frame:SetPoint("TOPLEFT", list, "TOPLEFT");
-                frame:SetPoint("TOPRIGHT", list, "TOPRIGHT");
-            else
-                frame:SetPoint("TOPLEFT", list.Frames[#list.Frames], "BOTTOMLEFT", 0, 0);
-                frame:SetPoint("TOPRIGHT", list.Frames[#list.Frames], "BOTTOMRIGHT", 0, 0);
-            end
             table.insert(list.Frames, frame);
             frame = list.Frames[list.LastIndex];
         end
@@ -529,7 +530,7 @@ function LootReserve.Client:UpdateCategories()
             end
             frame.Text:SetText(format(categoryCollapsed and "|cFF806900%s|r" or "%s", category.Name));
         else
-            frame.Text:SetText(category.Name);
+            frame.Text:SetText(category.IndentType == 1 and (" - " .. category.Name) or category.IndentType == 2 and (" + " .. category.Name) or category.Name);
             frame:RegisterForClicks("LeftButtonDown");
             frame:SetScript("OnClick", function(frame) self:OnCategoryClick(frame); end);
         end
@@ -598,6 +599,15 @@ function LootReserve.Client:UpdateCategories()
                 needsSelect = true;
             end
         end
+        
+        if frame:GetHeight() > 1 then
+            frame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
+            frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
+            list.ContentHeight = list.ContentHeight + frame:GetHeight();
+        else
+            frame:ClearAllPoints();
+        end
+        
     end
 
     if needsSelect then
