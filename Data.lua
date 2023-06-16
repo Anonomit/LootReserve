@@ -29,8 +29,9 @@ TBC:
 Wrath:
     3.0: Amani War Bear removed from ZA
     3.1: Naxxramas / EoE / OS
-    3.2: Ulduar
-    3.3: ToC
+    3.2: Ulduar, new VoA boss
+    3.3: ToC / Ony, new VoA boss
+    3.4: ICC, new VoA boss
 --]]
 local EXPANSION_PHASE = 3.2;
 
@@ -4698,132 +4699,6 @@ LootReserve.Data =
         },
         
         -- Icecrown Citadel
-        --[[
-        [3070] = {
-            Name = "Icecrown Citadel 10",
-            NameShort = "ICC 10",
-            Expansion = 2,
-            Children =
-            Squish{
-                {
-                    Name = "Lord Marrowgar",
-                    Loot =
-                    {
-                        50773, 50774, 50762, 50775, 50772, 0,
-                        50764, 50763, 50339, 0,
-                        50771, 50761, 50759, 50760, 0,
-                    },
-                },
-                {
-                    Name = "Lady Deathwhisper",
-                    Loot =
-                    {
-                        50785, 50782, 50780, 50778, 50783, 50777, 50784, 50779, 50786, 0,
-                        50342, 0,
-                        50781, 50776, 0,
-                    },
-                },
-                {
-                    Name = "Icecrown Gunship Battle",
-                    Loot =
-                    {
-                        50795, 50797, 50792, 50789, 50796, 50788, 0,
-                        50791, 50790, 50340, 0,
-                        50793, 50787, 50794, 0,
-                    },
-                },
-                {
-                    Name = "Deathbringer Saurfang",
-                    Loot =
-                    {
-                        50807, 50804, 50799, 50806, 50800, 50801, 50802, 50808, 0,
-                        50809, 50803, 0,
-                        50798, 50805, 0,
-                    },
-                },
-                {
-                    Name = "Festergut",
-                    Loot =
-                    {
-                        50988, 50990, 50985, 50858, 50812, 50967, 50811, 0,
-                        50859, 50852, 50986, 0,
-                        50810, 50966, 0,
-                    },
-                },
-                {
-                    Name = "Rotface",
-                    Loot =
-                    {
-                        51007, 51005, 51009, 51002, 51006, 51000, 0,
-                        51008, 51001, 0,
-                        51003, 51004, 50998, 0,
-                    },
-                },
-                {
-                    Name = "Professor Putricide",
-                    Loot =
-                    {
-                        51020, 51017, 51013, 51015, 51019, 51014, 51018, 0,
-                        51012, 51016, 50341, 0,
-                        51011, 51010, 0,
-                    },
-                },
-                {
-                    Name = "Blood Prince Council",
-                    Loot =
-                    {
-                        51379, 51380, 51023, 51325, 51383, 51025, 0,
-                        51382, 51381, 51024, 0,
-                        51021, 51022, 51326, 0,
-                    },
-                },
-                {
-                    Name = "Blood-Queen Lana'thel",
-                    Loot =
-                    {
-                        51554, 51552, 51550, 51551, 51386, 51556, 51555, 0,
-                        51548, 51387, 0,
-                        51384, 51385, 51553, 0,
-                    },
-                },
-                {
-                    Name = "Valithria Dreamwalker",
-                    Loot =
-                    {
-                        51777, 51585, 51565, 51583, 51566, 51586, 51563, 51564, 0,
-                        51584, 0,
-                        51562, 51582, 51561, 0,
-                    },
-                },
-                {
-                    Name = "Sindragosa",
-                    Loot =
-                    {
-                        51790, 51783, 51789, 51792, 51785, 51782, 51786, 51787, 0,
-                        51779, 0,
-                        51784, 51788, 51791, 0,
-                    },
-                },
-                {
-                    Name = "The Lich King",
-                    Loot =
-                    {
-                        51801, 51803, 51800, 51795, 51798, 51796, 51799, 51797, 51802, 0,
-                    },
-                },
-                { Separator = true },
-                {
-                    Name = "Trash",
-                    Loot =
-                    {
-                        50449, 50450, 50451, 0,
-                        50452, 50447, 50453, 0,
-                        50444, 0,
-                    },
-                },
-            },
-        },
-        --]]
         [3071] = {
             Name = "Icecrown Citadel 10",
             NameShort = "ICC 10",
@@ -5260,177 +5135,6 @@ LootReserve.Data =
                 },
             },
         },
-        --[[
-        [3072] = {
-            Name = "Icecrown Citadel 25",
-            NameShort = "ICC 25",
-            Expansion = 2,
-            Children =
-            Squish{
-                {
-                    Name = "Lord Marrowgar",
-                    Loot =
-                    {
-                        49978, 49979, 49950, 49952, 49980, 49951, 49960, 49964, 0,
-                        49975, 49949, 49977, 49967, 0,
-                        49968, 50415, 49976, 0,
-                        49908, 0,
-                        50274, 0,
-                    },
-                },
-                {
-                    Name = "Lady Deathwhisper",
-                    Loot =
-                    {
-                        49991, 49994, 49987, 49996, 49988, 49993, 49986, 49995, 49983, 0,
-                        49989, 49985, 49990, 0,
-                        49982, 49992, 50034, 0,
-                        49908, 0,
-                        50274, 0,
-                    },
-                },
-                {
-                    Name = "Icecrown Gunship Battle",
-                    Loot =
-                    {
-                        50006, 50011, 50001, 50009, 50000, 50003, 50002, 50010, 0,
-                        49998, 50005, 50008, 49999, 50359, 50352, 0,
-                        50411, 0,
-                        49908, 0,
-                        50274, 0,
-                    },
-                },
-                {
-                    Name = "Deathbringer Saurfang",
-                    Loot =
-                    {
-                        52027, 52026, 52025, 0,
-                        50333, 50015, 0,
-                        50014, 50362, 0,
-                        50412, 0,
-                        49908, 0,
-                        50274, 0,
-                    },
-                },
-                {
-                    Name = "Festergut",
-                    Loot =
-                    {
-                        50063, 50056, 50062, 50042, 50041, 50059, 50038, 50064, 50413, 50060, 50037, 50036, 0,
-                        50061, 50414, 0,
-                        50035, 50040, 0,
-                        49908, 0,
-                        50226, 50274, 0,
-                    },
-                },
-                {
-                    Name = "Rotface",
-                    Loot =
-                    {
-                        50032, 50026, 50021, 50022, 50030, 50020, 50024, 50027, 0,
-                        50019, 50023, 50025, 50353, 0,
-                        50028, 50016, 50033, 0,
-                        49908, 0,
-                        50231, 50274, 0,
-                    },
-                },
-                {
-                    Name = "Professor Putricide",
-                    Loot =
-                    {
-                        52027, 52026, 52025, 0,
-                        50067, 50069, 0,
-                        50351, 0,
-                        50179, 50068, 0,
-                        49908, 0,
-                        50274, 0,
-                    },
-                },
-                {
-                    Name = "Blood Prince Council",
-                    Loot =
-                    {
-                        50172, 50176, 50073, 50171, 50177, 50071, 50072, 50175, 50075, 0,
-                        50074, 50174, 50170, 0,
-                        50173, 50184, 49919, 0,
-                        49908, 0,
-                        50274, 0,
-                    },
-                },
-                {
-                    Name = "Blood-Queen Lana'thel",
-                    Loot =
-                    {
-                        52027, 52026, 52025, 0,
-                        50182, 50180, 50354, 0,
-                        50178, 50181, 50065, 0,
-                        49908, 0,
-                        50274, 0,
-                    },
-                },
-                {
-                    Name = "Valithria Dreamwalker",
-                    Loot =
-                    {
-                        50418, 50417, 50202, 50188, 50187, 50199, 50192, 50416, 50190, 0,
-                        50205, 50195, 50185, 50186, 0,
-                        50183, 50472, 0,
-                        49908, 0,
-                        50274, 0,
-                    },
-                },
-                {
-                    Name = "Sindragosa",
-                    Loot =
-                    {
-                        52027, 52026, 52025, 0,
-                        50421, 50424, 50360, 50361, 0,
-                        50423, 0,
-                        49908, 0,
-                        50274, 0,
-                    },
-                },
-                {
-                    Name = "The Lich King",
-                    Loot =
-                    {
-                        52027, 52026, 52025, 0,
-                        50426, 50427, 50070, 50012, 50428, 49997, 50425, 50429, 49981, 0,
-                        49908, 0,
-                        50274, 0,
-                    },
-                },
-                { Separator = true },
-                {
-                    Name = "Trash",
-                    Loot =
-                    {
-                        50449, 50450, 50451, 0,
-                        50452, 50447, 50453, 0,
-                        50444, 0,
-                    },
-                },
-                { Separator = true },
-                {
-                    Name = "Tier 10 Pieces",
-                    IndentType = 2,
-                    Loot =
-                    {
-                        51208, 51205, 51206, 51209, 51207, 0,
-                        51178, 51175, 51176, 51179, 51177, 51184, 51182, 51180, 51183, 51181, 0,
-                        51187, 51185, 51189, 51188, 51186, 0,
-                        51153, 51151, 51150, 51154, 51152, 0,
-                        51218, 51215, 51219, 51217, 51216, 51212, 51210, 51214, 51213, 51211, 0,
-                        51133, 51130, 51134, 51132, 51131, 51127, 51125, 51129, 51128, 51126, 0,
-                        51158, 51155, 51156, 51159, 51157, 0,
-                        51137, 51135, 51139, 51138, 51136, 51149, 51147, 51145, 51148, 51146, 51143, 51140, 51141, 51144, 51142, 0,
-                        51192, 51194, 51190, 51191, 51193, 51202, 51204, 51200, 51201, 51203, 51197, 51199, 51195, 51196, 51198, 0,
-                        51167, 51166, 51165, 51169, 51168, 51173, 51170, 51174, 51172, 51171, 51162, 51160, 51164, 51163, 51161, 0,
-                    },
-                },
-            },
-        },
-        --]]
         [3073] = {
             Name = "Icecrown Citadel 25",
             NameShort = "ICC 25",
@@ -5962,24 +5666,6 @@ LootReserve.Data =
         },
         
         -- The Ruby Sanctum
-        --[[
-        [3080] = {
-            Name = "The Ruby Sanctum 10",
-            NameShort = "RS 10",
-            Expansion = 2,
-            Children =
-            Squish{
-                {
-                    Name = "Halion",
-                    Loot =
-                    {
-                        53118, 53114, 53117, 53113, 53119, 53112, 53121, 53111, 0,
-                        53115, 53103, 53116, 53110, 0,
-                    },
-                },
-            },
-        },
-        --]]
         [3081] = {
             Name = "The Ruby Sanctum 10",
             NameShort = "RS 10",
@@ -6016,24 +5702,6 @@ LootReserve.Data =
                 },
             },
         },
-        --[[
-        [3082] = {
-            Name = "The Ruby Sanctum 25",
-            NameShort = "RS 25",
-            Expansion = 2,
-            Children =
-            Squish{
-                {
-                    Name = "Halion",
-                    Loot =
-                    {
-                        53486, 53134, 53126, 53488, 53127, 53125, 53487, 53129, 0,
-                        53489, 53132, 53490, 53133, 54572, 54573, 54571, 54569, 0,
-                    },
-                },
-            },
-        },
-        --]]
         [3083] = {
             Name = "The Ruby Sanctum 25",
             NameShort = "RS 25",
@@ -6113,9 +5781,9 @@ LootReserve.Data =
                         40904, 40925, 40937, 40782, 40802, 40842, 0,
                     },
                 },
-                { Separator = true },
-                { Name = "Emalon the Storm Watcher", Header = true },
-                {
+                EXPANSION_PHASE >= 3.2 and { Separator = true } or nil,
+                EXPANSION_PHASE >= 3.2 and { Name = "Emalon the Storm Watcher", Header = true } or nil,
+                EXPANSION_PHASE >= 3.2 and {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6133,8 +5801,8 @@ LootReserve.Data =
                         45401, 45403, 45406, 45409, 45414, 45416, 0,
                         45383, 45384, 45370, 45371, 45376, 45379, 0,
                     },
-                },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.2 and {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6150,9 +5818,9 @@ LootReserve.Data =
                         41000, 41026, 41006, 41032, 41136, 41198, 0,
                         40926, 40938, 40805, 40846, 0,
                     },
-                },
-                { Separator = true },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.3 and { Separator = true } or nil,
+                EXPANSION_PHASE >= 3.3 and {
                     Name = "Koralon the Flame Watcher",
                     Loot =
                     {
@@ -6170,8 +5838,8 @@ LootReserve.Data =
                         42037, 42039, 42036, 42040, 42038, 46373, 42034, 42035, 0,
                         42116, 42117, 0,
                     },
-                },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.3 and {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6200,8 +5868,8 @@ LootReserve.Data =
                         48296, 48298, 48337, 48339, 48367, 48369, 0,
                         48653, 48655, 48598, 48596, 48630, 48628, 0,
                     },
-                },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.3 and {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6217,9 +5885,9 @@ LootReserve.Data =
                         41001, 41027, 41007, 41033, 41137, 41199, 0,
                         40927, 40939, 40808, 40849, 0,
                     },
-                },
-                { Separator = true },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.4 and { Separator = true } or nil,
+                EXPANSION_PHASE >= 3.4 and {
                     Name = "Toravon the Ice Watcher",
                     Loot =
                     {
@@ -6237,8 +5905,8 @@ LootReserve.Data =
                         42044, 42046, 42043, 42047, 42045, 46374, 42041, 42042, 0,
                         42118, 42119, 0,
                     },
-                },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.4 and {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6254,8 +5922,8 @@ LootReserve.Data =
                         50836, 50838, 50842, 50844, 50831, 50833, 0,
                         50863, 50861, 50868, 50866, 50327, 50325, 0,
                     },
-                },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.4 and {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6270,7 +5938,7 @@ LootReserve.Data =
                         41002, 41028, 41008, 41034, 41138, 41200, 0,
                         40928, 40940, 40812, 40852, 0,
                     },
-                },
+                } or nil,
             },
         },
         [3091] = {
@@ -6314,9 +5982,9 @@ LootReserve.Data =
                         40905, 40926, 40938, 40785, 40805, 40846, 0,
                     },
                 },
-                { Separator = true },
-                { Name = "Emalon the Storm Watcher", Header = true },
-                {
+                EXPANSION_PHASE >= 3.2 and { Separator = true } or nil,
+                EXPANSION_PHASE >= 3.2 and { Name = "Emalon the Storm Watcher", Header = true } or nil,
+                EXPANSION_PHASE >= 3.2 and {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6332,8 +6000,8 @@ LootReserve.Data =
                         46199, 46202, 46207, 46210, 46200, 46208, 0,
                         46174, 46176, 46179, 46181, 46155, 46153, 0,
                     },
-                },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.2 and {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6349,9 +6017,9 @@ LootReserve.Data =
                         41001, 41027, 41007, 41033, 41137, 41199, 0,
                         40927, 40939, 40808, 40849, 0,
                     },
-                },
-                { Separator = true },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.3 and { Separator = true } or nil,
+                EXPANSION_PHASE >= 3.3 and {
                     Name = "Koralon the Flame Watcher",
                     Loot =
                     {
@@ -6368,8 +6036,8 @@ LootReserve.Data =
                         42044, 42046, 42043, 42047, 42045, 46374, 42041, 42042, 0,
                         42118, 42119, 0,
                     },
-                },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.3 and {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6398,8 +6066,8 @@ LootReserve.Data =
                         48301, 48303, 48334, 48332, 48364, 48362, 0,
                         48658, 48660, 48593, 48591, 48625, 48623, 0,
                     },
-                },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.3 and {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6415,9 +6083,9 @@ LootReserve.Data =
                         41002, 41028, 41008, 41034, 41138, 41200, 0,
                         40928, 40940, 40812, 40852, 0,
                     },
-                },
-                { Separator = true },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.4 and { Separator = true } or nil,
+                EXPANSION_PHASE >= 3.4 and {
                     Name = "Toravon the Ice Watcher",
                     Loot =
                     {
@@ -6434,8 +6102,8 @@ LootReserve.Data =
                         51335, 51349, 51331, 51347, 51333, 51353, 51355, 51357, 0,
                         51336, 51358, 0,
                     },
-                },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.4 and {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6451,8 +6119,8 @@ LootReserve.Data =
                         51191, 51193, 51201, 51203, 51196, 51198, 0,
                         51172, 51171, 51169, 51168, 51163, 51161, 0,
                     },
-                },
-                {
+                } or nil,
+                EXPANSION_PHASE >= 3.4 and {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6468,7 +6136,7 @@ LootReserve.Data =
                         51498, 51500, 51510, 51512, 51504, 51506, 0,
                         51469, 51471, 51475, 51477, 0,
                     },
-                },
+                } or nil,
             },
         },
     },
