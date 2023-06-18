@@ -4195,9 +4195,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        46993, 46973, 46975, 46989, 46965, 46991, 46968, 46967, 46986, 0,
-                        46971, 46977, 46966, 0,
-                        46980, 46969, 46964, 0,
+                        46992, 46972, 46974, 46988, 46960, 46990, 46962, 46961, 46985, 0,
+                        46970, 46976, 46959, 0,
+                        46979, 46958, 46963, 0,
                         
                         -- Horde
                         47264, 47258, 47259, 47262, 47251, 47265, 47254, 47253, 47263, 0,
@@ -4213,9 +4213,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        46992, 46972, 46974, 46988, 46960, 46990, 46962, 46961, 46985, 0,
-                        46970, 46976, 46959, 0,
-                        46979, 46958, 46963, 0,
+                        46993, 46973, 46975, 46989, 46965, 46991, 46968, 46967, 46986, 0,
+                        46971, 46977, 46966, 0,
+                        46980, 46969, 46964, 0,
                         
                         -- Horde
                         47425, 47419, 47420, 47423, 47412, 47426, 47415, 47414, 47424, 0,
@@ -4231,9 +4231,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        46993, 46992, 46973, 46972, 46975, 46974, 46989, 46988, 46965, 46960, 46991, 46990, 46968, 46962, 46967, 46961, 46986, 46985, 0,
-                        46971, 46970, 46977, 46976, 46966, 46959, 0,
-                        46980, 46979, 46969, 46958, 46964, 46963, 0,
+                        46992, 46993, 46972, 46973, 46974, 46975, 46988, 46989, 46960, 46965, 46990, 46991, 46962, 46968, 46961, 46967, 46985, 46986, 0,
+                        46970, 46971, 46976, 46977, 46959, 46966, 0,
+                        46979, 46980, 46958, 46969, 46963, 46964, 0,
                         
                         -- Horde
                         47264, 47425, 47258, 47419, 47259, 47420, 47262, 47423, 47251, 47412, 47265, 47426, 47254, 47415, 47253, 47414, 47263, 47424, 0,
@@ -4250,9 +4250,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47062, 47004, 47066, 47068, 47002, 47067, 47061, 47003, 0,
-                        47063, 47060, 47224, 47059, 0,
-                        47064, 47001, 46995, 0,
+                        47051, 47000, 47055, 47056, 46999, 47057, 47052, 46997, 0,
+                        47042, 47043, 47223, 47041, 0,
+                        47053, 46996, 46994, 0,
                         
                         -- Horde
                         47274, 47270, 47277, 47280, 47268, 47279, 47273, 47269, 0,
@@ -4268,9 +4268,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47051, 47000, 47055, 47056, 46999, 47057, 47052, 46997, 0,
-                        47042, 47043, 47223, 47041, 0,
-                        47053, 46996, 46994, 0,
+                        47062, 47004, 47066, 47068, 47002, 47067, 47061, 47003, 0,
+                        47063, 47060, 47224, 47059, 0,
+                        47064, 47001, 46995, 0,
                         
                         -- Horde
                         47435, 47431, 47438, 47441, 47429, 47440, 47434, 47430, 0,
@@ -4286,9 +4286,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47062, 47051, 47004, 47000, 47066, 47055, 47068, 47056, 47002, 46999, 47067, 47057, 47061, 47052, 47003, 46997, 0,
-                        47063, 47042, 47060, 47043, 47224, 47223, 47059, 47041, 0,
-                        47064, 47053, 47001, 46996, 46995, 46994, 0,
+                        47051, 47062, 47000, 47004, 47055, 47066, 47056, 47068, 46999, 47002, 47057, 47067, 47052, 47061, 46997, 47003, 0,
+                        47042, 47063, 47043, 47060, 47223, 47224, 47041, 47059, 0,
+                        47053, 47064, 46996, 47001, 46994, 46995, 0,
                         
                         -- Horde
                         47274, 47435, 47270, 47431, 47277, 47438, 47280, 47441, 47268, 47429, 47279, 47440, 47273, 47434, 47269, 47430, 0,
@@ -4305,9 +4305,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47084, 47097, 47096, 47077, 47074, 47087, 47099, 47086, 47098, 47076, 0,
-                        47095, 47075, 47088, 0,
-                        47078, 47085, 0,
+                        47081, 47092, 47094, 47071, 47073, 47083, 47090, 47082, 47093, 47072, 0,
+                        47089, 47070, 47080, 0,
+                        47069, 47079, 0,
                         
                         -- Horde
                         47286, 47293, 47292, 47284, 47281, 47289, 47295, 47288, 47294, 47283, 0,
@@ -4323,9 +4323,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47081, 47092, 47094, 47071, 47073, 47083, 47090, 47082, 47093, 47072, 0,
-                        47089, 47070, 47080, 0,
-                        47069, 47079, 0,
+                        47084, 47097, 47096, 47077, 47074, 47087, 47099, 47086, 47098, 47076, 0,
+                        47095, 47075, 47088, 0,
+                        47078, 47085, 0,
                         
                         -- Horde
                         47447, 47454, 47453, 47445, 47442, 47450, 47456, 47449, 47455, 47444, 0,
@@ -4341,9 +4341,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47084, 47081, 47097, 47092, 47096, 47094, 47077, 47071, 47074, 47073, 47087, 47083, 47099, 47090, 47086, 47082, 47098, 47093, 47076, 47072, 0,
-                        47095, 47089, 47075, 47070, 47088, 47080, 0,
-                        47078, 47069, 47085, 47079, 0,
+                        47081, 47084, 47092, 47097, 47094, 47096, 47071, 47077, 47073, 47074, 47083, 47087, 47090, 47099, 47082, 47086, 47093, 47098, 47072, 47076, 0,
+                        47089, 47095, 47070, 47075, 47080, 47088, 0,
+                        47069, 47078, 47079, 47085, 0,
                         
                         -- Horde
                         47286, 47447, 47293, 47454, 47292, 47453, 47284, 47445, 47281, 47442, 47289, 47450, 47295, 47456, 47288, 47449, 47294, 47455, 47283, 47444, 0,
@@ -4360,9 +4360,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47129, 47143, 47112, 47145, 47109, 47147, 47111, 47132, 0,
-                        47133, 47110, 47144, 47131, 0,
-                        47146, 47113, 47130, 0,
+                        47126, 47141, 47107, 47140, 47106, 47142, 47108, 47121, 0,
+                        47116, 47105, 47139, 47115, 0,
+                        47138, 47104, 47114, 0,
                         
                         -- Horde
                         47301, 47306, 47308, 47299, 47296, 47310, 47298, 47304, 0,
@@ -4378,9 +4378,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47126, 47141, 47107, 47140, 47106, 47142, 47108, 47121, 0,
-                        47116, 47105, 47139, 47115, 0,
-                        47138, 47104, 47114, 0,
+                        47129, 47143, 47112, 47145, 47109, 47147, 47111, 47132, 0,
+                        47133, 47110, 47144, 47131, 0,
+                        47146, 47113, 47130, 0,
                         
                         -- Horde
                         47462, 47467, 47469, 47460, 47457, 47471, 47459, 47465, 0,
@@ -4396,9 +4396,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47129, 47126, 47143, 47141, 47112, 47107, 47145, 47140, 47109, 47106, 47147, 47142, 47111, 47108, 47132, 47121, 0,
-                        47133, 47116, 47110, 47105, 47144, 47139, 47131, 47115, 0,
-                        47146, 47138, 47113, 47104, 47130, 47114, 0,
+                        47126, 47129, 47141, 47143, 47107, 47112, 47140, 47145, 47106, 47109, 47142, 47147, 47108, 47111, 47121, 47132, 0,
+                        47116, 47133, 47105, 47110, 47139, 47144, 47115, 47131, 0,
+                        47138, 47146, 47104, 47113, 47114, 47130, 0,
                         
                         -- Horde
                         47301, 47462, 47306, 47467, 47308, 47469, 47299, 47460, 47296, 47457, 47310, 47471, 47298, 47459, 47304, 47465, 0,
@@ -4415,9 +4415,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47208, 47236, 47189, 47205, 47155, 47190, 47209, 47153, 47191, 47240, 47207, 47154, 0,
-                        47238, 47192, 47237, 47157, 47188, 0,
-                        47156, 47206, 47239, 0,
+                        47203, 47235, 47187, 47194, 47151, 47186, 47204, 47152, 47184, 47234, 47195, 47150, 0,
+                        47225, 47183, 47054, 47149, 47182, 0,
+                        47148, 47193, 47233, 0,
                         
                         -- Horde
                         47324, 47326, 47317, 47321, 47313, 47318, 47325, 47311, 47319, 47330, 47323, 47312, 0,
@@ -4433,9 +4433,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47203, 47235, 47187, 47194, 47151, 47186, 47204, 47152, 47184, 47234, 47195, 47150, 0,
-                        47225, 47183, 47054, 47149, 47182, 0,
-                        47148, 47193, 47233, 0,
+                        47208, 47236, 47189, 47205, 47155, 47190, 47209, 47153, 47191, 47240, 47207, 47154, 0,
+                        47238, 47192, 47237, 47157, 47188, 0,
+                        47156, 47206, 47239, 0,
                         
                         -- Horde
                         47485, 47487, 47478, 47482, 47474, 47479, 47486, 47472, 47480, 47492, 47484, 47473, 0,
@@ -4451,9 +4451,9 @@ LootReserve.Data =
                         47242, 0,
                         
                         -- Alliance
-                        47208, 47203, 47236, 47235, 47189, 47187, 47205, 47194, 47155, 47151, 47190, 47186, 47209, 47204, 47153, 47152, 47191, 47184, 47240, 47234, 47207, 47195, 47154, 47150, 0,
-                        47238, 47225, 47192, 47183, 47237, 47054, 47157, 47149, 47188, 47182, 0,
-                        47156, 47148, 47206, 47193, 47239, 47233, 0,
+                        47203, 47208, 47235, 47236, 47187, 47189, 47194, 47205, 47151, 47155, 47186, 47190, 47204, 47209, 47152, 47153, 47184, 47191, 47234, 47240, 47195, 47207, 47150, 47154, 0,
+                        47225, 47238, 47183, 47192, 47054, 47237, 47149, 47157, 47182, 47188, 0,
+                        47148, 47156, 47193, 47206, 47233, 47239, 0,
                         
                         -- Horde
                         47324, 47485, 47326, 47487, 47317, 47478, 47321, 47482, 47313, 47474, 47318, 47479, 47325, 47486, 47311, 47472, 47319, 47480, 47330, 47492, 47323, 47484, 47312, 47473, 0,
@@ -6422,7 +6422,8 @@ do
     
     
     
-    -- ToC Sets
+    -- ToC Set Pieces
+    
     -- Normal
     ApplyFactionRestriction(47778, "Alliance")
     ApplyFactionRestriction(47781, "Alliance")
@@ -6851,6 +6852,7 @@ do
     -- ToC 10 Alliance
     
     -- The Beasts of Northrend
+    
     -- Normal
     ApplyFactionRestriction(47617, "Alliance")
     ApplyFactionRestriction(47613, "Alliance")
@@ -6880,6 +6882,7 @@ do
     ApplyFactionRestriction(47922, "Alliance")
     
     -- Lord Jaraxxus
+    
     -- Normal
     ApplyFactionRestriction(47663, "Alliance")
     ApplyFactionRestriction(47620, "Alliance")
@@ -6911,6 +6914,7 @@ do
     ApplyFactionRestriction(47938, "Alliance")
     
     -- Faction Champions
+    
     -- Normal
     ApplyFactionRestriction(47721, "Alliance")
     ApplyFactionRestriction(47719, "Alliance")
@@ -6936,6 +6940,7 @@ do
     ApplyFactionRestriction(47941, "Alliance")
     
     -- The Twin Val'kyr
+    
     -- Normal
     ApplyFactionRestriction(47745, "Alliance")
     ApplyFactionRestriction(49231, "Alliance")
@@ -6967,6 +6972,7 @@ do
     ApplyFactionRestriction(47950, "Alliance")
     
     -- Anub'arak
+    
     -- Normal
     ApplyFactionRestriction(47838, "Alliance")
     ApplyFactionRestriction(47837, "Alliance")
@@ -7025,6 +7031,7 @@ do
     -- ToC 10 Horde
     
     -- The Beasts of Northrend
+    
     -- Normal
     ApplyFactionRestriction(47855, "Horde")
     ApplyFactionRestriction(47857, "Horde")
@@ -7054,6 +7061,7 @@ do
     ApplyFactionRestriction(47995, "Horde")
     
     -- Lord Jaraxxus
+    
     -- Normal
     ApplyFactionRestriction(47861, "Horde")
     ApplyFactionRestriction(47865, "Horde")
@@ -7085,6 +7093,7 @@ do
     ApplyFactionRestriction(48010, "Horde")
     
     -- Faction Champions
+    
     -- Normal
     ApplyFactionRestriction(47873, "Horde")
     ApplyFactionRestriction(47878, "Horde")
@@ -7110,6 +7119,7 @@ do
     ApplyFactionRestriction(48013, "Horde")
     
     -- The Twin Val'kyr
+    
     -- Normal
     ApplyFactionRestriction(47889, "Horde")
     ApplyFactionRestriction(49232, "Horde")
@@ -7141,6 +7151,7 @@ do
     ApplyFactionRestriction(48022, "Horde")
     
     -- Anub'arak
+    
     -- Normal
     ApplyFactionRestriction(47906, "Horde")
     ApplyFactionRestriction(47909, "Horde")
@@ -7199,24 +7210,8 @@ do
     -- ToGC 25 Alliance
     
     -- The Beasts of Northrend
-    -- Normal
-    ApplyFactionRestriction(46993, "Alliance")
-    ApplyFactionRestriction(46973, "Alliance")
-    ApplyFactionRestriction(46975, "Alliance")
-    ApplyFactionRestriction(46989, "Alliance")
-    ApplyFactionRestriction(46965, "Alliance")
-    ApplyFactionRestriction(46991, "Alliance")
-    ApplyFactionRestriction(46968, "Alliance")
-    ApplyFactionRestriction(46967, "Alliance")
-    ApplyFactionRestriction(46986, "Alliance")
-    ApplyFactionRestriction(46971, "Alliance")
-    ApplyFactionRestriction(46977, "Alliance")
-    ApplyFactionRestriction(46966, "Alliance")
-    ApplyFactionRestriction(46980, "Alliance")
-    ApplyFactionRestriction(46969, "Alliance")
-    ApplyFactionRestriction(46964, "Alliance")
     
-    -- Heroic
+    -- Normal
     ApplyFactionRestriction(46992, "Alliance")
     ApplyFactionRestriction(46972, "Alliance")
     ApplyFactionRestriction(46974, "Alliance")
@@ -7233,25 +7228,26 @@ do
     ApplyFactionRestriction(46958, "Alliance")
     ApplyFactionRestriction(46963, "Alliance")
     
-    -- Lord Jaraxxus
-    -- Normal
-    ApplyFactionRestriction(47062, "Alliance")
-    ApplyFactionRestriction(47004, "Alliance")
-    ApplyFactionRestriction(47066, "Alliance")
-    ApplyFactionRestriction(47068, "Alliance")
-    ApplyFactionRestriction(47002, "Alliance")
-    ApplyFactionRestriction(47067, "Alliance")
-    ApplyFactionRestriction(47061, "Alliance")
-    ApplyFactionRestriction(47003, "Alliance")
-    ApplyFactionRestriction(47063, "Alliance")
-    ApplyFactionRestriction(47060, "Alliance")
-    ApplyFactionRestriction(47224, "Alliance")
-    ApplyFactionRestriction(47059, "Alliance")
-    ApplyFactionRestriction(47064, "Alliance")
-    ApplyFactionRestriction(47001, "Alliance")
-    ApplyFactionRestriction(46995, "Alliance")
-    
     -- Heroic
+    ApplyFactionRestriction(46993, "Alliance")
+    ApplyFactionRestriction(46973, "Alliance")
+    ApplyFactionRestriction(46975, "Alliance")
+    ApplyFactionRestriction(46989, "Alliance")
+    ApplyFactionRestriction(46965, "Alliance")
+    ApplyFactionRestriction(46991, "Alliance")
+    ApplyFactionRestriction(46968, "Alliance")
+    ApplyFactionRestriction(46967, "Alliance")
+    ApplyFactionRestriction(46986, "Alliance")
+    ApplyFactionRestriction(46971, "Alliance")
+    ApplyFactionRestriction(46977, "Alliance")
+    ApplyFactionRestriction(46966, "Alliance")
+    ApplyFactionRestriction(46980, "Alliance")
+    ApplyFactionRestriction(46969, "Alliance")
+    ApplyFactionRestriction(46964, "Alliance")
+    
+    -- Lord Jaraxxus
+    
+    -- Normal
     ApplyFactionRestriction(47051, "Alliance")
     ApplyFactionRestriction(47000, "Alliance")
     ApplyFactionRestriction(47055, "Alliance")
@@ -7268,25 +7264,26 @@ do
     ApplyFactionRestriction(46996, "Alliance")
     ApplyFactionRestriction(46994, "Alliance")
     
-    -- Faction Champions
-    -- Normal
-    ApplyFactionRestriction(47084, "Alliance")
-    ApplyFactionRestriction(47097, "Alliance")
-    ApplyFactionRestriction(47096, "Alliance")
-    ApplyFactionRestriction(47077, "Alliance")
-    ApplyFactionRestriction(47074, "Alliance")
-    ApplyFactionRestriction(47087, "Alliance")
-    ApplyFactionRestriction(47099, "Alliance")
-    ApplyFactionRestriction(47086, "Alliance")
-    ApplyFactionRestriction(47098, "Alliance")
-    ApplyFactionRestriction(47076, "Alliance")
-    ApplyFactionRestriction(47095, "Alliance")
-    ApplyFactionRestriction(47075, "Alliance")
-    ApplyFactionRestriction(47088, "Alliance")
-    ApplyFactionRestriction(47078, "Alliance")
-    ApplyFactionRestriction(47085, "Alliance")
-    
     -- Heroic
+    ApplyFactionRestriction(47062, "Alliance")
+    ApplyFactionRestriction(47004, "Alliance")
+    ApplyFactionRestriction(47066, "Alliance")
+    ApplyFactionRestriction(47068, "Alliance")
+    ApplyFactionRestriction(47002, "Alliance")
+    ApplyFactionRestriction(47067, "Alliance")
+    ApplyFactionRestriction(47061, "Alliance")
+    ApplyFactionRestriction(47003, "Alliance")
+    ApplyFactionRestriction(47063, "Alliance")
+    ApplyFactionRestriction(47060, "Alliance")
+    ApplyFactionRestriction(47224, "Alliance")
+    ApplyFactionRestriction(47059, "Alliance")
+    ApplyFactionRestriction(47064, "Alliance")
+    ApplyFactionRestriction(47001, "Alliance")
+    ApplyFactionRestriction(46995, "Alliance")
+    
+    -- Faction Champions
+    
+    -- Normal
     ApplyFactionRestriction(47081, "Alliance")
     ApplyFactionRestriction(47092, "Alliance")
     ApplyFactionRestriction(47094, "Alliance")
@@ -7303,25 +7300,26 @@ do
     ApplyFactionRestriction(47069, "Alliance")
     ApplyFactionRestriction(47079, "Alliance")
     
-    -- The Twin Val'kyr
-    -- Normal
-    ApplyFactionRestriction(47129, "Alliance")
-    ApplyFactionRestriction(47143, "Alliance")
-    ApplyFactionRestriction(47112, "Alliance")
-    ApplyFactionRestriction(47145, "Alliance")
-    ApplyFactionRestriction(47109, "Alliance")
-    ApplyFactionRestriction(47147, "Alliance")
-    ApplyFactionRestriction(47111, "Alliance")
-    ApplyFactionRestriction(47132, "Alliance")
-    ApplyFactionRestriction(47133, "Alliance")
-    ApplyFactionRestriction(47110, "Alliance")
-    ApplyFactionRestriction(47144, "Alliance")
-    ApplyFactionRestriction(47131, "Alliance")
-    ApplyFactionRestriction(47146, "Alliance")
-    ApplyFactionRestriction(47113, "Alliance")
-    ApplyFactionRestriction(47130, "Alliance")
-    
     -- Heroic
+    ApplyFactionRestriction(47084, "Alliance")
+    ApplyFactionRestriction(47097, "Alliance")
+    ApplyFactionRestriction(47096, "Alliance")
+    ApplyFactionRestriction(47077, "Alliance")
+    ApplyFactionRestriction(47074, "Alliance")
+    ApplyFactionRestriction(47087, "Alliance")
+    ApplyFactionRestriction(47099, "Alliance")
+    ApplyFactionRestriction(47086, "Alliance")
+    ApplyFactionRestriction(47098, "Alliance")
+    ApplyFactionRestriction(47076, "Alliance")
+    ApplyFactionRestriction(47095, "Alliance")
+    ApplyFactionRestriction(47075, "Alliance")
+    ApplyFactionRestriction(47088, "Alliance")
+    ApplyFactionRestriction(47078, "Alliance")
+    ApplyFactionRestriction(47085, "Alliance")
+    
+    -- The Twin Val'kyr
+    
+    -- Normal
     ApplyFactionRestriction(47126, "Alliance")
     ApplyFactionRestriction(47141, "Alliance")
     ApplyFactionRestriction(47107, "Alliance")
@@ -7338,30 +7336,26 @@ do
     ApplyFactionRestriction(47104, "Alliance")
     ApplyFactionRestriction(47114, "Alliance")
     
-    -- Anub'arak
-    -- Normal
-    ApplyFactionRestriction(47208, "Alliance")
-    ApplyFactionRestriction(47236, "Alliance")
-    ApplyFactionRestriction(47189, "Alliance")
-    ApplyFactionRestriction(47205, "Alliance")
-    ApplyFactionRestriction(47155, "Alliance")
-    ApplyFactionRestriction(47190, "Alliance")
-    ApplyFactionRestriction(47209, "Alliance")
-    ApplyFactionRestriction(47153, "Alliance")
-    ApplyFactionRestriction(47191, "Alliance")
-    ApplyFactionRestriction(47240, "Alliance")
-    ApplyFactionRestriction(47207, "Alliance")
-    ApplyFactionRestriction(47154, "Alliance")
-    ApplyFactionRestriction(47238, "Alliance")
-    ApplyFactionRestriction(47192, "Alliance")
-    ApplyFactionRestriction(47237, "Alliance")
-    ApplyFactionRestriction(47157, "Alliance")
-    ApplyFactionRestriction(47188, "Alliance")
-    ApplyFactionRestriction(47156, "Alliance")
-    ApplyFactionRestriction(47206, "Alliance")
-    ApplyFactionRestriction(47239, "Alliance")
-    
     -- Heroic
+    ApplyFactionRestriction(47129, "Alliance")
+    ApplyFactionRestriction(47143, "Alliance")
+    ApplyFactionRestriction(47112, "Alliance")
+    ApplyFactionRestriction(47145, "Alliance")
+    ApplyFactionRestriction(47109, "Alliance")
+    ApplyFactionRestriction(47147, "Alliance")
+    ApplyFactionRestriction(47111, "Alliance")
+    ApplyFactionRestriction(47132, "Alliance")
+    ApplyFactionRestriction(47133, "Alliance")
+    ApplyFactionRestriction(47110, "Alliance")
+    ApplyFactionRestriction(47144, "Alliance")
+    ApplyFactionRestriction(47131, "Alliance")
+    ApplyFactionRestriction(47146, "Alliance")
+    ApplyFactionRestriction(47113, "Alliance")
+    ApplyFactionRestriction(47130, "Alliance")
+    
+    -- Anub'arak
+    
+    -- Normal
     ApplyFactionRestriction(47203, "Alliance")
     ApplyFactionRestriction(47235, "Alliance")
     ApplyFactionRestriction(47187, "Alliance")
@@ -7383,6 +7377,28 @@ do
     ApplyFactionRestriction(47193, "Alliance")
     ApplyFactionRestriction(47233, "Alliance")
     
+    -- Heroic
+    ApplyFactionRestriction(47208, "Alliance")
+    ApplyFactionRestriction(47236, "Alliance")
+    ApplyFactionRestriction(47189, "Alliance")
+    ApplyFactionRestriction(47205, "Alliance")
+    ApplyFactionRestriction(47155, "Alliance")
+    ApplyFactionRestriction(47190, "Alliance")
+    ApplyFactionRestriction(47209, "Alliance")
+    ApplyFactionRestriction(47153, "Alliance")
+    ApplyFactionRestriction(47191, "Alliance")
+    ApplyFactionRestriction(47240, "Alliance")
+    ApplyFactionRestriction(47207, "Alliance")
+    ApplyFactionRestriction(47154, "Alliance")
+    ApplyFactionRestriction(47238, "Alliance")
+    ApplyFactionRestriction(47192, "Alliance")
+    ApplyFactionRestriction(47237, "Alliance")
+    ApplyFactionRestriction(47157, "Alliance")
+    ApplyFactionRestriction(47188, "Alliance")
+    ApplyFactionRestriction(47156, "Alliance")
+    ApplyFactionRestriction(47206, "Alliance")
+    ApplyFactionRestriction(47239, "Alliance")
+    
     -- Tribute
     ApplyFactionRestriction(47506, "Alliance")
     ApplyFactionRestriction(47526, "Alliance")
@@ -7401,6 +7417,7 @@ do
     -- ToGC 25 Horde
     
     -- The Beasts of Northrend
+    
     -- Normal
     ApplyFactionRestriction(47264, "Horde")
     ApplyFactionRestriction(47258, "Horde")
@@ -7436,6 +7453,7 @@ do
     ApplyFactionRestriction(47421, "Horde")
     
     -- Lord Jaraxxus
+    
     -- Normal
     ApplyFactionRestriction(47274, "Horde")
     ApplyFactionRestriction(47270, "Horde")
@@ -7471,6 +7489,7 @@ do
     ApplyFactionRestriction(47428, "Horde")
     
     -- Faction Champions
+    
     -- Normal
     ApplyFactionRestriction(47286, "Horde")
     ApplyFactionRestriction(47293, "Horde")
@@ -7506,6 +7525,7 @@ do
     ApplyFactionRestriction(47448, "Horde")
     
     -- The Twin Val'kyr
+    
     -- Normal
     ApplyFactionRestriction(47301, "Horde")
     ApplyFactionRestriction(47306, "Horde")
@@ -7541,6 +7561,7 @@ do
     ApplyFactionRestriction(47463, "Horde")
     
     -- Anub'arak
+    
     -- Normal
     ApplyFactionRestriction(47324, "Horde")
     ApplyFactionRestriction(47326, "Horde")
@@ -8319,7 +8340,7 @@ end
 
 
 local heroicMirrors = {
-    -- ToC 10
+    -- ToC 10 Alliance
     [47617] = 47921, -- Icehowl Cinch
     [47613] = 47923, -- Shoulderpads of the Glacial Wilds
     [47608] = 47919, -- Acidmaw Boots
@@ -8332,18 +8353,6 @@ local heroicMirrors = {
     [47607] = 47915, -- Collar of Ceaseless Torment
     [47578] = 47920, -- Carnivorous Band
     [47612] = 47922, -- Rod of Imprisoned Souls
-    [47855] = 47994, -- Icehowl Binding
-    [47857] = 47996, -- Pauldrons of the Glacial Wilds
-    [47853] = 47992, -- Acidmaw Treads
-    [47860] = 47999, -- Pauldrons of the Spirit Walker
-    [47850] = 47989, -- Bracers of the Northern Stalker
-    [47852] = 47991, -- Dreadscale Bracers
-    [47851] = 47990, -- Gauntlets of Mounting Anger
-    [47859] = 47998, -- Belt of the Impaler
-    [47858] = 47997, -- Girdle of the Frozen Reach
-    [47849] = 47988, -- Collar of Unending Torment
-    [47854] = 47993, -- Gormok's Band
-    [47856] = 47995, -- Scepter of Imprisoned Souls
     [47663] = 47927, -- Felspark Bindings
     [47620] = 47931, -- Leggings of the Demonic Messenger
     [47669] = 47929, -- Belt of the Winter Solstice
@@ -8357,19 +8366,6 @@ local heroicMirrors = {
     [47618] = 47928, -- Firestorm Ring
     [47703] = 47934, -- Planestalker Signet
     [47676] = 47938, -- Dirk of the Night Watch
-    [47861] = 48000, -- Felspark Bracers
-    [47865] = 48004, -- Legwraps of the Demonic Messenger
-    [47863] = 48002, -- Belt of the Bloodhoof Emissary
-    [47866] = 48005, -- Darkspear Ritual Binding
-    [49236] = 49237, -- Sabatons of Tortured Space
-    [47867] = 48006, -- Warsong Poacher's Greaves
-    [47869] = 48008, -- Armplates of the Nether Lord
-    [47870] = 48009, -- Belt of the Nether Champion
-    [47872] = 48011, -- Fortitude of the Infernal
-    [47864] = 48003, -- Pendant of Binding Elements
-    [47862] = 48001, -- Firestorm Band
-    [47868] = 48007, -- Planestalker Band
-    [47871] = 48010, -- Orcish Deathblade
     [47721] = 47940, -- Sandals of the Silver Magus
     [47719] = 47945, -- Gloves of the Silver Assassin
     [47718] = 47942, -- Helm of the Silver Ranger
@@ -8380,16 +8376,6 @@ local heroicMirrors = {
     [47726] = 47946, -- Talisman of Volatile Power
     [47725] = 47948, -- Victor's Call
     [47724] = 47941, -- Blade of the Silver Disciple
-    [47873] = 48012, -- Sunreaver Magus' Sandals
-    [47878] = 48017, -- Sunreaver Assassin's Gloves
-    [47875] = 48014, -- Sunreaver Ranger's Helm
-    [47876] = 48015, -- Sunreaver Champion's Faceplate
-    [47877] = 48016, -- Sunreaver Defender's Pauldrons
-    [47880] = 48019, -- Binding Stone
-    [47882] = 48021, -- Eitrigg's Oath
-    [47879] = 48018, -- Fetish of Volatile Power
-    [47881] = 48020, -- Vengeance of the Forsaken
-    [47874] = 48013, -- Sunreaver Disciple's Blade
     [47745] = 47956, -- Gloves of Looming Shadow
     [49231] = 49234, -- Boots of the Grieving Soul
     [47746] = 47959, -- Helm of the Snowy Grotto
@@ -8403,19 +8389,6 @@ local heroicMirrors = {
     [47737] = 47951, -- Reckoning
     [47743] = 47960, -- Enlightenment
     [47740] = 47950, -- The Diplomat
-    [47889] = 48028, -- Looming Shadow Wraps
-    [49232] = 49233, -- Sandals of the Grieving Soul
-    [47891] = 48034, -- Helm of the High Mesa
-    [47887] = 48026, -- Vest of Shifting Shadows
-    [47893] = 48038, -- Sen'jin Ritualist Gloves
-    [47885] = 48024, -- Greaves of the Lingering Vortex
-    [47890] = 48030, -- Darkbane Amulet
-    [47888] = 48027, -- Band of the Twin Val'kyr
-    [47913] = 48032, -- Lightbane Focus
-    [47886] = 48025, -- Nemesis Blade
-    [47884] = 48023, -- Edge of Agony
-    [47892] = 48036, -- Illumination
-    [47883] = 48022, -- Widebarrel Flintlock
     [47838] = 47974, -- Vestments of the Sleepless
     [47837] = 47977, -- Cinch of the Undying
     [47832] = 47972, -- Spaulders of the Snow Bandit
@@ -8434,6 +8407,56 @@ local heroicMirrors = {
     [47835] = 47978, -- Bulwark of the Royal Guard
     [47812] = 47963, -- Vigilant Ward
     [47741] = 47975, -- Baelgun's Heavy Crossbow
+    
+    -- ToC 10 Horde
+    [47855] = 47994, -- Icehowl Binding
+    [47857] = 47996, -- Pauldrons of the Glacial Wilds
+    [47853] = 47992, -- Acidmaw Treads
+    [47860] = 47999, -- Pauldrons of the Spirit Walker
+    [47850] = 47989, -- Bracers of the Northern Stalker
+    [47852] = 47991, -- Dreadscale Bracers
+    [47851] = 47990, -- Gauntlets of Mounting Anger
+    [47859] = 47998, -- Belt of the Impaler
+    [47858] = 47997, -- Girdle of the Frozen Reach
+    [47849] = 47988, -- Collar of Unending Torment
+    [47854] = 47993, -- Gormok's Band
+    [47856] = 47995, -- Scepter of Imprisoned Souls
+    [47861] = 48000, -- Felspark Bracers
+    [47865] = 48004, -- Legwraps of the Demonic Messenger
+    [47863] = 48002, -- Belt of the Bloodhoof Emissary
+    [47866] = 48005, -- Darkspear Ritual Binding
+    [49236] = 49237, -- Sabatons of Tortured Space
+    [47867] = 48006, -- Warsong Poacher's Greaves
+    [47869] = 48008, -- Armplates of the Nether Lord
+    [47870] = 48009, -- Belt of the Nether Champion
+    [47872] = 48011, -- Fortitude of the Infernal
+    [47864] = 48003, -- Pendant of Binding Elements
+    [47862] = 48001, -- Firestorm Band
+    [47868] = 48007, -- Planestalker Band
+    [47871] = 48010, -- Orcish Deathblade
+    [47873] = 48012, -- Sunreaver Magus' Sandals
+    [47878] = 48017, -- Sunreaver Assassin's Gloves
+    [47875] = 48014, -- Sunreaver Ranger's Helm
+    [47876] = 48015, -- Sunreaver Champion's Faceplate
+    [47877] = 48016, -- Sunreaver Defender's Pauldrons
+    [47880] = 48019, -- Binding Stone
+    [47882] = 48021, -- Eitrigg's Oath
+    [47879] = 48018, -- Fetish of Volatile Power
+    [47881] = 48020, -- Vengeance of the Forsaken
+    [47874] = 48013, -- Sunreaver Disciple's Blade
+    [47889] = 48028, -- Looming Shadow Wraps
+    [49232] = 49233, -- Sandals of the Grieving Soul
+    [47891] = 48034, -- Helm of the High Mesa
+    [47887] = 48026, -- Vest of Shifting Shadows
+    [47893] = 48038, -- Sen'jin Ritualist Gloves
+    [47885] = 48024, -- Greaves of the Lingering Vortex
+    [47890] = 48030, -- Darkbane Amulet
+    [47888] = 48027, -- Band of the Twin Val'kyr
+    [47913] = 48032, -- Lightbane Focus
+    [47886] = 48025, -- Nemesis Blade
+    [47884] = 48023, -- Edge of Agony
+    [47892] = 48036, -- Illumination
+    [47883] = 48022, -- Widebarrel Flintlock
     [47906] = 48051, -- Robes of the Sleepless
     [47909] = 48054, -- Belt of the Eternal
     [47904] = 48049, -- Shoulderpads of the Snow Bandit
@@ -8453,22 +8476,89 @@ local heroicMirrors = {
     [47895] = 48040, -- Pride of the Kor'kron
     [47907] = 48052, -- Darkmaw Crossbow
     
-    -- ToC 25
-    [46993] = 46992, -- Flowing Vestments of Ascent
-    [46973] = 46972, -- Cord of the Tenebrous Mist
-    [46975] = 46974, -- Leggings of the Broken Beast
-    [46989] = 46988, -- Boots of the Unrelenting Storm
-    [46965] = 46960, -- Breastplate of Cruel Intent
-    [46991] = 46990, -- Belt of the Ice Burrower
-    [46968] = 46962, -- Chestplate of the Towering Monstrosity
-    [46967] = 46961, -- Boneshatter Armplates
-    [46986] = 46985, -- Boots of the Courageous
-    [46971] = 46970, -- Drape of the Untamed Predator
-    [46977] = 46976, -- Shawl of the Refreshing Winds
-    [46966] = 46959, -- Band of the Violent Temperment
-    [46980] = 46979, -- Blade of Tarasque
-    [46969] = 46958, -- Steel Bladebreaker
-    [46964] = 46963, -- Crystal Plated Vanguard
+    -- ToC 25 Alliance
+    [46992] = 46993, -- Flowing Vestments of Ascent
+    [46972] = 46973, -- Cord of the Tenebrous Mist
+    [46974] = 46975, -- Leggings of the Broken Beast
+    [46988] = 46989, -- Boots of the Unrelenting Storm
+    [46960] = 46965, -- Breastplate of Cruel Intent
+    [46990] = 46991, -- Belt of the Ice Burrower
+    [46962] = 46968, -- Chestplate of the Towering Monstrosity
+    [46961] = 46967, -- Boneshatter Armplates
+    [46985] = 46986, -- Boots of the Courageous
+    [46970] = 46971, -- Drape of the Untamed Predator
+    [46976] = 46977, -- Shawl of the Refreshing Winds
+    [46959] = 46966, -- Band of the Violent Temperment
+    [46979] = 46980, -- Blade of Tarasque
+    [46958] = 46969, -- Steel Bladebreaker
+    [46963] = 46964, -- Crystal Plated Vanguard
+    [47051] = 47062, -- Leggings of the Soothing Touch
+    [47000] = 47004, -- Cuirass of Calamitous Fate
+    [47055] = 47066, -- Bracers of the Autumn Willow
+    [47056] = 47068, -- Bracers of Cloudy Omen
+    [46999] = 47002, -- Bloodbath Belt
+    [47057] = 47067, -- Legplates of Failing Light
+    [47052] = 47061, -- Legguards of Feverish Dedication
+    [46997] = 47003, -- Dawnbreaker Greaves
+    [47042] = 47063, -- Pride of the Eredar
+    [47043] = 47060, -- Charge of the Demon Lord
+    [47223] = 47224, -- Ring of the Darkmender
+    [47041] = 47059, -- Solace of the Defeated
+    [47053] = 47064, -- Symbol of Transgression
+    [46996] = 47001, -- Lionhead Slasher
+    [46994] = 46995, -- Talonstrike
+    [47081] = 47084, -- Cord of Biting Cold
+    [47092] = 47097, -- Boots of the Mourning Widow
+    [47094] = 47096, -- Vestments of the Shattered Fellowship
+    [47071] = 47077, -- Treads of the Icewalker
+    [47073] = 47074, -- Bracers of the Untold Massacre
+    [47083] = 47087, -- Legguards of Concealed Hatred
+    [47090] = 47099, -- Boots of Tremoring Earth
+    [47082] = 47086, -- Chestplate of the Frostborn Hero
+    [47093] = 47098, -- Vambraces of the Broken Bond
+    [47072] = 47076, -- Girdle of Bloodied Scars
+    [47089] = 47095, -- Cloak of Displacement
+    [47070] = 47075, -- Ring of Callous Aggression
+    [47080] = 47088, -- Satrina's Impeding Scarab
+    [47069] = 47078, -- Justicebringer
+    [47079] = 47085, -- Bastion of Purity
+    [47126] = 47129, -- Skyweaver Robes
+    [47141] = 47143, -- Bindings of Dark Essence
+    [47107] = 47112, -- Belt of the Merciless Killer
+    [47140] = 47145, -- Cord of Pale Thorns
+    [47106] = 47109, -- Sabatons of Ruthless Judgment
+    [47142] = 47147, -- Breastplate of the Frozen Lake
+    [47108] = 47111, -- Bracers of the Shieldmaiden
+    [47121] = 47132, -- Legguards of Ascension
+    [47116] = 47133, -- The Arbiter's Muse
+    [47105] = 47110, -- The Executioner's Malice
+    [47139] = 47144, -- Wail of the Val'kyr
+    [47115] = 47131, -- Death's Verdict
+    [47138] = 47146, -- Chalice of Searing Light
+    [47104] = 47113, -- Twin Spike
+    [47114] = 47130, -- Lupine Longstaff
+    [47203] = 47208, -- Armbands of the Ashen Saint
+    [47235] = 47236, -- Gloves of the Lifeless Touch
+    [47187] = 47189, -- Leggings of the Deepening Void
+    [47194] = 47205, -- Footpads of the Icy Floe
+    [47151] = 47155, -- Bracers of Dark Determination
+    [47186] = 47190, -- Legwraps of the Awakening
+    [47204] = 47209, -- Chestguard of Flowing Elements
+    [47152] = 47153, -- Belt of Deathly Dominion
+    [47184] = 47191, -- Legguards of the Lurking Threat
+    [47234] = 47240, -- Gloves of Bitter Reprisal
+    [47195] = 47207, -- Belt of the Forgotten Martyr
+    [47150] = 47154, -- Greaves of the 7th Legion
+    [47225] = 47238, -- Maiden's Favor
+    [47183] = 47192, -- Strength of the Nerub
+    [47054] = 47237, -- Band of Deplorable Violence
+    [47149] = 47157, -- Signet of the Traitor King
+    [47182] = 47188, -- Reign of the Unliving
+    [47148] = 47156, -- Stormpike Cleaver
+    [47193] = 47206, -- Misery's End
+    [47233] = 47239, -- Archon Glaive
+    
+    -- ToC 25 Horde
     [47264] = 47425, -- Flowing Robes of Ascent
     [47258] = 47419, -- Belt of the Tenebrous Mist
     [47259] = 47420, -- Legwraps of the Broken Beast
@@ -8484,21 +8574,6 @@ local heroicMirrors = {
     [47261] = 47422, -- Barb of Tarasque
     [47255] = 47416, -- Stygian Bladebreaker
     [47260] = 47421, -- Forlorn Barrier
-    [47062] = 47051, -- Leggings of the Soothing Touch
-    [47004] = 47000, -- Cuirass of Calamitous Fate
-    [47066] = 47055, -- Bracers of the Autumn Willow
-    [47068] = 47056, -- Bracers of Cloudy Omen
-    [47002] = 46999, -- Bloodbath Belt
-    [47067] = 47057, -- Legplates of Failing Light
-    [47061] = 47052, -- Legguards of Feverish Dedication
-    [47003] = 46997, -- Dawnbreaker Greaves
-    [47063] = 47042, -- Pride of the Eredar
-    [47060] = 47043, -- Charge of the Demon Lord
-    [47224] = 47223, -- Ring of the Darkmender
-    [47059] = 47041, -- Solace of the Defeated
-    [47064] = 47053, -- Symbol of Transgression
-    [47001] = 46996, -- Lionhead Slasher
-    [46995] = 46994, -- Talonstrike
     [47274] = 47435, -- Pants of the Soothing Touch
     [47270] = 47431, -- Vest of Calamitous Fate
     [47277] = 47438, -- Bindings of the Autumn Willow
@@ -8514,21 +8589,6 @@ local heroicMirrors = {
     [47276] = 47437, -- Talisman of Heedless Sins
     [47266] = 47427, -- Blood Fury
     [47267] = 47428, -- Death's Head Crossbow
-    [47084] = 47081, -- Cord of Biting Cold
-    [47097] = 47092, -- Boots of the Mourning Widow
-    [47096] = 47094, -- Vestments of the Shattered Fellowship
-    [47077] = 47071, -- Treads of the Icewalker
-    [47074] = 47073, -- Bracers of the Untold Massacre
-    [47087] = 47083, -- Legguards of Concealed Hatred
-    [47099] = 47090, -- Boots of Tremoring Earth
-    [47086] = 47082, -- Chestplate of the Frostborn Hero
-    [47098] = 47093, -- Vambraces of the Broken Bond
-    [47076] = 47072, -- Girdle of Bloodied Scars
-    [47095] = 47089, -- Cloak of Displacement
-    [47075] = 47070, -- Ring of Callous Aggression
-    [47088] = 47080, -- Satrina's Impeding Scarab
-    [47078] = 47069, -- Justicebringer
-    [47085] = 47079, -- Bastion of Purity
     [47286] = 47447, -- Belt of Biting Cold
     [47293] = 47454, -- Sandals of the Mourning Widow
     [47292] = 47453, -- Robes of the Shattered Fellowship
@@ -8544,21 +8604,6 @@ local heroicMirrors = {
     [47290] = 47451, -- Juggernaut's Vitality
     [47285] = 47446, -- Dual-blade Butcher
     [47287] = 47448, -- Bastion of Resolve
-    [47129] = 47126, -- Skyweaver Robes
-    [47143] = 47141, -- Bindings of Dark Essence
-    [47112] = 47107, -- Belt of the Merciless Killer
-    [47145] = 47140, -- Cord of Pale Thorns
-    [47109] = 47106, -- Sabatons of Ruthless Judgment
-    [47147] = 47142, -- Breastplate of the Frozen Lake
-    [47111] = 47108, -- Bracers of the Shieldmaiden
-    [47132] = 47121, -- Legguards of Ascension
-    [47133] = 47116, -- The Arbiter's Muse
-    [47110] = 47105, -- The Executioner's Malice
-    [47144] = 47139, -- Wail of the Val'kyr
-    [47131] = 47115, -- Death's Verdict
-    [47146] = 47138, -- Chalice of Searing Light
-    [47113] = 47104, -- Twin Spike
-    [47130] = 47114, -- Lupine Longstaff
     [47301] = 47462, -- Skyweaver Vestments
     [47306] = 47467, -- Dark Essence Bindings
     [47308] = 47469, -- Belt of Pale Thorns
@@ -8574,26 +8619,6 @@ local heroicMirrors = {
     [47309] = 47470, -- Mystifying Charm
     [47300] = 47461, -- Gouge of the Frigid Heart
     [47302] = 47463, -- Twin's Pact
-    [47208] = 47203, -- Armbands of the Ashen Saint
-    [47236] = 47235, -- Gloves of the Lifeless Touch
-    [47189] = 47187, -- Leggings of the Deepening Void
-    [47205] = 47194, -- Footpads of the Icy Floe
-    [47155] = 47151, -- Bracers of Dark Determination
-    [47190] = 47186, -- Legwraps of the Awakening
-    [47209] = 47204, -- Chestguard of Flowing Elements
-    [47153] = 47152, -- Belt of Deathly Dominion
-    [47191] = 47184, -- Legguards of the Lurking Threat
-    [47240] = 47234, -- Gloves of Bitter Reprisal
-    [47207] = 47195, -- Belt of the Forgotten Martyr
-    [47154] = 47150, -- Greaves of the 7th Legion
-    [47238] = 47225, -- Maiden's Favor
-    [47192] = 47183, -- Strength of the Nerub
-    [47237] = 47054, -- Band of Deplorable Violence
-    [47157] = 47149, -- Signet of the Traitor King
-    [47188] = 47182, -- Reign of the Unliving
-    [47156] = 47148, -- Stormpike Cleaver
-    [47206] = 47193, -- Misery's End
-    [47239] = 47233, -- Archon Glaive
     [47324] = 47485, -- Bindings of the Ashen Saint
     [47326] = 47487, -- Handwraps of the Lifeless Touch
     [47317] = 47478, -- Breeches of the Deepening Void
