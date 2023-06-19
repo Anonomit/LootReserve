@@ -73,6 +73,19 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_NEED_ROLL_RESERVED_ITEM"] =
     end,
 };
 
+StaticPopupDialogs["LOOTRESERVE_PROMPT_REMOVE_FAVORITE"] =
+{
+    text         = "|cff00ff00Congratulations!|r|n|nWould you like to remove %s from your favorites?",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self, data)
+        LootReserve.Client:SetFavorite(data.item:GetID(), false);
+    end,
+};
+
 
 function LootReserve.Client:Init()
     local function LootReserveRollOnLoot(rollID, rollType, ...)
@@ -180,6 +193,8 @@ function LootReserve.Client:SetFavorite(itemID, enabled)
 
     local favorites = bindType == LE_ITEM_BIND_ON_ACQUIRE and self.CharacterFavorites or self.GlobalFavorites;
     favorites[itemID] = enabled and true or nil;
+    
+    LootReserve.Client:UpdateLootList();
     self:FlashCategory("Favorites");
 end
 

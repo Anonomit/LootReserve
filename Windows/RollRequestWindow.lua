@@ -2,12 +2,15 @@ local LibCustomGlow = LibStub("LibCustomGlow-1.0");
 
 local function RollRequested(self, sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered, example)
     local frame = LootReserveRollRequestWindow;
+    
+    if item:GetID() == 0 and self.RollRequest and self.RollRequest.Example then
+        return;
+    end
 
     if LibCustomGlow then
         LibCustomGlow.ButtonGlow_Stop(frame.ItemFrame.IconGlow);
     end
 
-    self.RollRequest = nil;
     frame:Hide();
     
     if item:GetID() == 0 then
@@ -60,6 +63,8 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     frame.ItemFrame.Icon:SetTexture(texture);
     frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
     frame.ItemFrame.Misc:SetText(description);
+    frame.ItemFrame.Favorite:SetShown(self:IsFavorite(item:GetID()));
+    
     for i, button in ipairs({frame.ButtonRoll1, frame.ButtonRoll2, frame.ButtonRoll3}) do
         button:Disable();
         button:SetAlpha(0.25);
@@ -100,15 +105,16 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     end
 
     frame:Show();
+    
+    if LibCustomGlow and (--[[not self.Settings.RollRequestGlowOnlyReserved or--]] not roll.Custom or self:IsFavorite(item:GetID())) then
+        LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow);
+    end
 
     C_Timer.After(1, function()
         if frame.Roll == roll then
             for _, button in ipairs({frame.ButtonRoll1, frame.ButtonRoll2, frame.ButtonRoll3, frame.ButtonPass}) do
                 button:Enable();
                 button:SetAlpha(1);
-            end
-            if LibCustomGlow and (not self.Settings.RollRequestGlowOnlyReserved or not roll.Custom) then
-                LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow);
             end
         end
     end);
@@ -134,7 +140,6 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
                         end
                         if LootReserve.Client.Settings.RollRequestAutoCloseTiered then
                             frame:Hide();
-                            self.RollRequest = nil;
                         end
                     elseif self.RollRequest.Count > 1 then
                         self.RollRequest.Count = self.RollRequest.Count - 1;
@@ -174,7 +179,6 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
                         if text:match("^pa?s*$") or text == "-1" then
                             if LootReserve.Client.Settings.RollRequestAutoCloseTiered or not self.RollRequest.Tiered then
                                 frame:Hide();
-                                self.RollRequest = nil;
                             else
                                 local success = false;
                                 for _, button in ipairs({frame.ButtonRoll1, frame.ButtonRoll2, frame.ButtonRoll3}) do
@@ -186,7 +190,6 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
                                 end
                                 if not success then
                                     frame:Hide();
-                                    self.RollRequest = nil;
                                 end
                             end
                         end
@@ -234,14 +237,12 @@ function LootReserve.Client:RespondToRollRequest(tier)
             end
             if not success then
                 frame:Hide();
-                self.RollRequest = nil;
                 return;
             end
         end
     end
     
     if LootReserve.Client.Settings.RollRequestAutoCloseTiered or not self.RollRequest.Tiered then
-        LootReserveRollRequestWindow:Hide();
-        self.RollRequest = nil;
+        frame:Hide();
     end
 end

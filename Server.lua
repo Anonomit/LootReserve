@@ -2430,7 +2430,6 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
 
     -- Remove the item entirely if all reserves were cancelled
     if #reserve.Players == 0 then
-        self:CancelRollRequest(itemID);
         self.CurrentSession.ItemReserves[itemID] = nil;
     end
 

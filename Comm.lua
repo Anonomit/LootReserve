@@ -820,22 +820,27 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
         else
             losers = { };
         end
-        if LootReserve.Client.Settings.RollRequestWinnerReaction and LootReserve:Contains(winners, LootReserve:Me()) then
-            item:OnCache(function()
-                local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
-                local soundTable = custom and LootReserve.Constants.Sounds.Congratulate or LootReserve.Constants.Sounds.Cheer;
-                if race and sex and soundTable[race] and soundTable[race][sex] then
-                    PlaySound(soundTable[race][sex]);
-                end
-                PlaySound(LootReserve.Constants.Sounds.LevelUp);
-                
-                LootReserve:PrintMessage("Congratulations! %s has awarded you %s%s%s",
-                    LootReserve:ColoredPlayer(sender),
-                    item:GetLink(),
-                    raidRoll and " via raid-roll" or custom and phase and format(" for %s", phase or "") or "",
-                    roll and not raidRoll and format(" with a roll of %d", roll) or ""
-                );
-            end);
+        if LootReserve:Contains(winners, LootReserve:Me()) then
+            if LootReserve.Client:IsFavorite(item:GetID()) then
+                StaticPopup_Show("LOOTRESERVE_PROMPT_REMOVE_FAVORITE", item:GetLink(), nil, {item = item});
+            end
+            if LootReserve.Client.Settings.RollRequestWinnerReaction then
+                item:OnCache(function()
+                    local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
+                    local soundTable = custom and LootReserve.Constants.Sounds.Congratulate or LootReserve.Constants.Sounds.Cheer;
+                    if race and sex and soundTable[race] and soundTable[race][sex] then
+                        PlaySound(soundTable[race][sex]);
+                    end
+                    PlaySound(LootReserve.Constants.Sounds.LevelUp);
+                    
+                    LootReserve:PrintMessage("Congratulations! %s has awarded you %s%s%s",
+                        LootReserve:ColoredPlayer(sender),
+                        item:GetLink(),
+                        raidRoll and " via raid-roll" or custom and phase and format(" for %s", phase or "") or "",
+                        roll and not raidRoll and format(" with a roll of %d", roll) or ""
+                    );
+                end);
+            end
         end
         if LootReserve.Client.Settings.RollRequestLoserReaction and LootReserve:Contains(losers, LootReserve:Me()) then
             item:OnCache(function()

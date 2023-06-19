@@ -250,6 +250,15 @@
 					<Anchor point="TOPLEFT" relativeKey="$parent.LabelSender" relativePoint="BOTTOMLEFT" x="0" y="-5" />
 					<Anchor point="RIGHT" relativeKey="$parent.ButtonRoll1" relativePoint="LEFT" x="-5" y="0" />
 				</Anchors>
+				<Frames>
+					<Button parentKey="Favorite" hidden="true">
+						<Size x="24" y="24" />
+						<Anchors>
+							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Icon" relativePoint="BOTTOMRIGHT" x="2" y="-5" />
+						</Anchors>
+						<NormalTexture file="Interface\AddOns\LootReserve\Assets\Textures\FavoriteSet" />
+					</Button>
+				</Frames>
 			</Button>
 			<Button parentKey="ButtonClose" frameLevel="-1">
 				<Size x="24" y="24" />
@@ -281,6 +290,9 @@
 					end
 				end
 			</OnUpdate>
+			<OnHide>
+				LootReserve.Client.RollRequest = nil;
+			</OnHide>
 		</Scripts>
 	</Frame>
 </Ui>
