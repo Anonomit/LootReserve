@@ -262,7 +262,7 @@ StaticPopupDialogs["LOOTRESERVE_NEW_PHASE_NAME"] =
     whileDead    = 1,
     hideOnEscape = 1,
     OnAccept = function(self)
-        local name = LootReserve:StringTrim(self.editBox:GetText():gsub("[,;]", ""));
+        local name = LootReserve:StringTrim(self.editBox:GetText():gsub("[,|]", ""));
         if #name > 0 and not LootReserve:Contains(LootReserve.Server.Settings.Phases, name) then
             table.insert(LootReserve.Server.Settings.Phases, name);
         end
@@ -690,7 +690,7 @@ function LootReserve.Server:Load()
     if versionSave < "2023-06-19" then
         for _, t in ipairs({LootReserve.Server.Settings.RollPhases, LootReserve.Server.Settings.Phases}) do
             for i, phase in ipairs(t) do
-                t[i] = phase:gsub("[,;]", "");
+                t[i] = phase:gsub("[,|]", "");
             end
         end
     end
