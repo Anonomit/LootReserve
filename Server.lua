@@ -2255,10 +2255,10 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
 
     -- Send packets
     LootReserve.Comm:SendReserveResult(player, itemID, result, member.ReservesLeft, not not masquerade);
-    LootReserve.Comm:SendOptInfo(player, member.OptedOut);
+    -- LootReserve.Comm:SendOptInfo(player, member.OptedOut);
     if masquerade then
         LootReserve.Comm:SendReserveResult(masquerade, itemID, result, member.ReservesLeft);
-        LootReserve.Comm:SendOptInfo(masquerade, member.OptedOut);
+        -- LootReserve.Comm:SendOptInfo(masquerade, member.OptedOut);
     end
     
     if self.CurrentSession.Settings.Blind then
@@ -2409,11 +2409,11 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
     -- Send packets
     if not (LootReserve.Client.Masquerade and forced and LootReserve:IsMe(player)) then
         -- Don't send if client is masquerading and the server cancelled own reserve from server window. This would send wrong player's data to client
-        LootReserve.Comm:SendOptInfo(player, member.OptedOut);
+        -- LootReserve.Comm:SendOptInfo(player, member.OptedOut);
         LootReserve.Comm:SendCancelReserveResult(player, itemID, (forced or masquerade) and LootReserve.Constants.CancelReserveResult.Forced or LootReserve.Constants.CancelReserveResult.OK, member.ReservesLeft, count, winner);
     end
     if masquerade then
-        LootReserve.Comm:SendOptInfo(masquerade, member.OptedOut);
+        -- LootReserve.Comm:SendOptInfo(masquerade, member.OptedOut);
         LootReserve.Comm:SendCancelReserveResult(masquerade, itemID, LootReserve.Constants.CancelReserveResult.OK, member.ReservesLeft, count, winner);
     end
     

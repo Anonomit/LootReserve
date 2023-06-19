@@ -597,6 +597,9 @@ LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, resu
         end
         LootReserve.Client:SetItemPending(itemID, false);
         LootReserve.Client:UpdateReserveStatus();
+        
+        -- opting back in is implied
+        LootReserve.Comm.Handlers[Opcodes.OptInfo](sender, false);
     end
 end
 
@@ -718,6 +721,9 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
                 LootReserve.Client.Window:Show();
             end
         end
+        
+        -- opting back in is implied
+        LootReserve.Comm.Handlers[Opcodes.OptInfo](sender, false);
     end
 end
 
