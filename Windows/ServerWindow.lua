@@ -268,7 +268,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         local item = LootReserve.ItemCache:Item(reserve.Item);
         if item:IsCached() then
             name = item:GetName();
-        else
+        elseif item:Exists() then
             table.insert(missing, item);
         end
         return name:upper();
@@ -349,7 +349,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
                 createFrame(item, reserve, true);
                 match = true;
             end
-        else
+        elseif item:Exists() then
             table.insert(missing, item);
         end
         if filter and not match and LootReserve.Data:IsToken(itemID) then
@@ -360,7 +360,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
                         createFrame(item, reserve, true);
                         break;
                     end
-                else
+                elseif reward:Exists() then
                     table.insert(missing, reward);
                 end
             end
@@ -748,7 +748,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 itemsVisible = itemsVisible + 1;
                 match = true;
             end
-        else
+        elseif item:Exists() then
             table.insert(missing, item);
         end
         if filter and not match and LootReserve.Data:IsTokenReward(roll.Item:GetID()) then
@@ -758,7 +758,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                     createFrame(item, roll, true);
                     match = true;
                 end
-            else
+            elseif token:Exists() then
                 table.insert(missing, token);
             end
         end
@@ -771,7 +771,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                         itemsVisible = itemsVisible + 1;
                         break;
                     end
-                else
+                elseif reward:Exists() then
                     table.insert(missing, reward);
                 end
             end

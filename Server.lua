@@ -1619,7 +1619,7 @@ function LootReserve.Server:PrepareSession()
                             if item:Matches(text) then
                                 matchIDs[itemID] = item;
                             end
-                        else
+                        elseif item:Exists() then
                             table.insert(missing, item);
                         end
                         if LootReserve.Data:IsToken(itemID) then
@@ -1630,7 +1630,7 @@ function LootReserve.Server:PrepareSession()
                                         matchIDs[itemID] = reward;
                                         break;
                                     end
-                                else
+                                elseif reward:Exists() then
                                     table.insert(missing, reward);
                                 end
                             end
@@ -2555,7 +2555,7 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemLi
                         if not onlyRelevant or myReserves > 0 then
                             table.insert(list, format("%s: %s", item:GetLink(), reservesText));
                         end
-                    else
+                    elseif item:Exists() then
                         table.insert(missing, item);
                     end
                 end

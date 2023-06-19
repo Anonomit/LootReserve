@@ -80,7 +80,7 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
                                 roll.Phases and roll.Phases[101-max] or "");
                         end
                     end
-                else
+                elseif roll.Item:Exists() then
                     table.insert(missing, roll.Item);
                 end
             end

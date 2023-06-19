@@ -111,7 +111,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
         for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
             local item = LootReserve.ItemCache:Item(itemID);
             createFrame(item);
-            if not item:IsCached() then
+            if not item:IsCached() and item:Exists() then
                 table.insert(missing, item);
             end
         end
@@ -125,7 +125,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                         createFrame(item, "Custom Item");
                         match = true;
                     end
-                else
+                elseif item:Exists() then
                     table.insert(missing, item);
                 end
                 if filter and not match and LootReserve.Data:IsToken(itemID) then
@@ -136,7 +136,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                                 createFrame(item, "Custom Item");
                                 break;
                             end
-                        else
+                        elseif reward:Exists() then
                             table.insert(missing, reward);
                         end
                     end
@@ -160,7 +160,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                                         createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
                                         match = true;
                                     end
-                                else
+                                elseif item:Exists() then
                                     table.insert(missing, item);
                                 end
                                 if filter and not match and LootReserve.Data:IsToken(itemID) then
@@ -171,7 +171,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                                                 createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
                                                 break;
                                             end
-                                        else
+                                        elseif reward:Exists() then
                                             table.insert(missing, reward);
                                         end
                                     end
@@ -187,7 +187,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             if itemID ~= 0 and conditions.Custom then
                 local item = LootReserve.ItemCache:Item(itemID);
                 createFrame(item);
-                if not item:IsCached() then
+                if not item:IsCached() and item:Exists() then
                     table.insert(missing, item);
                 end
             end
@@ -197,7 +197,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             if itemID ~= 0 then
                 local item = LootReserve.ItemCache:Item(itemID);
                 createFrame(item);
-                if not item:IsCached() then
+                if not item:IsCached() and item:Exists() then
                     table.insert(missing, item);
                 end
             elseif itemID == 0 then
