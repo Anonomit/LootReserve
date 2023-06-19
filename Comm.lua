@@ -242,7 +242,7 @@ LootReserve.Comm.Handlers[Opcodes.Hello] = function(sender)
             end
         end
         local Roll = LootReserve.Server.RequestedRoll
-        LootReserve.Comm:SendRequestRoll(sender, Roll.Item, players, Roll.Custom, Roll.Duration, Roll.MaxDuration, Roll.Phases and Roll.Phases[1] or "");
+        LootReserve.Comm:SendRequestRoll(sender, Roll.Item, players, Roll.Custom, Roll.Duration, Roll.MaxDuration, Roll.Phases or { }, Roll.Tiered and true or nil);
     end
 end
 
@@ -722,35 +722,43 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
 end
 
 -- RequestRoll
-function LootReserve.Comm:BroadcastRequestRoll(item, players, custom, duration, maxDuration, phase)
-    LootReserve.Comm:SendRequestRoll(nil, item, players, custom, duration, maxDuration, phase);
+function LootReserve.Comm:BroadcastRequestRoll(item, players, custom, duration, maxDuration, phases, tiered)
+    LootReserve.Comm:SendRequestRoll(nil, item, players, custom, duration, maxDuration, phases or { }, tiered);
 end
-function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duration, maxDuration, phase)
+function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duration, maxDuration, phases, tiered)
     LootReserve.Comm:Send(target, Opcodes.RequestRoll,
         format("%d,%d", item:GetID(), item:GetSuffix() or 0),
         strjoin(",", unpack(players)),
         custom == true,
         format("%.2f", duration or 0),
         maxDuration or 0,
-        phase or "",
-        LootReserve.Server.Settings.AcceptRollsAfterTimerEnded);
+        tiered and strjoin(",", unpack(phases or { })) or (phases or { })[1],
+        LootReserve.Server.Settings.AcceptRollsAfterTimerEnded,
+        tiered);
 end
-LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phase, acceptRollsAfterTimerEnded)
+LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered)
     local id, suffix = strsplit(",", item);
     item = LootReserve.ItemCache:Item(tonumber(id), tonumber(suffix));
     custom = tonumber(custom) == 1;
     duration = tonumber(duration);
     maxDuration = tonumber(maxDuration);
-    phase = phase and #phase > 0 and phase or nil;
+    phases = phases and #phases > 0 and phases or "";
     acceptRollsAfterTimerEnded = tonumber(acceptRollsAfterTimerEnded) == 1;
-
+    tiered = tonumber(tiered) == 1;
+    
+    
     if LootReserve.Client.SessionServer == sender or custom then
         if #players > 0 then
             players = { strsplit(",", players) };
         else
             players = { };
         end
-        LootReserve.Client:RollRequested(sender, item, players, custom, duration, maxDuration, phase, acceptRollsAfterTimerEnded);
+        if #phases > 0 then
+            phases = { strsplit(",", phases) };
+        else
+            phases = { };
+        end
+        LootReserve.Client:RollRequested(sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered);
     end
 end
 
@@ -760,10 +768,7 @@ function LootReserve.Comm:SendPassRoll(item)
 end
 LootReserve.Comm.Handlers[Opcodes.PassRoll] = function(sender, item)
     item = LootReserve.ItemCache:Item(strsplit(",", item));
-
-    if true--[[LootReserve.Server.CurrentSession]] then
-        LootReserve.Server:PassRoll(sender, item);
-    end
+    LootReserve.Server:PassRoll(sender, item);
 end
 
 -- DeletedRoll

@@ -4,7 +4,7 @@
 		<KeyValues>
 			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
 		</KeyValues>
-		<Size x="300" y="90" />
+		<Size x="364" y="90" />
 		<Anchors>
 			<Anchor point="BOTTOM" y="200" />
 		</Anchors>
@@ -79,43 +79,10 @@
 					<Anchor point="BOTTOMRIGHT" x="-1" y="1" />
 				</Anchors>
 			</Button>
-			<Button parentKey="ItemFrame" inherits="LootReserveItemButtonTemplate">
-				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.LabelSender" relativePoint="BOTTOMLEFT" x="0" y="-5" />
-					<Anchor point="TOPRIGHT" relativeKey="$parent.LabelSender" relativePoint="BOTTOMRIGHT" x="-58" y="-5" />
-				</Anchors>
-			</Button>
-			<Button parentKey="ButtonRoll">
-				<Size x="32" y="32" />
-				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.ItemFrame" relativePoint="RIGHT" x="5" />
-				</Anchors>
-				<Layers>
-					<Layer level="OVERLAY">
-						<FontString parentKey="Multi" inherits="GameFontNormalOutline" justifyV="BOTTOM" setAllPoints="true">
-							<Color r="0" g="1" b="0" />
-						</FontString>
-					</Layer>
-				</Layers>
-				<Scripts>
-					<OnClick>
-						LootReserve.Client:RespondToRollRequest(true);
-					</OnClick>
-					<OnEnter>
-						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-						GameTooltip:SetText(ROLL);
-						GameTooltip:Show();
-					</OnEnter>
-					<OnLeave function="GameTooltip_Hide" />
-				</Scripts>
-				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up" />
-				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD" />
-				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down" />
-			</Button>
 			<Button parentKey="ButtonPass">
 				<Size x="16" y="16" />
 				<Anchors>
-					<Anchor point="LEFT" relativeKey="$parent.ButtonRoll" relativePoint="RIGHT" x="5" y="2" />
+					<Anchor point="TOPRIGHT" relativeKey="$parent.LabelSender" relativePoint="BOTTOMRIGHT" x="5" y="-10" />
 				</Anchors>
 				<Scripts>
 					<OnClick>
@@ -133,8 +100,159 @@
 				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Pass-Highlight" alphaMode="ADD" />
 				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Pass-Down" />
 			</Button>
+			<Button parentKey="ButtonRoll1">
+				<Size x="32" y="32" />
+				<KeyValues>
+					<KeyValue key="rollMax" value="100" type="number" />
+					<KeyValue key="phase"   value=""    type="string" />
+				</KeyValues>
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent.LabelSender" relativePoint="BOTTOM" x="0" y="-5" />
+					<Anchor point="RIGHT" relativeKey="$parent.ButtonPass" relativePoint="LEFT" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString parentKey="Multi" inherits="GameFontNormalOutline" justifyV="BOTTOM" setAllPoints="true">
+							<Color r="0" g="1" b="0" />
+						</FontString>
+					</Layer>
+				</Layers>
+				<Scripts>
+					<OnClick>
+						LootReserve.Client:RespondToRollRequest(self.rollMax);
+						self:Disable();
+						self:SetAlpha(0.25);
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						if self.phase == "" then
+							GameTooltip:SetText(format("%s 1-%d", ROLL, self.rollMax));
+						else
+							GameTooltip:SetText(format("%s for |cFF00FF00%s|r (1-%d)", ROLL, self.phase, self.rollMax));
+						end
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Dice-Up" />
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD" />
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down" />
+				<Frames>
+					<Button parentKey="PassedIcon" hidden="true" disabled="true">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.ButtonRoll1" relativePoint="TOPLEFT" />
+							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.ButtonRoll1" relativePoint="BOTTOMRIGHT" />
+						</Anchors>
+						<NormalTexture file="Interface\Buttons\UI-GroupLoot-Pass-Up" />
+						<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Pass-Highlight" alphaMode="ADD" />
+						<PushedTexture file="Interface\Buttons\UI-GroupLoot-Pass-Down" />
+					</Button>
+				</Frames>
+			</Button>
+			<Button parentKey="ButtonRoll2">
+				<Size x="32" y="32" />
+				<KeyValues>
+					<KeyValue key="rollMax" value="99" type="number" />
+					<KeyValue key="phase"   value=""   type="string" />
+				</KeyValues>
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent.LabelSender" relativePoint="BOTTOM" x="0" y="-5" />
+					<Anchor point="RIGHT" relativeKey="$parent.ButtonPass" relativePoint="LEFT" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootReserve.Client:RespondToRollRequest(self.rollMax);
+						self:Disable();
+						self:SetAlpha(0.25);
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						if self.phase == "" then
+							GameTooltip:SetText(format("%s 1-%d", ROLL, self.rollMax));
+						else
+							GameTooltip:SetText(format("%s for |cFF00FF00%s|r (1-%d)", ROLL, self.phase, self.rollMax));
+						end
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-Coin-Up" />
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Coin-Highlight" alphaMode="ADD" />
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Coin-Down" />
+				<Frames>
+					<Button parentKey="PassedIcon" hidden="true" disabled="true">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.ButtonRoll2" relativePoint="TOPLEFT" />
+							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.ButtonRoll2" relativePoint="BOTTOMRIGHT" />
+						</Anchors>
+						<NormalTexture file="Interface\Buttons\UI-GroupLoot-Pass-Up" />
+						<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Pass-Highlight" alphaMode="ADD" />
+						<PushedTexture file="Interface\Buttons\UI-GroupLoot-Pass-Down" />
+					</Button>
+				</Frames>
+			</Button>
+			<Button parentKey="ButtonRoll3">
+				<Size x="32" y="32" />
+				<KeyValues>
+					<KeyValue key="rollMax" value="98" type="number" />
+					<KeyValue key="phase"   value=""   type="string" />
+				</KeyValues>
+				<Anchors>
+					<Anchor point="TOP" relativeKey="$parent.LabelSender" relativePoint="BOTTOM" x="0" y="-5" />
+					<Anchor point="RIGHT" relativeKey="$parent.ButtonPass" relativePoint="LEFT" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						LootReserve.Client:RespondToRollRequest(self.rollMax);
+						self:Disable();
+						self:SetAlpha(0.25);
+					</OnClick>
+					<OnEnter>
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						if self.phase == "" then
+							GameTooltip:SetText(format("%s 1-%d", ROLL, self.rollMax));
+						else
+							GameTooltip:SetText(format("%s for |cFF00FF00%s|r (1-%d)", ROLL, self.phase, self.rollMax));
+						end
+						GameTooltip:Show();
+					</OnEnter>
+					<OnLeave function="GameTooltip_Hide" />
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-GroupLoot-DE-Up" />
+				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-DE-Highlight" alphaMode="ADD" />
+				<PushedTexture file="Interface\Buttons\UI-GroupLoot-DE-Down" />
+				<Frames>
+					<Button parentKey="PassedIcon" hidden="true" disabled="true">
+						<Anchors>
+							<Anchor point="TOPLEFT" relativeKey="$parent.ButtonRoll3" relativePoint="TOPLEFT" />
+							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.ButtonRoll3" relativePoint="BOTTOMRIGHT" />
+						</Anchors>
+						<NormalTexture file="Interface\Buttons\UI-GroupLoot-Pass-Up" />
+						<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Pass-Highlight" alphaMode="ADD" />
+						<PushedTexture file="Interface\Buttons\UI-GroupLoot-Pass-Down" />
+					</Button>
+				</Frames>
+			</Button>
+			<Button inherits="LootReserveCommonFrameMovingHeaderTemplate">
+				<Size y="42" />
+				<Anchors>
+					<Anchor point="TOPLEFT" />
+					<Anchor point="TOPRIGHT" />
+				</Anchors>
+			</Button>
+			<Button inherits="LootReserveCommonFrameSizeGrabberTemplate">
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-1" y="1" />
+				</Anchors>
+			</Button>
+			<Button parentKey="ItemFrame" inherits="LootReserveItemButtonTemplate">
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeKey="$parent.LabelSender" relativePoint="BOTTOMLEFT" x="0" y="-5" />
+					<Anchor point="RIGHT" relativeKey="$parent.ButtonRoll1" relativePoint="LEFT" x="-5" y="0" />
+				</Anchors>
+			</Button>
 			<Button parentKey="ButtonClose" frameLevel="-1">
-				<Size x="14" y="14" />
+				<Size x="24" y="24" />
 				<Anchors>
 					<Anchor point="TOPRIGHT" x="-5" y="-5" />
 				</Anchors>

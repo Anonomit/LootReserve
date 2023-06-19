@@ -1,8 +1,8 @@
 
 LootReserve.Server.Export.reservesExportHeaderText    = "Player,Class,ExtraReserves,RollBonus,Item,Count";
 LootReserve.Server.Export.reservesExportFormatPattern = "\n%s,%s,%d,%d,%d,%d";
-LootReserve.Server.Export.rollsExportHeaderText       = "Time,Item ID,Item Name,Winner,Reserved,Disenchanted,Reason";
-LootReserve.Server.Export.rollsExportFormatPattern    = "\n%d,%d,%d,%s,%s,%d,%s";
+LootReserve.Server.Export.rollsExportHeaderText       = "Time,Item ID,Item Name,Winner,Reserved,Raid Rolled,Disenchanted,Reason";
+LootReserve.Server.Export.rollsExportFormatPattern    = "\n%d,%d,%s,%s,%d,%d,%d,%s";
 
 
 function LootReserve.Server.Export:UpdateReservesExportText()
@@ -45,7 +45,7 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
                         if not winners then
                             -- this can happen with older rolls, or on a reserved item when nobody rolled
                             winners = { };
-                            local max = 0;
+                            local max = LootReserve.Constants.RollType.NotRolled;
                             for player, rolls in pairs(roll.Players) do
                                 for _, rollNumber in ipairs(rolls) do
                                     if rollNumber >= max then
@@ -53,24 +53,31 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
                                             wipe(winners);
                                             max = rollNumber;
                                         end
-                                        winners[player] = true;
+                                        table.insert(winners, player);
                                     end
                                 end
                             end
-                            if max <= 0 then
+                            if max <= LootReserve.Constants.RollType.NotRolled then
                                 wipe(winners);
                             end
                         end
                         
-                        for winner in pairs(winners) do
+                        for _, winner in ipairs(winners) do
+                            local max = 100;
+                            local _;
+                            if roll.Tiered then
+                                local highest = LootReserve.Server:GetWinningRollAndPlayers(roll);
+                                _, max = LootReserve.Server:ConvertFromTieredRoll(highest);
+                            end
                             text = text .. format(self.rollsExportFormatPattern,
                                 roll.StartTime,
                                 roll.Item:GetID(),
                                 roll.Item:GetName(),
                                 winner,
                                 (roll.Custom or roll.Disenchant) and 0 or 1,
+                                roll.RaidRoll and 1 or 0,
                                 roll.Disenchant and 1 or 0,
-                                roll.Phases and roll.Phases[1] or "");
+                                roll.Phases and roll.Phases[101-max] or "");
                         end
                     end
                 else
