@@ -143,6 +143,7 @@ function LootReserve.Client:Load()
             from[field] = to[field];
         end
     end
+    local versionSave = LootReserveGlobalSave.Client.Version and LootReserveGlobalSave.Client.Version or "0"
     loadInto(self, LootReserveGlobalSave.Client, "Settings");
     loadInto(self, LootReserveCharacterSave.Client, "CharacterFavorites");
     loadInto(self, LootReserveGlobalSave.Client, "GlobalFavorites");
@@ -178,6 +179,14 @@ function LootReserve.Client:Load()
             tooltip:AddLine("(Toggle icon visibility in Reserves window)");
         end,
     }), self.Settings.LibDBIcon);
+    
+    
+    -- 2023-06-19: Reset auto roll notification
+    if versionSave < "2023-06-19" then
+        self.Settings.RollRequestAutoRollNotified = false;
+    end
+    
+    LootReserveGlobalSave.Client.Version = LootReserve.Version;
 end
 
 function LootReserve.Client:IsFavorite(itemID)
@@ -295,7 +304,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
             if self:IsItemReservedByMe(itemID, true) then
                 LootReserve:PrintMessage("Automatically rolling Need on reserved item: %s", item:GetLink());
                 if not self.Settings.RollRequestAutoRollNotified then
-                    LootReserve:PrintError("Automatic rolling on reserved items can be disabled in Settings.");
+                    LootReserve:PrintError("Automatic rolling on reserved items can be disabled in Reserve window settings.");
                     self.Settings.RollRequestAutoRollNotified = true;
                 end
                 self.RollOnLoot(rollID, 1);

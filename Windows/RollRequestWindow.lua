@@ -22,7 +22,7 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     if LootReserve.Client.Settings.RollRequestAutoRollReserved and not custom and (myCount or 0) > 0 then
         LootReserve:PrintMessage("Automatically rolling on reserved item: %s%s", item:GetLink(), (myCount or 1) > 1 and ("x" .. myCount) or "");
         if not LootReserve.Client.Settings.RollRequestAutoRollNotified then
-            LootReserve:PrintError("Automatic rolling on reserved items can be disabled in Settings.");
+            LootReserve:PrintError("Automatic rolling on reserved items can be disabled in Reserve window settings.");
             LootReserve.Client.Settings.RollRequestAutoRollNotified = true;
         end
         for i = 1, myCount or 1 do
