@@ -421,12 +421,8 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
     LootReserve.Client:UpdateLootList();
     if LootReserve.Client.SkipOpen then
         LootReserve.Client.SkipOpen = false;
-    elseif acceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
-        if UnitAffectingCombat("player") then
-            LootReserve.Client.PendingOpen = true;
-        else
-            LootReserve.Client.Window:Show();
-        end
+    else
+        LootReserve.Client.Window:PendOpen();
     end
 end
 
@@ -472,17 +468,12 @@ LootReserve.Comm.Handlers[Opcodes.OptInfo] = function(sender, out)
     LootReserve.Client.OptedOut = out;
 
     LootReserve.Client:UpdateReserveStatus();
-    if LootReserve.Client.SessionServer and LootReserve.Client.AcceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
-        if UnitAffectingCombat("player") then
-            LootReserve.Client.PendingOpen = true;
-        else
-            LootReserve.Client.Window:Show();
-        end
-    elseif LootReserve.Client.OptedOut then
+    if LootReserve.Client.OptedOut then
         if not LootReserve.Client.Masquerade then
             LootReserve.Client.Window:Hide();
         end
     end
+    LootReserve.Client.Window:PendOpen();
 end
 
 -- Opt Out
@@ -600,6 +591,8 @@ LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, resu
         
         -- opting back in is implied
         LootReserve.Comm.Handlers[Opcodes.OptInfo](sender, false);
+        
+        LootReserve.Client.Window:PendOpen();
     end
 end
 
@@ -714,16 +707,10 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
             LootReserve.Client:UpdateReserveStatus();
         end
         
-        if LootReserve.Client.AcceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
-            if UnitAffectingCombat("player") then
-                LootReserve.Client.PendingOpen = true;
-            else
-                LootReserve.Client.Window:Show();
-            end
-        end
-        
         -- opting back in is implied
         LootReserve.Comm.Handlers[Opcodes.OptInfo](sender, false);
+        
+        LootReserve.Client.Window:PendOpen();
     end
 end
 

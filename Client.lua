@@ -278,7 +278,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
         end);
 
         LootReserve:RegisterEvent("PLAYER_REGEN_ENABLED", function()
-            if self.SessionServer and self.PendingOpen then
+            if self.PendingOpen and self.SessionServer and self.AcceptingReserves and not self.Locked and self.RemainingReserves > 0 and not self.OptedOut then
                 self.Window:Show();
             end
             self.PendingOpen = false;

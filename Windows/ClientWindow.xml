@@ -569,6 +569,16 @@
 			<OnLoad>
 				LootReserve.Client:OnWindowLoad(self);
 				table.insert(UISpecialFrames, self:GetName());
+				
+				function self:PendOpen()
+					if LootReserve.Client.SessionServer and LootReserve.Client.AcceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
+						if UnitAffectingCombat("player") then
+							self.PendingOpen = true;
+						else
+							self:Show();
+						end
+					end
+				end
 			</OnLoad>
 			<OnShow>
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
