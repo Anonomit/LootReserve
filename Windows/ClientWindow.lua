@@ -165,13 +165,13 @@ function LootReserve.Client:UpdateLootList()
             frame:Show();
 
             local usable, usabilityCached = LootReserve.ItemConditions:IsItemUsableByMe(item:GetID());
-            if not usabilityCached then
+            if not usabilityCached and item:Exists() then
                 table.insert(missingLoad, item);
             end
             if source then
                 source = format("%s%s", usable and "" or "|cFFFF2020", source);
             end
-            local description = format("%s%s", usable and "" or "|cFFFF2020", LootReserve:GetItemDescription(item:GetID()) or "");
+            local description = format("%s%s", usable and "" or "|cFFFF2020", LootReserve:GetItemDescription(item:GetID(), LootReserve.Data:IsHeroicMirror(item:GetID())) or "");
             local name, link, texture = item:GetNameLinkTexture();
             frame.Link = link;
 
@@ -196,10 +196,14 @@ function LootReserve.Client:UpdateLootList()
             frame.Favorite:SetShown(frame.hovered or frame.Favorite.Unset:IsShown());
             frame.ItemFrame.Name:SetPoint("TOPRIGHT", frame.ItemFrame, "TOPRIGHT", frame.Favorite:IsShown() and -20 or 0, 0);
         end
-
-        frame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
-        frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
-        list.ContentHeight = list.ContentHeight + frame:GetHeight();
+        
+        if frame:GetHeight() > 1 then
+            frame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
+            frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
+            list.ContentHeight = list.ContentHeight + frame:GetHeight();
+        else
+            frame:ClearAllPoints();
+        end
     end
 
     local function matchesFilter(item, reserve, filter, sourceCategory, sourceChild)
@@ -300,7 +304,7 @@ function LootReserve.Client:UpdateLootList()
             elseif self.SelectedCategory.Reserves == "all" and self:IsItemReserved(itemID) and not self.Blind then
                 createFrame(item);
             end
-            if not item:IsCached() then
+            if not item:IsCached() and item:Exists() then
                 table.insert(missing, item);
             end
         end
@@ -335,7 +339,7 @@ function LootReserve.Client:UpdateLootList()
                     
                     local item = LootReserve.ItemCache:Item(itemID);
                     createFrame(item);
-                    if not item:IsCached() then
+                    if not item:IsCached() and item:Exists() then
                         table.insert(missing, item);
                     end
                 end
@@ -353,7 +357,7 @@ function LootReserve.Client:UpdateLootList()
                         alreadyFoundIDs[itemID] = true;
                         match = true;
                     end
-                else
+                elseif item:Exists() then
                     table.insert(missing, item);
                 end
                 if filter and not match and LootReserve.Data:IsToken(itemID) then
@@ -365,16 +369,20 @@ function LootReserve.Client:UpdateLootList()
                                 alreadyFoundIDs[itemID] = true;
                                 break;
                             end
-                        else
+                        elseif reward:Exists() then
                             table.insert(missing, reward);
                         end
                     end
                 end
             end
         end
+        local parentCategoryName = "";
         for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
             if category.Children and (not self.LootCategories or LootReserve:Contains(self.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for _, child in ipairs(category.Children) do
+                    if child.Name and child.IndentType ~= 1 then
+                        parentCategoryName = child.Name;
+                    end
                     if child.Loot then
                         for _, itemID in ipairs(child.Loot) do
                             if itemID ~= 0 and not alreadyFoundIDs[itemID] then
@@ -382,11 +390,11 @@ function LootReserve.Client:UpdateLootList()
                                 local item = LootReserve.ItemCache:Item(itemID);
                                 if item:IsCached() then
                                     if matchesFilter(item, self.ItemReserves[itemID], filter, category.Name, child.Name) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
-                                        createFrame(item, format("%s > %s", category.Name, child.Name));
+                                        createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
                                         alreadyFoundIDs[itemID] = true;
                                         match = true;
                                     end
-                                else
+                                elseif item:Exists() then
                                     table.insert(missing, item);
                                 end
                                 if filter and not match and LootReserve.Data:IsToken(itemID) then
@@ -394,18 +402,18 @@ function LootReserve.Client:UpdateLootList()
                                         local reward = LootReserve.ItemCache:Item(rewardID);
                                         if reward:IsCached() then
                                             if item:IsCached() and matchesFilter(reward, self.ItemReserves[rewardID], filter, category.Name, child.Name) then
-                                                createFrame(item, format("%s > %s", category.Name, child.Name));
+                                                createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
                                                 alreadyFoundIDs[itemID] = true;
                                                 break;
                                             end
-                                        else
+                                        elseif reward:Exists() then
                                             table.insert(missing, reward);
                                         end
                                     end
                                 end
                                 if LootReserve.Data:IsTokenReward(itemID) then
                                     local token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(itemID));
-                                    if not token:IsCached() then
+                                    if not token:IsCached() and token:Exists() then
                                         table.insert(missing, token);
                                     end
                                 end
@@ -423,7 +431,7 @@ function LootReserve.Client:UpdateLootList()
                 if LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                     createFrame(item);
                 end
-                if not item:IsCached() then
+                if not item:IsCached() and item:Exists() then
                     table.insert(missing, item);
                 end
             end
@@ -435,12 +443,12 @@ function LootReserve.Client:UpdateLootList()
                 if LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                     createFrame(item);
                 end
-                if not item:IsCached() then
+                if not item:IsCached() and item:Exists() then
                     table.insert(missing, item);
                 end
                 if LootReserve.Data:IsTokenReward(itemID) then
                     local token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(itemID));
-                    if not token:IsCached() then
+                    if not token:IsCached() and token:Exists() then
                         table.insert(missing, token);
                     end
                 end
@@ -494,6 +502,7 @@ function LootReserve.Client:UpdateCategories()
     local list = self.Window.Categories.Scroll.Container;
     list.Frames = list.Frames or { };
     list.LastIndex = 0;
+    list.ContentHeight = 0;
 
     local function createButton(id, category, expansion)
         list.LastIndex = list.LastIndex + 1;
@@ -505,14 +514,6 @@ function LootReserve.Client:UpdateCategories()
                 category.Children and "LootReserveCategoryListHeaderTemplate" or
                 category.Header and "LootReserveCategoryListSubheaderTemplate" or
                 "LootReserveCategoryListButtonTemplate");
-
-            if #list.Frames == 0 then
-                frame:SetPoint("TOPLEFT", list, "TOPLEFT");
-                frame:SetPoint("TOPRIGHT", list, "TOPRIGHT");
-            else
-                frame:SetPoint("TOPLEFT", list.Frames[#list.Frames], "BOTTOMLEFT", 0, 0);
-                frame:SetPoint("TOPRIGHT", list.Frames[#list.Frames], "BOTTOMRIGHT", 0, 0);
-            end
             table.insert(list.Frames, frame);
             frame = list.Frames[list.LastIndex];
         end
@@ -545,7 +546,7 @@ function LootReserve.Client:UpdateCategories()
             end
             frame.Text:SetText(format(categoryCollapsed and "|cFF806900%s|r" or "%s", category.Name));
         else
-            frame.Text:SetText(category.Name);
+            frame.Text:SetText(category.IndentType == 1 and (" - " .. category.Name) or category.IndentType == 2 and (" + " .. category.Name) or category.Name);
             frame:RegisterForClicks("LeftButtonDown");
             frame:SetScript("OnClick", function(frame) self:OnCategoryClick(frame); end);
         end
@@ -614,6 +615,15 @@ function LootReserve.Client:UpdateCategories()
                 needsSelect = true;
             end
         end
+        
+        if frame:GetHeight() > 1 then
+            frame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
+            frame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
+            list.ContentHeight = list.ContentHeight + frame:GetHeight();
+        else
+            frame:ClearAllPoints();
+        end
+        
     end
 
     if needsSelect then

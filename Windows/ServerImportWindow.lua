@@ -177,7 +177,7 @@ function LootReserve.Server.Import:UpdateReservesList()
             end
             button:Show();
             button.Item = LootReserve.ItemCache:Item(itemID);
-            if not button.Item:IsCached() and button.Item:GetID() ~= 0 then
+            if not button.Item:IsCached() and button.Item:GetID() ~= 0 and button.Item:Exists() then
                 table.insert(missing, button.Item)
             end
 

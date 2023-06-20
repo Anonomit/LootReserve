@@ -144,7 +144,7 @@
 								local width = 0;
 								for i, roll in ipairs(won) do
 									local name, link, texture = roll.Item:GetNameLinkTexture();
-									if not link then
+									if not link and roll.Item:Exists() then
 										table.insert(missing, roll.Item)
 									end
 

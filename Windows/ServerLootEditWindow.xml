@@ -549,7 +549,7 @@
 							local name, link, texture;
 							if item:IsCached() then
 								name, link, texture = item:GetNameLinkTexture();
-							else
+							elseif item:Exists() then
 								table.insert(missing, item);
 							end
 							table.insert(menu,

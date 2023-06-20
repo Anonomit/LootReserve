@@ -105,9 +105,9 @@
 				</Texture>
 			</Layer>
 			<Layer level="OVERLAY">
-				<FontString parentKey="Roll" inherits="GameFontWhiteSmall" justifyH="CENTER" wordwrap="false">
+				<FontString parentKey="Roll" inherits="GameFontWhiteSmall" justifyH="RIGHT" wordwrap="false">
 					<Anchors>
-						<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-32" />
+						<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="-64" />
 						<Anchor point="BOTTOMRIGHT" />
 					</Anchors>
 				</FontString>
@@ -212,7 +212,7 @@
 										local width = 0;
 										for i, roll in ipairs(won) do
 											local name, link, texture = roll.Item:GetNameLinkTexture();
-											if not link then
+											if not link and roll.Item:Exists() then
 												table.insert(missing, roll.Item);
 											end
 
@@ -276,6 +276,7 @@
 									local width = 0;
 									local expectedRolls = #frame.Roll.Players[player];
 									local actualRolls = 0;
+									local alreadyRolledTiers = { };
 									for i, data in ipairs(frame.Roll.Chat[player]) do
 										local time, type, text = strsplit("|", data, 3);
 										time = format("|cFF808080[%s]|r", date("%X", tonumber(time)));
@@ -284,8 +285,16 @@
 											text = format("%s %s", time, text);
 											if text:find("%(%d+%-%d+%)") then
 												actualRolls = actualRolls + 1;
-												if actualRolls > expectedRolls or not text:find("%(1%-100%)") then
-													info = ChatTypeInfo["RESTRICTED"]
+												if frame.Roll.Tiered then
+													local tier = text:match("%(1%-(%d+)%)");
+							            if alreadyRolledTiers[tier] then
+							              info = ChatTypeInfo["RESTRICTED"];
+							            end
+							            alreadyRolledTiers[tier] = true;
+												elseif not text:find("%(1%-100%)") then
+													info = ChatTypeInfo["RESTRICTED"];
+												elseif actualRolls > expectedRolls then
+													info = ChatTypeInfo["RESTRICTED"];
 												end
 											end
 										elseif type == "EMOTE" then
@@ -439,7 +448,10 @@
 						if not LootReserve.Server.RequestedRoll and self:GetParent().Historical then
 							LootReserve.Server:ContinueRoll(self:GetParent().Roll);
 						elseif LootReserve.Server:IsRolling(self:GetParent().Item) then
-							local roll, players, losers = LootReserve.Server:GetWinningRollAndPlayers();
+							local roll, players, losers = LootReserve.Server:GetWinningRollAndPlayers(LootReserve.Server.RequestedRoll);
+							if roll and LootReserve.Server.RequestedRoll.Tiered then
+								roll = LootReserve.Server:ConvertFromTieredRoll(roll);
+							end
 							if players then
 								for i = 1, #players do
 									players[i] = LootReserve:ColoredPlayer(players[i]);
@@ -1165,7 +1177,7 @@
 								end
 								LootReserve.Server:RequestCustomRoll(item,
 									LootReserve.Server.Settings.RollLimitDuration and LootReserve.Server.Settings.RollDuration or nil,
-									phases);
+									phases, LootReserve.Server.Settings.RollUseTiered or nil);
 							end
 						end
 						local function RaidRoll()
@@ -1206,6 +1218,7 @@
 											LootReserve:ReopenMenu(self, "#phases");
 										end,
 										checked = contains,
+										disabled = not contains and #LootReserve.Server.Settings.RollPhases >= LootReserve.Constants.MAX_PHASES,
 									});
 								end
 							end
@@ -1389,6 +1402,12 @@
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Settings for \"All Players\"", isTitle = true },
 							{
+								text = "Tiered Rolls",
+								tooltipText = "Allow rolls with reduced maximums.|n|nA 1-100 roll |cffff0000always|r beats a 1-99 roll.",
+								checked = LootReserve.Server.Settings.RollUseTiered,
+								func = function(_, _, _, checked) LootReserve.Server.Settings.RollUseTiered = checked; LootReserve:ReopenMenu(self); end,
+							},
+							{
 								text = format(LootReserve.Server.Settings.RollUsePhases and "Roll For: |cFF00FF00%s|r" or "Roll For...", strjoin(", ", unpack(LootReserve.Server.Settings.RollPhases))),
 								arg1 = "#phases",
 								checked = LootReserve.Server.Settings.RollUsePhases,
@@ -1415,7 +1434,7 @@
 							{
 								text = "Advance Automatically",
 								tooltipText = "Advance to the next stage when the timer expires if nobody rolled.",
-								disabled = not LootReserve.Server.Settings.RollUsePhases or #LootReserve.Server.Settings.RollPhases &lt;= 1 or not LootReserve.Server.Settings.RollLimitDuration,
+								disabled = LootReserve.Server.Settings.RollUseTiered or not LootReserve.Server.Settings.RollUsePhases or #LootReserve.Server.Settings.RollPhases &lt;= 1 or not LootReserve.Server.Settings.RollLimitDuration,
 								checked = LootReserve.Server.Settings.RollAdvanceOnExpire,
 								func = function(_, _, _, checked) LootReserve.Server.Settings.RollAdvanceOnExpire = checked; end,
 							},
@@ -1479,15 +1498,30 @@
 						});
 						
 						if LootReserve.Server.Settings.RollUsePhases and #LootReserve.Server.Settings.RollPhases > 0 then
-							for i = #LootReserve.Server.Settings.RollPhases, 1, -1 do
+							if LootReserve.Server.Settings.RollUseTiered then
+								local phases = { };
+								for i, phase in ipairs(LootReserve.Server.Settings.RollPhases) do
+									table.insert(phases, phase);
+								end
 								table.insert(menu, 3,
-								{ text = format("Among All Players (|cff00ff00%s|r)", LootReserve.Server.Settings.RollPhases[i]), arg2 = i, func = function(...)
+								{ text = format("Among All Players (|cff00ff00%s|r)", strjoin(", ", unpack(phases))), arg2 = 1, func = function(...)
 									if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
 										StartRoll(...)
 									else
-										StaticPopup_Show("LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM", link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players), {Item = item, Frame = self:GetParent(), Phase = i});
+										StaticPopup_Show("LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM", link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players), {Item = item, Frame = self:GetParent(), Phase = 1});
 									end
 								end });
+							else
+								for i = #LootReserve.Server.Settings.RollPhases, 1, -1 do
+									table.insert(menu, 3,
+									{ text = format("Among All Players (|cff00ff00%s|r)", LootReserve.Server.Settings.RollPhases[i]), arg2 = i, func = function(...)
+										if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
+											StartRoll(...)
+										else
+											StaticPopup_Show("LOOTRESERVE_CONFIRM_CUSTOM_ROLL_RESERVED_ITEM", link, LootReserve:FormatReservesTextColored(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players), {Item = item, Frame = self:GetParent(), Phase = i});
+										end
+									end });
+								end
 							end
 						else
 							table.insert(menu, 3,
@@ -1590,7 +1624,7 @@
 											local link = item:GetLink();
 											if not link or not texture then
 												texture = item:GetTexture();
-												if not link then
+												if not link and item:Exists() then
 													table.insert(missing, item);
 												end
 											end

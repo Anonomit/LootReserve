@@ -29,6 +29,7 @@ LootReserve.Client =
         RollRequestShowUnusableBoE  = false,
         RollRequestGlowOnlyReserved = true,
         RollRequestAutoRollReserved = true,
+        RollRequestAutoCloseTiered  = false,
         RollRequestAutoRollNotified = false,
         RollRequestWinnerReaction   = true,
         RollRequestLoserReaction    = true,
@@ -70,6 +71,19 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_NEED_ROLL_RESERVED_ITEM"] =
     hideOnEscape = 1,
     OnAccept = function(self, data)
         LootReserve.Client.RollOnLoot(data.rollID, 1);
+    end,
+};
+
+StaticPopupDialogs["LOOTRESERVE_PROMPT_REMOVE_FAVORITE"] =
+{
+    text         = "|cff00ff00Congratulations!|r|n|nWould you like to remove %s from your favorites?",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self, data)
+        LootReserve.Client:SetFavorite(data.item:GetID(), false);
     end,
 };
 
@@ -130,6 +144,7 @@ function LootReserve.Client:Load()
             from[field] = to[field];
         end
     end
+    local versionSave = LootReserveGlobalSave.Client.Version and LootReserveGlobalSave.Client.Version or "0"
     loadInto(self, LootReserveGlobalSave.Client, "Settings");
     loadInto(self, LootReserveCharacterSave.Client, "CharacterFavorites");
     loadInto(self, LootReserveGlobalSave.Client, "GlobalFavorites");
@@ -165,6 +180,14 @@ function LootReserve.Client:Load()
             tooltip:AddLine("(Toggle icon visibility in Reserves window)");
         end,
     }), self.Settings.LibDBIcon);
+    
+    
+    -- 2023-06-19: Reset auto roll notification
+    if versionSave < "2023-06-19" then
+        self.Settings.RollRequestAutoRollNotified = false;
+    end
+    
+    LootReserveGlobalSave.Client.Version = LootReserve.Version;
 end
 
 function LootReserve.Client:IsFavorite(itemID)
@@ -180,6 +203,8 @@ function LootReserve.Client:SetFavorite(itemID, enabled)
 
     local favorites = bindType == LE_ITEM_BIND_ON_ACQUIRE and self.CharacterFavorites or self.GlobalFavorites;
     favorites[itemID] = enabled and true or nil;
+    
+    LootReserve.Client:UpdateLootList();
     self:FlashCategory("Favorites");
 end
 
@@ -293,7 +318,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
         end);
 
         LootReserve:RegisterEvent("PLAYER_REGEN_ENABLED", function()
-            if self.SessionServer and self.PendingOpen then
+            if self.PendingOpen and self.SessionServer and self.AcceptingReserves and not self.Locked and self.RemainingReserves > 0 and not self.OptedOut then
                 self.Window:Show();
             end
             self.PendingOpen = false;
@@ -319,7 +344,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
             if self:IsItemReservedByMe(itemID, true) then
                 LootReserve:PrintMessage("Automatically rolling Need on reserved item: %s", item:GetLink());
                 if not self.Settings.RollRequestAutoRollNotified then
-                    LootReserve:PrintError("Automatic rolling on reserved items can be disabled in Settings.");
+                    LootReserve:PrintError("Automatic rolling on reserved items can be disabled in Reserve window settings.");
                     self.Settings.RollRequestAutoRollNotified = true;
                 end
                 self.RollOnLoot(rollID, 1);

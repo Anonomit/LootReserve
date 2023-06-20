@@ -5,6 +5,7 @@ LootReserve.Constants.MAX_RESERVES          = 99;
 LootReserve.Constants.MAX_MULTIRESERVES     = 99;
 LootReserve.Constants.MAX_RESERVES_PER_ITEM = 99;
 LootReserve.Constants.MAX_CHAT_STORAGE      = 25;
+LootReserve.Constants.MAX_PHASES            = 100;
 
 LootReserve.Constants.ReserveResult = {
     OK                       = 0,
@@ -228,7 +229,7 @@ LootReserve.Constants.LocomotionPhrases = {
     -- "Clump",
     -- "Coast",
     "Commute",
-    "Corporealize",
+    -- "Corporealize",
     "Crawl",
     -- "Creep",
     "Cycle",
@@ -346,6 +347,7 @@ LootReserve.Constants.LocomotionPhrases = {
     "Totter",
     "Traipse",
     -- "Tramp",
+    "Translocate",
     "Travel",
     "Trek",
     -- "Troop",

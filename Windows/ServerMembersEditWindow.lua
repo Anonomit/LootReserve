@@ -52,7 +52,7 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
             for _, roll in ipairs(won) do
                 if roll.Item:IsCached() then
                     wonMaxQuality = math.max(wonMaxQuality, roll.Item:GetQuality());
-                else
+                elseif roll.Item:Exists() then
                     table.insert(missing, roll.Item);
                 end
             end
@@ -90,7 +90,7 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
         for itemID, count in pairs(reservedItems) do
             local item = LootReserve.ItemCache:Item(itemID);
             table.insert(itemOrder, item);
-            if not item:IsCached() then
+            if not item:IsCached() and item:Exists() then
                 table.insert(missing, item);
             end
         end

@@ -260,7 +260,6 @@
 								self:Hide();
 								self:GetParent().Set:Show();
 								PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_OFF);
-								LootReserve.Client:UpdateLootList();
 							</OnClick>
 							<OnEnter>
 								GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
@@ -363,9 +362,10 @@
 							{ text = "Show Popup", checked = LootReserve.Client.Settings.RollRequestShow, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShow = checked; end },
 							{ text = "Show For Unusable Items", checked = LootReserve.Client.Settings.RollRequestShowUnusable, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShowUnusable = checked; end },
 							{ text = "Consider BoE Items Usable", checked = LootReserve.Client.Settings.RollRequestShowUnusableBoE, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShowUnusableBoE = checked; end },
-							{ text = "Glow Only For Reserved Items", checked = LootReserve.Client.Settings.RollRequestGlowOnlyReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestGlowOnlyReserved = checked; end },
-							{ text = "Auto Roll on Reserved Items", checked = LootReserve.Client.Settings.RollRequestAutoRollReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestAutoRollReserved = checked; end },
-							{ text = "Open Example Popup", func = function() LootReserve.Client:RollRequested(LootReserve:Me(), LootReserve.ItemCache:Item(18582), { LootReserve:Me() }, true, 30, 30, "Test Spec", false, true); end },
+							-- { text = "Glow Only For Reserved Items", checked = LootReserve.Client.Settings.RollRequestGlowOnlyReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestGlowOnlyReserved = checked; end },
+							{ text = "Auto Roll On Reserved Items", checked = LootReserve.Client.Settings.RollRequestAutoRollReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestAutoRollReserved = checked; end },
+							{ text = "Always Close Popup After Rolling", checked = LootReserve.Client.Settings.RollRequestAutoCloseTiered, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestAutoCloseTiered = checked; end },
+							{ text = "Open Example Popup", func = function() if LootReserve.Client.RollRequest then return; end LootReserve.Client:RollRequested(LootReserve:Me(), LootReserve.ItemCache:Item(18582), { LootReserve:Me() }, true, 30, 30, {"Test Spec"}, false, false, true); end, disabled = LootReserve.Client.RollRequest and true or false },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Roll Reactions", isTitle = true },
 							{ text = "React When Winning", tooltipText = "Enable to make your character cheer or congratulate you when you win an item.|n|nOnly you can hear the reaction.", checked = LootReserve.Client.Settings.RollRequestWinnerReaction, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestWinnerReaction = checked; end },
@@ -377,7 +377,7 @@
 							{ text = "Show Reopen Hint", tooltipText = "Shows a hint in chat when this window is closed, telling you how to reopen it.", checked = LootReserve.Client.Settings.ShowReopenHint, func = function(_, _, _, checked) LootReserve.Client.Settings.ShowReopenHint = checked; end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Cache", isTitle = true },
-							{ text = "Precache items", tooltipText = "Cache items in advance to speed up search functions.|n|nIn rare cases, other addons have been known to misbehave while the cache is being built.|n|nInstall/Update ItemCache to remember the item database between sessions.|n|n|cFFFF2020Takes effect on next UI Reload|r", checked = LootReserve.Client.Settings.AllowPreCache, func = function(_, _, _, checked) LootReserve.Client.Settings.AllowPreCache = checked; end },
+							{ text = "Precache Items", tooltipText = "Cache items in advance to speed up search functions.|n|nIn rare cases, other addons have been known to misbehave while the cache is being built.|n|nInstall/Update ItemCache to remember the item database between sessions.|n|n|cFFFF2020Takes effect on next UI Reload|r", checked = LootReserve.Client.Settings.AllowPreCache, func = function(_, _, _, checked) LootReserve.Client.Settings.AllowPreCache = checked; end },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Close" },
 						};
@@ -569,6 +569,16 @@
 			<OnLoad>
 				LootReserve.Client:OnWindowLoad(self);
 				table.insert(UISpecialFrames, self:GetName());
+				
+				function self:PendOpen()
+					if LootReserve.Client.SessionServer and LootReserve.Client.AcceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
+						if UnitAffectingCombat("player") then
+							self.PendingOpen = true;
+						else
+							self:Show();
+						end
+					end
+				end
 			</OnLoad>
 			<OnShow>
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);

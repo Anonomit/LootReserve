@@ -87,7 +87,7 @@ function LootReserve.Server:UpdateReserveListButtons(lockdown)
             for _, button in ipairs(frame.ReservesFrame.Players) do
                 if button:IsShown() then
                     button.Name.WonRolls:SetShown(self.CurrentSession and self.CurrentSession.Members[button.Player] and self.CurrentSession.Members[button.Player].WonRolls);
-                    button.Name.RecentChat:SetShown(frame.Roll and self:HasRelevantRecentChat(frame.Roll.Chat, frame.Roll.Players, button.Player));
+                    button.Name.RecentChat:SetShown(frame.Roll and self:HasRelevantRecentChat(frame.Roll, button.Player));
                 end
             end
         end
@@ -268,7 +268,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         local item = LootReserve.ItemCache:Item(reserve.Item);
         if item:IsCached() then
             name = item:GetName();
-        else
+        elseif item:Exists() then
             table.insert(missing, item);
         end
         return name:upper();
@@ -349,7 +349,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
                 createFrame(item, reserve, true);
                 match = true;
             end
-        else
+        elseif item:Exists() then
             table.insert(missing, item);
         end
         if filter and not match and LootReserve.Data:IsToken(itemID) then
@@ -360,7 +360,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
                         createFrame(item, reserve, true);
                         break;
                     end
-                else
+                elseif reward:Exists() then
                     table.insert(missing, reward);
                 end
             end
@@ -422,6 +422,11 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
                         local rolled = roll > LootReserve.Constants.RollType.NotRolled;
                         local passed = roll == LootReserve.Constants.RollType.Passed;
                         local deleted = roll == LootReserve.Constants.RollType.Deleted;
+                        local rollText = tostring(roll);
+                        if rolled and frame.Roll.Tiered then
+                            local roll, max = self:ConvertFromTieredRoll(roll);
+                            rollText = format("%d/%d", roll, max);
+                        end
                         local winner;
                         if frame.Roll.Winners then
                             if LootReserve:Contains(frame.Roll.Winners, button.Player) and not alreadyHighlighted[button.Player] then
@@ -434,7 +439,7 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
 
                         local color = winner and GREEN_FONT_COLOR or passed and GRAY_FONT_COLOR or deleted and RED_FONT_COLOR or HIGHLIGHT_FONT_COLOR;
                         button.Roll:Show();
-                        button.Roll:SetText(rolled and tostring(roll) or passed and "PASS" or deleted and "DEL" or "...");
+                        button.Roll:SetText(rolled and rollText or passed and "PASS" or deleted and "DEL" or "...");
                         button.Roll:SetTextColor(color.r, color.g, color.b);
                         if not frame.Historical then
                             button.RedHighlight:Hide();
@@ -489,7 +494,7 @@ function LootReserve.Server:UpdateRollListButtons(lockdown)
             for _, button in ipairs(frame.ReservesFrame.Players) do
                 if button:IsShown() then
                     button.Name.WonRolls:SetShown(self.CurrentSession and self.CurrentSession.Members[button.Player] and self.CurrentSession.Members[button.Player].WonRolls);
-                    button.Name.RecentChat:SetShown(frame.Roll and self:HasRelevantRecentChat(frame.Roll.Chat, frame.Roll.Players, button.Player));
+                    button.Name.RecentChat:SetShown(frame.Roll and self:HasRelevantRecentChat(frame.Roll, button.Player));
                 end
             end
         end
@@ -624,7 +629,11 @@ function LootReserve.Server:UpdateRollList(lockdown)
             local last = 0;
             frame.ReservesFrame.Players = frame.ReservesFrame.Players or { };
 
-            for player, roll, rollNumber in LootReserve.Server:GetOrderedPlayerRolls(roll.Players) do
+            local highest = LootReserve.Constants.RollType.NotRolled;
+            for player, roll, rollIndex in LootReserve.Server:GetOrderedPlayerRolls(roll.Players) do
+                if highest < roll then
+                    highest = roll;
+                end
                 last = last + 1;
                 if last > #frame.ReservesFrame.Players then
                     local button = CreateFrame("Button", nil, frame.ReservesFrame, lockdown and "LootReserveReserveListPlayerTemplate" or "LootReserveReserveListPlayerSecureTemplate");
@@ -635,7 +644,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 if button.init then button:init(); end
                 button:Show();
                 button.Player = player;
-                button.RollNumber = rollNumber;
+                button.RollNumber = rollIndex;
                 button.Unit = unit;
                 if not lockdown then
                     button:SetAttribute("unit", unit);
@@ -656,7 +665,12 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 end
             end
 
-            frame.ReservesFrame.HeaderPlayer:SetText(roll.RaidRoll and "Raid-rolled to" or roll.Disenchant and "Disenchanted" or roll.Custom and format("Rolled%s by", roll.Phases and format(" for |cFF00FF00%s|r", roll.Phases[1] or "") or "") or "Reserved by");
+            local phase = roll.Phases and roll.Phases[1];
+            if roll.Tiered then
+                local rollNumber, max = self:ConvertFromTieredRoll(highest);
+                phase = roll.Phases and roll.Phases[101-max];
+            end
+            frame.ReservesFrame.HeaderPlayer:SetText(roll.RaidRoll and "Raid-rolled to" or roll.Disenchant and "Disenchanted" or roll.Custom and format("Rolled%s by", phase and format(" for |cFF00FF00%s|r", phase or "") or "") or "Reserved by");
             frame.ReservesFrame.NoRollsPlaceholder:SetShown(last == 0);
             if frame.ReservesFrame.NoRollsPlaceholder:IsShown() then
                 reservesHeight = reservesHeight + 16;
@@ -734,7 +748,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 itemsVisible = itemsVisible + 1;
                 match = true;
             end
-        else
+        elseif item:Exists() then
             table.insert(missing, item);
         end
         if filter and not match and LootReserve.Data:IsTokenReward(roll.Item:GetID()) then
@@ -744,7 +758,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                     createFrame(item, roll, true);
                     match = true;
                 end
-            else
+            elseif token:Exists() then
                 table.insert(missing, token);
             end
         end
@@ -757,7 +771,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                         itemsVisible = itemsVisible + 1;
                         break;
                     end
-                else
+                elseif reward:Exists() then
                     table.insert(missing, reward);
                 end
             end

@@ -242,7 +242,7 @@ LootReserve.Comm.Handlers[Opcodes.Hello] = function(sender)
             end
         end
         local Roll = LootReserve.Server.RequestedRoll
-        LootReserve.Comm:SendRequestRoll(sender, Roll.Item, players, Roll.Custom, Roll.Duration, Roll.MaxDuration, Roll.Phases and Roll.Phases[1] or "");
+        LootReserve.Comm:SendRequestRoll(sender, Roll.Item, players, Roll.Custom, Roll.Duration, Roll.MaxDuration, Roll.Phases or { }, Roll.Tiered and true or nil);
     end
 end
 
@@ -421,12 +421,8 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
     LootReserve.Client:UpdateLootList();
     if LootReserve.Client.SkipOpen then
         LootReserve.Client.SkipOpen = false;
-    elseif acceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
-        if UnitAffectingCombat("player") then
-            LootReserve.Client.PendingOpen = true;
-        else
-            LootReserve.Client.Window:Show();
-        end
+    else
+        LootReserve.Client.Window:PendOpen();
     end
 end
 
@@ -472,17 +468,12 @@ LootReserve.Comm.Handlers[Opcodes.OptInfo] = function(sender, out)
     LootReserve.Client.OptedOut = out;
 
     LootReserve.Client:UpdateReserveStatus();
-    if LootReserve.Client.SessionServer and LootReserve.Client.AcceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
-        if UnitAffectingCombat("player") then
-            LootReserve.Client.PendingOpen = true;
-        else
-            LootReserve.Client.Window:Show();
-        end
-    elseif LootReserve.Client.OptedOut then
+    if LootReserve.Client.OptedOut then
         if not LootReserve.Client.Masquerade then
             LootReserve.Client.Window:Hide();
         end
     end
+    LootReserve.Client.Window:PendOpen();
 end
 
 -- Opt Out
@@ -597,6 +588,11 @@ LootReserve.Comm.Handlers[Opcodes.ReserveResult] = function(sender, itemID, resu
         end
         LootReserve.Client:SetItemPending(itemID, false);
         LootReserve.Client:UpdateReserveStatus();
+        
+        -- opting back in is implied
+        LootReserve.Comm.Handlers[Opcodes.OptInfo](sender, false);
+        
+        LootReserve.Client.Window:PendOpen();
     end
 end
 
@@ -711,46 +707,51 @@ LootReserve.Comm.Handlers[Opcodes.CancelReserveResult] = function(sender, itemID
             LootReserve.Client:UpdateReserveStatus();
         end
         
-        if LootReserve.Client.AcceptingReserves and not LootReserve.Client.Locked and LootReserve.Client.RemainingReserves > 0 and not LootReserve.Client.OptedOut then
-            if UnitAffectingCombat("player") then
-                LootReserve.Client.PendingOpen = true;
-            else
-                LootReserve.Client.Window:Show();
-            end
-        end
+        -- opting back in is implied
+        LootReserve.Comm.Handlers[Opcodes.OptInfo](sender, false);
+        
+        LootReserve.Client.Window:PendOpen();
     end
 end
 
 -- RequestRoll
-function LootReserve.Comm:BroadcastRequestRoll(item, players, custom, duration, maxDuration, phase)
-    LootReserve.Comm:SendRequestRoll(nil, item, players, custom, duration, maxDuration, phase);
+function LootReserve.Comm:BroadcastRequestRoll(item, players, custom, duration, maxDuration, phases, tiered)
+    LootReserve.Comm:SendRequestRoll(nil, item, players, custom, duration, maxDuration, phases or { }, tiered);
 end
-function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duration, maxDuration, phase)
+function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duration, maxDuration, phases, tiered)
     LootReserve.Comm:Send(target, Opcodes.RequestRoll,
         format("%d,%d", item:GetID(), item:GetSuffix() or 0),
         strjoin(",", unpack(players)),
         custom == true,
         format("%.2f", duration or 0),
         maxDuration or 0,
-        phase or "",
-        LootReserve.Server.Settings.AcceptRollsAfterTimerEnded);
+        tiered and strjoin(",", unpack(phases or { })) or (phases or { })[1],
+        LootReserve.Server.Settings.AcceptRollsAfterTimerEnded,
+        tiered);
 end
-LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phase, acceptRollsAfterTimerEnded)
+LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered)
     local id, suffix = strsplit(",", item);
     item = LootReserve.ItemCache:Item(tonumber(id), tonumber(suffix));
     custom = tonumber(custom) == 1;
     duration = tonumber(duration);
     maxDuration = tonumber(maxDuration);
-    phase = phase and #phase > 0 and phase or nil;
+    phases = phases and #phases > 0 and phases or "";
     acceptRollsAfterTimerEnded = tonumber(acceptRollsAfterTimerEnded) == 1;
-
+    tiered = tonumber(tiered) == 1;
+    
+    
     if LootReserve.Client.SessionServer == sender or custom then
         if #players > 0 then
             players = { strsplit(",", players) };
         else
             players = { };
         end
-        LootReserve.Client:RollRequested(sender, item, players, custom, duration, maxDuration, phase, acceptRollsAfterTimerEnded);
+        if #phases > 0 then
+            phases = { strsplit(",", phases) };
+        else
+            phases = { };
+        end
+        LootReserve.Client:RollRequested(sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered);
     end
 end
 
@@ -760,10 +761,7 @@ function LootReserve.Comm:SendPassRoll(item)
 end
 LootReserve.Comm.Handlers[Opcodes.PassRoll] = function(sender, item)
     item = LootReserve.ItemCache:Item(strsplit(",", item));
-
-    if true--[[LootReserve.Server.CurrentSession]] then
-        LootReserve.Server:PassRoll(sender, item);
-    end
+    LootReserve.Server:PassRoll(sender, item);
 end
 
 -- DeletedRoll
@@ -815,22 +813,27 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
         else
             losers = { };
         end
-        if LootReserve.Client.Settings.RollRequestWinnerReaction and LootReserve:Contains(winners, LootReserve:Me()) then
-            item:OnCache(function()
-                local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
-                local soundTable = custom and LootReserve.Constants.Sounds.Congratulate or LootReserve.Constants.Sounds.Cheer;
-                if race and sex and soundTable[race] and soundTable[race][sex] then
-                    PlaySound(soundTable[race][sex]);
-                end
-                PlaySound(LootReserve.Constants.Sounds.LevelUp);
-                
-                LootReserve:PrintMessage("Congratulations! %s has awarded you %s%s%s",
-                    LootReserve:ColoredPlayer(sender),
-                    item:GetLink(),
-                    raidRoll and " via raid-roll" or custom and phase and format(" for %s", phase or "") or "",
-                    roll and not raidRoll and format(" with a roll of %d", roll) or ""
-                );
-            end);
+        if LootReserve:Contains(winners, LootReserve:Me()) then
+            if LootReserve.Client:IsFavorite(item:GetID()) then
+                StaticPopup_Show("LOOTRESERVE_PROMPT_REMOVE_FAVORITE", item:GetLink(), nil, {item = item});
+            end
+            if LootReserve.Client.Settings.RollRequestWinnerReaction then
+                item:OnCache(function()
+                    local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
+                    local soundTable = custom and LootReserve.Constants.Sounds.Congratulate or LootReserve.Constants.Sounds.Cheer;
+                    if race and sex and soundTable[race] and soundTable[race][sex] then
+                        PlaySound(soundTable[race][sex]);
+                    end
+                    PlaySound(LootReserve.Constants.Sounds.LevelUp);
+                    
+                    LootReserve:PrintMessage("Congratulations! %s has awarded you %s%s%s",
+                        LootReserve:ColoredPlayer(sender),
+                        item:GetLink(),
+                        raidRoll and " via raid-roll" or custom and phase and format(" for %s", phase or "") or "",
+                        roll and not raidRoll and format(" with a roll of %d", roll) or ""
+                    );
+                end);
+            end
         end
         if LootReserve.Client.Settings.RollRequestLoserReaction and LootReserve:Contains(losers, LootReserve:Me()) then
             item:OnCache(function()
