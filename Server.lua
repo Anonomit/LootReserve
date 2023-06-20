@@ -686,8 +686,8 @@ function LootReserve.Server:Load()
         end
     end
     
-    -- 2023-06-19: Remove illegal characters in phases
-    if versionSave < "2023-06-19" then
+    -- 2023-06-20: Remove illegal characters in phases
+    if versionSave < "2023-06-20" then
         for _, t in ipairs({LootReserve.Server.Settings.RollPhases, LootReserve.Server.Settings.Phases}) do
             for i, phase in ipairs(t) do
                 t[i] = phase:gsub("[,|]", "");

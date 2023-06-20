@@ -37,7 +37,7 @@ Wrath:
     3.3: ToC / Ony, new VoA boss
     3.4: ICC, new VoA boss
 --]]
-local EXPANSION_PHASE = 3.2;
+local EXPANSION_PHASE = GetBuildInfo() == "3.4.1" and 3.2 or 3.3;
 
 
 local hidden = { Hidden = true };

@@ -182,8 +182,8 @@ function LootReserve.Client:Load()
     }), self.Settings.LibDBIcon);
     
     
-    -- 2023-06-19: Reset auto roll notification
-    if versionSave < "2023-06-19" then
+    -- 2023-06-20: Reset auto roll notification
+    if versionSave < "2023-06-20" then
         self.Settings.RollRequestAutoRollNotified = false;
     end
     
