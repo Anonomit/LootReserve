@@ -36,6 +36,16 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
         if not LootReserve:Contains(players, LootReserve:Me()) then return; end
         if custom and not self.Settings.RollRequestShowUnusable and (not LootReserve.ItemConditions:IsItemUsableByMe(item:GetID()) and (not self.Settings.RollRequestShowUnusableBoE or item:GetBindType() == LE_ITEM_BIND_ON_ACQUIRE)) then return; end
     end
+    
+    local isFavorite = self:IsFavorite(item:GetID());
+    if not isFavorite then
+        for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(item:GetID()) or { }) do
+            if self:IsFavorite(rewardID) then
+                isFavorite = true;
+                break;
+            end
+        end
+    end
 
     self.RollRequest =
     {
@@ -63,7 +73,7 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     frame.ItemFrame.Icon:SetTexture(texture);
     frame.ItemFrame.Name:SetText((link or name or "|cFFFF4000Loading...|r"):gsub("[%[%]]", ""));
     frame.ItemFrame.Misc:SetText(description);
-    frame.ItemFrame.Favorite:SetShown(self:IsFavorite(item:GetID()));
+    frame.ItemFrame.Favorite:SetShown(isFavorite);
     
     for i, button in ipairs({frame.ButtonRoll1, frame.ButtonRoll2, frame.ButtonRoll3}) do
         button:Disable();
@@ -106,7 +116,7 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
 
     frame:Show();
     
-    if LibCustomGlow and (--[[not self.Settings.RollRequestGlowOnlyReserved or--]] not roll.Custom or self:IsFavorite(item:GetID())) then
+    if LibCustomGlow and (--[[not self.Settings.RollRequestGlowOnlyReserved or--]] not roll.Custom or isFavorite) then
         LibCustomGlow.ButtonGlow_Start(frame.ItemFrame.IconGlow);
     end
 
