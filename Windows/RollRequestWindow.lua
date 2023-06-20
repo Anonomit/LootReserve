@@ -212,10 +212,6 @@ function LootReserve.Client:RollRequested(sender, item, ...)
 end
 
 function LootReserve.Client:RespondToRollRequest(tier)
-    if LibCustomGlow then
-        LibCustomGlow.ButtonGlow_Stop(LootReserveRollRequestWindow.ItemFrame.IconGlow);
-    end
-
     if not self.RollRequest then return; end
     
     local frame = LootReserveRollRequestWindow;

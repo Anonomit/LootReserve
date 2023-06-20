@@ -251,7 +251,7 @@
 					<Anchor point="RIGHT" relativeKey="$parent.ButtonRoll1" relativePoint="LEFT" x="-5" y="0" />
 				</Anchors>
 				<Frames>
-					<Button parentKey="Favorite" hidden="true">
+					<Button parentKey="Favorite" frameLevel="100" hidden="true">
 						<Size x="24" y="24" />
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.Icon" relativePoint="BOTTOMRIGHT" x="2" y="-5" />
