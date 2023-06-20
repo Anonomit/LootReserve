@@ -20,6 +20,10 @@ ClassMask id
 Wrath loot tables depend on this setting
 Changing it demands a new required addon version
 
+Classic:
+    1.1: Initial
+    1.5: AQ40 server attunement quest items added to raid loot
+
 TBC:
     2.1: Initial
     2.2: S1 arena gear available from tokens
@@ -197,7 +201,7 @@ LootReserve.Data =
                         18817, 19137, 0,
                         18814, 19138, 17102, 17107, 17063, 17082, 18815, 0,
                         17106, 18816, 17104, 17076, 0,
-                        21110, 0,
+                        unpack(EXPANSION_PHASE < 1.5 and {} or {21110, 0,}),
                     },
                 },
                 { Separator = true },
@@ -208,7 +212,7 @@ LootReserve.Data =
                         16802, 16806, 16817, 16827, 16828, 16851, 16838, 16858, 16864, 0,
                         16799, 16804, 16819, 16825, 16830, 16850, 16840, 16857, 16861, 0,
                         17011, 17010, 11382, 17012, 0,
-                        20951, 0,
+                        unpack(EXPANSION_PHASE < 1.5 and {} or {20951, 0,}),
                     },
                 },
                 { Separator = true },
@@ -339,7 +343,7 @@ LootReserve.Data =
                         19342, 19341, 0,
                         19374, 19373, 0,
                         19350, 19351, 0,
-                        20383, 0,
+                        unpack(EXPANSION_PHASE < 1.5 and {} or {20383, 0,}),
                     },
                 },
                 {
@@ -394,7 +398,7 @@ LootReserve.Data =
                         19379, 19378, 19382, 19377, 19376, 0,
                         19356, 19360, 19364, 19363, 0,
                         11938, 0,
-                        21138, 0,
+                        unpack(EXPANSION_PHASE < 1.5 and {} or {21138, 0,}),
                     },
                 },
                 { Separator = true },
@@ -1312,10 +1316,19 @@ LootReserve.Data =
                     },
                 },
                 {
+                    Name = "Engineering",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        23809, 0,
+                    },
+                },
+                {
                     Name = "Enchanting",
                     IndentType = 1,
                     Loot =
                     {
+                        22559, 22561, 22560, 0,
                         22545, 0,
                     },
                 },
@@ -6382,7 +6395,7 @@ do
     HideItem(47556);
     
     -- Ashen Sack of Gems
-    HideItem(49294);
+    -- HideItem(49294);
     
     -- Primordial Saronite
     HideItem(49908);
