@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 4
+local MAJOR, MINOR = ADDON_NAME, 5
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -12,25 +12,18 @@ end
 
 local Addon = {}
 local L
-local AceConfig
-local AceConfigDialog
-local AceConfigRegistry
-local AceDB
-local AceDBOptions
-local SemVer
 
 if IsStandalone then
-  Addon = LibStub("AceAddon-3.0"):NewAddon(ADDON_NAME, "AceConsole-3.0") or {}
-  ItemCacheAddon = Addon
+  Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
   L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
   
-  AceConfig         = LibStub"AceConfig-3.0"
-  AceConfigDialog   = LibStub"AceConfigDialog-3.0"
-  AceConfigRegistry = LibStub"AceConfigRegistry-3.0"
-  AceDB             = LibStub"AceDB-3.0"
-  AceDBOptions      = LibStub"AceDBOptions-3.0"
+  Addon.AceConfig         = LibStub"AceConfig-3.0"
+  Addon.AceConfigDialog   = LibStub"AceConfigDialog-3.0"
+  Addon.AceConfigRegistry = LibStub"AceConfigRegistry-3.0"
+  Addon.AceDB             = LibStub"AceDB-3.0"
+  Addon.AceDBOptions      = LibStub"AceDBOptions-3.0"
   
-  SemVer            = LibStub"SemVer"
+  Addon.SemVer = LibStub"SemVer"
 end
 
 
@@ -91,7 +84,7 @@ end
 
 do
   Addon.expansions = {
-    retail  = 9,
+    retail  = 10,
     wrath   = 3,
     wotlk   = 3,
     tbc     = 2,
@@ -117,65 +110,6 @@ end
 local MY_CLASS = select(2, UnitClassBase"player")
 
 
-
-function Addon:GetDB()
-  return self.db
-end
-function Addon:GetDefaultDB()
-  return self.dbDefault
-end
-function Addon:GetProfile()
-  return self:GetDB().profile
-end
-function Addon:GetDefaultProfile()
-  return self:GetDefaultDB().profile
-end
-function Addon:GetGlobal()
-  return self:GetDB().global
-end
-function Addon:GetDefaultGlobal()
-  return self:GetDefaultDB().global
-end
-local function GetOption(self, db, ...)
-  local val = db
-  for _, key in ipairs{...} do
-    val = val[key]
-  end
-  return val
-end
-function Addon:GetOption(...)
-  return GetOption(self, self:GetProfile(), ...)
-end
-function Addon:GetDefaultOption(...)
-  return GetOption(self, self:GetDefaultProfile(), ...)
-end
-function Addon:GetGlobalOption(...)
-  return GetOption(self, self:GetGlobal(), ...)
-end
-function Addon:GetDefaultGlobalOption(...)
-  return GetOption(self, self:GetDefaultGlobal(), ...)
-end
-local function SetOption(self, db, val, ...)
-  local keys = {...}
-  local lastKey = tblremove(keys, #keys)
-  local tbl = db
-  for _, key in ipairs(keys) do
-    tbl = tbl[key]
-  end
-  tbl[lastKey] = val
-end
-function Addon:SetOption(val, ...)
-  return SetOption(self, self:GetProfile(), val, ...)
-end
-function Addon:ResetOption(...)
-  return self:SetOption(val, self:GetDefaultOption(...))
-end
-function Addon:SetGlobalOption(val, ...)
-  return SetOption(self, self:GetGlobal(), val, ...)
-end
-function Addon:ResetGlobalOption(...)
-  return self:SetOption(val, self:GetDefaultGlobalOption(...))
-end
 
 
 local CLASS_MAP_TO_ID = {}
@@ -628,7 +562,7 @@ end
 function ItemDB:InitTooltipScanner()
   self.tooltipScanner = ItemCachetooltipScanner
   if not self.tooltipScanner then
-    self.tooltipScanner = CreateFrame("GameTooltip", "ItemCachetooltipScanner", UIParent, "GameTooltipTemplate")
+    self.tooltipScanner = CreateFrame("GameTooltip", "ItemCachetooltipScanner", nil, "GameTooltipTemplate")
     self.tooltipScanner:Hide()
     
     self.tooltipScanner.ClassesAllowed = format("^%s$"  , ITEM_CLASSES_ALLOWED:gsub("%d+%$", ""):gsub("%%s", "(.+)"))
@@ -1011,7 +945,7 @@ function Item:GetInfo()
       -- local name, link, quality, level, minLevel, itemType, itemSubType, maxStackSize, equipLoc, texture, sellPrice, classID, subclassID, bindType = unpack(info)
       private(self).searchName = ItemCache:FormatSearchText(info[1])
       
-      ItemDB.tooltipScanner:SetOwner(UIParent, "ANCHOR_NONE")
+      ItemDB.tooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE")
       ItemDB.tooltipScanner:SetHyperlink("item:" .. self:GetID())
       for i = 1, ItemDB.tooltipScanner:NumLines() do
         local line = _G[ItemDB.tooltipScanner:GetName() .. "TextLeft" .. i]
@@ -1268,70 +1202,28 @@ Item.IsShoes = Item.IsBoots
 
 
 function Addon:OnChatCommand(input)
-  self:OpenConfig(ADDON_NAME, true)
+  local arg = self:GetArgs(input, 1)
+  
+  local func = arg and self.chatArgs[arg] or nil
+  if func then
+    func(self)
+  else
+    self:OpenConfig(ADDON_NAME)
+  end
 end
 
-function Addon:OpenConfig(category, expandSection)
-  InterfaceAddOnsList_Update()
-  InterfaceOptionsFrame_OpenToCategory(category)
-  
-  if expandSection then
-    -- Expand config if it's collapsed
-    local i = 1
-    while _G["InterfaceOptionsFrameAddOnsButton"..i] do
-      local frame = _G["InterfaceOptionsFrameAddOnsButton"..i]
-      if frame.element then
-        if frame.element.name == ADDON_NAME then
-          if frame.element.hasChildren and frame.element.collapsed then
-            if _G["InterfaceOptionsFrameAddOnsButton"..i.."Toggle"] and _G["InterfaceOptionsFrameAddOnsButton"..i.."Toggle"].Click then
-              _G["InterfaceOptionsFrameAddOnsButton"..i.."Toggle"]:Click()
-              break
-            end
-          end
-          break
-        end
-      end
-      i = i + 1
-    end
-  end
-end
-function Addon:MakeDefaultFunc(category)
-  return function()
-    self:GetDB():ResetProfile()
-    self:InitDB()
-    self:Printf(L["Profile reset to default."])
-    AceConfigRegistry:NotifyChange(category)
-  end
-end
-function Addon:CreateOptionsCategory(categoryName, options)
-  local category = ADDON_NAME
-  if categoryName then
-    category = ("%s.%s"):format(category, categoryName)
-  end
-  AceConfig:RegisterOptionsTable(category, options)
-  local Panel = AceConfigDialog:AddToBlizOptions(category, categoryName, categoryName and ADDON_NAME or nil)
-  Panel.default = self:MakeDefaultFunc(category)
-  return Panel
-end
-
-function Addon:RefreshOptions()
-  Data:RefreshOptionsTable(ADDON_NAME, self, L)
-  
-  AceConfigRegistry:NotifyChange(ADDON_NAME)
-end
 
 function Addon:CreateOptions()
-  self.Options = {}
+  self:MakeAddonOptions(self.chatCommands[1])
   
-  self:CreateOptionsCategory(nil, Data:RefreshOptionsTable(ADDON_NAME, self, L))
-  
-  if self:GetOption("Debug", "menu") then
-    self:CreateOptionsCategory("Debug" , Data:MakeDebugOptionsTable("Debug", self, L))
+  -- Debug Options
+  if self:IsDebugEnabled() then
+    self:MakeDebugOptions(self.L["Debug"], self.chatCommands[1], "debug", "db", "d")
   end
 end
 
 function Addon:InitDB()
-  local configVersion = SemVer(self:GetOption"_VERSION" or tostring(self.Version))
+  local configVersion = self.SemVer(self:GetOption"_VERSION" or tostring(self.Version))
   if configVersion < self.Version then
     -- Update data schema here
   end
@@ -1340,11 +1232,14 @@ end
 
 
 function Addon:OnInitialize()
-  self.Version   = SemVer(GetAddOnMetadata(ADDON_NAME, "Version"))
-  self.db        = AceDB:New(("%sDB"):format(ADDON_NAME)        , Data:MakeDefaultOptions(), true)
-  self.dbDefault = AceDB:New(("%sDB_Default"):format(ADDON_NAME), Data:MakeDefaultOptions(), true)
+  self.Version   = self.SemVer(GetAddOnMetadata(ADDON_NAME, "Version"))
+  self.db        = self.AceDB:New(("%sDB"):format(ADDON_NAME)        , self:MakeDefaultOptions(), true)
+  self.dbDefault = self.AceDB:New(("%sDB_Default"):format(ADDON_NAME), self:MakeDefaultOptions(), true)
   
-  self:RegisterChatCommand(Data.CHAT_COMMAND, "OnChatCommand", true)
+  self.chatCommands = {"zt", "zera", ADDON_NAME:lower()}
+  for _, chatCommand in ipairs(self.chatCommands) do
+    self:RegisterChatCommand(chatCommand, "OnChatCommand", true)
+  end
   
   ItemDB:Init()
 end
@@ -1355,6 +1250,11 @@ function Addon:OnEnable()
   self:GetDB().RegisterCallback(self, "OnProfileCopied" , "InitDB")
   self:GetDB().RegisterCallback(self, "OnProfileReset"  , "InitDB")
   
+  self.chatArgs = {}
+  do
+    local function PrintVersion() self:Printf("Version: %s", tostring(self.version)) end
+    for _, arg in ipairs{"version", "vers", "ver", "v"} do self.chatArgs[arg] = PrintVersion end
+  end
   self:CreateOptions()
 end
 
