@@ -977,10 +977,10 @@ function LootReserve.Server:AddRecentLoot(item, acceptAllQualities)
     
     -- try to get the tooltip to cache
     if not LootReserve.TooltipScanner then
-        LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
+        LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", nil, "GameTooltipTemplate");
         LootReserve.TooltipScanner:Hide();
     end
-    LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
+    LootReserve.TooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
     LootReserve.TooltipScanner:SetHyperlink(item:GetString());
     LootReserve.TooltipScanner:Hide();
 end

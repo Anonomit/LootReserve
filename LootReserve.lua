@@ -881,11 +881,11 @@ end
 
 function LootReserve:IsItemSoulbound(bag, slot)
     if not self.TooltipScanner then
-        self.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
+        self.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", nil, "GameTooltipTemplate");
         self.TooltipScanner:Hide();
     end
 
-    self.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
+    self.TooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
     self.TooltipScanner:SetBagItem(bag, slot);
     for i = LootReserve.TooltipScanner:NumLines(), 1, -1 do
         local line = _G[self.TooltipScanner:GetName() .. "TextLeft" .. i];
@@ -900,7 +900,7 @@ end
 
 function LootReserve:IsItemSoulboundTradeable(bag, slot)
     if not self.TooltipScanner then
-        self.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
+        self.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", nil, "GameTooltipTemplate");
         self.TooltipScanner:Hide();
     end
 
@@ -908,7 +908,7 @@ function LootReserve:IsItemSoulboundTradeable(bag, slot)
         self.TooltipScanner.SoulboundTradeable = BIND_TRADE_TIME_REMAINING:gsub("%.", "%%."):gsub("%%s", "(.+)");
     end
 
-    self.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
+    self.TooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
     self.TooltipScanner:SetBagItem(bag, slot);
     for i = LootReserve.TooltipScanner:NumLines(), 1, -1 do
         local line = _G[self.TooltipScanner:GetName() .. "TextLeft" .. i];

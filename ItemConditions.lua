@@ -213,7 +213,7 @@ local function IsItemUsable(itemID, playerClass, isMe)
         -- If item is class-locked then make sure this class is listed
         -- Also make sure the item is not unique if I already own one
         if not LootReserve.TooltipScanner then
-            LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", UIParent, "GameTooltipTemplate");
+            LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", nil, "GameTooltipTemplate");
             LootReserve.TooltipScanner:Hide();
         end
         if not LootReserve.TooltipScanner.Unique then
@@ -226,7 +226,7 @@ local function IsItemUsable(itemID, playerClass, isMe)
             LootReserve.TooltipScanner.ProfessionAllowed = format("^%s$", ITEM_MIN_SKILL:gsub("%d+%$",""):gsub("%%s ", "([%%u%%l%%s]+) "):gsub("%(%%d%)", "%%((%%d+)%%)"));
         end
 
-        LootReserve.TooltipScanner:SetOwner(UIParent, "ANCHOR_NONE");
+        LootReserve.TooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
         LootReserve.TooltipScanner:SetHyperlink("item:" .. itemID);
         for i = 1, LootReserve.TooltipScanner:NumLines() do
             local line = _G[LootReserve.TooltipScanner:GetName() .. "TextLeft" .. i];
