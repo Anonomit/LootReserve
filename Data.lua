@@ -37,7 +37,7 @@ Wrath:
     3.3: ToC / Ony, new VoA boss
     3.4: ICC, new VoA boss
 --]]
-local EXPANSION_PHASE = GetBuildInfo() == "3.4.1" and 3.2 or 3.3;
+local EXPANSION_PHASE = 3.3;
 
 
 local hidden = { Hidden = true };
@@ -6156,7 +6156,9 @@ LootReserve.Data =
     ItemConditions = { },
     
     RecentLootBlacklist = {
-        [29434] = true, -- Badge of Justice (when it was an item in TBC)
+        [29434]  = true, -- Badge of Justice (when it was an item in TBC)
+        [202269] = true, -- Bounty Satchel (Titan Rune Dungeon: Alpha)
+        [208157] = true, -- Bounty Satchel (Titan Rune Dungeon: Beta)
     },
     
     -- Items which start a quest that can only be completed one time
