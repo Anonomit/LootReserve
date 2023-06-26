@@ -361,7 +361,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
                 
                 -- Check if it's already been added
                 local frame, text;
-                for i = 1, 50 do
+                for i = 1, tooltip:NumLines() do
                 frame = _G[tooltip:GetName() .. "TextLeft" .. i];
                 if frame then
                     text = frame:GetText();
