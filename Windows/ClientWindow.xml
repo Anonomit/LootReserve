@@ -181,6 +181,10 @@
 						<Scripts>
 							<OnEnter>
 								local item = self:GetParent():GetParent().Item;
+								local token = LootReserve.Data:GetToken(item:GetID());
+								if token then
+									item = LootReserve.ItemCache(token);
+								end
 								local _, myReserves, uniquePlayers, totalReserves = LootReserve:GetReservesData(LootReserve.Client:GetItemReservers(item:GetID()), LootReserve.Client.Masquerade or LootReserve:Me());
 
 								if LootReserve.Client:IsItemReservedByMe(item:GetID()) and LootReserve.Client.Blind then
