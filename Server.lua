@@ -875,6 +875,7 @@ end
 function LootReserve.Server:HasAlreadyWon(player, item)
     local won = self.CurrentSession and self.CurrentSession.Members[player] and self.CurrentSession.Members[player].WonRolls;
     if won then
+        local item = LootReserve.Data:GetToken(item) or item;
         for i, roll in ipairs(won) do
             if roll.Item:GetID() == item then
                 return true;

@@ -560,9 +560,11 @@
 							LootReserve:OpenMenu(menu, self:GetParent().Menu, self);
 						else
 							local winners = { };
-							if LootReserve.Server.CurrentSession.WonItems and LootReserve.Server.CurrentSession.WonItems[self:GetParent().Item:GetID()] then
-								for _, player in ipairs(LootReserve.Server.CurrentSession.WonItems[self:GetParent().Item:GetID()].Players) do
-									if LootReserve:Contains(LootReserve.Server.CurrentSession.ItemReserves[self:GetParent().Item:GetID()].Players, player) then
+							local itemID = self:GetParent().Item:GetID();
+							itemID = LootReserve.Data:GetToken(itemID) or itemID;
+							if LootReserve.Server.CurrentSession.WonItems and LootReserve.Server.CurrentSession.WonItems[itemID] then
+								for _, player in ipairs(LootReserve.Server.CurrentSession.WonItems[itemID].Players) do
+									if LootReserve:Contains(LootReserve.Server.CurrentSession.ItemReserves[itemID].Players, player) then
 										table.insert(winners, player);
 									end
 								end
@@ -1369,9 +1371,11 @@
 							{ text = "Start Roll", isTitle = true },
 							{ text = "Among Reserving Players", arg1 = true, disabled = not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()], func = function(...)
 								local winners = { };
-								if LootReserve.Server.CurrentSession.WonItems and LootReserve.Server.CurrentSession.WonItems[token and token:GetID() or item:GetID()] then
-									for _, player in ipairs(LootReserve.Server.CurrentSession.WonItems[token and token:GetID() or item:GetID()].Players) do
-										if LootReserve:Contains(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players, player) then
+								local itemID = item:GetID();
+								itemID = LootReserve.Data:GetToken(itemID) or itemID;
+								if LootReserve.Server.CurrentSession.WonItems and LootReserve.Server.CurrentSession.WonItems[itemID] then
+									for _, player in ipairs(LootReserve.Server.CurrentSession.WonItems[itemID].Players) do
+										if LootReserve:Contains(LootReserve.Server.CurrentSession.ItemReserves[itemID].Players, player) then
 											table.insert(winners, player);
 										end
 									end
