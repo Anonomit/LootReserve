@@ -477,7 +477,7 @@
 								if recentLootCount > #players and (not self:GetParent().Roll.Custom or self:GetParent().Roll.Phases and (#losers > 0 or #self:GetParent().Roll.Phases > 1)) then
 									table.insert(menu, 2, { text = players and format("Announce %d |4Winner:Winners; (%s) and continue", #players, strjoin(", ", unpack(players))) or "Announce Winner", disabled = not players or #players == 0, func = function() LootReserve.Server:FinishRollRequest(self:GetParent().Item, nil, nil, true); LootReserve.Server:ContinueRoll(LootReserve.Server.RollHistory[#LootReserve.Server.RollHistory]) end });
 								end
-							elseif LootReserve.Server.RequestedRoll.Phases and #LootReserve.Server.RequestedRoll.Phases > 1 then
+							elseif LootReserve.Server.RequestedRoll.Phases and #LootReserve.Server.RequestedRoll.Phases > 1 and not LootReserve.Server.RequestedRoll.Tiered then
 								menu[3] =
 								{
 									text = format("Advance to |cFF00FF00%s|r", LootReserve.Server.RequestedRoll.Phases[2]),

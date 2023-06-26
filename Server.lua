@@ -2619,7 +2619,7 @@ function LootReserve.Server:ExpireRollRequest()
             end
         else
             -- If nobody rolled on this phase - advance to the next
-            if self.Settings.RollAdvanceOnExpire then
+            if self.Settings.RollAdvanceOnExpire and not self.RequestedRoll.Tiered then
                 if not self:AdvanceRollPhase(self.RequestedRoll.Item) then
                     -- If the phase cannot advance (i.e. because we ran out of phases) - end the roll
                     if self.Settings.RollFinishOnExpire then
@@ -2629,7 +2629,7 @@ function LootReserve.Server:ExpireRollRequest()
                         end
                     end
                 end
-            elseif not self.RequestedRoll.Phases or #self.RequestedRoll.Phases <= 1 then
+            elseif not self.RequestedRoll.Phases or #self.RequestedRoll.Phases <= 1 or self.RequestedRoll.Tiered then
                 -- If no more phases remaining - end the roll
                 if self.Settings.RollFinishOnExpire then
                     self:FinishRollRequest(self.RequestedRoll.Item);
