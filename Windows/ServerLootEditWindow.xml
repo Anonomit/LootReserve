@@ -219,8 +219,11 @@
 										local itemID = self:GetParent():GetParent():GetParent().Item;
 										local tokenID = LootReserve.Data:GetToken(itemID);
 										local conditions = LootReserve.ItemConditions:Make(tokenID or itemID, true);
-										conditions.Limit = tonumber(self:GetText()) and math.min(LootReserve.Constants.MAX_RESERVES_PER_ITEM, tonumber(self:GetText()));
-										LootReserve.ItemConditions:Save(tokenID or itemID, true);
+										local newLimit = tonumber(self:GetText()) and math.min(LootReserve.Constants.MAX_RESERVES_PER_ITEM, tonumber(self:GetText()));
+										if conditions.Limit ~= newLimit then
+											conditions.Limit = newLimit;
+											LootReserve.ItemConditions:Save(tokenID or itemID, true);
+										end
 									</OnTextChanged>
 									<OnEnterPressed function="EditBox_ClearFocus" />
 									<OnEditFocusGained inherit="prepend">
