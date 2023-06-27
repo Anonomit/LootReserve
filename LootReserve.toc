@@ -2,7 +2,7 @@
 ## Interface-Wrath: 30402
 ## Interface-Classic: 11403
 
-## Version: 2023-06-20
+## Version: 2023-06-26
 ## X-Min-Allowed-Version: 2023-06-20
 
 ## X-Curse-Project-ID: 390790
