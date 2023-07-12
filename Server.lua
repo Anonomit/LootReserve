@@ -740,7 +740,7 @@ function LootReserve.Server:Load()
     -- Verify that all loot categories actually exist. deselect categories and/or terminate session otherwise
     if self.CurrentSession then
         for _, category in ipairs(self.CurrentSession.Settings.LootCategories or {}) do
-            if not LootReserve.Data.Categories[category] then
+            if not LootReserve.Data.Categories[category] or LootReserve.Data.Categories[category].Expansion > LootReserve:GetCurrentExpansion() then
                 self.CurrentSession = nil;
                 self.SaveProfile.CurrentSession = nil;
                 break;
@@ -750,7 +750,7 @@ function LootReserve.Server:Load()
     do
         local newLootCategories = { };
         for _, category in ipairs(self.NewSessionSettings.LootCategories or {}) do
-            if LootReserve.Data.Categories[category] then
+            if LootReserve.Data.Categories[category] and LootReserve.Data.Categories[category].Expansion <= LootReserve:GetCurrentExpansion() then
                 table.insert(newLootCategories, category);
             end
         end
