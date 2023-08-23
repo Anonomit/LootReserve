@@ -166,45 +166,12 @@ LootReserve.Constants.Races = {
     Worgen   = 22,
     Goblin   = 9,
 };
-LootReserve.Constants.Sounds = {
-    LevelUp = 1440,
-    Cheer = {
-        [LootReserve.Constants.Races.Human]    = {[LootReserve.Constants.Genders.Male] = 2677, [LootReserve.Constants.Genders.Female] = 2689},
-        [LootReserve.Constants.Races.Dwarf]    = {[LootReserve.Constants.Genders.Male] = 2725, [LootReserve.Constants.Genders.Female] = 2737},
-        [LootReserve.Constants.Races.Gnome]    = {[LootReserve.Constants.Genders.Male] = 2835, [LootReserve.Constants.Genders.Female] = 2847},
-        [LootReserve.Constants.Races.NightElf] = {[LootReserve.Constants.Genders.Male] = 2749, [LootReserve.Constants.Genders.Female] = 2761},
-        [LootReserve.Constants.Races.Orc]      = {[LootReserve.Constants.Genders.Male] = 2701, [LootReserve.Constants.Genders.Female] = 2713},
-        [LootReserve.Constants.Races.Troll]    = {[LootReserve.Constants.Genders.Male] = 2859, [LootReserve.Constants.Genders.Female] = 2871},
-        [LootReserve.Constants.Races.Tauren]   = {[LootReserve.Constants.Genders.Male] = 2797, [LootReserve.Constants.Genders.Female] = 2810},
-        [LootReserve.Constants.Races.Scourge]  = {[LootReserve.Constants.Genders.Male] = 2773, [LootReserve.Constants.Genders.Female] = 2785},
-        [LootReserve.Constants.Races.Draenei]  = {[LootReserve.Constants.Genders.Male] = 9706, [LootReserve.Constants.Genders.Female] = 9681},
-        [LootReserve.Constants.Races.BloodElf] = {[LootReserve.Constants.Genders.Male] = 9656, [LootReserve.Constants.Genders.Female] = 9632},
-    },
-    Congratulate = {
-        [LootReserve.Constants.Races.Human]    = {[LootReserve.Constants.Genders.Male] = 6168, [LootReserve.Constants.Genders.Female] = 6141},
-        [LootReserve.Constants.Races.Dwarf]    = {[LootReserve.Constants.Genders.Male] = 6113, [LootReserve.Constants.Genders.Female] = 6104},
-        [LootReserve.Constants.Races.Gnome]    = {[LootReserve.Constants.Genders.Male] = 6131, [LootReserve.Constants.Genders.Female] = 6122},
-        [LootReserve.Constants.Races.NightElf] = {[LootReserve.Constants.Genders.Male] = 6186, [LootReserve.Constants.Genders.Female] = 6177},
-        [LootReserve.Constants.Races.Orc]      = {[LootReserve.Constants.Genders.Male] = 6366, [LootReserve.Constants.Genders.Female] = 6357},
-        [LootReserve.Constants.Races.Troll]    = {[LootReserve.Constants.Genders.Male] = 6402, [LootReserve.Constants.Genders.Female] = 6393},
-        [LootReserve.Constants.Races.Tauren]   = {[LootReserve.Constants.Genders.Male] = 6384, [LootReserve.Constants.Genders.Female] = 6375},
-        [LootReserve.Constants.Races.Scourge]  = {[LootReserve.Constants.Genders.Male] = 6420, [LootReserve.Constants.Genders.Female] = 6411},
-        [LootReserve.Constants.Races.Draenei]  = {[LootReserve.Constants.Genders.Male] = 9707, [LootReserve.Constants.Genders.Female] = 9682},
-        [LootReserve.Constants.Races.BloodElf] = {[LootReserve.Constants.Genders.Male] = 9657, [LootReserve.Constants.Genders.Female] = 9641},
-    },
-    Cry = {
-        [LootReserve.Constants.Races.Human]    = {[LootReserve.Constants.Genders.Male] = 6921, [LootReserve.Constants.Genders.Female] = 6916},
-        [LootReserve.Constants.Races.Dwarf]    = {[LootReserve.Constants.Genders.Male] = 6901, [LootReserve.Constants.Genders.Female] = 6895},
-        [LootReserve.Constants.Races.Gnome]    = {[LootReserve.Constants.Genders.Male] = 6911, [LootReserve.Constants.Genders.Female] = 6906},
-        [LootReserve.Constants.Races.NightElf] = {[LootReserve.Constants.Genders.Male] = 6931, [LootReserve.Constants.Genders.Female] = 6926},
-        [LootReserve.Constants.Races.Orc]      = {[LootReserve.Constants.Genders.Male] = 6941, [LootReserve.Constants.Genders.Female] = 6936},
-        [LootReserve.Constants.Races.Troll]    = {[LootReserve.Constants.Genders.Male] = 6961, [LootReserve.Constants.Genders.Female] = 6956},
-        [LootReserve.Constants.Races.Tauren]   = {[LootReserve.Constants.Genders.Male] = 6951, [LootReserve.Constants.Genders.Female] = 6946},
-        [LootReserve.Constants.Races.Scourge]  = {[LootReserve.Constants.Genders.Male] = 6972, [LootReserve.Constants.Genders.Female] = 6967},
-        [LootReserve.Constants.Races.Draenei]  = {[LootReserve.Constants.Genders.Male] = 9701, [LootReserve.Constants.Genders.Female] = 9676},
-        [LootReserve.Constants.Races.BloodElf] = {[LootReserve.Constants.Genders.Male] = 9651, [LootReserve.Constants.Genders.Female] = 9647},
-    },
-};
+LootReserve.Constants.ItemLevelInvTypeWhitelist = setmetatable({
+    [""]           = false,
+    INVTYPE_BAG    = false,
+    INVTYPE_TABARD = false,
+    INVTYPE_BODY   = false,
+}, { __index = function() return true end });
 LootReserve.Constants.LocomotionPhrases = {
     "Advance",
     "Amble",
@@ -370,92 +337,161 @@ LootReserve.Constants.LocomotionPhrases = {
     "Zoom",
 };
 
-local result = LootReserve.Constants.ReserveResult;
-LootReserve.Constants.ReserveResultText =
-{
-    [result.OK]                       = "",
-    [result.NotInRaid]                = "You are not in the raid",
-    [result.NoSession]                = "Loot reserves aren't active",
-    [result.NotAccepting]             = "Loot reserves are not currently being accepted",
-    [result.NotMember]                = "You are not participating in loot reserves",
-    [result.ItemNotReservable]        = "That item is not reservable",
-    [result.AlreadyReserved]          = "You are already reserving that item",
-    [result.NoReservesLeft]           = "You are at your reserve limit",
-    [result.FailedConditions]         = "You cannot reserve that item",
-    [result.Locked]                   = "Your reserves are locked in and cannot be changed",
-    [result.NotEnoughReservesLeft]    = "You don't have enough reserves to do that",
-    [result.MultireserveLimit]        = "You cannot reserve that item more times",
-    [result.MultireserveLimitPartial] = "Not all of your reserves were accepted because you reached the limit of how many times you are allowed to reserve a single item",
-    [result.FailedClass]              = "Your class cannot reserve that item",
-    [result.FailedFaction]            = "Your faction cannot reserve that item",
-    [result.FailedLimit]              = "That item has reached the limit of reserves",
-    [result.FailedLimitPartial]       = "Not all of your reserves were accepted because the item reached the limit of reserves",
-    [result.FailedUsable]             = "You may not reserve unusable items",
-};
+(function()
+    local input, output = LootReserve.Constants, "Sounds";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
+        LevelUp = 1440,
+        Cheer = {
+            [Races.Human]    = {[Genders.Male] = 2677, [Genders.Female] = 2689},
+            [Races.Dwarf]    = {[Genders.Male] = 2725, [Genders.Female] = 2737},
+            [Races.Gnome]    = {[Genders.Male] = 2835, [Genders.Female] = 2847},
+            [Races.NightElf] = {[Genders.Male] = 2749, [Genders.Female] = 2761},
+            [Races.Orc]      = {[Genders.Male] = 2701, [Genders.Female] = 2713},
+            [Races.Troll]    = {[Genders.Male] = 2859, [Genders.Female] = 2871},
+            [Races.Tauren]   = {[Genders.Male] = 2797, [Genders.Female] = 2810},
+            [Races.Scourge]  = {[Genders.Male] = 2773, [Genders.Female] = 2785},
+            [Races.Draenei]  = {[Genders.Male] = 9706, [Genders.Female] = 9681},
+            [Races.BloodElf] = {[Genders.Male] = 9656, [Genders.Female] = 9632},
+        },
+        Congratulate = {
+            [Races.Human]    = {[Genders.Male] = 6168, [Genders.Female] = 6141},
+            [Races.Dwarf]    = {[Genders.Male] = 6113, [Genders.Female] = 6104},
+            [Races.Gnome]    = {[Genders.Male] = 6131, [Genders.Female] = 6122},
+            [Races.NightElf] = {[Genders.Male] = 6186, [Genders.Female] = 6177},
+            [Races.Orc]      = {[Genders.Male] = 6366, [Genders.Female] = 6357},
+            [Races.Troll]    = {[Genders.Male] = 6402, [Genders.Female] = 6393},
+            [Races.Tauren]   = {[Genders.Male] = 6384, [Genders.Female] = 6375},
+            [Races.Scourge]  = {[Genders.Male] = 6420, [Genders.Female] = 6411},
+            [Races.Draenei]  = {[Genders.Male] = 9707, [Genders.Female] = 9682},
+            [Races.BloodElf] = {[Genders.Male] = 9657, [Genders.Female] = 9641},
+        },
+        Cry = {
+            [Races.Human]    = {[Genders.Male] = 6921, [Genders.Female] = 6916},
+            [Races.Dwarf]    = {[Genders.Male] = 6901, [Genders.Female] = 6895},
+            [Races.Gnome]    = {[Genders.Male] = 6911, [Genders.Female] = 6906},
+            [Races.NightElf] = {[Genders.Male] = 6931, [Genders.Female] = 6926},
+            [Races.Orc]      = {[Genders.Male] = 6941, [Genders.Female] = 6936},
+            [Races.Troll]    = {[Genders.Male] = 6961, [Genders.Female] = 6956},
+            [Races.Tauren]   = {[Genders.Male] = 6951, [Genders.Female] = 6946},
+            [Races.Scourge]  = {[Genders.Male] = 6972, [Genders.Female] = 6967},
+            [Races.Draenei]  = {[Genders.Male] = 9701, [Genders.Female] = 9676},
+            [Races.BloodElf] = {[Genders.Male] = 9651, [Genders.Female] = 9647},
+        },
+    };
+end)();
 
-local result = LootReserve.Constants.CancelReserveResult;
-LootReserve.Constants.CancelReserveResultText =
-{
-    [result.OK]                = "",
-    [result.NotInRaid]         = "You are not in the raid",
-    [result.NoSession]         = "Loot reserves aren't active",
-    [result.NotAccepting]      = "Loot reserves are not currently being accepted",
-    [result.NotMember]         = "You are not participating in loot reserves",
-    [result.ItemNotReservable] = "That item is not reservable",
-    [result.NotReserved]       = "You did not reserve that item",
-    [result.Forced]            = "",
-    [result.Locked]            = "Your reserves are locked in and cannot be changed",
-    [result.InternalError]     = "Internal error",
-    [result.NotEnoughReserves] = "You don't have that many reserves on that item",
-};
+(function()
+    local input, output = LootReserve.Constants.ReserveResult, "ReserveResultText";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
+        [OK]                       = "",
+        [NotInRaid]                = "You are not in the raid",
+        [NoSession]                = "Loot reserves aren't active",
+        [NotAccepting]             = "Loot reserves are not currently being accepted",
+        [NotMember]                = "You are not participating in loot reserves",
+        [ItemNotReservable]        = "That item is not reservable",
+        [AlreadyReserved]          = "You are already reserving that item",
+        [NoReservesLeft]           = "You are at your reserve limit",
+        [FailedConditions]         = "You cannot reserve that item",
+        [Locked]                   = "Your reserves are locked in and cannot be changed",
+        [NotEnoughReservesLeft]    = "You don't have enough reserves to do that",
+        [MultireserveLimit]        = "You cannot reserve that item more times",
+        [MultireserveLimitPartial] = "Not all of your reserves were accepted because you reached the limit of how many times you are allowed to reserve a single item",
+        [FailedClass]              = "Your class cannot reserve that item",
+        [FailedFaction]            = "Your faction cannot reserve that item",
+        [FailedLimit]              = "That item has reached the limit of reserves",
+        [FailedLimitPartial]       = "Not all of your reserves were accepted because the item reached the limit of reserves",
+        [FailedUsable]             = "You may not reserve unusable items",
+    };
+end)();
 
-local result = LootReserve.Constants.OptResult;
-LootReserve.Constants.OptResultText =
-{
-    [result.OK]                       = "",
-    [result.NotInRaid]                = "You are not in the raid",
-    [result.NoSession]                = "Loot reserves aren't active",
-    [result.NotMember]                = "You are not participating in loot reserves",
-};
+(function()
+    local input, output = LootReserve.Constants.CancelReserveResult, "CancelReserveResultText";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
+        [OK]                = "",
+        [NotInRaid]         = "You are not in the raid",
+        [NoSession]         = "Loot reserves aren't active",
+        [NotAccepting]      = "Loot reserves are not currently being accepted",
+        [NotMember]         = "You are not participating in loot reserves",
+        [ItemNotReservable] = "That item is not reservable",
+        [NotReserved]       = "You did not reserve that item",
+        [Forced]            = "",
+        [Locked]            = "Your reserves are locked in and cannot be changed",
+        [InternalError]     = "Internal error",
+        [NotEnoughReserves] = "You don't have that many reserves on that item",
+    };
+end)();
 
-local result = LootReserve.Constants.ReserveDeltaResult;
-LootReserve.Constants.ReserveDeltaResultText =
-{
-    [result.NoSession]         = "Loot reserves aren't active",
-    [result.NotMember]         = "You are not participating in loot reserves",
-};
+(function()
+    local input, output = LootReserve.Constants.OptResult, "OptResultText";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
+        [OK]                       = "",
+        [NotInRaid]                = "You are not in the raid",
+        [NoSession]                = "Loot reserves aren't active",
+        [NotMember]                = "You are not participating in loot reserves",
+    };
+end)();
 
-local enum = LootReserve.Constants.ReservesSorting;
-LootReserve.Constants.ReservesSortingText =
-{
-    [enum.ByTime]   = "By Time",
-    [enum.ByName]   = "By Item Name",
-    [enum.BySource] = "By Boss",
-    [enum.ByLooter] = "By Looter",
-};
+(function()
+    local input, output = LootReserve.Constants.ReserveDeltaResult, "ReserveDeltaResultText";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
+        [NoSession]         = "Loot reserves aren't active",
+        [NotMember]         = "You are not participating in loot reserves",
+    };
+end)();
 
-local enum = LootReserve.Constants.WinnerReservesRemoval;
-LootReserve.Constants.WinnerReservesRemovalText =
-{
-    [enum.None]      = "None",
-    [enum.Single]    = "Just one",
-    [enum.Duplicate] = "Duplicate",
-    [enum.All]       = "All",
-    [enum.Smart]     = "Smart",
-};
+(function()
+    local input, output = LootReserve.Constants.ReservesSorting, "ReservesSortingText";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
+        [ByTime]   = "By Time",
+        [ByName]   = "By Item Name",
+        [BySource] = "By Boss",
+        [ByLooter] = "By Looter",
+    };
+end)();
 
-local enum = LootReserve.Constants.ChatReservesListLimit;
-LootReserve.Constants.ChatReservesListLimitText =
-{
-    [enum.None] = "None",
-};
+(function()
+    local input, output = LootReserve.Constants.WinnerReservesRemoval, "WinnerReservesRemovalText";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
+        [None]      = "None",
+        [Single]    = "Just one",
+        [Duplicate] = "Duplicate",
+        [All]       = "All",
+        [Smart]     = "Smart",
+    };
+end)();
 
-local enum = LootReserve.Constants.WonRollPhase;
-LootReserve.Constants.WonRollPhaseText =
-{
-    [enum.Reserve]  = "Reserve",
-    [enum.RaidRoll] = "Raid-Roll",
-};
+(function()
+    local input, output = LootReserve.Constants.ChatReservesListLimit, "ChatReservesListLimitText";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
+        [None] = "None",
+    };
+end)();
+
+(function()
+    local input, output = LootReserve.Constants.WonRollPhase, "WonRollPhaseText";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
+        [Reserve]  = "Reserve",
+        [RaidRoll] = "Raid-Roll",
+    };
+end)();
 
 for i = 1, LootReserve:GetNumClasses() do
     local name, file, id = LootReserve:GetClassInfo(i);

@@ -1399,3 +1399,7 @@ end
 function LootReserve:GetReservesStringColored(server, players, player, isUpdate, link)
     return GetReservesString(server, isUpdate, link, self:GetReservesDataColored(players, player));
 end
+
+function LootReserve:GetItemLevel(item)
+    return LootReserve.Data:GetItemLevelOverride(item:GetID()) or LootReserve.Constants.ItemLevelInvTypeWhitelist[item:GetEquipLocation() or ""] and item:GetLevel() or nil;
+end

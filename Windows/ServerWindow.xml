@@ -1621,6 +1621,7 @@
 											end
 										end
 										local missing = { };
+										local itemPattern = LootReserve:GetCurrentExpansion() >= 2 and "|T%1$d:16|t%2$s %3$s%4$s%6$s%5$s" or "|T%1$d:16|t%2$s %3$s%4$s%5$s"
 										local function MakeItem(count, item, texture)
 											if count == 1 then
 												count = nil;
@@ -1636,10 +1637,12 @@
 											if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
 												token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
 											end
+											
 											local notBoP = item:IsBindOnPickup() and "" or " |TInterface\\MINIMAP\\TRACKING\\Auctioneer:0|t";
+											local iLvl = LootReserve:GetItemLevel(item);
 											return
 											{
-												text = format("|T%d:0|t%s %s%s%s", texture, notBoP, LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] and (select(3, LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players)) .. "x|TInterface/Buttons/UI-GroupLoot-Dice-Up:0|t ") or "", (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", ""), count and format("|cFF808080 x%d|r", count) or ""),
+												text = format(itemPattern, texture, notBoP, LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] and (select(3, LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()].Players)) .. "x|TInterface/Buttons/UI-GroupLoot-Dice-Up:0|t ") or "", (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", ""), count and format("|cFFFFFFFF x%d|r", count) or "", iLvl and format("|cFFFFD700 [%d]|r", iLvl) or ""),
 												arg1 = item,
 												func = SelectItem,
 												tooltipOnButton = item:GetString(), -- Not how this is supposed to be used
@@ -1734,16 +1737,14 @@
 										end
 										local numRecentLootItems = 0;
 										local recentLootItemsDone = { };
-										for _, item in ipairs(LootReserve.Server.RecentLoot) do
+										for i = #LootReserve.Server.RecentLoot, 1, -1 do
+											local item = LootReserve.Server.RecentLoot[i];
 											if IsMasterLooter() and recentLootBlocks[item] and recentLootBlocks[item] > 0 then
 												recentLootBlocks[item] = recentLootBlocks[item] - 1;
 											elseif not recentLootItemsDone[item] then
 												recentLootItemsDone[item] = true;
-												local button = MakeItem(1, item);
 												local count = LootReserve:TableCount(LootReserve.Server.RecentLoot, item);
-												if count > 1 then
-													button.text = button.text .. format(" |cFFFFFFFFx%s|r ", count);
-												end
+												local button = MakeItem(count, item);
 												local count = LootReserve:GetTradeableItemCount(item:GetID());
 												if count > 0 then
 													button.text = button.text .. format(" |cFFC0C0C0(%d in bags)|r", count);
