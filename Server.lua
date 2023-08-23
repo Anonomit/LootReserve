@@ -3847,11 +3847,19 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
             local pending = self.PendingMasterLoot;
             self.PendingMasterLoot = nil;
             if pending and pending.ItemIndex == LootReserve:IsLootingItem(pending.Item) and pending.Timeout >= time() then
-                for playerIndex = 1, 40 do
-                    if not GetMasterLootCandidate(pending.ItemIndex, playerIndex) then
-                        break;
+                local gapExists = false;
+                for playerIndex = 1, MAX_RAID_MEMBERS do
+                    local player = GetMasterLootCandidate(pending.ItemIndex, playerIndex);
+                    
+                    if not player then
+                        -- don't do this, just in case gaps are possible
+                        -- break;
+                        gapExists = true;
                     end
                     if LootReserve:IsSamePlayer(GetMasterLootCandidate(pending.ItemIndex, playerIndex), pending.Player) then
+                        if gapExists then
+                            LootReserve:debug("Masterloot index gap exists");
+                        end
                         GiveMasterLoot(pending.ItemIndex, playerIndex);
                         MasterLooterFrame:Hide();
                         return;
