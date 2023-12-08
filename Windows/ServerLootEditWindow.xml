@@ -218,9 +218,10 @@
 										end
 										local itemID = self:GetParent():GetParent():GetParent().Item;
 										local tokenID = LootReserve.Data:GetToken(itemID);
-										local conditions = LootReserve.ItemConditions:Make(tokenID or itemID, true);
+										local conditions = LootReserve.ItemConditions:Get(tokenID or itemID, true);
 										local newLimit = tonumber(self:GetText()) and math.min(LootReserve.Constants.MAX_RESERVES_PER_ITEM, tonumber(self:GetText()));
-										if conditions.Limit ~= newLimit then
+										if newLimit or conditions then
+											local conditions = LootReserve.ItemConditions:Make(tokenID or itemID, true);
 											conditions.Limit = newLimit;
 											LootReserve.ItemConditions:Save(tokenID or itemID, true);
 										end
