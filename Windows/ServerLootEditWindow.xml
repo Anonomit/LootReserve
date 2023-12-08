@@ -578,9 +578,10 @@
 										local name, link, texture = item:GetNameLinkTexture();
 										table.insert(menu,
 										{
-											text = format("|T%d:0|t %s", texture, (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", "")),
-											arg1 = item:GetID(),
-											func = SelectItem,
+											text            = format("|T%d:0|t %s", texture, (link or "|cFFFF0000Loading...|r"):gsub("[%[%]]", "")),
+											arg1            = item:GetID(),
+											func            = SelectItem,
+											tooltipOnButton = item:GetString(),
 										});
 									end
 								end
