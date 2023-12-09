@@ -2797,10 +2797,13 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent, noLose
             end
 
             local recordPhase;
+            local announcePhase;
             if self.RequestedRoll.RaidRoll then
                 recordPhase = LootReserve.Constants.WonRollPhase.RaidRoll;
+                announcePhase = recordPhase;
             elseif self.RequestedRoll.Custom then
                 recordPhase = phases and phases[101-max];
+                announcePhase = recordPhase;
             else
                 recordPhase = LootReserve.Constants.WonRollPhase.Reserve;
             end
@@ -2814,7 +2817,7 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent, noLose
                 item:OnCache(function()
                     local link        = item:GetLink();
                     local playersText = LootReserve:FormatPlayersText(winners);
-                    LootReserve:SendChatMessage(format(raidroll and "%s won %s%s via raid-roll" or "%s won %s%s with %s of %d", playersText, LootReserve:FixLink(link), recordPhase and format(" for %s", recordPhase or "") or "", #winners > 1 and "rolls" or "a roll", roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
+                    LootReserve:SendChatMessage(format(raidroll and "%s won %s%s via raid-roll" or "%s won %s%s with %s of %d", playersText, LootReserve:FixLink(link), announcePhase and format(" for %s", announcePhase or "") or "", #winners > 1 and "rolls" or "a roll", roll), self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollWinner));
                     if LootReserve.Server.Settings.ChatAnnounceWinToGuild and IsInGuild() and item:GetQuality() >= (LootReserve.Server.Settings.ChatAnnounceWinToGuildThreshold or 3) then
                         for _, player in ipairs(winners) do
                             if LootReserve:Contains(self.GuildMembers, player) then
