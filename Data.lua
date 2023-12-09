@@ -20,6 +20,9 @@ ClassMask id
 Wrath loot tables depend on this setting
 Changing it demands a new required addon version
 
+Season of Discovery:
+    1.01: initial
+
 Classic:
     1.1: Initial
     1.5: AQ40 server attunement quest items added to raid loot
@@ -37,8 +40,22 @@ Wrath:
     3.3: ToC / Ony, new VoA boss
     3.4: ICC, new VoA boss
 --]]
-local EXPANSION_PHASE = 3.4;
 
+local SEASON_NUMBER = C_Seasons and C_Seasons.GetActiveSeason() or 0
+local SEASONS = {
+    MASTERY   = 1,
+    DISCOVERY = 2,
+};
+local EXPANSION_PHASE
+if LootReserve:GetCurrentExpansion() == 0 then
+    if SEASON_NUMBER == SEASONS.DISCOVERY then
+        EXPANSION_PHASE = 1.01;
+    else
+        EXPANSION_PHASE = 1.5;
+    end
+else
+    EXPANSION_PHASE = 3.4;
+end
 
 local hidden = { Hidden = true };
 
@@ -90,6 +107,102 @@ LootReserve.Data =
                 { Name = "Custom Items", Custom = true },
             },
         },
+        
+        -- Season of Discovery
+        [910] = SEASON_NUMBER == SEASONS.DISCOVERY and {
+            Name = "Blackfathom Deeps",
+            NameShort = "BFD",
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Baron Aquanis",
+                    Loot =
+                    {
+                        211852, 209828, 209421, 204804, 209676, 0,
+                        209423, 209825, 209422, 209677, 0,
+                        209590, 204807, 0,
+                    },
+                },
+                {
+                    Name = "Ghamoo-Ra",
+                    Loot =
+                    {
+                        209432, 209675, 209524, 209678, 209418, 209824, 0,
+                        209523, 0,
+                        209436, 209424, 209830, 0,
+                    },
+                },
+                {
+                    Name = "Lady Sarevess",
+                    Loot =
+                    {
+                        211842, 209679, 211789, 209527, 209566, 211843, 0,
+                        209680, 209565, 209823, 0,
+                        209822, 209525, 209564, 209563, 0,
+                    },
+                },
+                {
+                    Name = "Gelihast",
+                    Loot =
+                    {
+                        209683, 209671, 209669, 209670, 211507, 211509, 211508, 209569, 209572, 211510, 211512, 211511, 209568, 211505, 211504, 211506, 0,
+                        209820, 209681, 209821, 0,
+                        209570, 209571, 209573, 209559, 209567, 0,
+                        211491, 0,
+                    },
+                },
+                {
+                    Name = "Lorgus Jett",
+                    Loot =
+                    {
+                        209683, 209671, 209669, 209578, 211507, 211509, 211508, 211510, 211512, 211511, 209682, 211504, 211505, 209581, 211506, 0,
+                        209576, 209575, 209574, 0,
+                        209818, 209577, 209579, 209560, 0,
+                    },
+                },
+                {
+                    Name = "Twilight Lord Kelris",
+                    Loot =
+                    {
+                        209667, 209672, 211455, 211507, 211510, 211512, 211511, 211505, 211504, 211506, 211457, 0,
+                        209668, 209686, 209673, 209817, 209816, 0,
+                        211458, 209694, 209561, 209674, 209688, 0,
+                        211492, 0,
+                    },
+                },
+                {
+                    Name = "Aku'mai",
+                    Loot =
+                    {
+                        209684, 209669, 209685, 211508, 209687, 211510, 211511, 209692, 209689, 209690, 211505, 0,
+                        211456, 209691, 209580, 209688, 209534, 209562, 0,
+                        209693, 211452, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Set Pieces",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        209683, 209671, 209669, 0,
+                        211507, 211509, 211508, 0,
+                        211510, 211512, 211511, 0,
+                        211505, 211504, 211506, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        211450, 211451, 211449, 0,
+                    },
+                },
+            },
+        } or nil,
         
         -- Classic
         [1010] = {
@@ -6424,6 +6537,15 @@ end
 
 -- Faction Restricted Items
 do
+    -- Perfect Blackfathom Pearl
+    ApplyFactionRestriction(209693, "Alliance");
+    ApplyFactionRestriction(211452, "Horde");
+    
+    -- Discarded Tenets of the Silver Hand
+    ApplyFactionRestriction(209574, "Alliance");
+    -- Carved Driftwood Idol
+    ApplyFactionRestriction(209575, "Horde");
+    
     -- Head of Onyxia
     ApplyFactionRestriction(18422, "Horde");
     ApplyFactionRestriction(18423, "Alliance");
@@ -7723,6 +7845,13 @@ end
 
 
 local tokenMap = {
+    -- BFD
+    
+    -- Perfect Blackfathom Pearl
+    [209693] = UnitFactionGroup("player") == "Alliance" and {211450, 211451, 211449} or nil,
+    [211452] = UnitFactionGroup("player") == "Horde"    and {211450, 211451, 211449} or nil,
+    
+    
     -- MC
     
     -- Eye of Sulfuras
