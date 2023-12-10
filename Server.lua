@@ -1656,21 +1656,21 @@ function LootReserve.Server:PrepareSession()
                                 whitelist[matches[1]] = true;
                             end
                         elseif #matches > 1 then
-                            local names = { };
+                            local links = { };
                             for _, itemID in ipairs(matches) do
                                 local item = LootReserve.ItemCache:Item(itemID);
                                 if item and item:GetInfo() then
-                                    table.insert(names, item:GetName());
+                                    table.insert(links, item:GetLink());
                                 end
-                                if #matches >= 5 then
+                                if #links >= 2 then
                                     break;
                                 end
                             end
-                            LootReserve:SendChatMessage(format("Try being more specific, %d items match that name%s%s%s",
+                            LootReserve:SendChatMessage(format("Be more specific, or link the item. %d matching items%s%s%s",
                                 #matches,
-                                #names > 0 and ": " or "",
-                                strjoin(", ", unpack(names)),
-                                #names > 0 and #matches > #names and format(" and %d more...", #matches - #names) or ""
+                                #links > 0 and ": " or "",
+                                strjoin(", ", unpack(links)),
+                                #links > 0 and #matches > #links and format(" and %d more...", #matches - #links) or ""
                             ), "WHISPER", sender);
                             self:SendSupportString(sender, true);
                         end
