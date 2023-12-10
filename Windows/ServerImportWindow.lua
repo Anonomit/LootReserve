@@ -463,7 +463,9 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                                         self.PendingInputOptionsUpdate = true;
                                         C_Timer.After(0.1, function()
                                             self.PendingInputOptionsUpdate = false;
-                                            self:InputOptionsUpdated();
+                                            if LootReserveServerImportWindow:IsShown() then
+                                                self:InputOptionsUpdated();
+                                            end
                                         end);
                                     end
                                     return format("Creating item name database... (%d%%)|n|nInstall/Update ItemCache to remember the item database between sessions", LootReserve.ItemSearch.FullCache:GetProgress(0));

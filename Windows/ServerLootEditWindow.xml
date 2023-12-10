@@ -601,7 +601,11 @@
 									LootReserve.Server.PendingLootTextEdit = true;
 									C_Timer.After(0.1, function()
 										LootReserve.Server.PendingLootTextEdit = false;
-										UpdateText();
+										if LootReserveServerLootEditWindow:IsShown() then
+											UpdateText();
+										else
+											CloseMenus();
+										end
 									end);
 								end
 							end
@@ -742,6 +746,9 @@
 				LootReserve.Server.LootEdit:UpdateLootList();
 			</OnShow>
 			<OnHide>
+				if LootReserve.ItemSearch.FullCache and not LootReserve.ItemSearch.FullCache:IsComplete() then
+					LootReserve.ItemSearch.FullCache:SetSpeed(LootReserve.ItemSearch.DefaultSpeed);
+				end
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 			</OnHide>

@@ -421,8 +421,12 @@
 			<OnShow>
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
 				LootReserve.Server.Import:UpdateReservesList();
+				LootReserve.Server.Import:SessionSettingsUpdated();
 			</OnShow>
 			<OnHide>
+				if LootReserve.ItemSearch.FullCache and not LootReserve.ItemSearch.FullCache:IsComplete() then
+					LootReserve.ItemSearch.FullCache:SetSpeed(LootReserve.ItemSearch.DefaultSpeed);
+				end
 				CloseMenus();
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_CLOSE);
 			</OnHide>
