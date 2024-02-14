@@ -204,6 +204,101 @@ LootReserve.Data =
                 },
             },
         } or nil,
+        [920] = SEASON_NUMBER == SEASONS.DISCOVERY and {
+            Name = "Gnomeregan",
+            NameShort = "Gnomer",
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Grubbis",
+                    Loot =
+                    {
+                        213321, 213323, 213322, 213324, 213304, 213326, 213327, 213288, 213294, 0,
+                        215437, 215435, 215436, 0,
+                        213542, 213351, 0,
+                        216490, 0,
+                    },
+                },
+                {
+                    Name = "Viscous Fallout",
+                    Loot =
+                    {
+                        213290, 213285, 213301, 213299, 213413, 213302, 0,
+                        213307, 0,
+                        213291, 213352, 213353, 213355, 0,
+                        213289, 0,
+                    },
+                },
+                {
+                    Name = "Electrocutioner 6000",
+                    Loot =
+                    {
+                        217008, 217009, 217007, 0,
+                        215377, 215379, 215378, 213300, 213298, 213414, 213319, 213279, 213418, 0,
+                        213309, 213287, 0,
+                        213560, 213286, 213354, 213293, 213559, 0,
+                        216494, 0,
+                    },
+                },
+                {
+                    Name = "Crowd Pummeler 9-60",
+                    Loot =
+                    {
+                        213415, 213340, 213278, 213317, 213305, 0,
+                        213412, 213295, 213442, 213408, 210741, 213292, 213419, 0,
+                        215449, 0,
+                    },
+                },
+                {
+                    Name = "The Mechanical Menagerie",
+                    Loot =
+                    {
+                        217008, 217009, 217007, 0,
+                        215377, 215379, 215378, 213318, 213303, 213280, 213320, 213325, 213417, 215380, 0,
+                        213306, 213308, 0,
+                        213297, 213410, 213296, 213411, 0,
+                    },
+                },
+                {
+                    Name = "Mekgineer Thermaplugg",
+                    Loot =
+                    {
+                        217350, 217351, 0,
+                        217008, 217009, 217007, 0,
+                        215377, 215379, 215378, 213281, 0,
+                        213283, 213282, 213284, 215461, 213347, 213348, 213350, 213349, 213417, 0,
+                        213409, 213416, 213356, 0,
+                        216608, 13325, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Set Pieces",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        213311, 213329, 213336, 0,
+                        213310, 213328, 213337, 0,
+                        213313, 213332, 213341, 0,
+                        213312, 213331, 213342, 0,
+                        213314, 213339, 213333, 0,
+                        213315, 213334, 213338, 0,
+                        213316, 213330, 213335, 0,
+                        216485, 216486, 216484, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        213345, 213346, 213344, 213343, 0,
+                    },
+                },
+            },
+        } or nil,
         
         -- Classic
         [1010] = {
@@ -6592,6 +6687,15 @@ do
     -- Carved Driftwood Idol
     ApplyFactionRestriction(209575, "Horde");
     
+    -- Thermaplugg's Engineering Notes
+    ApplyFactionRestriction(217350, "Alliance");
+    ApplyFactionRestriction(217351, "Horde");
+    
+    -- Libram of Benediction
+    ApplyFactionRestriction(215435, "Alliance");
+    -- Totem of Invigorating Flame
+    ApplyFactionRestriction(215436, "Horde");
+    
     -- Head of Onyxia
     ApplyFactionRestriction(18422, "Horde");
     ApplyFactionRestriction(18423, "Alliance");
@@ -7896,6 +8000,19 @@ local tokenMap = {
     -- Perfect Blackfathom Pearl
     [209693] = UnitFactionGroup("player") == "Alliance" and {211450, 211451, 211449} or nil,
     [211452] = UnitFactionGroup("player") == "Horde"    and {211450, 211451, 211449} or nil,
+    
+    -- Gnomeregan
+    
+    -- Power Depleted Chest
+    [217008] = {213311, 213310, 213313, 213312, 213314, 213315, 213316, 216485},
+    -- Power Depleted Legs
+    [217009] = {213329, 213328, 213332, 213331, 213339, 213334, 213330, 216486},
+    -- Power Depleted Boots
+    [217007] = {213336, 213337, 213341, 213342, 213333, 213338, 213335, 216484},
+    
+    -- Thermaplugg's Engineering Notes
+    [217350] = UnitFactionGroup("player") == "Alliance" and {213345, 213346, 213344, 213343} or nil,
+    [217351] = UnitFactionGroup("player") == "Horde"    and {213345, 213346, 213344, 213343} or nil,
     
     
     -- MC
