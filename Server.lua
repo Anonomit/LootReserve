@@ -2800,7 +2800,6 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent, noLose
             local announcePhase;
             if self.RequestedRoll.RaidRoll then
                 recordPhase = LootReserve.Constants.WonRollPhase.RaidRoll;
-                announcePhase = recordPhase;
             elseif self.RequestedRoll.Custom then
                 recordPhase = phases and phases[101-max];
                 announcePhase = recordPhase;
