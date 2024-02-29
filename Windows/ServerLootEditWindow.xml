@@ -742,7 +742,7 @@
 			</OnLoad>
 			<OnShow>
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
-				LootReserve.Server.LootEdit:UpdateCategories();
+				LootReserve.Server.LootEdit:UpdateCategories(true);
 				LootReserve.Server.LootEdit:UpdateLootList();
 			</OnShow>
 			<OnHide>

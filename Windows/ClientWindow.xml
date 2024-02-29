@@ -1,5 +1,17 @@
 <Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
 	<Script file="ClientWindow.lua" />
+	<Button name="LootReserveCategoryLisHidetButtonTemplate" hidden="true" virtual="true">
+		<Size x="18" />
+		<Anchors>
+			<Anchor point="TOPRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" />
+			<Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="BOTTOMRIGHT" />
+		</Anchors>
+		<Scripts>
+			<Onclick>
+				LootReserve.Server.LootEdit:ToggleLootCategory(self:GetParent().CategoryID, self:GetParent().Category)
+			</Onclick>
+		</Scripts>
+	</Button>
 	<CheckButton name="LootReserveCategoryListButtonTemplate" virtual="true">
 		<Size y="18" />
 		<Layers>
@@ -17,6 +29,30 @@
 		</Layers>
 		<HighlightTexture file="Interface\QUESTFRAME\UI-QuestTitleHighlight" alphaMode="ADD" />
 		<CheckedTexture file="Interface\QUESTFRAME\UI-QuestTitleHighlight" alphaMode="ADD" />
+		<Frames>
+			<Button parentKey="HideButtonVisible" inherits="LootReserveCategoryLisHidetButtonTemplate">
+				<NormalTexture file="Interface\LFGFRAME\LFG-Eye">
+					<TexCoords left="0.015625" right="0.109375" top="0.03125" bottom="0.21875" />
+				</NormalTexture>
+				<HighlightTexture file="Interface\LFGFRAME\LFG-Eye" alpha="0.5" alphaMode="ADD">
+					<TexCoords left="0.015625" right="0.109375" top="0.03125" bottom="0.21875" />
+				</HighlightTexture>
+				<PushedTexture file="Interface\LFGFRAME\LFG-Eye" alpha="0.5">
+					<TexCoords left="0.015625" right="0.109375" top="0.03125" bottom="0.21875" />
+				</PushedTexture>
+			</Button>
+			<Button parentKey="HideButtonHidden" inherits="LootReserveCategoryLisHidetButtonTemplate">
+				<NormalTexture file="Interface\LFGFRAME\LFG-Eye">
+					<TexCoords left="0.515625" right="0.609375" top="0.03125" bottom="0.21875" />
+				</NormalTexture>
+				<HighlightTexture file="Interface\LFGFRAME\LFG-Eye" alpha="0.5" alphaMode="ADD">
+					<TexCoords left="0.515625" right="0.609375" top="0.03125" bottom="0.21875" />
+				</HighlightTexture>
+				<PushedTexture file="Interface\LFGFRAME\LFG-Eye" alpha="0.5">
+					<TexCoords left="0.515625" right="0.609375" top="0.03125" bottom="0.21875" />
+				</PushedTexture>
+			</Button>
+		</Frames>
 	</CheckButton>
 	<CheckButton name="LootReserveCategoryListExpansionTemplate" virtual="true">
 		<Size y="28" />
