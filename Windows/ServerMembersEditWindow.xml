@@ -468,33 +468,10 @@
 					</Frame>
 				</Frames>
 			</Frame>
-			<Button parentKey="ImportExportButton" inherits="UIMenuButtonStretchTemplate" text="Import/Export">
-				<Size x="90" y="20" />
+			<Button parentKey="ImportExportButton" inherits="LootReserveServerImportTexportButtonTemplate">
 				<Anchors>
 					<Anchor point="RIGHT" relativeKey="$parent.Header" relativePoint="RIGHT" />
 				</Anchors>
-				<Scripts>
-					<OnLoad>
-						self.Menu = LootReserve.LibDD:Create_UIDropDownMenu(nil, self);
-						self.Menu:Hide();
-					</OnLoad>
-					<OnClick>
-						if LootReserve.Server.CurrentSession then
-							LootReserve.Server.Export.Window:SetShown(not LootReserve.Server.Export.Window:IsShown());
-							return;
-						end
-
-						local menu =
-						{
-							{ text = "Import from CSV", disabled = LootReserve.Server.CurrentSession ~= nil, func = function() LootReserve.Server.Import.Window:Show(); end },
-							{ text = "Export to CSV", func = function() LootReserve.Server.Export.Window:Show(); end },
-							{ text = "Clear Imported Data", disabled = LootReserve.Server.CurrentSession or not next(LootReserve.Server.NewSessionSettings.ImportedMembers), func = function() LootReserve.Server.MembersEdit:ClearImported(); end },
-							LootReserve:MakeMenuSeparator(),
-							{ text = "Close" },
-						};
-						LootReserve:OpenMenu(menu, self.Menu, self);
-					</OnClick>
-				</Scripts>
 			</Button>
 			<ScrollFrame parentKey="Scroll" inherits="LootReserveScrollTemplate">
 				<Anchors>

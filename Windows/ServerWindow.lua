@@ -1000,6 +1000,7 @@ function LootReserve.Server:SessionStarted()
     self.Window.PanelSession.ButtonStartReserves:Hide();
     self.Window.PanelSession.ButtonStopReserves:Show();
     self.Window.PanelSession.ButtonResetSession:Hide();
+    self.Window.PanelSession.ImportExportButton:Hide();
     self:UpdateServerAuthority();
     self:UpdateRollList();
     self.LootEdit.Window:Hide();
@@ -1017,6 +1018,7 @@ function LootReserve.Server:SessionStopped()
     self.Window.PanelSession.ButtonStartReserves:Show();
     self.Window.PanelSession.ButtonStopReserves:Hide();
     self.Window.PanelSession.ButtonResetSession:Show();
+    self.Window.PanelSession.ImportExportButton:Hide();
     self:RefreshWindowTab();
     self:UpdateServerAuthority();
     self:UpdateRollList();
@@ -1035,6 +1037,7 @@ function LootReserve.Server:SessionReset()
     self.Window.PanelSession.ButtonStartReserves:Hide();
     self.Window.PanelSession.ButtonStopReserves:Hide();
     self.Window.PanelSession.ButtonResetSession:Hide();
+    self.Window.PanelSession.ImportExportButton:Show();
     self:UpdateServerAuthority();
     self:UpdateRollList();
 end
