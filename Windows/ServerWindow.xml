@@ -2797,10 +2797,10 @@
 										else
 											table.insert(LootReserve.Server.NewSessionSettings.LootCategories, info.value);
 										end
-										LootReserve.Server.LootEdit:UpdateCategories();
+										LootReserve.Server.LootEdit:UpdateCategories(true);
 										if LootReserve.Server.LootEdit.Window:IsShown() then
-      								LootReserve.LibDD:ToggleDropDownMenu(nil, nil, self);
-      							end
+		      								LootReserve.LibDD:ToggleDropDownMenu(nil, nil, self);
+		      							end
 										LootReserve.Server.LootEdit:UpdateLootList();
 										LootReserve.Server.Import:SessionSettingsUpdated();
 										self:UpdateText();

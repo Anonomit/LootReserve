@@ -119,6 +119,7 @@ function LootReserve.ItemConditions:Clear(server)
         table.wipe(LootReserve.Server:GetNewSessionItemConditions());
 
         LootReserve.Server.LootEdit:UpdateLootList();
+        LootReserve.Server.LootEdit:UpdateCategories();
         LootReserve.Server.Import:SessionSettingsUpdated();
     else
         LootReserve:ShowError("Cannot edit loot on client");
@@ -347,6 +348,9 @@ function LootReserve.ItemConditions:TestPlayer(player, itemID, server)
     if conditions and conditions.Hidden then
         return false, LootReserve.Constants.ReserveResult.ItemNotReservable;
     end
+    if conditions and conditions.BossHidden then
+        return false, LootReserve.Constants.ReserveResult.ItemNotReservable;
+    end
     if conditions and conditions.ClassMask and playerClass and not self:TestClassMask(conditions.ClassMask, playerClassID) then
         return false, LootReserve.Constants.ReserveResult.FailedClass;
     end
@@ -392,7 +396,7 @@ end
 
 function LootReserve.ItemConditions:Pack(conditions)
     local text = "";
-    if conditions.Hidden then
+    if conditions.Hidden or conditions.BossHidden then
         text = text .. "-";
     elseif conditions.Custom then
         text = text .. "+";

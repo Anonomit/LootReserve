@@ -445,8 +445,10 @@ end
 local function GetSavedItemConditions(categories)
     if not categories then return { }; end
     local container = { };
+    local itemIDs = { };
     for _, category in ipairs(categories) do
         for itemID, conditions in pairs(GetSavedItemConditionsSingle(category)) do
+            itemIDs[itemID] = true;
             container[itemID] = container[itemID] or { };
             container[itemID].ClassMask = bit.bor(container[itemID].ClassMask or 0, conditions.ClassMask or 0);
             container[itemID].Custom = container[itemID].Custom or conditions.Custom or nil;
@@ -461,6 +463,24 @@ local function GetSavedItemConditions(categories)
             -- container[itemID] = conditions;
         end
     end
+    
+    -- explicitly check if item is bosshidden in each category
+    for itemID in pairs(itemIDs) do
+        local conditions = container[itemID];
+        local bossHidden = true;
+        for _, category in ipairs(categories) do
+            local conditions = LootReserve.Server.Settings.ItemConditions[category];
+            if not conditions or not conditions.BossHidden then
+                bossHidden = nil;
+                break;
+            end
+        end
+        conditions.BossHidden = bossHidden;
+        if not next(conditions) then
+            container[itemID] = nil;
+        end
+    end
+    
     return container;
 end
 

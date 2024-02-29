@@ -114,39 +114,58 @@ function LootReserve.Server.LootEdit:UpdateLootList()
 
         return false;
     end
-
+    
+    bossHiddenLootExists = false;
     local missing = { };
     if self.SelectedCategory and self.SelectedCategory.Edited then
         for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
-            local item = LootReserve.ItemCache:Item(itemID);
-            createFrame(item);
-            if not item:IsCached() and item:Exists() then
-                table.insert(missing, item);
+            if tonumber(itemID) then
+                if conditions.BossHidden then
+                    bossHiddenLootExists = true;
+                end
+                local onlyBossHidden = conditions.BossHidden;
+                if onlyBossHidden then
+                    for k in pairs(conditions) do
+                        if k ~= "BossHidden" and k ~="Faction" then
+                            onlyBossHidden = false;
+                            break;
+                        end
+                    end
+                end
+                if not onlyBossHidden then
+                    local item = LootReserve.ItemCache:Item(itemID);
+                    createFrame(item);
+                    if not item:IsCached() and item:Exists() then
+                        table.insert(missing, item);
+                    end
+                end
             end
         end
     elseif self.SelectedCategory and self.SelectedCategory.SearchResults and filter then
         for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
-            if itemID ~= 0 and conditions.Custom then
-                local match = false;
-                local item = LootReserve.ItemCache:Item(itemID);
-                if item:IsCached() then
-                    if matchesFilter(item, filter) then
-                        createFrame(item, "Custom Item");
-                        match = true;
+            if tonumber(itemID) then
+                if itemID ~= 0 and conditions.Custom then
+                    local match = false;
+                    local item = LootReserve.ItemCache:Item(itemID);
+                    if item:IsCached() then
+                        if matchesFilter(item, filter) then
+                            createFrame(item, "Custom Item");
+                            match = true;
+                        end
+                    elseif item:Exists() then
+                        table.insert(missing, item);
                     end
-                elseif item:Exists() then
-                    table.insert(missing, item);
-                end
-                if filter and not match and LootReserve.Data:IsToken(itemID) then
-                    for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
-                        local reward = LootReserve.ItemCache:Item(rewardID);
-                        if reward:IsCached() then
-                            if item:IsCached() and matchesFilter(reward, filter) then
-                                createFrame(item, "Custom Item");
-                                break;
+                    if filter and not match and LootReserve.Data:IsToken(itemID) then
+                        for _, rewardID in ipairs(LootReserve.Data:GetTokenRewards(itemID)) do
+                            local reward = LootReserve.ItemCache:Item(rewardID);
+                            if reward:IsCached() then
+                                if item:IsCached() and matchesFilter(reward, filter) then
+                                    createFrame(item, "Custom Item");
+                                    break;
+                                end
+                            elseif reward:Exists() then
+                                table.insert(missing, reward);
                             end
-                        elseif reward:Exists() then
-                            table.insert(missing, reward);
                         end
                     end
                 end
@@ -193,11 +212,13 @@ function LootReserve.Server.LootEdit:UpdateLootList()
         end
     elseif self.SelectedCategory and self.SelectedCategory.Custom then
         for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
-            if itemID ~= 0 and conditions.Custom then
-                local item = LootReserve.ItemCache:Item(itemID);
-                createFrame(item);
-                if not item:IsCached() and item:Exists() then
-                    table.insert(missing, item);
+            if tonumber(itemID) then
+                if itemID ~= 0 and conditions.Custom then
+                    local item = LootReserve.ItemCache:Item(itemID);
+                    createFrame(item);
+                    if not item:IsCached() and item:Exists() then
+                        table.insert(missing, item);
+                    end
                 end
             end
         end
@@ -228,7 +249,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
         self.PendingLootEditUpdate:SetSpeed(math.ceil(#missing/LootReserve.ItemSearch.BatchFrames));
     end
 
-    if self.SelectedCategory.Edited and list.LastIndex > 0 then
+    if self.SelectedCategory.Edited and (list.LastIndex > 0 or bossHiddenLootExists) then
         list.RevertEditsFrame:Show();
         list.RevertEditsFrame:SetPoint("TOPLEFT", list, "TOPLEFT", 0, -list.ContentHeight);
         list.RevertEditsFrame:SetPoint("TOPRIGHT", list, "TOPRIGHT", 0, -list.ContentHeight);
@@ -246,7 +267,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
     list:GetParent():UpdateScrollChildRect();
 end
 
-function LootReserve.Server.LootEdit:UpdateCategories()
+function LootReserve.Server.LootEdit:UpdateCategories(opening)
     LootReserveServerButtonLootEdit:SetGlow(false);
     for _ in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
         LootReserveServerButtonLootEdit:SetGlow(true);
@@ -284,8 +305,25 @@ function LootReserve.Server.LootEdit:UpdateCategories()
             if category.Children or category.Header then
                 frame:EnableMouse(false);
             else
-                frame:RegisterForClicks("LeftButtonDown");
-                frame:SetScript("OnClick", function(frame) self:OnCategoryClick(frame); end);
+                if category.Edited then
+                    self.EditedButton = frame
+                end
+                local conditions = LootReserve.ItemConditions:Get(id .. category.Name, true);
+                if conditions and conditions.Hidden then
+                    frame:EnableMouse(false);
+                    frame:SetEnabled(false);
+                    frame.Text:SetFontObject(GameFontDisable);
+                    frame.HideButtonHidden:SetShown(true);
+                    frame.HideButtonVisible:SetShown(false);
+                else
+                    frame:EnableMouse(true);
+                    frame:SetEnabled(true);
+                    frame.Text:SetFontObject(GameFontWhite);
+                    frame.HideButtonHidden:SetShown(false);
+                    frame.HideButtonVisible:SetShown(category.Loot and category.IndentType ~= 2);
+                    frame:RegisterForClicks("LeftButtonDown");
+                    frame:SetScript("OnClick", function(frame) self:OnCategoryClick(frame); end);
+                end
             end
         end
     end
@@ -326,14 +364,66 @@ function LootReserve.Server.LootEdit:UpdateCategories()
             frame:ClearAllPoints();
         end
     end
-
-    for i, frame in ipairs(list.Frames) do
-        if i <= list.LastIndex and frame.Category.Edited then
-            frame:Click();
+    
+    if opening then
+        for i, frame in ipairs(list.Frames) do
+            if i <= list.LastIndex and frame.Category.Edited then
+                frame:Click();
+            end
         end
     end
 
     list:GetParent():UpdateScrollChildRect();
+end
+
+function LootReserve.Server.LootEdit:ToggleLootCategory(categoryID, category)
+    if #LootReserve.Server.NewSessionSettings.LootCategories ~= 1 then
+        LootReserve:ShowError("Cannot edit Loot List while multiple raids are selected.|n|nCombined raids inherit their Loot List from each selected raid.|n|nTo modify loot for combined raids, select and edit each raid individually before combining.");
+        return;
+    end
+    
+    local categoryConditions = LootReserve.ItemConditions:Make(categoryID .. category.Name, true);
+    categoryConditions.Hidden = not categoryConditions.Hidden;
+    LootReserve.ItemConditions:Save(categoryID .. category.Name, true);
+    
+    if categoryConditions.Hidden then
+        local items = { };
+        
+        for _, section in ipairs(LootReserve.Data.Categories[categoryID].Children) do
+            if section.Loot and section.IndentType ~= 2 then
+                local sectionConditions = LootReserve.ItemConditions:Get(categoryID .. section.Name, true);
+                if not sectionConditions or not sectionConditions.Hidden then
+                    for _, itemID in ipairs(section.Loot) do
+                        if itemID ~= 0 then
+                            items[itemID] = true;
+                        end
+                    end
+                end
+            end
+        end
+        
+        for _, itemID in ipairs(category.Loot) do
+            if itemID ~= 0 and not items[itemID] then
+                local conditions = LootReserve.ItemConditions:Make(itemID, true);
+                conditions.BossHidden = true;
+                LootReserve.ItemConditions:Save(itemID, true);
+            end
+        end
+    else
+        for _, itemID in ipairs(category.Loot) do
+            if itemID ~= 0 then
+                local conditions = LootReserve.ItemConditions:Make(itemID, true);
+                conditions.BossHidden = nil;
+                LootReserve.ItemConditions:Save(itemID, true);
+            end
+        end
+    end
+    
+    if self.SelectedCategory == category then
+        self.EditedButton:Click();
+        self:UpdateLootList();
+    end
+    self:UpdateCategories();
 end
 
 function LootReserve.Server.LootEdit:OnCategoryClick(button)
