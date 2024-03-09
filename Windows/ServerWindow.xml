@@ -730,8 +730,14 @@
 								self.Arrow:Show();
 								self.Arrow:SetRotation(angle);
 							end
+								
+							if LootReserve:IsRangeCheckRestricted(unit) and not angle then
+								if min &lt;= 15 then
+									return self:SetState(format("%s: %s", "Open trade", distText), true, false);
+								end
+							end
 							
-							if not CheckInteractDistance(unit, 2) then
+							if not LootReserve:IsRangeCheckRestricted(unit) and not LootReserve:CheckInteractDistance(unit, 2) then
 								if not (max or min) then
 									return self:SetState(UnitIsVisible(unit) and "Approach" or "Travel", false, false);
 								end
@@ -740,7 +746,11 @@
 									return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Approach" or "Travel", distText), false, false);
 								end
 								
-								if not UnitInPhase(unit) or (not UnitIsVisible(unit) and (max or min) &lt;= 9) then
+								if not UnitInPhase(unit) then
+									return self:SetState(format("%s: %s", "Phased", distText), false, false);
+								end
+								
+								if not UnitIsVisible(unit) and (max or min) &lt;= 9 then
 									return self:SetState(format("%s: %s", "Wrong Layer", distText), false, false);
 								end
 								
@@ -816,7 +826,7 @@
 											LootReserve:PutItemInTrade(bag, slot);
 										end
 									end
-								elseif CheckInteractDistance(unit, 2) then
+								elseif LootReserve:IsRangeCheckRestricted(unit) or LootReserve:CheckInteractDistance(unit, 2) then
 									LootReserve:PickupContainerItem(bag, slot);
 									DropItemOnUnit(unit);
 									C_Timer.After(1, function() ClearCursor(); end);

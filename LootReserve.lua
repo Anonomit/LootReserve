@@ -11,7 +11,7 @@ LootReserve.EventFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 0, 0);
 LootReserve.EventFrame:SetSize(0, 0);
 LootReserve.EventFrame:Show();
 
-LootReserve.LibRangeCheck = LibStub("LibRangeCheck-2.0");
+LootReserve.LibRangeCheck = LibStub("LibRangeCheck-3.0");
 LootReserve.ItemCache     = LibStub("ItemCache");
 LootReserve.LibDD         = LibStub("LibUIDropDownMenu-4.0");
 
@@ -1050,6 +1050,15 @@ function LootReserve:GetContinent(unitID)
     if not continent or not worldPos then return; end
     
     return continent, worldPos;
+end
+
+function LootReserve:IsRangeCheckRestricted(unitID)
+    return LootReserve:GetCurrentExpansion() == 0 and InCombatLockdown() and not UnitCanAttack("player", unitID)
+end
+
+function LootReserve:CheckInteractDistance(unitID, distIndex)
+    if self:IsRangeCheckRestricted(unitID) then return false; end
+    return CheckInteractDistance(unitID, distIndex);
 end
 
 function LootReserve:GetRange(unitID, playerPos, targetPos)
