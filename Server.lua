@@ -715,6 +715,11 @@ function LootReserve.Server:Load()
         end
     end
     
+    -- 2024-03-09: Delete LootCategory key in LootReserve.Server.NewSessionSettings
+    if versionSave < "2024-03-09" then
+        LootReserve.Server.NewSessionSettings.LootCategory = nil;
+    end
+    
     -- Create RollBonus metatables
     if self.CurrentSession then
         for _, member in pairs(self.CurrentSession.Members) do
