@@ -6423,6 +6423,14 @@ LootReserve.Data =
     
     -- Items which start a quest that can only be completed one time
     QuestStarters = {
+        -- Perfect Blackfathom Pearl
+        [209693] = 78916,
+        [211452] = 78917,
+        
+        -- Thermaplugg's Engineering Notes
+        [217350] = 80324,
+        [217351] = 80325,
+        
         -- Ancient Petrified Leaf
         [18703] = 7632,
         
