@@ -732,12 +732,16 @@
 							end
 								
 							if LootReserve:IsRangeCheckRestricted(unit) and not angle then
-								if min &lt;= 15 then
+								if not (max or min) then
+									return self:SetState(UnitIsVisible(unit) and "Approach" or "Travel", false, false);
+								end
+								if min &lt;= 10 then
 									return self:SetState(format("%s: %s", "Open trade", distText), true, false);
 								end
+								return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Approach" or "Travel", distText), false, false);
 							end
 							
-							if not LootReserve:IsRangeCheckRestricted(unit) and not LootReserve:CheckInteractDistance(unit, 2) then
+							if LootReserve:CanLocate() or not LootReserve:IsRangeCheckRestricted(unit) and not LootReserve:CheckInteractDistance(unit, 2) then
 								if not (max or min) then
 									return self:SetState(UnitIsVisible(unit) and "Approach" or "Travel", false, false);
 								end
@@ -755,7 +759,11 @@
 								end
 								
 								if (max or min) &lt;= 9 then
-									return self:SetState(format("%s: %s", "Above/Below", distText), false, false);
+									if not LootReserve:CanLocate() then
+										return self:SetState(format("%s: %s", "Above/Below", distText), false, false);
+									else
+										return self:SetState(format("%s: %s", "Open trade", distText), true, true);
+									end
 								end
 								
 								local prefix = "Travel"
