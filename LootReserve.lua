@@ -1,9 +1,6 @@
 ﻿local addon, ns = ...;
 
 LootReserve = LibStub("AceAddon-3.0"):NewAddon("LootReserve", "AceComm-3.0");
-LootReserve.Version = GetAddOnMetadata(addon, "Version");
-LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version");
-LootReserve.LatestKnownVersion = LootReserve.Version;
 LootReserve.Enabled = true;
 
 LootReserve.EventFrame = CreateFrame("Frame", nil, UIParent);
@@ -80,6 +77,17 @@ function SlashCmdList.LOOTRESERVE(command)
         LootReserve:ToggleServerWindow(not LootReserve.Server.Window:IsShown(), true);
     end
 end
+
+function LootReserve:GetCurrentExpansion()
+    local version = GetBuildInfo();
+    local expansion, major, minor = strsplit(".", version);
+    return tonumber(expansion) - 1;
+end
+
+LootReserve.Version = GetAddOnMetadata(addon, "Version");
+LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, LootReserve:GetCurrentExpansion() == 0 and "X-Min-Allowed-Version-Era" or "X-Min-Allowed-Version-Classic");
+LootReserve.LatestKnownVersion = LootReserve.Version;
+
 
 local pendingToggleServerWindow = nil;
 local pendingLockdownHooked = nil;
@@ -444,12 +452,6 @@ function LootReserve:SendChatMessage(text, channel, target)
         end
         Send(self:StringTrim(accumulator));
     end
-end
-
-function LootReserve:GetCurrentExpansion()
-    local version = GetBuildInfo();
-    local expansion, major, minor = strsplit(".", version);
-    return tonumber(expansion) - 1;
 end
 
 function LootReserve:IsCrossRealm()
