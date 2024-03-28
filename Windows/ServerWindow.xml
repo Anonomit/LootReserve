@@ -287,10 +287,12 @@
 												actualRolls = actualRolls + 1;
 												if frame.Roll.Tiered then
 													local tier = text:match("%(1%-(%d+)%)");
-							            if alreadyRolledTiers[tier] then
-							              info = ChatTypeInfo["RESTRICTED"];
-							            end
-							            alreadyRolledTiers[tier] = true;
+													if not tier or alreadyRolledTiers[tier] then
+														info = ChatTypeInfo["RESTRICTED"];
+													end
+													if tier then
+														alreadyRolledTiers[tier] = true;
+													end
 												elseif not text:find("%(1%-100%)") then
 													info = ChatTypeInfo["RESTRICTED"];
 												elseif actualRolls > expectedRolls then
