@@ -1,17 +1,17 @@
 ## Interface: 30403
 ## Interface-Wrath: 30403
-## Interface-Classic: 11501
+## Interface-Classic: 11502
 
-## Version: 2024-03-28
+## Version: 2024-04-10
 ## X-Min-Allowed-Version-Classic: 2024-03-09
-## X-Min-Allowed-Version-Era: 2024-03-28
+## X-Min-Allowed-Version-Era: 2024-04-10
 
 ## X-Curse-Project-ID: 390790
 ## X-Wago-ID: WL6JpyGv
 
 ## Title: LootReserve
 ## Notes: Soft reserves management addon
-## Author: Anonomit (Damagus-Benediction)|nOriginal addon by Tagar-NethergardeKeep
+## Author: Anonomit (Damagus-Benediction, Damage-CrusaderStrikeUS)|nOriginal addon by Tagar-NethergardeKeep
 
 ## SavedVariables: LootReserveGlobalSave
 ## SavedVariablesPerCharacter: LootReserveCharacterSave
