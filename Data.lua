@@ -305,6 +305,137 @@ LootReserve.Data =
                 },
             },
         } or nil,
+        [925] = SEASON_NUMBER == SEASONS.DISCOVERY and {
+            Name = "Sunken Temple",
+            NameShort = "ST",
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Atal'alarion",
+                    Loot =
+                    {
+                        220637, 220636, 0,
+                        220537, 220527, 220529, 220511, 220554, 220539, 220561, 0,
+                        220615, 0,
+                        220580, 220602, 220567, 220568, 0,
+                        220635, 0,
+                        221312, 0,
+                    },
+                },
+                {
+                    Name = "Festering Rotslime",
+                    Loot =
+                    {
+                        220637, 220636, 0,
+                        220565, 220546, 220518, 220550, 220545, 220538, 220552, 220542, 220540, 220541, 0,
+                        220569, 220571, 0,
+                        221484, 0,
+                        221312, 0,
+                    },
+                },
+                {
+                    Name = "Atal'ai Defenders",
+                    Loot =
+                    {
+                        220637, 220636, 0,
+                        220548, 220522, 220558, 220532, 220516, 220528, 220533, 220560, 220555, 0,
+                        220611, 0,
+                        220591, 220674, 220572, 0,
+                        220638, 0,
+                        221312, 0,
+                    },
+                },
+                {
+                    Name = "Dreamscythe and Weaver",
+                    Loot =
+                    {
+                        220637, 220636, 0,
+                        220549, 220536, 220521, 220544, 220519, 220551, 0,
+                        220609, 0,
+                        220587, 220584, 220581, 220594, 220566, 0,
+                        221312, 0,
+                    },
+                },
+                {
+                    Name = "Jammal'an and Ogom",
+                    Loot =
+                    {
+                        220637, 220636, 0,
+                        220535, 220556, 220547, 220515, 0,
+                        220623, 220624, 220625, 220605, 0,
+                        220601, 220586, 220575, 220583, 220576, 220578, 0,
+                        221312, 0,
+                    },
+                },
+                {
+                    Name = "Morphaz and Hazzas",
+                    Loot =
+                    {
+                        220637, 220636, 0,
+                        220563, 220543, 220514, 220559, 220553, 220512, 0,
+                        220606, 220607, 0,
+                        220598, 220597, 220599, 220589, 220596, 220965, 0,
+                        221312, 0,
+                    },
+                },
+                {
+                    Name = "Shade of Eranikus",
+                    Loot =
+                    {
+                        220637, 220636, 0,
+                        220523, 220564, 0,
+                        220622, 0,
+                        220604, 220603, 220595, 220579, 220574, 220585, 220582, 220573, 220600, 0,
+                        221312, 0,
+                    },
+                },
+                {
+                    Name = "Avatar of Hakkar",
+                    Loot =
+                    {
+                        220637, 220636, 0,
+                        221346, 221363, 0,
+                        220534, 220557, 220562, 220530, 0,
+                        220608, 220634, 220632, 220633, 0,
+                        220590, 220588, 220577, 220686, 0,
+                        220620, 0,
+                        221312, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Set Pieces",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        220783, 220781, 220784, 0, -- Nightmare Prophet's Garb
+                        220680, 220679, 220681, 0, -- Malevolent Prophet's Vestments
+                        220683, 220684, 220685, 0, -- Benevolent Prophet's Vestments
+                        220672, 220673, 220675, 0, -- Lost Worshipper's Armor
+                        220669, 220671, 220670, 0, -- Exiled Prophet's Raiment
+                        220779, 220778, 220780, 0, -- Coagulate Bloodguard's Leathers
+                        220676, 220678, 220677, 0, -- Blood Corrupted Leathers
+                        220666, 220667, 220668, 0, -- Dread Hunter's Chain
+                        220657, 220658, 220659, 0, -- Ostracized Berserk's Battlemail
+                        220665, 220663, 220664, 0, -- Corrupted Spiritweaver's Mail
+                        220660, 220661, 220662, 0, -- Shunned Devotee's Chainmail
+                        220650, 220651, 220652, 0, -- Obsessed Prophet's Plate
+                        220653, 220654, 220656, 0, -- Wailing Berserker's Plate Armor
+                        220642, 220643, 220648, 0, -- Banished Martyr's Full Plate
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        220628, 220626, 220627, 220629, 220630, 0,
+                    },
+                },
+            },
+        } or nil,
         
         -- Classic
         [1010] = {
@@ -6431,6 +6562,10 @@ LootReserve.Data =
         [217350] = 80324,
         [217351] = 80325,
         
+        -- Scapula of the Fallen Avatar
+        [221346] = 82081,
+        [221363] = 82083,
+        
         -- Ancient Petrified Leaf
         [18703] = 7632,
         
@@ -6521,6 +6656,9 @@ end
 do
     -- Gnomeregan items
     HideItem(213427); -- Grime-Encrusted Salvage
+    
+    -- Sunken Temple items
+    HideItem(221312); -- Flask of Atal'ai Mojo
     
     -- Molten Core trash
     HideItem(11382);
@@ -6695,6 +6833,11 @@ end
 
 -- Faction Restricted Items
 do
+    
+    -- SoD items
+    
+    -- Blackfathom Deeps
+    
     -- Perfect Blackfathom Pearl
     ApplyFactionRestriction(209693, "Alliance");
     ApplyFactionRestriction(211452, "Horde");
@@ -6704,6 +6847,9 @@ do
     -- Carved Driftwood Idol
     ApplyFactionRestriction(209575, "Horde");
     
+    
+    -- Gnomeregan
+    
     -- Thermaplugg's Engineering Notes
     ApplyFactionRestriction(217350, "Alliance");
     ApplyFactionRestriction(217351, "Horde");
@@ -6712,6 +6858,19 @@ do
     ApplyFactionRestriction(215435, "Alliance");
     -- Totem of Invigorating Flame
     ApplyFactionRestriction(215436, "Horde");
+    
+    -- Sunken Temple
+    
+    -- Scapula of the Fallen Avatar
+    ApplyFactionRestriction(221346, "Alliance");
+    ApplyFactionRestriction(221363, "Horde");
+    
+    -- Libram of Sacrilege
+    ApplyFactionRestriction(220605, "Alliance");
+    -- Totem of Tormented Ancestry
+    ApplyFactionRestriction(220607, "Horde");
+    
+    
     
     -- Head of Onyxia
     ApplyFactionRestriction(18422, "Horde");
@@ -8012,11 +8171,12 @@ end
 
 
 local tokenMap = {
-    -- BFD
+    -- Blackfathom Deeps
     
     -- Perfect Blackfathom Pearl
     [209693] = UnitFactionGroup("player") == "Alliance" and {211450, 211451, 211449} or nil,
     [211452] = UnitFactionGroup("player") == "Horde"    and {211450, 211451, 211449} or nil,
+    
     
     -- Gnomeregan
     
@@ -8030,6 +8190,18 @@ local tokenMap = {
     -- Thermaplugg's Engineering Notes
     [217350] = UnitFactionGroup("player") == "Alliance" and {213345, 213346, 213344, 213343} or nil,
     [217351] = UnitFactionGroup("player") == "Horde"    and {213345, 213346, 213344, 213343} or nil,
+    
+    
+    -- Sunken Temple
+    
+    -- Atal'ai Ritual Token
+    [220637] = {220783, 220781, 220784, 220680, 220679, 220681, 220683, 220684, 220685, 220672, 220673, 220675, 220669, 220671, 220670, 220779, 220778, 220780},
+    -- Atal'ai Blood Icon
+    [220636] = {220676, 220678, 220677, 220666, 220667, 220668, 220657, 220658, 220659, 220665, 220663, 220664, 220660, 220661, 220662, 220650, 220651, 220652, 220653, 220654, 220656, 220642, 220643, 220648},
+    
+    -- Scapula of the Fallen Avatar
+    [221346] = UnitFactionGroup("player") == "Alliance" and {220628, 220626, 220627, 220629, 220630} or nil,
+    [221363] = UnitFactionGroup("player") == "Horde"    and {220628, 220626, 220627, 220629, 220630} or nil,
     
     
     -- MC
