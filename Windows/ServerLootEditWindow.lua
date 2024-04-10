@@ -142,14 +142,16 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             end
         end
     elseif self.SelectedCategory and self.SelectedCategory.SearchResults and filter then
+        local alreadyFoundIDs = { };
         for itemID, conditions in pairs(LootReserve.Server:GetNewSessionItemConditions()) do
             if tonumber(itemID) then
-                if itemID ~= 0 and conditions.Custom then
+                if itemID ~= 0 and conditions.Custom and not alreadyFoundIDs[itemID] then
                     local match = false;
                     local item = LootReserve.ItemCache:Item(itemID);
                     if item:IsCached() then
                         if matchesFilter(item, filter) then
                             createFrame(item, "Custom Item");
+                            alreadyFoundIDs[itemID] = true;
                             match = true;
                         end
                     elseif item:Exists() then
@@ -161,6 +163,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                             if reward:IsCached() then
                                 if item:IsCached() and matchesFilter(reward, filter) then
                                     createFrame(item, "Custom Item");
+                                    alreadyFoundIDs[itemID] = true;
                                     break;
                                 end
                             elseif reward:Exists() then
@@ -180,12 +183,13 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                     end
                     if child.Loot then
                         for _, itemID in ipairs(child.Loot) do
-                            if itemID ~= 0 then
+                            if itemID ~= 0 and not alreadyFoundIDs[itemID] then
                                 local match = false;
                                 local item = LootReserve.ItemCache:Item(itemID);
                                 if item:IsCached() then
                                     if matchesFilter(item, filter, category.Name, child.Name) then
                                         createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
+                                        alreadyFoundIDs[itemID] = true;
                                         match = true;
                                     end
                                 elseif item:Exists() then
@@ -197,6 +201,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                                         if reward:IsCached() then
                                             if item:IsCached() and matchesFilter(reward, filter, category.Name, child.Name) then
                                                 createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
+                                                alreadyFoundIDs[itemID] = true;
                                                 break;
                                             end
                                         elseif reward:Exists() then
