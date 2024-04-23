@@ -2973,30 +2973,39 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
             LootReserve.ItemCache:Item(itemID):OnCache(function(reservedItem)
                 for player in pairs(uniqueWinners) do
                     if self.CurrentSession.ItemReserves[reservedItem:GetID()] and LootReserve:Contains(self.CurrentSession.ItemReserves[reservedItem:GetID()].Players, player) then
+                        local WinnerReservesRemoval = self.Settings.WinnerReservesRemoval;
+                        if not self.Settings.AllowMultipleRollsOnReserves then
+                            WinnerReservesRemoval = LootReserve.Constants.WinnerReservesRemoval.Single;
+                        end
                         local smartOverride;
-                        if self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Smart then
+                        if WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Smart then
                             -- For most items, assume the player can only use one.
                             smartOverride = LootReserve.Constants.WinnerReservesRemoval.Duplicate;
-                            -- If players can reserve unusable items, never remove more than one reserve.
-                            if not self.CurrentSession.Settings.Equip then
+                            
+                            if LootReserve.Data.NonUniqueWinnings[reservedItem:GetID()] then
+                                -- If the item is a token that awards multiple mainspec items, then assume the player may want multiple.
+                                smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
+                                
+                            elseif not self.CurrentSession.Settings.Equip then
+                                -- If players can reserve unusable items, never remove more than one reserve.
                                 smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
                                 
                             -- Make sure the item is not unique and is not a quest starter.
                             elseif not reservedItem:IsUnique() and not item:StartsQuest() and not (reservedItem:GetType() == "Recipe" and reservedItem:GetBindType() == LE_ITEM_BIND_ON_ACQUIRE) then
                                 -- Players may genuinely want multiple copies of the same ring to equip together.
-                                if reservedItem:GetEquipLocation() == "INVTYPE_FINGER" then
+                                if reservedItem:GetEquipLocation() == "INVTYPE_FINGER" or reservedItem:GetEquipLocation() == "INVTYPE_TRINKET" then
                                     smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
                                 -- Trying to filter to raid mats. Excluding equippable items, tokens, and quest drops.
-                                elseif reservedItem:GetEquipLocation() == "" and not LootReserve.Data:IsToken(reservedItem:GetID()) and not LootReserve.Data.QuestDrops[reservedItem:GetID()] then
+                                elseif (reservedItem:GetEquipLocation() == "" or reservedItem:GetEquipLocation() == "INVTYPE_NON_EQUIP_IGNORE") and not LootReserve.Data:IsToken(reservedItem:GetID()) and not LootReserve.Data.QuestDrops[reservedItem:GetID()] then
                                     smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
                                 end
                             end
                         end
                         
-                        if self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Single or smartOverride == LootReserve.Constants.WinnerReservesRemoval.Single then
+                        if WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Single or smartOverride == LootReserve.Constants.WinnerReservesRemoval.Single then
                             self:CancelReserve(player, reservedItem:GetID(), 1, false, true, true, true);
                             self:IncrementReservesDelta(player, -1, true);
-                        elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Duplicate or smartOverride == LootReserve.Constants.WinnerReservesRemoval.Duplicate then
+                        elseif WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.Duplicate or smartOverride == LootReserve.Constants.WinnerReservesRemoval.Duplicate then
                             local count = 0;
                             for i, id in ipairs(self.CurrentSession.Members[player].ReservedItems) do
                                 if id == reservedItem:GetID() then
@@ -3005,7 +3014,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
                             end
                             self:CancelReserve(player, reservedItem:GetID(), count, false, true, true, true);
                             self:IncrementReservesDelta(player, 0 - count, true);
-                        elseif self.Settings.WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.All then
+                        elseif WinnerReservesRemoval == LootReserve.Constants.WinnerReservesRemoval.All then
                             self:IncrementReservesDelta(player, 0 - self.CurrentSession.Members[player].ReservesLeft - #self.CurrentSession.Members[player].ReservedItems, true, true);
                         end
                     end

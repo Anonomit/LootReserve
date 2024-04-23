@@ -306,7 +306,7 @@ LootReserve.Data =
             },
         } or nil,
         [925] = SEASON_NUMBER == SEASONS.DISCOVERY and {
-            Name = "Sunken Temple",
+            Name = "Temple of Atal'Hakkar",
             NameShort = "ST",
             Expansion = 0,
             Children =
@@ -6619,6 +6619,39 @@ LootReserve.Data =
         Rewards       = { },
         HeroicMirrors = { },
     },
+    NonUniqueWinnings = {
+        -- Items that the player may want to win multiple times
+        
+        -- Sunken Temple
+        [220636] = true, -- Atal'ai Blood Icon
+        [220637] = true, -- Atal'ai Ritual Token
+        
+        -- Ony/BWL
+        [11938] = true, -- Sack of Gems
+        
+        -- ZG
+        [22637] = true, -- Primal Hakkari Idol
+        
+        -- ZA
+        [33865] = true, -- Amani Hex Stick
+        
+        -- Ony 10/25
+        [49294] = {36919, 36922, 36931, 36928, 36934, 36925}, -- Ashen Sack of Gems
+        
+        -- ToC
+        [47242] = true, -- Trophy of the Crusade
+        [47557] = true, -- Regalia of the Grand Conqueror
+        [47558] = true, -- Regalia of the Grand Protector
+        [47559] = true, -- Regalia of the Grand Vanquisher
+        
+        -- ICC
+        [52027] = true, -- Conqueror's Mark of Sanctification (Normal)
+        [52026] = true, -- Protector's Mark of Sanctification (Normal)
+        [52025] = true, -- Vanquisher's Mark of Sanctification (Normal)
+        [52030] = true, -- Conqueror's Mark of Sanctification (Heroic)
+        [52029] = true, -- Protector's Mark of Sanctification (Heroic)
+        [52028] = true, -- Vanquisher's Mark of Sanctification (Heroic)
+    },
     ItemLevelOverrides = {},
 };
 
@@ -8394,6 +8427,7 @@ local tokenMap = {
     
     -- Mag
     
+    -- Magtheridon's Head
     [32385] = UnitFactionGroup("player") == "Alliance" and {28791, 28790, 28793, 28792} or nil,
     [32386] = UnitFactionGroup("player") == "Horde"    and {28791, 28790, 28793, 28792} or nil,
     
@@ -8782,21 +8816,21 @@ local tokenMap = {
     
     -- ICC 10/25
     
-    -- Conqueror' Mark of Sanctification (Normal)
+    -- Conqueror's Mark of Sanctification (Normal)
     [52027] = {
         51208, 51205, 51206, 51209, 51207,
         51178, 51175, 51176, 51179, 51177, 51184, 51182, 51180, 51183, 51181,
         51167, 51166, 51165, 51169, 51168, 51173, 51170, 51174, 51172, 51171, 51162, 51160, 51164, 51163, 51161,
     },
     
-    -- Protector' Mark of Sanctification (Normal)
+    -- Protector's Mark of Sanctification (Normal)
     [52026] = {
         51153, 51151, 51150, 51154, 51152,
         51218, 51215, 51219, 51217, 51216, 51212, 51210, 51214, 51213, 51211,
         51192, 51194, 51190, 51191, 51193, 51202, 51204, 51200, 51201, 51203, 51197, 51199, 51195, 51196, 51198,
     },
     
-    -- Vanquisher' Mark of Sanctification (Normal)
+    -- Vanquisher's Mark of Sanctification (Normal)
     [52025] = {
         51187, 51185, 51189, 51188, 51186,
         51133, 51130, 51134, 51132, 51131, 51127, 51125, 51129, 51128, 51126,
@@ -8805,21 +8839,21 @@ local tokenMap = {
     },
     
     
-    -- Conqueror' Mark of Sanctification (Heroic)
+    -- Conqueror's Mark of Sanctification (Heroic)
     [52030] = {
         51231, 51234, 51233, 51230, 51232,
         51261, 51264, 51263, 51260, 51262, 51255, 51257, 51259, 51256, 51258,
         51272, 51273, 51274, 51270, 51271, 51266, 51269, 51265, 51267, 51268, 51277, 51279, 51275, 51276, 51278,
     },
     
-    -- Protector' Mark of Sanctification (Heroic)
+    -- Protector's Mark of Sanctification (Heroic)
     [52029] = {
         51286, 51288, 51289, 51285, 51287,
         51221, 51224, 51220, 51222, 51223, 51227, 51229, 51225, 51226, 51228,
         51247, 51245, 51249, 51248, 51246, 51237, 51235, 51239, 51238, 51236, 51242, 51240, 51244, 51243, 51241,
     },
     
-    -- Vanquisher' Mark of Sanctification (Heroic)
+    -- Vanquisher's Mark of Sanctification (Heroic)
     [52028] = {
         51252, 51254, 51250, 51251, 51253,
         51306, 51309, 51305, 51307, 51308, 51312, 51314, 51310, 51311, 51313,
