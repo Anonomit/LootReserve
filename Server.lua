@@ -57,6 +57,7 @@ LootReserve.Server =
         RollMasterLoot                  = true,
         AcceptAllRollFormats            = false,
         AcceptRollsAfterTimerEnded      = true,
+        AllowMultipleRollsOnReserves    = true,
         WinnerReservesRemoval           = LootReserve.Constants.WinnerReservesRemoval.Smart,
         ItemConditions                  = { },
         CollapsedExpansions             = { },
@@ -3480,7 +3481,7 @@ function LootReserve.Server:RequestRoll(item, allowedPlayers)
         LootReserve:ShowError("Loot reserves haven't been started");
         return;
     end
-
+    
     local reserve = self.CurrentSession.ItemReserves[item:GetID()];
     if not reserve and self.ReservableRewardIDs[item:GetID()] then
         reserve = self.CurrentSession.ItemReserves[LootReserve.Data:GetToken(item:GetID())];
@@ -3489,8 +3490,19 @@ function LootReserve.Server:RequestRoll(item, allowedPlayers)
         LootReserve:ShowError("That item is not reserved by anyone");
         return;
     end
-
-    local players = allowedPlayers or reserve.Players;
+    
+    local players = { };
+    if self.Settings.AllowMultipleRollsOnReserves then
+        players = allowedPlayers or reserve.Players;
+    else
+        local playersUnique = { };
+        for _, player in ipairs(allowedPlayers or reserve.Players) do
+            playersUnique[player] = true
+        end
+        for player in pairs(playersUnique) do
+            tinsert(players, player)
+        end
+    end
     
     -- Give the item a suffix if it doesn't have one. Source it from loot and inventory
     if not item:HasSuffix() then
@@ -3522,7 +3534,7 @@ function LootReserve.Server:RequestRoll(item, allowedPlayers)
             end
         end
     end
-
+    
     self.RequestedRoll =
     {
         Item        = item,
@@ -3537,20 +3549,20 @@ function LootReserve.Server:RequestRoll(item, allowedPlayers)
         AllowedPlayers = allowedPlayers,
     };
     self.SaveProfile.RequestedRoll = self.RequestedRoll;
-
+    
     for _, player in ipairs(players) do
         self.RequestedRoll.Players[player] = self.RequestedRoll.Players[player] or { };
         table.insert(self.RequestedRoll.Players[player], LootReserve.Constants.RollType.NotRolled);
     end
-
+    
     if self:TryFinishRoll() then
         return;
     end
-
+    
     self:PrepareRequestRoll();
-
+    
     LootReserve.Comm:BroadcastRequestRoll(item, players);
-
+    
     if self.CurrentSession.Settings.ChatFallback then
         local durationStr = "";
         if self.RequestedRoll.MaxDuration then
@@ -3559,14 +3571,14 @@ function LootReserve.Server:RequestRoll(item, allowedPlayers)
                        or time % 60 == 0 and format(" (%d %s)", time / 60, time == 60 and "min" or "mins")
                        or                    format(" (%d:%02d mins)", math.floor(time / 60), time % 60);
         end
-
+        
         local closureRoll = self.RequestedRoll;
         local closureItem = self.RequestedRoll.Item;
         
         -- Broadcast roll
         item:OnCache(function()
             local link = item:GetLink();
-
+            
             local playersText = LootReserve:FormatReservesText(players);
             local msg = format("%s - roll on reserved %s%s", playersText, LootReserve:FixLink(link), durationStr);
             LootReserve:SendChatMessage(msg, self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.RollStartReserved));
@@ -3595,7 +3607,7 @@ function LootReserve.Server:RequestRoll(item, allowedPlayers)
             end
         end);
     end
-
+    
     self:UpdateReserveListRolls();
     self:UpdateRollList();
 end
