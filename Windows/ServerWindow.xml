@@ -54,6 +54,11 @@
 			<OnLoad>
 				self.selectedTextY = 4;
 				self:SetFrameLevel(self:GetFrameLevel() + 4);
+				if LootReserve:GetCurrentExpansion() >= 3 then
+					self.LeftDisabled:SetSize(20, 64);
+					self.MiddleDisabled:SetSize(88, 64);
+					self.RightDisabled:SetSize(20, 64);
+				end
 				self:RegisterEvent("DISPLAY_SIZE_CHANGED");
 			</OnLoad>
 			<OnEvent>
