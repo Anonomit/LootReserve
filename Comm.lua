@@ -820,6 +820,9 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
             if LootReserve.Client.Settings.RollRequestWinnerReaction then
                 item:OnCache(function()
                     local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
+                    if LootReserve:UnitIsGilneanForm(LootReserve:Me()) then
+                        race = LootReserve.Constants.Races.Gilnean;
+                    end
                     local soundTable = custom and LootReserve.Constants.Sounds.Congratulate or LootReserve.Constants.Sounds.Cheer;
                     if race and sex and soundTable[race] and soundTable[race][sex] then
                         PlaySound(soundTable[race][sex]);
@@ -838,6 +841,9 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
         if LootReserve.Client.Settings.RollRequestLoserReaction and LootReserve:Contains(losers, LootReserve:Me()) then
             item:OnCache(function()
                 local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
+                if LootReserve:UnitIsGilneanForm(LootReserve:Me()) then
+                    race = LootReserve.Constants.Races.Gilnean;
+                end
                 local soundTable = LootReserve.Constants.Sounds.Cry;
                 if race and sex and soundTable[race] and soundTable[race][sex] then
                     PlaySound(soundTable[race][sex]);

@@ -600,6 +600,18 @@ function LootReserve:UnitRace(player)
     end);
 end
 
+function LootReserve:UnitIsGilneanForm(player)
+    if select(3, self:UnitRace(player)) == self.Constants.Races.Worgen then
+        self.PlayerModel = self.PlayerModel or CreateFrame("PlayerModel");
+        self.PlayerModel:SetUnit(player);
+        local model = self.PlayerModel:GetModelFileID();
+        if model then
+            return self.Constants.GilneanModels[model] and true or false;
+        end
+    end
+    return false;
+end
+
 function LootReserve:UnitSex(player)
     if not self:IsCrossRealm() then
         return UnitSex(player);
