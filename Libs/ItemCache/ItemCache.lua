@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 6
+local MAJOR, MINOR = ADDON_NAME, 7
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -128,7 +128,7 @@ local IsItemUsable, IsItemUnusable
 do
   -- WARRIOR, PALADIN, HUNTER, ROGUE, PRIEST, DEATHKNIGHT, SHAMAN, MAGE, WARLOCK, MONK, DRUID, DEMONHUNTER
   local ID = {}
-  for i = 1, GetNumClasses() do
+  for i = 1, 15 do -- Don't use GetNumClasses() because there are currently gaps between the class IDs
     local classInfo = C_CreatureInfo.GetClassInfo(i)
     if classInfo then
       ID[classInfo.classFile] = classInfo.classID
