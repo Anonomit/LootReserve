@@ -1054,20 +1054,20 @@ function LootReserve:CanUseDBMLocator(unitID)
 end
 
 function LootReserve:GetContinent(unitID)
-    local mapID = C_Map.GetBestMapForUnit(unitID)
+    local mapID = C_Map.GetBestMapForUnit(unitID);
     if not mapID then return; end
     
-    local mapPos = C_Map.GetPlayerMapPosition(mapID, unitID)
+    local mapPos = C_Map.GetPlayerMapPosition(mapID, unitID);
     if not mapPos then return; end
     
-    local continent, worldPos = C_Map.GetWorldPosFromMapPos(mapID, mapPos)
+    local continent, worldPos = C_Map.GetWorldPosFromMapPos(mapID, mapPos);
     if not continent or not worldPos then return; end
     
     return continent, worldPos;
 end
 
 function LootReserve:IsRangeCheckRestricted(unitID)
-    return LootReserve:GetCurrentExpansion() == 0 and InCombatLockdown() and not UnitCanAttack("player", unitID)
+    return LootReserve:GetCurrentExpansion() == 0 and InCombatLockdown() and not UnitCanAttack("player", unitID);
 end
 
 function LootReserve:CheckInteractDistance(unitID, distIndex)
