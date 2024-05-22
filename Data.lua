@@ -8867,6 +8867,9 @@ LootReserve.Data =
         [52030] = true, -- Conqueror's Mark of Sanctification (Heroic)
         [52029] = true, -- Protector's Mark of Sanctification (Heroic)
         [52028] = true, -- Vanquisher's Mark of Sanctification (Heroic)
+        
+        -- Throne of the Four Winds
+        [66998] = true, -- Essence of the Forlorn
     },
     ItemLevelOverrides = {},
 };
