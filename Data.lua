@@ -12181,6 +12181,8 @@ for normal, heroic in pairs(heroicMirrors) do
     LootReserve.Data.TokenMap.Tokens[normal]  = heroic;
 end
 
+
+-- ItemLevelOverrides
 do
     local _, MY_CLASS = UnitClassBase("player");
     local function TableMax(t)
@@ -12197,6 +12199,15 @@ do
     end
     
     for ids, ilvl in pairs({
+        [{215390, 215417, 215386, 215388, 215419, 215392}] = 30, -- Waylaid Supplies
+        [{215398, 215402, 215408, 215411}] = 35, -- Waylaid Supplies
+        [{215415, 215403}] = 40, -- Waylaid Supplies
+        [{217337}] = 30, -- Supply Shipment
+        [{217338}] = 35, -- Supply Shipment
+        [{281008, 281009, 281010}] = 45, -- Supply Shipment
+        
+        [{209693, 211452}] = 33, -- Perfect Blackfathom Pearl
+        
         [{18665, 18646}] = 75, -- Benediction / Anathema
         [{18703, 18704, 18705}] = 75, -- Lok'delar, Rhok'delar, Lamina
         [{17204}] = 80, -- Sulfuras
@@ -12284,8 +12295,8 @@ do
         
         [{45635, 45636, 45637, 45644, 45645, 45646, 45647, 45648, 45649, 45650, 45651, 45652, 45659, 45660, 45661}] = 225, -- T8 10
         [{45632, 45633, 45634, 45638, 45639, 45640, 45653, 45654, 45655, 45641, 45642, 45643, 45656, 45657, 45658}] = 232, -- T8 25
-        [{46052}] = 226, -- Reply-Code Alpha 10
-        [{46053}] = 239, -- Reply-Code Alpha 25
+        [{46052}] = 239, -- Reply-Code Alpha 10
+        [{46053}] = 252, -- Reply-Code Alpha 25
         [{45038}] = 258, -- Fragment of Val'anyr
         
         [{47242}] = 245, -- T9 10H / 25 / 25H
