@@ -1785,6 +1785,8 @@
 												end
 											end
 										end
+										
+										table.insert(menu, 2 + currentLootOffset, { text = "Clear Recent Loot", func = function() StaticPopup_Show("LOOTRESERVE_CONFIRM_CLEAR_RECENT_LOOT"); end });
 										local numRecentLootItems = 0;
 										local recentLootItemsDone = { };
 										for i = #LootReserve.Server.RecentLoot, 1, -1 do
@@ -1804,6 +1806,7 @@
 											end
 										end
 										if numRecentLootItems == 0 then
+											table.remove(menu, 2 + currentLootOffset);
 											table.insert(menu, 2 + currentLootOffset, { text = "No Loot", disabled = true });
 										end
 										LootReserve:OpenMenu(menu, self:GetParent().Menu, self);

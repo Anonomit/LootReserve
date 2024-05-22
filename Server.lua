@@ -306,6 +306,20 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_CLEAR_RECENT_LOOT_BLACKLIST"] =
     end,
 };
 
+StaticPopupDialogs["LOOTRESERVE_CONFIRM_CLEAR_RECENT_LOOT"] =
+{
+    text         = "Are you sure you want to clear the Recent Loot?",
+    button1      = YES,
+    button2      = NO,
+    timeout      = 0,
+    whileDead    = 1,
+    hideOnEscape = 1,
+    OnAccept = function(self)
+        wipe(LootReserve.Server.RecentLoot);
+        CloseMenus();
+    end,
+};
+
 StaticPopupDialogs["LOOTRESERVE_CONFIRM_RESET_PHASES"] =
 {
     text         = "Are you sure you want to reset stages to default?",
