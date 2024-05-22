@@ -3900,14 +3900,11 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
                     local player = GetMasterLootCandidate(pending.ItemIndex, playerIndex);
                     
                     if not player then
-                        -- don't do this, just in case gaps are possible
-                        -- break;
-                        gapExists = true;
-                    end
-                    if LootReserve:IsSamePlayer(GetMasterLootCandidate(pending.ItemIndex, playerIndex), pending.Player) then
-                        if gapExists then
+                        if not gapExists then
                             LootReserve:debug("Masterloot index gap exists");
                         end
+                        gapExists = true;
+                    elseif LootReserve:IsSamePlayer(GetMasterLootCandidate(pending.ItemIndex, playerIndex), pending.Player) then
                         GiveMasterLoot(pending.ItemIndex, playerIndex);
                         MasterLooterFrame:Hide();
                         return;
