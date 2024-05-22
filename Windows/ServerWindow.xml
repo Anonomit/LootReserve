@@ -1710,6 +1710,8 @@
 														table.insert(bagMenu, MakeItem(containerInfo.stackCount, LootReserve.ItemCache:Item(containerInfo.hyperlink), containerInfo.iconFileID));
 													end
 												end
+											else
+												table.insert(bagMenus, { });
 											end
 										end
 										local menu =
@@ -1754,12 +1756,21 @@
 											},
 											{ text = "Cancel" },
 										};
-										for bag, bagMenu in ipairs(bagMenus) do
-											table.insert(menu, 3 + bag,
+										if #bagMenus == 0 then
+											table.insert(menu, 4,
 											{
-												text = bag == 1 and "Backpack" or format("Bag %d", bag - 1),
-												menuList = bagMenu,
+												text = "No Items Found",
+												disabled = true,
 											});
+										else
+											for bag, bagMenu in ipairs(bagMenus) do
+												table.insert(menu, 3 + bag,
+												{
+													text = bag == 1 and "Backpack" or format("Bag %d", bag - 1),
+													menuList = #bagMenu > 0 and bagMenu or nil,
+													disabled = #bagMenu == 0,
+												});
+											end
 										end
 										local currentLootOffset = 0;
 										local recentLootBlocks = { };
