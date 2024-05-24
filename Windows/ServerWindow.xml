@@ -674,7 +674,7 @@
 							end
 							
 							self.Locator.m1 = DBM.HudMap:RegisterRangeMarkerOnPartyMember(87654, "party", LootReserve:Me(), 0.5, nil, color1.r, color1.g, color1.b, 1, nil, false);
-							self.Locator.m2 = DBM.HudMap:RegisterRangeMarkerOnPartyMember(87654, "party", UnitName(unit), 0.75, nil, color2.r, color2.g, color2.b, 1, nil, false);
+							self.Locator.m2 = DBM.HudMap:RegisterRangeMarkerOnPartyMember(87654, "party", UnitNameUnmodified(unit), 0.75, nil, color2.r, color2.g, color2.b, 1, nil, false);
 							self.Locator.edge = self.Locator.m2:EdgeTo(self.Locator.m1, nil, nil, 0, 1, 0, 1);
 							
 							-- Play appearing animation
@@ -829,7 +829,7 @@
 						
 						if not unit then return; end
 						if self.Lootable then
-							LootReserve.Server:MasterLootItem(item, LootReserve:Player(UnitName(unit)));
+							LootReserve.Server:MasterLootItem(item, LootReserve:Player(UnitNameUnmodified(unit)));
 						elseif self.Tradeable then
 							local bag, slot = LootReserve:GetBagSlot(item, true);
 							if bag and slot then
@@ -979,7 +979,7 @@
 										func = function(info)
 											local frame = self:GetParent():GetParent();
 											if not frame.Roll then return; end
-											local recipient = UnitIsPlayer("target") and UnitIsConnected("target") and UnitName("target");
+											local recipient = UnitIsPlayer("target") and UnitIsConnected("target") and UnitNameUnmodified("target");
 											if info.arg1 == "WHISPER" and not recipient then
 												LootReserve:PrintError("Target is not a valid player to whisper.")
 												return;
@@ -1089,7 +1089,7 @@
 										disabled = not condition,
 										func = function(info)
 											local frame = self:GetParent():GetParent();
-											local recipient = UnitIsPlayer("target") and UnitIsConnected("target") and UnitName("target");
+											local recipient = UnitIsPlayer("target") and UnitIsConnected("target") and UnitNameUnmodified("target");
 											if info.arg1 == "WHISPER" and not recipient then
 												LootReserve:PrintError("Target is not a valid player to whisper.")
 												return;

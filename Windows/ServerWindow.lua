@@ -583,7 +583,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
                 frame.DistributeButton.Tradeable     = tradeable;
                 
                 local unit = LootReserve:GetGroupUnitID(player);
-                if not unit and UnitExists("target") and UnitIsPlayer("target") and LootReserve:Player(UnitName("target")) == player then
+                if not unit and UnitExists("target") and UnitIsPlayer("target") and LootReserve:Player(UnitNameUnmodified("target")) == player then
                     unit = "target";
                 end
                 frame.DistributeButton.Unit = unit;

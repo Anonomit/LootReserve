@@ -504,7 +504,7 @@ function LootReserve:Player(player)
 end
 
 function LootReserve:Me()
-    return self:Player(UnitName("player"));
+    return self:Player(UnitNameUnmodified("player"));
 end
 
 function LootReserve:IsMe(player)
@@ -648,7 +648,7 @@ end
 
 local function GetRaidUnitID(player)
     for i = 1, MAX_RAID_MEMBERS do
-        local unit = UnitName("raid" .. i);
+        local unit = UnitNameUnmodified("raid" .. i);
         if unit and LootReserve:IsSamePlayer(LootReserve:Player(unit), player) then
             return "raid" .. i;
         end
@@ -661,7 +661,7 @@ end
 
 local function GetPartyUnitID(player)
     for i = 1, MAX_PARTY_MEMBERS do
-        local unit = UnitName("party" .. i);
+        local unit = UnitNameUnmodified("party" .. i);
         if unit and LootReserve:IsSamePlayer(LootReserve:Player(unit), player) then
             return "party" .. i;
         end

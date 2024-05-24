@@ -930,7 +930,7 @@ function LootReserve.Server:UpdateTradeFrameAutoButton(accepting)
         return;
     end
     
-    local target        = LootReserve:Player(UnitName("npc"));
+    local target        = LootReserve:Player(UnitNameUnmodified("npc"));
     local itemsToInsert = { };
     local slotsFree     = 6;
     local relevantSlots = 0;
