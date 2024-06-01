@@ -1007,7 +1007,10 @@
 											local i = 1;
 											for player, roll, rollNumber in LootReserve.Server:GetOrderedPlayerRolls(frame.Roll.Players) do
 												if roll > LootReserve.Constants.RollType.NotRolled and (not self.Lines or self.Lines == 0 or self.Lines >= i) then
-													LootReserve:SendChatMessage(format("  %d by %s", roll, player), info.arg1, recipient);
+													if frame.Roll.Tiered then
+														roll = LootReserve.Server:ConvertFromTieredRoll(roll) .. "/" .. math.floor(roll);
+													end
+													LootReserve:SendChatMessage(format("  %s by %s", roll, player), info.arg1, recipient);
 													i = i + 1;
 												end
 											end
