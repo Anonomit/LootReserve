@@ -2,8 +2,8 @@
 ## Interface-Cata: 40400
 ## Interface-Classic: 11502
 
-## Version: 2024-05-23
-## X-Min-Allowed-Version-Classic: 2024-05-23
+## Version: 2024-06-02
+## X-Min-Allowed-Version-Classic: 2024-06-02
 ## X-Min-Allowed-Version-Era: 2024-05-23
 
 ## X-Curse-Project-ID: 390790
