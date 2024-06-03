@@ -732,6 +732,7 @@
 							end
 							
 							local min, max, angle, distText = LootReserve:GetRange(unit, playerPos, targetPos);
+							local range = max or min;
 							
 							if angle then
 								self.Arrow:Show();
@@ -739,7 +740,7 @@
 							end
 								
 							if LootReserve:IsRangeCheckRestricted(unit) and not angle then
-								if not (max or min) then
+								if not range then
 									return self:SetState(UnitIsVisible(unit) and "Approach" or "Travel", false, false);
 								end
 								if min &lt;= 10 then
@@ -748,8 +749,8 @@
 								return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Approach" or "Travel", distText), false, false);
 							end
 							
-							if LootReserve:CanLocate() or not LootReserve:IsRangeCheckRestricted(unit) and not LootReserve:CheckInteractDistance(unit, 2) then
-								if not (max or min) then
+							if LootReserve:CanLocate() and (not range or range > 9) or not LootReserve:IsRangeCheckRestricted(unit) and not LootReserve:CheckInteractDistance(unit, 2) then
+								if not range then
 									return self:SetState(UnitIsVisible(unit) and "Approach" or "Travel", false, false);
 								end
 							
@@ -761,11 +762,11 @@
 									return self:SetState(format("%s: %s", "Phased", distText), false, false);
 								end
 								
-								if not UnitIsVisible(unit) and (max or min) &lt;= 9 then
+								if not UnitIsVisible(unit) and range &lt;= 9 then
 									return self:SetState(format("%s: %s", "Wrong Layer", distText), false, false);
 								end
 								
-								if (max or min) &lt;= 9 then
+								if range &lt;= 9 then
 									if not LootReserve:CanLocate() then
 										return self:SetState(format("%s: %s", "Above/Below", distText), false, false);
 									else
