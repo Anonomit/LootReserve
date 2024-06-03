@@ -182,10 +182,10 @@ function LootReserve.Server.LootEdit:UpdateLootList()
                         parentCategoryName = child.Name;
                     end
                     if child.Loot then
-                        for _, itemID in ipairs(child.Loot) do
+                        for _, item in ipairs(child.Loot) do
+                            local itemID = LootReserve.ItemCache(item):GetID();
                             if itemID ~= 0 and not alreadyFoundIDs[itemID] then
                                 local match = false;
-                                local item = LootReserve.ItemCache:Item(itemID);
                                 if item:IsCached() then
                                     if matchesFilter(item, filter, category.Name, child.Name) then
                                         createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));

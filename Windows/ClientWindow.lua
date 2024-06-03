@@ -254,7 +254,7 @@ function LootReserve.Client:UpdateLootList()
                 for childIndex, child in ipairs(category.Children) do
                     if child.Loot then
                         for lootIndex, loot in ipairs(child.Loot) do
-                            if loot == item:GetID() then
+                            if LootReserve.ItemCache(loot):GetID() == item:GetID() then
                                 return id * 10000 + childIndex * 100 + lootIndex;
                             end
                         end
@@ -384,10 +384,10 @@ function LootReserve.Client:UpdateLootList()
                         parentCategoryName = child.Name;
                     end
                     if child.Loot then
-                        for _, itemID in ipairs(child.Loot) do
+                        for _, item in ipairs(child.Loot) do
+                            local itemID = LootReserve.ItemCache(item):GetID();
                             if itemID ~= 0 and not alreadyFoundIDs[itemID] then
                                 local match = false;
-                                local item = LootReserve.ItemCache:Item(itemID);
                                 if item:IsCached() then
                                     if matchesFilter(item, self.ItemReserves[itemID], filter, category.Name, child.Name) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
                                         createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));

@@ -286,12 +286,13 @@ function LootReserve.Server:UpdateReserveList(lockdown)
                 end
             end
         end
+        local item = LootReserve.ItemCache(item);
         for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
             if category.Children and (not self.CurrentSession or LootReserve:Contains(self.CurrentSession.Settings.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for childIndex, child in ipairs(category.Children) do
                     if child.Loot then
                         for lootIndex, loot in ipairs(child.Loot) do
-                            if loot == item then
+                            if LootReserve.ItemCache(loot) == item then
                                 return id * 10000 + childIndex * 100 + lootIndex;
                             end
                         end

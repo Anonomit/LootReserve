@@ -256,8 +256,9 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
         if category.Children and (not self.LootCategories or LootReserve:Contains(self.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
             for _, child in ipairs(category.Children) do
                 if child.Loot then
-                    for _, itemID in ipairs(child.Loot) do
-                        if itemID ~= 0 then
+                    for _, item in ipairs(child.Loot) do
+                        if item ~= 0 then
+                            local itemID = LootReserve.ItemCache(item):GetID();
                             if LootReserve.ItemConditions:TestServer(itemID) then
                                 if LootReserve.Data:IsTokenReward(itemID) then
                                     table.insert(rewardIDs, itemID);

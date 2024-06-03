@@ -12322,15 +12322,16 @@ end
 
 
 function LootReserve.Data:IsItemInCategories(itemID, categories)
+    if itemID == 0 then return false; end
     for _, category in ipairs(categories) do
-        if itemID == 0 or category <= 0 then return false; end
+        if category <= 0 then return false; end
 
         category = self.Categories[category];
         if category and category.Children and self:IsCategoryVisible(category) then
             for _, child in ipairs(category.Children) do
                 if child.Loot then
                     for _, lootItem in ipairs(child.Loot) do
-                        if lootItem == itemID then
+                        if LootReserve.ItemCache(lootItem):GetID() == itemID then
                             return true;
                         end
                     end
