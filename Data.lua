@@ -8083,7 +8083,7 @@ LootReserve.Data =
                     Loot =
                     {
                         -- Set
-                        60257, 60255, 60476, 60475, 0, 60275, 60261, 60468, 60470, 0,
+                        60257, 60255, 60473, 60475, 0, 60275, 60261, 60468, 60470, 0,
                         
                         -- Bracers / Belt / Boots
                         60628, 60626, 60630, 0, 60635, 60637, 60636, 0, 60634, 60612, 60613, 0, -- Priest / Mage / Warlock
@@ -8386,7 +8386,7 @@ LootReserve.Data =
                     Loot =
                     {
                         -- Set
-                        71046, 71048, 70301, 70297, 0,
+                        71046, 71048, 70295, 70297, 0,
                         
                         -- Bracers / Belt / Boots
                         70350, 70349, 70348, 0, 70352, 70347, 70351, 0, -- Rogue / Druid
@@ -8688,7 +8688,7 @@ LootReserve.Data =
                         77038, 77036, 73505, 73503, 0, 76757, 76759, 73516, 73514, 0, 77041, 77043, 73511, 73509, 0,
                         
                         -- Bracers / Belt / Boots
-                        73519, 73507, 73677, 0, 73518, 73522, 73520, 0, -- Shaman
+                        73519, 73507, 73521, 0, 73518, 73522, 73520, 0, -- Shaman
                         73586, 73590, 73587, 0, 73585, 73589, 73588, 0, -- Hunter / Shaman
                         
                         -- Capes
@@ -11388,8 +11388,15 @@ local tokenMap = {
 };
 
 for token, rewards in pairs(tokenMap) do
+    if LootReserve.Data.TokenMap.Rewards[token] then
+        geterrorhandler()("[LootReserve] Duplicate token detected: " .. token);
+    end
     LootReserve.Data.TokenMap.Rewards[token] = rewards;
+    
     for _, reward in ipairs(rewards) do
+        if LootReserve.Data.TokenMap.Tokens[reward] then
+            geterrorhandler()("[LootReserve] Duplicate reward detected: " .. reward);
+        end
         LootReserve.Data.TokenMap.Tokens[reward] = token;
     end
 end
@@ -12180,8 +12187,17 @@ local heroicMirrors = {
 for normal, heroic in pairs(heroicMirrors) do
     LootReserve.Data.TokenMap.HeroicMirrors[normal] = true;
     
-    LootReserve.Data.TokenMap.Rewards[heroic] = {normal};
+    if LootReserve.Data.TokenMap.Tokens[normal] then
+        geterrorhandler()("[LootReserve] Duplicate normal item detected: " .. normal);
+    end
     LootReserve.Data.TokenMap.Tokens[normal]  = heroic;
+    
+    
+    if LootReserve.Data.TokenMap.Rewards[heroic] then
+        tinsert(LootReserve.Data.TokenMap.Rewards[heroic], normal);
+    else
+        LootReserve.Data.TokenMap.Rewards[heroic] = {normal};
+    end
 end
 
 
