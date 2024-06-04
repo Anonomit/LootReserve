@@ -43,7 +43,8 @@ function LootReserve.ItemSearch:Load()
         if not category.Expansion or category.Expansion <= expansion then
             for _, child in ipairs(category.Children or { }) do
                 for _, item in ipairs(child.Loot or { }) do
-                    local itemID = LootReserve.ItemCache(item):GetID();
+                    item = LootReserve.ItemCache(item);
+                    local itemID = item:GetID();
                     if not alreadyAddedIDs[itemID] then
                         itemsToCache[#itemsToCache+1] = itemID;
                         alreadyAddedIDs[itemID] = true;

@@ -385,7 +385,8 @@ function LootReserve.Client:UpdateLootList()
                     end
                     if child.Loot then
                         for _, item in ipairs(child.Loot) do
-                            local itemID = LootReserve.ItemCache(item):GetID();
+                            item = LootReserve.ItemCache(item);
+                            local itemID = item:GetID();
                             if itemID ~= 0 and not alreadyFoundIDs[itemID] then
                                 local match = false;
                                 if item:IsCached() then
