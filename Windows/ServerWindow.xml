@@ -576,7 +576,7 @@
 									end
 								end
 							end
-							if #winners > 0 then
+							if #winners > 0 and not LootReserve.Data.NonUniqueWinnings[itemID] then
 								StaticPopup_Show("LOOTRESERVE_CONFIRM_ROLL_RESERVED_ITEM_AGAIN", self:GetParent().Link, format("%s:|n%s", #winners == 1 and "a reserver" or format("%d reservers", #winners), LootReserve:FormatReservesTextColored(winners)), {Item = self:GetParent().Item});
 							else
 								LootReserve.Server:RequestRoll(self:GetParent().Item);
