@@ -446,7 +446,7 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
                             button.RedHighlight:Hide();
                             button.RedHighlight.text = nil;
                             
-                            if LootReserve.Server:HasAlreadyWon(button.Player, frame.Item:GetID()) then
+                            if LootReserve.Server:HasAlreadyWon(button.Player, frame.Item:GetID()) and not LootReserve.Data.NonUniqueWinnings[frame.Item:GetID()] then
                                 button.RedHighlight.title = "Already won";
                                 button.RedHighlight.text  = {format("%s has already won %s this session.", LootReserve:ColoredPlayer(button.Player), frame.Item:GetLink())};
                                 button.RedHighlight:Show();
