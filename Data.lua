@@ -43,7 +43,9 @@ Wrath:
 
 Cata:
     4.0: ZG and ZA removed
-    4.1: Bastion of Twilight, Blackwing Descent, Throne of Four Winds, Baradin Hold
+    4.1: Bastion of Twilight, Blackwing Descent, Throne of Four Winds, Baradin Hold (only Argaloth)
+    4.?: Occu'thar added to Baradin Hold
+    4.?: Alizabal added to Baradin Hold
 --]]
 
 local SEASON_NUMBER = C_Seasons and C_Seasons.GetActiveSeason() or 0
@@ -54,12 +56,12 @@ local SEASONS = {
 local EXPANSION_PHASE
 if LootReserve:GetCurrentExpansion() == 0 then
     if SEASON_NUMBER == SEASONS.DISCOVERY then
-        EXPANSION_PHASE = 1.01;
+        EXPANSION_PHASE = 1.01; -- Season of Discovery
     else
-        EXPANSION_PHASE = 1.5;
+        EXPANSION_PHASE = 1.5; -- Classic Era
     end
 else
-    EXPANSION_PHASE = 3.5;
+    EXPANSION_PHASE = 3.5; -- Classic
 end
 
 local hidden = { Hidden = true };
@@ -89,6 +91,14 @@ local function ConcatenateIf(t1, bool, t2)
     return t1;
 end
 
+local function ShortCircuit(expression, trueVal, falseVal)
+    if expression then
+        return trueVal
+    else
+        return falseVal
+    end
+end
+
 
 LootReserve.Data =
 {
@@ -116,7 +126,7 @@ LootReserve.Data =
         
         -- Season of Discovery
         
-        [910] = SEASON_NUMBER == SEASONS.DISCOVERY and {
+        [910] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Blackfathom Deeps",
             NameShort = "BFD",
             Expansion = 0,
@@ -209,8 +219,8 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
-        [920] = SEASON_NUMBER == SEASONS.DISCOVERY and {
+        }),
+        [920] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Gnomeregan",
             NameShort = "Gnomer",
             Expansion = 0,
@@ -310,8 +320,8 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
-        [925] = SEASON_NUMBER == SEASONS.DISCOVERY and {
+        }),
+        [925] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Temple of Atal'Hakkar",
             NameShort = "ST",
             Expansion = 0,
@@ -441,7 +451,7 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
+        }),
         
         
         -- Classic
@@ -549,25 +559,23 @@ LootReserve.Data =
                 {
                     Name = "Ragnaros",
                     Loot =
-                    {
+                    ConcatenateIf({
                         17204, 0,
                         16915, 16930, 16922, 16909, 16901, 16938, 16946, 16954, 16962, 0,
                         18817, 19137, 0,
                         18814, 19138, 17102, 17107, 17063, 17082, 18815, 0,
                         17106, 18816, 17104, 17076, 0,
-                        unpack(EXPANSION_PHASE < 1.5 and {} or {21110, 0,}),
-                    },
+                    }, EXPANSION_PHASE >= 1.5, {21110, 0,}),
                 },
                 { Separator = true },
                 {
                     Name = "Trash",
                     Loot =
-                    {
+                    ConcatenateIf({
                         16802, 16806, 16817, 16827, 16828, 16851, 16838, 16858, 16864, 0,
                         16799, 16804, 16819, 16825, 16830, 16850, 16840, 16857, 16861, 0,
                         17011, 17010, 11382, 17012, 0,
-                        unpack(EXPANSION_PHASE < 1.5 and {} or {20951, 0,}),
-                    },
+                    }, EXPANSION_PHASE >= 1.5, {20951, 0,}),
                 },
                 { Separator = true },
                 { Name = "Recipes", Header = true },
@@ -716,13 +724,12 @@ LootReserve.Data =
                 {
                     Name = "Broodlord Lashlayer",
                     Loot =
-                    {
+                    ConcatenateIf({
                         16912, 16927, 16919, 16906, 16898, 16941, 16949, 16957, 16965, 0,
                         19342, 19341, 0,
                         19374, 19373, 0,
                         19350, 19351, 0,
-                        unpack(EXPANSION_PHASE < 1.5 and {} or {20383, 0,}),
-                    },
+                    }, EXPANSION_PHASE >= 1.5, {20383, 0,}),
                 },
                 {
                     Name = "Firemaw",
@@ -769,25 +776,24 @@ LootReserve.Data =
                 {
                     Name = "Nefarian",
                     Loot =
-                    Squish{
-                        EXPANSION_PHASE >= 3.0 and 16914 or nil,
-                        EXPANSION_PHASE >= 3.0 and 16929 or nil,
-                        EXPANSION_PHASE >= 3.0 and 16921 or nil,
-                        EXPANSION_PHASE >= 3.0 and 16908 or nil,
-                        EXPANSION_PHASE >= 3.0 and 16900 or nil,
-                        EXPANSION_PHASE >= 3.0 and 16939 or nil,
-                        EXPANSION_PHASE >= 3.0 and 16947 or nil,
-                        EXPANSION_PHASE >= 3.0 and 16955 or nil,
-                        EXPANSION_PHASE >= 3.0 and 16963 or nil,
-                        EXPANSION_PHASE >= 3.0 and     0 or nil,
+                    ConcatenateIf(Squish({
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16914),
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16929),
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16921),
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16908),
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16900),
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16939),
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16947),
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16955),
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16963),
+                        ShortCircuit(EXPANSION_PHASE >= 3.0,     0),
                         16916, 16931, 16923, 16905, 16897, 16942, 16950, 16958, 16966, 0,
                         19003, 19002, 0,
                         19375, 19381, 19380, 0,
                         19379, 19378, 19382, 19377, 19376, 0,
                         19356, 19360, 19364, 19363, 0,
                         11938, 0,
-                        unpack(EXPANSION_PHASE < 1.5 and {} or {21138, 0,}),
-                    },
+                    }), EXPANSION_PHASE >= 1.5, {21138, 0,}),
                 },
                 { Separator = true },
                 {
@@ -806,15 +812,15 @@ LootReserve.Data =
                     IndentType = 2,
                     Loot =
                     Squish{
-                        EXPANSION_PHASE >= 3.0 and 16929 or nil, 16932, 16931, 16934, 16928, 16933, 16927, 0,
-                        EXPANSION_PHASE >= 3.0 and 16914 or nil, 16917, 16916, 16918, 16913, 16818, 16912, 0,
-                        EXPANSION_PHASE >= 3.0 and 16921 or nil, 16924, 16923, 16926, 16920, 16925, 16919, 0,
-                        EXPANSION_PHASE >= 3.0 and 16908 or nil, 16832, 16905, 16911, 16907, 16910, 16906, 0,
-                        EXPANSION_PHASE >= 3.0 and 16900 or nil, 16902, 16897, 16904, 16899, 16903, 16898, 0,
-                        EXPANSION_PHASE >= 3.0 and 16939 or nil, 16937, 16942, 16935, 16940, 16936, 16941, 0,
-                        EXPANSION_PHASE >= 3.0 and 16947 or nil, 16945, 16950, 16943, 16948, 16944, 16949, 0,
-                        EXPANSION_PHASE >= 3.0 and 16963 or nil, 16961, 16966, 16959, 16964, 16960, 16965, 0,
-                        EXPANSION_PHASE >= 3.0 and 16955 or nil, 16953, 16958, 16951, 16956, 16952, 16957, 0,
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16929), 16932, 16931, 16934, 16928, 16933, 16927, 0,
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16914), 16917, 16916, 16918, 16913, 16818, 16912, 0,
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16921), 16924, 16923, 16926, 16920, 16925, 16919, 0,
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16908), 16832, 16905, 16911, 16907, 16910, 16906, 0,
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16900), 16902, 16897, 16904, 16899, 16903, 16898, 0,
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16939), 16937, 16942, 16935, 16940, 16936, 16941, 0,
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16947), 16945, 16950, 16943, 16948, 16944, 16949, 0,
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16963), 16961, 16966, 16959, 16964, 16960, 16965, 0,
+                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16955), 16953, 16958, 16951, 16956, 16952, 16957, 0,
                     },
                 },
                 {
@@ -827,7 +833,7 @@ LootReserve.Data =
                 },
             },
         },
-        [1040] = EXPANSION_PHASE < 4.0 and {
+        [1040] = ShortCircuit(EXPANSION_PHASE < 4.0, {
             Name = "Zul'Gurub",
             NameShort = "ZG",
             Expansion = 0,
@@ -1004,7 +1010,7 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
+        }),
         [1050] = {
             Name = "Ruins of Ahn'Qiraj",
             NameShort = "AQ20",
@@ -1319,7 +1325,7 @@ LootReserve.Data =
                 },
             },
         },
-        [1070] = EXPANSION_PHASE < 3.0 and {
+        [1070] = ShortCircuit(EXPANSION_PHASE < 3.0, {
             Name = "Naxxramas",
             NameShort = "Naxx 40",
             Expansion = 0,
@@ -1523,7 +1529,7 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
+        }),
         
         
         -- The Burning Crusade
@@ -1759,7 +1765,7 @@ LootReserve.Data =
                         29068, 29067, 0,
                     },
                 },
-                EXPANSION_PHASE >= 2.2 and {
+                ShortCircuit(EXPANSION_PHASE >= 2.2, {
                     Name = "Season 1 Pieces",
                     IndentType = 2,
                     Loot =
@@ -1782,7 +1788,7 @@ LootReserve.Data =
                         27881, 27880, 0,
                         27704, 27703, 0,
                     },
-                } or nil,
+                }),
             },
         },
         [2020] = {
@@ -1836,7 +1842,7 @@ LootReserve.Data =
                         29070, 29069, 0,
                     },
                 },
-                EXPANSION_PHASE >= 2.2 and {
+                ShortCircuit(EXPANSION_PHASE >= 2.2, {
                     Name = "Season 1 Pieces",
                     IndentType = 2,
                     Loot =
@@ -1859,7 +1865,7 @@ LootReserve.Data =
                         27883, 27882, 0,
                         27706, 27705, 0,
                     },
-                } or nil,
+                }),
             },
         },
         [2030] = {
@@ -1898,7 +1904,7 @@ LootReserve.Data =
                         29062, 29071, 29066, 0,
                     },
                 },
-                EXPANSION_PHASE >= 2.2 and {
+                ShortCircuit(EXPANSION_PHASE >= 2.2, {
                     Name = "Season 1 Pieces",
                     IndentType = 2,
                     Loot =
@@ -1913,7 +1919,7 @@ LootReserve.Data =
                         24544, 0,
                         31613, 27879, 27702, 0,
                     },
-                } or nil,
+                }),
                 {
                     Name = "Quest Rewards",
                     IndentType = 2,
@@ -2054,7 +2060,7 @@ LootReserve.Data =
                         30125, 30124, 30126, 0,
                     },
                 },
-                EXPANSION_PHASE >= 2.3 and {
+                ShortCircuit(EXPANSION_PHASE >= 2.3, {
                     Name = "Season 2 Pieces",
                     IndentType = 2,
                     Loot =
@@ -2077,7 +2083,7 @@ LootReserve.Data =
                         32041, 32040, 32042, 0,
                         31997, 31993, 31995, 0,
                     },
-                } or nil,
+                }),
             },
         },
         [2050] = {
@@ -2188,7 +2194,7 @@ LootReserve.Data =
                         30127, 30123, 0,
                     },
                 },
-                EXPANSION_PHASE >= 2.3 and{
+                ShortCircuit(EXPANSION_PHASE >= 2.3, {
                     Name = "Season 2 Pieces",
                     IndentType = 2,
                     Loot =
@@ -2211,7 +2217,7 @@ LootReserve.Data =
                         32043, 32039, 0,
                         31996, 31992, 0,
                     },
-                } or nil,
+                }),
                 {
                     Name = "Quest Rewards",
                     IndentType = 2,
@@ -2342,7 +2348,7 @@ LootReserve.Data =
                         30987, 30985, 0,
                     },
                 },
-                EXPANSION_PHASE >= 2.5 and {
+                ShortCircuit(EXPANSION_PHASE >= 2.5, {
                     Name = "Season 3 Pieces",
                     IndentType = 2,
                     Loot =
@@ -2365,7 +2371,7 @@ LootReserve.Data =
                         33751, 33750, 0,
                         33697, 33696, 0,
                     },
-                } or nil,
+                }),
             },
         },
         [2070] = {
@@ -2520,7 +2526,7 @@ LootReserve.Data =
                         30998, 30991, 30995, 0,
                     },
                 },
-                EXPANSION_PHASE >= 2.5 and {
+                ShortCircuit(EXPANSION_PHASE >= 2.5, {
                     Name = "Season 3 Pieces",
                     IndentType = 2,
                     Loot =
@@ -2543,10 +2549,10 @@ LootReserve.Data =
                         33753, 33749, 33752, 0,
                         33699, 33695, 33698, 0,
                     },
-                } or nil,
+                }),
             },
         },
-        [2080] = EXPANSION_PHASE < 4.0 and {
+        [2080] = ShortCircuit(EXPANSION_PHASE < 4.0, {
             Name = "Zul'Aman",
             NameShort = "ZA",
             Expansion = 1,
@@ -2637,13 +2643,13 @@ LootReserve.Data =
                         33497, 33498, 33496, 33500, 33499, 0,
                     },
                 },
-                EXPANSION_PHASE < 3.0 and {
+                ShortCircuit(EXPANSION_PHASE < 3.0, {
                     Name = " - Fourth Prisoner Saved",
                     Loot =
                     {
                         33809, 0,
                     },
-                } or nil,
+                }),
                 { Separator = true },
                 {
                     Name = "Trash",
@@ -2655,7 +2661,7 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
+        }),
         [2090] = {
             Name = "Sunwell Plateau",
             NameShort = "SWP",
@@ -2818,7 +2824,7 @@ LootReserve.Data =
         -- Wrath of the Lich King
         
         -- Naxxramas
-        [3010] = EXPANSION_PHASE <= 3.1 and {
+        [3010] = ShortCircuit(EXPANSION_PHASE <= 3.1, {
             Name = "Naxxramas 10",
             NameShort = "Naxx 10",
             Expansion = 2,
@@ -3011,10 +3017,10 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
+        }),
         [3011] = {
-            Name = EXPANSION_PHASE <= 3.1 and "Naxxramas 25" or "Naxxramas",
-            NameShort = EXPANSION_PHASE <= 3.1 and "Naxx 25" or "Naxx",
+            Name = ShortCircuit(EXPANSION_PHASE <= 3.1, "Naxxramas 25", "Naxxramas"),
+            NameShort = ShortCircuit(EXPANSION_PHASE <= 3.1, "Naxx 25", "Naxx"),
             Expansion = 2,
             Children =
             Squish{
@@ -3210,7 +3216,7 @@ LootReserve.Data =
         },
         
         -- Eye of Eternity
-        [3020] = EXPANSION_PHASE <= 3.1 and {
+        [3020] = ShortCircuit(EXPANSION_PHASE <= 3.1, {
             Name = "Eye of Eternity 10",
             NameShort = "EoE 10",
             Expansion = 2,
@@ -3227,10 +3233,10 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
+        }),
         [3021] = {
-            Name = EXPANSION_PHASE <= 3.1 and "Eye of Eternity 25" or "Eye of Eternity",
-            NameShort = EXPANSION_PHASE <= 3.1 and "EoE 25" or "EoE",
+            Name = ShortCircuit(EXPANSION_PHASE <= 3.1, "Eye of Eternity 25", "Eye of Eternity"),
+            NameShort = ShortCircuit(EXPANSION_PHASE <= 3.1, "EoE 25", "EoE"),
             Expansion = 2,
             Children =
             Squish{
@@ -3247,7 +3253,7 @@ LootReserve.Data =
         },
         
         -- The Obsidian Sanctum
-        [3030] = EXPANSION_PHASE <= 3.1 and {
+        [3030] = ShortCircuit(EXPANSION_PHASE <= 3.1, {
             Name = "The Obsidian Sanctum 10",
             NameShort = "OS 10",
             Expansion = 2,
@@ -3309,8 +3315,8 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
-        [3029] = EXPANSION_PHASE > 3.1 and {
+        }),
+        [3029] = ShortCircuit(EXPANSION_PHASE > 3.1, {
             Name = "The Obsidian Sanctum 10",
             NameShort = "OS 10",
             Expansion = 2,
@@ -3371,7 +3377,7 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
+        }),
         [3031] = {
             Name = "The Obsidian Sanctum 25",
             NameShort = "OS 25",
@@ -3436,7 +3442,7 @@ LootReserve.Data =
         },
         
         -- Ulduar
-        [3040] = EXPANSION_PHASE <= 3.2 and {
+        [3040] = ShortCircuit(EXPANSION_PHASE <= 3.2, {
             Name = "Ulduar 10",
             NameShort = "Uld 10",
             Expansion = 2,
@@ -3751,8 +3757,8 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
-        [3039] = EXPANSION_PHASE > 3.2 and {
+        }),
+        [3039] = ShortCircuit(EXPANSION_PHASE > 3.2, {
             Name = "Ulduar 10",
             NameShort = "Uld 10",
             Expansion = 2,
@@ -4081,7 +4087,7 @@ LootReserve.Data =
                     },
                 },
             },
-        } or nil,
+        }),
         [3041] = {
             Name = "Ulduar 25",
             NameShort = "Uld 25",
@@ -4321,21 +4327,19 @@ LootReserve.Data =
                     Name = "One or Fewer Keepers",
                     IndentType = 1,
                     Loot =
-                    {
+                    ConcatenateIf({
                         45537, 45536, 0,
                         45534, 45535, 0,
                         45533, 0,
-                        unpack(EXPANSION_PHASE <= 3.2 and {} or {45038, 0,}),
-                    },
+                    }, EXPANSION_PHASE <= 3.2, {45038, 0,}),
                 },
                 {
                     Name = "No Keepers",
                     IndentType = 1,
                     Loot =
-                    {
+                    ConcatenateIf({
                         45693, 0,
-                        unpack(EXPANSION_PHASE <= 3.2 and {} or {45038, 0,}),
-                    },
+                    }, EXPANSION_PHASE <= 3.2, {45038, 0,}),
                 },
                 { Separator = true },
                 {
@@ -6573,9 +6577,9 @@ LootReserve.Data =
                         40782, 40802, 40842, 0,
                     },
                 },
-                EXPANSION_PHASE >= 3.2 and { Separator = true } or nil,
-                EXPANSION_PHASE >= 3.2 and { Name = "Emalon the Storm Watcher", Header = true } or nil,
-                EXPANSION_PHASE >= 3.2 and {
+                ShortCircuit(EXPANSION_PHASE >= 3.2, { Separator = true }),
+                ShortCircuit(EXPANSION_PHASE >= 3.2, { Name = "Emalon the Storm Watcher", Header = true }),
+                ShortCircuit(EXPANSION_PHASE >= 3.2, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6600,8 +6604,8 @@ LootReserve.Data =
                         45376, 45379, 0,
                         45383, 45384, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.2 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.2, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6623,9 +6627,9 @@ LootReserve.Data =
                         40926, 40938, 0,
                         40805, 40846, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.3 and { Separator = true } or nil,
-                EXPANSION_PHASE >= 3.3 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.3, { Separator = true }),
+                ShortCircuit(EXPANSION_PHASE >= 3.3, {
                     Name = "Koralon the Flame Watcher",
                     Loot =
                     {
@@ -6643,8 +6647,8 @@ LootReserve.Data =
                         42037, 42039, 42036, 42040, 42038, 46373, 42034, 42035, 0,
                         42116, 42117, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.3 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.3, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6691,8 +6695,8 @@ LootReserve.Data =
                         48630, 48628, 0,
                         48653, 48655, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.3 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.3, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6714,9 +6718,9 @@ LootReserve.Data =
                         40927, 40939, 0,
                         40808, 40849, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.4 and { Separator = true } or nil,
-                EXPANSION_PHASE >= 3.4 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.4, { Separator = true }),
+                ShortCircuit(EXPANSION_PHASE >= 3.4, {
                     Name = "Toravon the Ice Watcher",
                     Loot =
                     {
@@ -6734,8 +6738,8 @@ LootReserve.Data =
                         42044, 42046, 42043, 42047, 42045, 46374, 42041, 42042, 0,
                         42118, 42119, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.4 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.4, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6760,8 +6764,8 @@ LootReserve.Data =
                         50327, 50325, 0,
                         50863, 50861, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.4 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.4, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6783,7 +6787,7 @@ LootReserve.Data =
                         40928, 40940, 0,
                         40812, 40852, 0,
                     },
-                } or nil,
+                }),
             },
         },
         [3091] = {
@@ -6842,9 +6846,9 @@ LootReserve.Data =
                         40785, 40805, 40846, 0,
                     },
                 },
-                EXPANSION_PHASE >= 3.2 and { Separator = true } or nil,
-                EXPANSION_PHASE >= 3.2 and { Name = "Emalon the Storm Watcher", Header = true } or nil,
-                EXPANSION_PHASE >= 3.2 and {
+                ShortCircuit(EXPANSION_PHASE >= 3.2, { Separator = true }),
+                ShortCircuit(EXPANSION_PHASE >= 3.2, { Name = "Emalon the Storm Watcher", Header = true }),
+                ShortCircuit(EXPANSION_PHASE >= 3.2, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6860,8 +6864,8 @@ LootReserve.Data =
                         46199, 46202, 46207, 46210, 46200, 46208, 0,
                         46174, 46176, 46179, 46181, 46155, 46153, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.2 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.2, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6883,9 +6887,9 @@ LootReserve.Data =
                         40927, 40939, 0,
                         40808, 40849, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.3 and { Separator = true } or nil,
-                EXPANSION_PHASE >= 3.3 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.3, { Separator = true }),
+                ShortCircuit(EXPANSION_PHASE >= 3.3, {
                     Name = "Koralon the Flame Watcher",
                     Loot =
                     {
@@ -6902,8 +6906,8 @@ LootReserve.Data =
                         42044, 42046, 42043, 42047, 42045, 46374, 42041, 42042, 0,
                         42118, 42119, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.3 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.3, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -6950,8 +6954,8 @@ LootReserve.Data =
                         48625, 48623, 0,
                         48658, 48660, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.3 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.3, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -6973,9 +6977,9 @@ LootReserve.Data =
                         40928, 40940, 0,
                         40812, 40852, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.4 and { Separator = true } or nil,
-                EXPANSION_PHASE >= 3.4 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.4, { Separator = true }),
+                ShortCircuit(EXPANSION_PHASE >= 3.4, {
                     Name = "Toravon the Ice Watcher",
                     Loot =
                     {
@@ -6992,8 +6996,8 @@ LootReserve.Data =
                         51335, 51349, 51331, 51347, 51333, 51353, 51355, 51357, 0,
                         51336, 51358, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.4 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.4, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -7018,8 +7022,8 @@ LootReserve.Data =
                         51163, 51161, 0,
                         51172, 51171, 0,
                     },
-                } or nil,
-                EXPANSION_PHASE >= 3.4 and {
+                }),
+                ShortCircuit(EXPANSION_PHASE >= 3.4, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -7041,7 +7045,7 @@ LootReserve.Data =
                         51469, 51471, 0,
                         51475, 51477, 0,
                     },
-                } or nil,
+                }),
             },
         },
         
@@ -8208,7 +8212,7 @@ LootReserve.Data =
                         0,
                     },
                 },
-                {
+                ShortCircuit(false, {
                     Name = "Occu'thar",
                     Loot =
                     {
@@ -8218,8 +8222,8 @@ LootReserve.Data =
                         70390, 70391, 70392, 0,
                         70393, 70394, 70395, 0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Druid",
                     IndentType = 1,
                     Loot =
@@ -8249,8 +8253,8 @@ LootReserve.Data =
                         70374, 70375, -- Hunter / Rogue / Shaman / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Death Knight",
                     IndentType = 1,
                     Loot =
@@ -8273,8 +8277,8 @@ LootReserve.Data =
                         70373, 70372, -- Warrior / Paladin / Death Knight
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Hunter",
                     IndentType = 1,
                     Loot =
@@ -8297,8 +8301,8 @@ LootReserve.Data =
                         70374, 70375, -- Hunter / Rogue / Shaman / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Mage",
                     IndentType = 1,
                     Loot =
@@ -8321,8 +8325,8 @@ LootReserve.Data =
                         70370, 70369, -- Paladin / Priest / Shaman / Mage / Warlock / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Paladin",
                     IndentType = 1,
                     Loot =
@@ -8352,8 +8356,8 @@ LootReserve.Data =
                         70373, 70372, -- Warrior / Paladin / Death Knight
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Priest",
                     IndentType = 1,
                     Loot =
@@ -8379,8 +8383,8 @@ LootReserve.Data =
                         70371, -- Paladin / Priest / Shamn / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Rogue",
                     IndentType = 1,
                     Loot =
@@ -8403,8 +8407,8 @@ LootReserve.Data =
                         70374, 70375, -- Hunter / Rogue / Shaman / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Shaman",
                     IndentType = 1,
                     Loot =
@@ -8434,8 +8438,8 @@ LootReserve.Data =
                         70374, 70375, -- Hunter / Rogue / Shaman / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Warlock",
                     IndentType = 1,
                     Loot =
@@ -8458,8 +8462,8 @@ LootReserve.Data =
                         70370, 70369, -- Paladin / Priest / Shaman / Mage / Warlock / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Warrior",
                     IndentType = 1,
                     Loot =
@@ -8482,8 +8486,8 @@ LootReserve.Data =
                         70373, 70372, -- Warrior / Paladin / Death Knight
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Alizabal",
                     Loot =
                     {
@@ -8493,8 +8497,8 @@ LootReserve.Data =
                         73539, 73535, 73536, 0,
                         73538, 73534, 73537, 0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Druid",
                     IndentType = 1,
                     Loot =
@@ -8524,8 +8528,8 @@ LootReserve.Data =
                         73640, 73641, -- Hunter / Rogue / Shaman / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Death Knight",
                     IndentType = 1,
                     Loot =
@@ -8548,8 +8552,8 @@ LootReserve.Data =
                         73488, 73489, -- Warrior / Paladin / Death Knight
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Hunter",
                     IndentType = 1,
                     Loot =
@@ -8572,8 +8576,8 @@ LootReserve.Data =
                         73640, 73641, -- Hunter / Rogue / Shaman / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Mage",
                     IndentType = 1,
                     Loot =
@@ -8596,8 +8600,8 @@ LootReserve.Data =
                         73622, 73623, -- Paladin / Priest / Shaman / Mage / Warlock / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Paladin",
                     IndentType = 1,
                     Loot =
@@ -8627,8 +8631,8 @@ LootReserve.Data =
                         73488, 73489, -- Warrior / Paladin / Death Knight
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Priest",
                     IndentType = 1,
                     Loot =
@@ -8654,8 +8658,8 @@ LootReserve.Data =
                         73621, -- Paladin / Priest / Shamn / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Rogue",
                     IndentType = 1,
                     Loot =
@@ -8678,8 +8682,8 @@ LootReserve.Data =
                         73640, 73641, -- Hunter / Rogue / Shaman / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Shaman",
                     IndentType = 1,
                     Loot =
@@ -8708,8 +8712,8 @@ LootReserve.Data =
                         73640, 73641, -- Hunter / Rogue / Shaman / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Warlock",
                     IndentType = 1,
                     Loot =
@@ -8732,8 +8736,8 @@ LootReserve.Data =
                         73622, 73623, -- Paladin / Priest / Shaman / Mage / Warlock / Druid
                         0,
                     },
-                },
-                {
+                }),
+                ShortCircuit(false, {
                     Name = "Warrior",
                     IndentType = 1,
                     Loot =
@@ -8756,7 +8760,7 @@ LootReserve.Data =
                         73488, 73489, -- Warrior / Paladin / Death Knight
                         0,
                     },
-                },
+                }),
             },
         },
     },
@@ -11526,7 +11530,7 @@ local heroicMirrors = {
     [47897] = 48042, -- Helm of the Crypt Lord
     [47901] = 48046, -- Pauldrons of the Shadow Hunter
     [47896] = 48041, -- Stoneskin Chestplate
-    [47902] = 48047, -- Legplates of Redeemed Blood, Legplates of the Redeemed Blood Knight
+    [47902] = 48047, -- Legplates of Redeemed Blood | Legplates of the Redeemed Blood Knight
     [47908] = 48053, -- Sunwalker Legguards
     [47899] = 48044, -- Ardent Guard
     [47903] = 48048, -- Forsaken Bonecarver
@@ -12017,12 +12021,12 @@ local heroicMirrors = {
     
     
     -- T11 tokens
-    [63683] = 65001, -- Helm of the Forlorn Conqueror, Crown of the Forlorn Conqueror
-    [63684] = 65000, -- Helm of the Forlorn Protector, Crown of the Forlorn Protector
-    [63682] = 65002, -- Helm of the Forlorn Vanquisher, Crown of the Forlorn Vanquisher
-    [64315] = 65088, -- Mantle of the Forlorn Conqueror, Shoulders of the Forlorn Conqueror
-    [64316] = 65087, -- Mantle of the Forlorn Protector, Shoulders of the Forlorn Protector
-    [64314] = 65089, -- Mantle of the Forlorn Vanquisher, Shoulders of the Forlorn Vanquisher
+    [63683] = 65001, -- Helm of the Forlorn Conqueror | Crown of the Forlorn Conqueror
+    [63684] = 65000, -- Helm of the Forlorn Protector | Crown of the Forlorn Protector
+    [63682] = 65002, -- Helm of the Forlorn Vanquisher | Crown of the Forlorn Vanquisher
+    [64315] = 65088, -- Mantle of the Forlorn Conqueror | Shoulders of the Forlorn Conqueror
+    [64316] = 65087, -- Mantle of the Forlorn Protector | Shoulders of the Forlorn Protector
+    [64314] = 65089, -- Mantle of the Forlorn Vanquisher | Shoulders of the Forlorn Vanquisher
     
     -- Blackwing Descent
     [59219] = 65077, -- Power Generator Hood
