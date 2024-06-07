@@ -262,7 +262,7 @@ function LootReserve.Server.Import:InputOptionsUpdated()
     -- Try to guess if there's a headers row
     if self.UseHeaders == nil then
         if #self.Rows > 1 then
-            for _, header in ipairs({"name", "player", "member", "character", "delta", "bonus"}) do
+            for _, header in ipairs({"name", "player", "member", "character", "delta", "bonus", "plus"}) do
                 for _, cell in ipairs(self.Rows[1]) do
                     if tostring(cell):lower():match(header) then
                         self.UseHeaders = true;
@@ -300,7 +300,7 @@ function LootReserve.Server.Import:InputOptionsUpdated()
                             break;
                         end
                     end
-                elseif header:find("delta") or header:find("reserves?%s*bonus") or header:find("bonus%s*reserves?") or header:find("extra%s*reserves?") then
+                elseif header:find("delta") or header:find("plus") or header:find("reserves?%s*bonus") or header:find("bonus%s*reserves?") or header:find("extra%s*reserves?") then
                     self.Columns[i] = "Extra Reserves"
                 elseif header:find("class") then
                     self.Columns[i] = "Class";
