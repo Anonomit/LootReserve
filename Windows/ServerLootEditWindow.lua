@@ -175,7 +175,7 @@ function LootReserve.Server.LootEdit:UpdateLootList()
             end
         end
         local parentCategoryName = "";
-        for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
+        for id, category in LootReserve:OrderedMemo(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
             if category.Children and (not LootReserve.Server.NewSessionSettings.LootCategories or LootReserve:Contains(LootReserve.Server.NewSessionSettings.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for _, child in ipairs(category.Children) do
                     if child.Name and child.IndentType ~= 1 then
@@ -347,7 +347,7 @@ function LootReserve.Server.LootEdit:UpdateCategories(opening)
         end
     end
 
-    for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
+    for id, category in LootReserve:OrderedMemo(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
         if LootReserve.Data:IsCategoryVisible(category) then
             createCategoryButtonsRecursively(id, category);
         end

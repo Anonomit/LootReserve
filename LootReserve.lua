@@ -1167,7 +1167,7 @@ function LootReserve:Contains(tbl, val)
     return false;
 end
 
-function LootReserve:Ordered_old(tbl, sorter)
+function LootReserve:Ordered(tbl, sorter)
     local __orderedIndex;
     local function __genOrderedIndex(t)
         local orderedIndex = { };
@@ -1208,7 +1208,7 @@ function LootReserve:Ordered_old(tbl, sorter)
     return orderedNext, tbl, nil;
 end
 
-local function OrderedHelper(tbl, sorter)
+local function OrderedMemoHelper(tbl, sorter)
     local __orderedIndex = { };
     for key in pairs(tbl) do
         table.insert(__orderedIndex, key);
@@ -1232,8 +1232,8 @@ local function OrderedHelper(tbl, sorter)
     
     return orderedNext, reset;
 end
-local orderedMemos  = setmetatable({ }, { __mode = "k" });
-function LootReserve:Ordered(tbl, sorter)
+local orderedMemos = setmetatable({ }, { __mode = "k" });
+function LootReserve:OrderedMemo(tbl, sorter)
     if not orderedMemos[tbl] then
         orderedMemos[tbl] = setmetatable({ }, { __mode = "k" });
     end

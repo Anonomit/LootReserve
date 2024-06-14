@@ -252,7 +252,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
     end
     local rewardIDs = { };
     local hiddenIDs = { };
-    for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
+    for id, category in LootReserve:OrderedMemo(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
         if category.Children and (not self.LootCategories or LootReserve:Contains(self.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
             for _, child in ipairs(category.Children) do
                 if child.Loot then

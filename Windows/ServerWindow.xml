@@ -2851,7 +2851,7 @@
 									end
 									local lastExpansion = nil;
 									local collapsed = LootReserve.Server.Settings.CollapsedExpansions[expansion];
-									for id, category in LootReserve:Ordered(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
+									for id, category in LootReserve:OrderedMemo(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
 										if id > 0 and LootReserve.Data:IsCategoryVisible(category) then
 											if LootReserve:GetCurrentExpansion() > 0 and category.Expansion ~= lastExpansion then
 												lastExpansion = category.Expansion;
