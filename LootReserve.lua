@@ -1238,7 +1238,7 @@ function LootReserve:OrderedMemo(tbl, sorter)
         orderedMemos[tbl] = setmetatable({ }, { __mode = "k" });
     end
     if not orderedMemos[tbl][sorter or ""] then
-        orderedMemos[tbl][sorter or ""] = {OrderedHelper(tbl, sorter)};
+        orderedMemos[tbl][sorter or ""] = {OrderedMemoHelper(tbl, sorter)};
     end
     
     local orderedNext, reset = unpack(orderedMemos[tbl][sorter or ""]);
