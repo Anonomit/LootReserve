@@ -8876,6 +8876,7 @@ LootReserve.Data =
         [66998] = true, -- Essence of the Forlorn
     },
     ItemLevelOverrides = {},
+    FactionConversionItems = {},
 };
 
 
@@ -8898,13 +8899,55 @@ local function ApplyClassRestriction(itemID, classMask)
 end
 
 
-local function ApplyFactionRestriction(itemID, faction)
+local CHECK_FACTION_CONVERTED_ITEMS;
+--@debug@
+CHECK_FACTION_CONVERTED_ITEMS = false;
+local allianceItems = {};
+local hordeItems    = {};
+--@end-debug@
+local AddFactionConversionItem;
+do
+    local FactionConversionItems = LootReserve.Data.FactionConversionItems;
+    if CHECK_FACTION_CONVERTED_ITEMS then
+        if UnitFactionGroup("player") == "Alliance" then
+            AddFactionConversionItem = function(alliance, horde)
+                allianceItems[#allianceItems+1] = alliance;
+                hordeItems[#hordeItems+1]       = horde;
+                
+                FactionConversionItems[horde] = alliance;
+            end;
+        else
+            AddFactionConversionItem = function(alliance, horde)
+                allianceItems[#allianceItems+1] = alliance;
+                hordeItems[#hordeItems+1]       = horde;
+                
+                FactionConversionItems[alliance] = horde;
+            end;
+        end
+    else
+        if UnitFactionGroup("player") == "Alliance" then
+            AddFactionConversionItem = function(alliance, horde)
+                FactionConversionItems[horde] = alliance;
+            end;
+        else
+            AddFactionConversionItem = function(alliance, horde)
+                FactionConversionItems[alliance] = horde;
+            end;
+        end
+    end
+end
+local function ApplySingleFactionRestriction(itemID, faction)
     if LootReserve.Data.ItemConditions[itemID] then
         LootReserve.Data.ItemConditions[itemID] = LootReserve:Deepcopy(LootReserve.Data.ItemConditions[itemID]);
         LootReserve.Data.ItemConditions[itemID]["Faction"] = faction;
     else
         LootReserve.Data.ItemConditions[itemID] = faction == "Alliance" and factionAlliance or factionHorde;
     end
+end
+local function ApplyFactionRestriction(allianceItem, hordeItem)
+    AddFactionConversionItem(allianceItem, hordeItem)
+    ApplySingleFactionRestriction(allianceItem, "Alliance")
+    ApplySingleFactionRestriction(hordeItem,    "Horde")
 end
 
 
@@ -9098,1605 +9141,945 @@ do
     -- Blackfathom Deeps
     
     -- Perfect Blackfathom Pearl
-    ApplyFactionRestriction(209693, "Alliance");
-    ApplyFactionRestriction(211452, "Horde");
-    
-    -- Discarded Tenets of the Silver Hand
-    ApplyFactionRestriction(209574, "Alliance");
-    -- Carved Driftwood Idol
-    ApplyFactionRestriction(209575, "Horde");
+    ApplyFactionRestriction(209693, 211452);
     
     
     -- Gnomeregan
     
     -- Thermaplugg's Engineering Notes
-    ApplyFactionRestriction(217350, "Alliance");
-    ApplyFactionRestriction(217351, "Horde");
+    ApplyFactionRestriction(217350, 217351);
     
-    -- Libram of Benediction
-    ApplyFactionRestriction(215435, "Alliance");
-    -- Totem of Invigorating Flame
-    ApplyFactionRestriction(215436, "Horde");
     
     -- Sunken Temple
     
     -- Scapula of the Fallen Avatar
-    ApplyFactionRestriction(221346, "Alliance");
-    ApplyFactionRestriction(221363, "Horde");
-    
-    -- Libram of Sacrilege
-    ApplyFactionRestriction(220605, "Alliance");
-    -- Totem of Tormented Ancestry
-    ApplyFactionRestriction(220607, "Horde");
+    ApplyFactionRestriction(221346, 221363);
     
     
     
     -- Head of Onyxia
-    ApplyFactionRestriction(18422, "Horde");
-    ApplyFactionRestriction(18423, "Alliance");
+    ApplyFactionRestriction(18423, 18422);
     
     -- Head of Nefarian
-    ApplyFactionRestriction(19002, "Horde");
-    ApplyFactionRestriction(19003, "Alliance");
+    ApplyFactionRestriction(19003, 19002);
+    
     
     -- Magtheridon's Head
-    ApplyFactionRestriction(32385, "Alliance");
-    ApplyFactionRestriction(32386, "Horde");
+    ApplyFactionRestriction(32385, 32386);
     
     
     
     -- ToC Set Pieces
     
     -- Vendor (some of it drops in VoA)
+    ApplyFactionRestriction(47784, 47801);
+    ApplyFactionRestriction(47787, 47798);
+    ApplyFactionRestriction(47786, 47799);
+    ApplyFactionRestriction(47783, 47802);
+    ApplyFactionRestriction(47785, 47800);
+    ApplyFactionRestriction(47748, 47774);
+    ApplyFactionRestriction(47751, 47777);
+    ApplyFactionRestriction(47749, 47776);
+    ApplyFactionRestriction(47752, 47773);
+    ApplyFactionRestriction(47750, 47775);
+    ApplyFactionRestriction(48073, 48098);
+    ApplyFactionRestriction(48076, 48101);
+    ApplyFactionRestriction(48075, 48100);
+    ApplyFactionRestriction(48072, 48097);
+    ApplyFactionRestriction(48074, 48099);
+    ApplyFactionRestriction(47914, 48068);
+    ApplyFactionRestriction(47981, 48071);
+    ApplyFactionRestriction(47936, 48070);
+    ApplyFactionRestriction(47982, 48067);
+    ApplyFactionRestriction(47980, 48069);
+    ApplyFactionRestriction(48158, 48184);
+    ApplyFactionRestriction(48161, 48187);
+    ApplyFactionRestriction(48159, 48186);
+    ApplyFactionRestriction(48162, 48183);
+    ApplyFactionRestriction(48160, 48185);
+    ApplyFactionRestriction(48102, 48154);
+    ApplyFactionRestriction(48131, 48157);
+    ApplyFactionRestriction(48129, 48156);
+    ApplyFactionRestriction(48132, 48153);
+    ApplyFactionRestriction(48130, 48155);
+    ApplyFactionRestriction(48214, 48188);
+    ApplyFactionRestriction(48217, 48191);
+    ApplyFactionRestriction(48216, 48189);
+    ApplyFactionRestriction(48213, 48192);
+    ApplyFactionRestriction(48215, 48190);
+    ApplyFactionRestriction(48218, 48245);
+    ApplyFactionRestriction(48221, 48247);
+    ApplyFactionRestriction(48219, 48243);
+    ApplyFactionRestriction(48222, 48244);
+    ApplyFactionRestriction(48220, 48246);
+    ApplyFactionRestriction(48250, 48277);
+    ApplyFactionRestriction(48253, 48279);
+    ApplyFactionRestriction(48251, 48275);
+    ApplyFactionRestriction(48254, 48276);
+    ApplyFactionRestriction(48252, 48278);
+    ApplyFactionRestriction(48313, 48338);
+    ApplyFactionRestriction(48315, 48340);
+    ApplyFactionRestriction(48310, 48336);
+    ApplyFactionRestriction(48312, 48337);
+    ApplyFactionRestriction(48314, 48339);
+    ApplyFactionRestriction(48280, 48297);
+    ApplyFactionRestriction(48283, 48299);
+    ApplyFactionRestriction(48281, 48295);
+    ApplyFactionRestriction(48284, 48296);
+    ApplyFactionRestriction(48282, 48298);
+    ApplyFactionRestriction(48343, 48368);
+    ApplyFactionRestriction(48345, 48370);
+    ApplyFactionRestriction(48341, 48366);
+    ApplyFactionRestriction(48342, 48367);
+    ApplyFactionRestriction(48344, 48369);
+    ApplyFactionRestriction(48371, 48388);
+    ApplyFactionRestriction(48374, 48390);
+    ApplyFactionRestriction(48372, 48386);
+    ApplyFactionRestriction(48375, 48387);
+    ApplyFactionRestriction(48373, 48389);
+    ApplyFactionRestriction(48429, 48458);
+    ApplyFactionRestriction(48448, 48460);
+    ApplyFactionRestriction(48436, 48456);
+    ApplyFactionRestriction(48449, 48457);
+    ApplyFactionRestriction(48445, 48459);
+    ApplyFactionRestriction(48472, 48503);
+    ApplyFactionRestriction(48478, 48505);
+    ApplyFactionRestriction(48474, 48501);
+    ApplyFactionRestriction(48480, 48502);
+    ApplyFactionRestriction(48476, 48504);
+    ApplyFactionRestriction(48529, 48560);
+    ApplyFactionRestriction(48535, 48562);
+    ApplyFactionRestriction(48531, 48558);
+    ApplyFactionRestriction(48537, 48559);
+    ApplyFactionRestriction(48533, 48561);
+    ApplyFactionRestriction(48564, 48597);
+    ApplyFactionRestriction(48572, 48595);
+    ApplyFactionRestriction(48566, 48599);
+    ApplyFactionRestriction(48574, 48598);
+    ApplyFactionRestriction(48568, 48596);
+    ApplyFactionRestriction(48604, 48629);
+    ApplyFactionRestriction(48606, 48627);
+    ApplyFactionRestriction(48602, 48631);
+    ApplyFactionRestriction(48603, 48630);
+    ApplyFactionRestriction(48605, 48628);
+    ApplyFactionRestriction(48634, 48654);
+    ApplyFactionRestriction(48636, 48656);
+    ApplyFactionRestriction(48632, 48652);
+    ApplyFactionRestriction(48633, 48653);
+    ApplyFactionRestriction(48635, 48655);
     
-    ApplyFactionRestriction(47784, "Alliance");
-    ApplyFactionRestriction(47787, "Alliance");
-    ApplyFactionRestriction(47786, "Alliance");
-    ApplyFactionRestriction(47783, "Alliance");
-    ApplyFactionRestriction(47785, "Alliance");
-    ApplyFactionRestriction(47748, "Alliance");
-    ApplyFactionRestriction(47751, "Alliance");
-    ApplyFactionRestriction(47749, "Alliance");
-    ApplyFactionRestriction(47752, "Alliance");
-    ApplyFactionRestriction(47750, "Alliance");
-    ApplyFactionRestriction(48073, "Alliance");
-    ApplyFactionRestriction(48076, "Alliance");
-    ApplyFactionRestriction(48075, "Alliance");
-    ApplyFactionRestriction(48072, "Alliance");
-    ApplyFactionRestriction(48074, "Alliance");
-    ApplyFactionRestriction(47914, "Alliance");
-    ApplyFactionRestriction(47981, "Alliance");
-    ApplyFactionRestriction(47936, "Alliance");
-    ApplyFactionRestriction(47982, "Alliance");
-    ApplyFactionRestriction(47980, "Alliance");
-    ApplyFactionRestriction(48158, "Alliance");
-    ApplyFactionRestriction(48161, "Alliance");
-    ApplyFactionRestriction(48159, "Alliance");
-    ApplyFactionRestriction(48162, "Alliance");
-    ApplyFactionRestriction(48160, "Alliance");
-    ApplyFactionRestriction(48102, "Alliance");
-    ApplyFactionRestriction(48131, "Alliance");
-    ApplyFactionRestriction(48129, "Alliance");
-    ApplyFactionRestriction(48132, "Alliance");
-    ApplyFactionRestriction(48130, "Alliance");
-    ApplyFactionRestriction(48214, "Alliance");
-    ApplyFactionRestriction(48217, "Alliance");
-    ApplyFactionRestriction(48216, "Alliance");
-    ApplyFactionRestriction(48213, "Alliance");
-    ApplyFactionRestriction(48215, "Alliance");
-    ApplyFactionRestriction(48218, "Alliance");
-    ApplyFactionRestriction(48221, "Alliance");
-    ApplyFactionRestriction(48219, "Alliance");
-    ApplyFactionRestriction(48222, "Alliance");
-    ApplyFactionRestriction(48220, "Alliance");
-    ApplyFactionRestriction(48250, "Alliance");
-    ApplyFactionRestriction(48253, "Alliance");
-    ApplyFactionRestriction(48251, "Alliance");
-    ApplyFactionRestriction(48254, "Alliance");
-    ApplyFactionRestriction(48252, "Alliance");
-    ApplyFactionRestriction(48313, "Alliance");
-    ApplyFactionRestriction(48315, "Alliance");
-    ApplyFactionRestriction(48310, "Alliance");
-    ApplyFactionRestriction(48312, "Alliance");
-    ApplyFactionRestriction(48314, "Alliance");
-    ApplyFactionRestriction(48280, "Alliance");
-    ApplyFactionRestriction(48283, "Alliance");
-    ApplyFactionRestriction(48281, "Alliance");
-    ApplyFactionRestriction(48284, "Alliance");
-    ApplyFactionRestriction(48282, "Alliance");
-    ApplyFactionRestriction(48343, "Alliance");
-    ApplyFactionRestriction(48345, "Alliance");
-    ApplyFactionRestriction(48341, "Alliance");
-    ApplyFactionRestriction(48342, "Alliance");
-    ApplyFactionRestriction(48344, "Alliance");
-    ApplyFactionRestriction(48371, "Alliance");
-    ApplyFactionRestriction(48374, "Alliance");
-    ApplyFactionRestriction(48372, "Alliance");
-    ApplyFactionRestriction(48375, "Alliance");
-    ApplyFactionRestriction(48373, "Alliance");
-    ApplyFactionRestriction(48429, "Alliance");
-    ApplyFactionRestriction(48448, "Alliance");
-    ApplyFactionRestriction(48436, "Alliance");
-    ApplyFactionRestriction(48449, "Alliance");
-    ApplyFactionRestriction(48445, "Alliance");
-    ApplyFactionRestriction(48472, "Alliance");
-    ApplyFactionRestriction(48478, "Alliance");
-    ApplyFactionRestriction(48474, "Alliance");
-    ApplyFactionRestriction(48480, "Alliance");
-    ApplyFactionRestriction(48476, "Alliance");
-    ApplyFactionRestriction(48529, "Alliance");
-    ApplyFactionRestriction(48535, "Alliance");
-    ApplyFactionRestriction(48531, "Alliance");
-    ApplyFactionRestriction(48537, "Alliance");
-    ApplyFactionRestriction(48533, "Alliance");
-    ApplyFactionRestriction(48564, "Alliance");
-    ApplyFactionRestriction(48572, "Alliance");
-    ApplyFactionRestriction(48566, "Alliance");
-    ApplyFactionRestriction(48574, "Alliance");
-    ApplyFactionRestriction(48568, "Alliance");
-    ApplyFactionRestriction(48604, "Alliance");
-    ApplyFactionRestriction(48606, "Alliance");
-    ApplyFactionRestriction(48602, "Alliance");
-    ApplyFactionRestriction(48603, "Alliance");
-    ApplyFactionRestriction(48605, "Alliance");
-    ApplyFactionRestriction(48634, "Alliance");
-    ApplyFactionRestriction(48636, "Alliance");
-    ApplyFactionRestriction(48632, "Alliance");
-    ApplyFactionRestriction(48633, "Alliance");
-    ApplyFactionRestriction(48635, "Alliance");
-    
-    ApplyFactionRestriction(47801, "Horde");
-    ApplyFactionRestriction(47798, "Horde");
-    ApplyFactionRestriction(47799, "Horde");
-    ApplyFactionRestriction(47802, "Horde");
-    ApplyFactionRestriction(47800, "Horde");
-    ApplyFactionRestriction(47774, "Horde");
-    ApplyFactionRestriction(47777, "Horde");
-    ApplyFactionRestriction(47776, "Horde");
-    ApplyFactionRestriction(47773, "Horde");
-    ApplyFactionRestriction(47775, "Horde");
-    ApplyFactionRestriction(48098, "Horde");
-    ApplyFactionRestriction(48101, "Horde");
-    ApplyFactionRestriction(48100, "Horde");
-    ApplyFactionRestriction(48097, "Horde");
-    ApplyFactionRestriction(48099, "Horde");
-    ApplyFactionRestriction(48068, "Horde");
-    ApplyFactionRestriction(48071, "Horde");
-    ApplyFactionRestriction(48070, "Horde");
-    ApplyFactionRestriction(48067, "Horde");
-    ApplyFactionRestriction(48069, "Horde");
-    ApplyFactionRestriction(48184, "Horde");
-    ApplyFactionRestriction(48187, "Horde");
-    ApplyFactionRestriction(48186, "Horde");
-    ApplyFactionRestriction(48183, "Horde");
-    ApplyFactionRestriction(48185, "Horde");
-    ApplyFactionRestriction(48154, "Horde");
-    ApplyFactionRestriction(48157, "Horde");
-    ApplyFactionRestriction(48156, "Horde");
-    ApplyFactionRestriction(48153, "Horde");
-    ApplyFactionRestriction(48155, "Horde");
-    ApplyFactionRestriction(48188, "Horde");
-    ApplyFactionRestriction(48191, "Horde");
-    ApplyFactionRestriction(48189, "Horde");
-    ApplyFactionRestriction(48192, "Horde");
-    ApplyFactionRestriction(48190, "Horde");
-    ApplyFactionRestriction(48245, "Horde");
-    ApplyFactionRestriction(48247, "Horde");
-    ApplyFactionRestriction(48243, "Horde");
-    ApplyFactionRestriction(48244, "Horde");
-    ApplyFactionRestriction(48246, "Horde");
-    ApplyFactionRestriction(48277, "Horde");
-    ApplyFactionRestriction(48279, "Horde");
-    ApplyFactionRestriction(48275, "Horde");
-    ApplyFactionRestriction(48276, "Horde");
-    ApplyFactionRestriction(48278, "Horde");
-    ApplyFactionRestriction(48338, "Horde");
-    ApplyFactionRestriction(48340, "Horde");
-    ApplyFactionRestriction(48336, "Horde");
-    ApplyFactionRestriction(48337, "Horde");
-    ApplyFactionRestriction(48339, "Horde");
-    ApplyFactionRestriction(48297, "Horde");
-    ApplyFactionRestriction(48299, "Horde");
-    ApplyFactionRestriction(48295, "Horde");
-    ApplyFactionRestriction(48296, "Horde");
-    ApplyFactionRestriction(48298, "Horde");
-    ApplyFactionRestriction(48368, "Horde");
-    ApplyFactionRestriction(48370, "Horde");
-    ApplyFactionRestriction(48366, "Horde");
-    ApplyFactionRestriction(48367, "Horde");
-    ApplyFactionRestriction(48369, "Horde");
-    ApplyFactionRestriction(48388, "Horde");
-    ApplyFactionRestriction(48390, "Horde");
-    ApplyFactionRestriction(48386, "Horde");
-    ApplyFactionRestriction(48387, "Horde");
-    ApplyFactionRestriction(48389, "Horde");
-    ApplyFactionRestriction(48458, "Horde");
-    ApplyFactionRestriction(48460, "Horde");
-    ApplyFactionRestriction(48456, "Horde");
-    ApplyFactionRestriction(48457, "Horde");
-    ApplyFactionRestriction(48459, "Horde");
-    ApplyFactionRestriction(48503, "Horde");
-    ApplyFactionRestriction(48505, "Horde");
-    ApplyFactionRestriction(48501, "Horde");
-    ApplyFactionRestriction(48502, "Horde");
-    ApplyFactionRestriction(48504, "Horde");
-    ApplyFactionRestriction(48560, "Horde");
-    ApplyFactionRestriction(48562, "Horde");
-    ApplyFactionRestriction(48558, "Horde");
-    ApplyFactionRestriction(48559, "Horde");
-    ApplyFactionRestriction(48561, "Horde");
-    ApplyFactionRestriction(48597, "Horde");
-    ApplyFactionRestriction(48595, "Horde");
-    ApplyFactionRestriction(48599, "Horde");
-    ApplyFactionRestriction(48598, "Horde");
-    ApplyFactionRestriction(48596, "Horde");
-    ApplyFactionRestriction(48629, "Horde");
-    ApplyFactionRestriction(48627, "Horde");
-    ApplyFactionRestriction(48631, "Horde");
-    ApplyFactionRestriction(48630, "Horde");
-    ApplyFactionRestriction(48628, "Horde");
-    ApplyFactionRestriction(48654, "Horde");
-    ApplyFactionRestriction(48656, "Horde");
-    ApplyFactionRestriction(48652, "Horde");
-    ApplyFactionRestriction(48653, "Horde");
-    ApplyFactionRestriction(48655, "Horde");
     
     -- Normal
-    ApplyFactionRestriction(47778, "Alliance");
-    ApplyFactionRestriction(47781, "Alliance");
-    ApplyFactionRestriction(47779, "Alliance");
-    ApplyFactionRestriction(47782, "Alliance");
-    ApplyFactionRestriction(47780, "Alliance");
-    ApplyFactionRestriction(47984, "Alliance");
-    ApplyFactionRestriction(47987, "Alliance");
-    ApplyFactionRestriction(47986, "Alliance");
-    ApplyFactionRestriction(47983, "Alliance");
-    ApplyFactionRestriction(47985, "Alliance");
-    ApplyFactionRestriction(48078, "Alliance");
-    ApplyFactionRestriction(48081, "Alliance");
-    ApplyFactionRestriction(48080, "Alliance");
-    ApplyFactionRestriction(48077, "Alliance");
-    ApplyFactionRestriction(48079, "Alliance");
-    ApplyFactionRestriction(48225, "Alliance");
-    ApplyFactionRestriction(48227, "Alliance");
-    ApplyFactionRestriction(48223, "Alliance");
-    ApplyFactionRestriction(48224, "Alliance");
-    ApplyFactionRestriction(48226, "Alliance");
-    ApplyFactionRestriction(48257, "Alliance");
-    ApplyFactionRestriction(48259, "Alliance");
-    ApplyFactionRestriction(48255, "Alliance");
-    ApplyFactionRestriction(48256, "Alliance");
-    ApplyFactionRestriction(48258, "Alliance");
-    ApplyFactionRestriction(48430, "Alliance");
-    ApplyFactionRestriction(48454, "Alliance");
-    ApplyFactionRestriction(48450, "Alliance");
-    ApplyFactionRestriction(48452, "Alliance");
-    ApplyFactionRestriction(48446, "Alliance");
-    ApplyFactionRestriction(48378, "Alliance");
-    ApplyFactionRestriction(48380, "Alliance");
-    ApplyFactionRestriction(48376, "Alliance");
-    ApplyFactionRestriction(48377, "Alliance");
-    ApplyFactionRestriction(48379, "Alliance");
-    ApplyFactionRestriction(48540, "Alliance");
-    ApplyFactionRestriction(48542, "Alliance");
-    ApplyFactionRestriction(48538, "Alliance");
-    ApplyFactionRestriction(48539, "Alliance");
-    ApplyFactionRestriction(48541, "Alliance");
-    ApplyFactionRestriction(48483, "Alliance");
-    ApplyFactionRestriction(48485, "Alliance");
-    ApplyFactionRestriction(48481, "Alliance");
-    ApplyFactionRestriction(48482, "Alliance");
-    ApplyFactionRestriction(48484, "Alliance");
-    ApplyFactionRestriction(47754, "Alliance");
-    ApplyFactionRestriction(47757, "Alliance");
-    ApplyFactionRestriction(47756, "Alliance");
-    ApplyFactionRestriction(47753, "Alliance");
-    ApplyFactionRestriction(47755, "Alliance");
-    ApplyFactionRestriction(48134, "Alliance");
-    ApplyFactionRestriction(48137, "Alliance");
-    ApplyFactionRestriction(48136, "Alliance");
-    ApplyFactionRestriction(48133, "Alliance");
-    ApplyFactionRestriction(48135, "Alliance");
-    ApplyFactionRestriction(48164, "Alliance");
-    ApplyFactionRestriction(48167, "Alliance");
-    ApplyFactionRestriction(48166, "Alliance");
-    ApplyFactionRestriction(48163, "Alliance");
-    ApplyFactionRestriction(48165, "Alliance");
-    ApplyFactionRestriction(48211, "Alliance");
-    ApplyFactionRestriction(48208, "Alliance");
-    ApplyFactionRestriction(48209, "Alliance");
-    ApplyFactionRestriction(48212, "Alliance");
-    ApplyFactionRestriction(48210, "Alliance");
-    ApplyFactionRestriction(48287, "Alliance");
-    ApplyFactionRestriction(48289, "Alliance");
-    ApplyFactionRestriction(48285, "Alliance");
-    ApplyFactionRestriction(48286, "Alliance");
-    ApplyFactionRestriction(48288, "Alliance");
-    ApplyFactionRestriction(48318, "Alliance");
-    ApplyFactionRestriction(48320, "Alliance");
-    ApplyFactionRestriction(48316, "Alliance");
-    ApplyFactionRestriction(48317, "Alliance");
-    ApplyFactionRestriction(48319, "Alliance");
-    ApplyFactionRestriction(48348, "Alliance");
-    ApplyFactionRestriction(48350, "Alliance");
-    ApplyFactionRestriction(48346, "Alliance");
-    ApplyFactionRestriction(48347, "Alliance");
-    ApplyFactionRestriction(48349, "Alliance");
-    ApplyFactionRestriction(48577, "Alliance");
-    ApplyFactionRestriction(48579, "Alliance");
-    ApplyFactionRestriction(48575, "Alliance");
-    ApplyFactionRestriction(48576, "Alliance");
-    ApplyFactionRestriction(48578, "Alliance");
-    ApplyFactionRestriction(48639, "Alliance");
-    ApplyFactionRestriction(48637, "Alliance");
-    ApplyFactionRestriction(48641, "Alliance");
-    ApplyFactionRestriction(48640, "Alliance");
-    ApplyFactionRestriction(48638, "Alliance");
-    ApplyFactionRestriction(48609, "Alliance");
-    ApplyFactionRestriction(48611, "Alliance");
-    ApplyFactionRestriction(48607, "Alliance");
-    ApplyFactionRestriction(48608, "Alliance");
-    ApplyFactionRestriction(48610, "Alliance");
+    ApplyFactionRestriction(47778, 47804);
+    ApplyFactionRestriction(47781, 47807);
+    ApplyFactionRestriction(47779, 47806);
+    ApplyFactionRestriction(47782, 47803);
+    ApplyFactionRestriction(47780, 47805);
+    ApplyFactionRestriction(47984, 48065);
+    ApplyFactionRestriction(47987, 48062);
+    ApplyFactionRestriction(47986, 48063);
+    ApplyFactionRestriction(47983, 48066);
+    ApplyFactionRestriction(47985, 48064);
+    ApplyFactionRestriction(48078, 48095);
+    ApplyFactionRestriction(48081, 48092);
+    ApplyFactionRestriction(48080, 48093);
+    ApplyFactionRestriction(48077, 48096);
+    ApplyFactionRestriction(48079, 48094);
+    ApplyFactionRestriction(48225, 48240);
+    ApplyFactionRestriction(48227, 48238);
+    ApplyFactionRestriction(48223, 48242);
+    ApplyFactionRestriction(48224, 48241);
+    ApplyFactionRestriction(48226, 48239);
+    ApplyFactionRestriction(48257, 48272);
+    ApplyFactionRestriction(48259, 48270);
+    ApplyFactionRestriction(48255, 48274);
+    ApplyFactionRestriction(48256, 48273);
+    ApplyFactionRestriction(48258, 48271);
+    ApplyFactionRestriction(48430, 48463);
+    ApplyFactionRestriction(48454, 48465);
+    ApplyFactionRestriction(48450, 48461);
+    ApplyFactionRestriction(48452, 48462);
+    ApplyFactionRestriction(48446, 48464);
+    ApplyFactionRestriction(48378, 48393);
+    ApplyFactionRestriction(48380, 48395);
+    ApplyFactionRestriction(48376, 48391);
+    ApplyFactionRestriction(48377, 48392);
+    ApplyFactionRestriction(48379, 48394);
+    ApplyFactionRestriction(48540, 48555);
+    ApplyFactionRestriction(48542, 48553);
+    ApplyFactionRestriction(48538, 48557);
+    ApplyFactionRestriction(48539, 48556);
+    ApplyFactionRestriction(48541, 48554);
+    ApplyFactionRestriction(48483, 48498);
+    ApplyFactionRestriction(48485, 48496);
+    ApplyFactionRestriction(48481, 48500);
+    ApplyFactionRestriction(48482, 48499);
+    ApplyFactionRestriction(48484, 48497);
+    ApplyFactionRestriction(47754, 47771);
+    ApplyFactionRestriction(47757, 47768);
+    ApplyFactionRestriction(47756, 47769);
+    ApplyFactionRestriction(47753, 47772);
+    ApplyFactionRestriction(47755, 47770);
+    ApplyFactionRestriction(48134, 48151);
+    ApplyFactionRestriction(48137, 48148);
+    ApplyFactionRestriction(48136, 48149);
+    ApplyFactionRestriction(48133, 48152);
+    ApplyFactionRestriction(48135, 48150);
+    ApplyFactionRestriction(48164, 48181);
+    ApplyFactionRestriction(48167, 48178);
+    ApplyFactionRestriction(48166, 48179);
+    ApplyFactionRestriction(48163, 48182);
+    ApplyFactionRestriction(48165, 48180);
+    ApplyFactionRestriction(48211, 48194);
+    ApplyFactionRestriction(48208, 48197);
+    ApplyFactionRestriction(48209, 48196);
+    ApplyFactionRestriction(48212, 48193);
+    ApplyFactionRestriction(48210, 48195);
+    ApplyFactionRestriction(48287, 48302);
+    ApplyFactionRestriction(48289, 48304);
+    ApplyFactionRestriction(48285, 48300);
+    ApplyFactionRestriction(48286, 48301);
+    ApplyFactionRestriction(48288, 48303);
+    ApplyFactionRestriction(48318, 48333);
+    ApplyFactionRestriction(48320, 48331);
+    ApplyFactionRestriction(48316, 48335);
+    ApplyFactionRestriction(48317, 48334);
+    ApplyFactionRestriction(48319, 48332);
+    ApplyFactionRestriction(48348, 48363);
+    ApplyFactionRestriction(48350, 48361);
+    ApplyFactionRestriction(48346, 48365);
+    ApplyFactionRestriction(48347, 48364);
+    ApplyFactionRestriction(48349, 48362);
+    ApplyFactionRestriction(48577, 48592);
+    ApplyFactionRestriction(48579, 48590);
+    ApplyFactionRestriction(48575, 48594);
+    ApplyFactionRestriction(48576, 48593);
+    ApplyFactionRestriction(48578, 48591);
+    ApplyFactionRestriction(48639, 48659);
+    ApplyFactionRestriction(48637, 48661);
+    ApplyFactionRestriction(48641, 48657);
+    ApplyFactionRestriction(48640, 48658);
+    ApplyFactionRestriction(48638, 48660);
+    ApplyFactionRestriction(48609, 48624);
+    ApplyFactionRestriction(48611, 48622);
+    ApplyFactionRestriction(48607, 48626);
+    ApplyFactionRestriction(48608, 48625);
+    ApplyFactionRestriction(48610, 48623);
     
-    ApplyFactionRestriction(47804, "Horde");
-    ApplyFactionRestriction(47807, "Horde");
-    ApplyFactionRestriction(47806, "Horde");
-    ApplyFactionRestriction(47803, "Horde");
-    ApplyFactionRestriction(47805, "Horde");
-    ApplyFactionRestriction(48065, "Horde");
-    ApplyFactionRestriction(48062, "Horde");
-    ApplyFactionRestriction(48063, "Horde");
-    ApplyFactionRestriction(48066, "Horde");
-    ApplyFactionRestriction(48064, "Horde");
-    ApplyFactionRestriction(48095, "Horde");
-    ApplyFactionRestriction(48092, "Horde");
-    ApplyFactionRestriction(48093, "Horde");
-    ApplyFactionRestriction(48096, "Horde");
-    ApplyFactionRestriction(48094, "Horde");
-    ApplyFactionRestriction(48240, "Horde");
-    ApplyFactionRestriction(48238, "Horde");
-    ApplyFactionRestriction(48242, "Horde");
-    ApplyFactionRestriction(48241, "Horde");
-    ApplyFactionRestriction(48239, "Horde");
-    ApplyFactionRestriction(48272, "Horde");
-    ApplyFactionRestriction(48270, "Horde");
-    ApplyFactionRestriction(48274, "Horde");
-    ApplyFactionRestriction(48273, "Horde");
-    ApplyFactionRestriction(48271, "Horde");
-    ApplyFactionRestriction(48463, "Horde");
-    ApplyFactionRestriction(48465, "Horde");
-    ApplyFactionRestriction(48461, "Horde");
-    ApplyFactionRestriction(48462, "Horde");
-    ApplyFactionRestriction(48464, "Horde");
-    ApplyFactionRestriction(48393, "Horde");
-    ApplyFactionRestriction(48395, "Horde");
-    ApplyFactionRestriction(48391, "Horde");
-    ApplyFactionRestriction(48392, "Horde");
-    ApplyFactionRestriction(48394, "Horde");
-    ApplyFactionRestriction(48555, "Horde");
-    ApplyFactionRestriction(48553, "Horde");
-    ApplyFactionRestriction(48557, "Horde");
-    ApplyFactionRestriction(48556, "Horde");
-    ApplyFactionRestriction(48554, "Horde");
-    ApplyFactionRestriction(48498, "Horde");
-    ApplyFactionRestriction(48496, "Horde");
-    ApplyFactionRestriction(48500, "Horde");
-    ApplyFactionRestriction(48499, "Horde");
-    ApplyFactionRestriction(48497, "Horde");
-    ApplyFactionRestriction(47771, "Horde");
-    ApplyFactionRestriction(47768, "Horde");
-    ApplyFactionRestriction(47769, "Horde");
-    ApplyFactionRestriction(47772, "Horde");
-    ApplyFactionRestriction(47770, "Horde");
-    ApplyFactionRestriction(48151, "Horde");
-    ApplyFactionRestriction(48148, "Horde");
-    ApplyFactionRestriction(48149, "Horde");
-    ApplyFactionRestriction(48152, "Horde");
-    ApplyFactionRestriction(48150, "Horde");
-    ApplyFactionRestriction(48181, "Horde");
-    ApplyFactionRestriction(48178, "Horde");
-    ApplyFactionRestriction(48179, "Horde");
-    ApplyFactionRestriction(48182, "Horde");
-    ApplyFactionRestriction(48180, "Horde");
-    ApplyFactionRestriction(48194, "Horde");
-    ApplyFactionRestriction(48197, "Horde");
-    ApplyFactionRestriction(48196, "Horde");
-    ApplyFactionRestriction(48193, "Horde");
-    ApplyFactionRestriction(48195, "Horde");
-    ApplyFactionRestriction(48302, "Horde");
-    ApplyFactionRestriction(48304, "Horde");
-    ApplyFactionRestriction(48300, "Horde");
-    ApplyFactionRestriction(48301, "Horde");
-    ApplyFactionRestriction(48303, "Horde");
-    ApplyFactionRestriction(48333, "Horde");
-    ApplyFactionRestriction(48331, "Horde");
-    ApplyFactionRestriction(48335, "Horde");
-    ApplyFactionRestriction(48334, "Horde");
-    ApplyFactionRestriction(48332, "Horde");
-    ApplyFactionRestriction(48363, "Horde");
-    ApplyFactionRestriction(48361, "Horde");
-    ApplyFactionRestriction(48365, "Horde");
-    ApplyFactionRestriction(48364, "Horde");
-    ApplyFactionRestriction(48362, "Horde");
-    ApplyFactionRestriction(48592, "Horde");
-    ApplyFactionRestriction(48590, "Horde");
-    ApplyFactionRestriction(48594, "Horde");
-    ApplyFactionRestriction(48593, "Horde");
-    ApplyFactionRestriction(48591, "Horde");
-    ApplyFactionRestriction(48659, "Horde");
-    ApplyFactionRestriction(48661, "Horde");
-    ApplyFactionRestriction(48657, "Horde");
-    ApplyFactionRestriction(48658, "Horde");
-    ApplyFactionRestriction(48660, "Horde");
-    ApplyFactionRestriction(48624, "Horde");
-    ApplyFactionRestriction(48622, "Horde");
-    ApplyFactionRestriction(48626, "Horde");
-    ApplyFactionRestriction(48625, "Horde");
-    ApplyFactionRestriction(48623, "Horde");
     
     -- Heroic
-    ApplyFactionRestriction(47789, "Alliance");
-    ApplyFactionRestriction(47792, "Alliance");
-    ApplyFactionRestriction(47791, "Alliance");
-    ApplyFactionRestriction(47788, "Alliance");
-    ApplyFactionRestriction(47790, "Alliance");
-    ApplyFactionRestriction(48035, "Alliance");
-    ApplyFactionRestriction(48029, "Alliance");
-    ApplyFactionRestriction(48031, "Alliance");
-    ApplyFactionRestriction(48037, "Alliance");
-    ApplyFactionRestriction(48033, "Alliance");
-    ApplyFactionRestriction(48085, "Alliance");
-    ApplyFactionRestriction(48082, "Alliance");
-    ApplyFactionRestriction(48083, "Alliance");
-    ApplyFactionRestriction(48086, "Alliance");
-    ApplyFactionRestriction(48084, "Alliance");
-    ApplyFactionRestriction(48230, "Alliance");
-    ApplyFactionRestriction(48228, "Alliance");
-    ApplyFactionRestriction(48232, "Alliance");
-    ApplyFactionRestriction(48231, "Alliance");
-    ApplyFactionRestriction(48229, "Alliance");
-    ApplyFactionRestriction(48262, "Alliance");
-    ApplyFactionRestriction(48260, "Alliance");
-    ApplyFactionRestriction(48264, "Alliance");
-    ApplyFactionRestriction(48263, "Alliance");
-    ApplyFactionRestriction(48261, "Alliance");
-    ApplyFactionRestriction(48433, "Alliance");
-    ApplyFactionRestriction(48455, "Alliance");
-    ApplyFactionRestriction(48451, "Alliance");
-    ApplyFactionRestriction(48453, "Alliance");
-    ApplyFactionRestriction(48447, "Alliance");
-    ApplyFactionRestriction(48383, "Alliance");
-    ApplyFactionRestriction(48381, "Alliance");
-    ApplyFactionRestriction(48385, "Alliance");
-    ApplyFactionRestriction(48384, "Alliance");
-    ApplyFactionRestriction(48382, "Alliance");
-    ApplyFactionRestriction(48545, "Alliance");
-    ApplyFactionRestriction(48543, "Alliance");
-    ApplyFactionRestriction(48547, "Alliance");
-    ApplyFactionRestriction(48546, "Alliance");
-    ApplyFactionRestriction(48544, "Alliance");
-    ApplyFactionRestriction(48488, "Alliance");
-    ApplyFactionRestriction(48486, "Alliance");
-    ApplyFactionRestriction(48490, "Alliance");
-    ApplyFactionRestriction(48489, "Alliance");
-    ApplyFactionRestriction(48487, "Alliance");
-    ApplyFactionRestriction(47761, "Alliance");
-    ApplyFactionRestriction(47758, "Alliance");
-    ApplyFactionRestriction(47759, "Alliance");
-    ApplyFactionRestriction(47762, "Alliance");
-    ApplyFactionRestriction(47760, "Alliance");
-    ApplyFactionRestriction(48141, "Alliance");
-    ApplyFactionRestriction(48138, "Alliance");
-    ApplyFactionRestriction(48139, "Alliance");
-    ApplyFactionRestriction(48142, "Alliance");
-    ApplyFactionRestriction(48140, "Alliance");
-    ApplyFactionRestriction(48171, "Alliance");
-    ApplyFactionRestriction(48168, "Alliance");
-    ApplyFactionRestriction(48169, "Alliance");
-    ApplyFactionRestriction(48172, "Alliance");
-    ApplyFactionRestriction(48170, "Alliance");
-    ApplyFactionRestriction(48204, "Alliance");
-    ApplyFactionRestriction(48207, "Alliance");
-    ApplyFactionRestriction(48206, "Alliance");
-    ApplyFactionRestriction(48203, "Alliance");
-    ApplyFactionRestriction(48205, "Alliance");
-    ApplyFactionRestriction(48292, "Alliance");
-    ApplyFactionRestriction(48290, "Alliance");
-    ApplyFactionRestriction(48294, "Alliance");
-    ApplyFactionRestriction(48293, "Alliance");
-    ApplyFactionRestriction(48291, "Alliance");
-    ApplyFactionRestriction(48323, "Alliance");
-    ApplyFactionRestriction(48321, "Alliance");
-    ApplyFactionRestriction(48325, "Alliance");
-    ApplyFactionRestriction(48324, "Alliance");
-    ApplyFactionRestriction(48322, "Alliance");
-    ApplyFactionRestriction(48353, "Alliance");
-    ApplyFactionRestriction(48351, "Alliance");
-    ApplyFactionRestriction(48355, "Alliance");
-    ApplyFactionRestriction(48354, "Alliance");
-    ApplyFactionRestriction(48352, "Alliance");
-    ApplyFactionRestriction(48582, "Alliance");
-    ApplyFactionRestriction(48580, "Alliance");
-    ApplyFactionRestriction(48584, "Alliance");
-    ApplyFactionRestriction(48583, "Alliance");
-    ApplyFactionRestriction(48581, "Alliance");
-    ApplyFactionRestriction(48644, "Alliance");
-    ApplyFactionRestriction(48646, "Alliance");
-    ApplyFactionRestriction(48642, "Alliance");
-    ApplyFactionRestriction(48643, "Alliance");
-    ApplyFactionRestriction(48645, "Alliance");
-    ApplyFactionRestriction(48614, "Alliance");
-    ApplyFactionRestriction(48612, "Alliance");
-    ApplyFactionRestriction(48616, "Alliance");
-    ApplyFactionRestriction(48615, "Alliance");
-    ApplyFactionRestriction(48613, "Alliance");
+    ApplyFactionRestriction(47789, 47796);
+    ApplyFactionRestriction(47792, 47793);
+    ApplyFactionRestriction(47791, 47794);
+    ApplyFactionRestriction(47788, 47797);
+    ApplyFactionRestriction(47790, 47795);
+    ApplyFactionRestriction(48035, 48058);
+    ApplyFactionRestriction(48029, 48061);
+    ApplyFactionRestriction(48031, 48060);
+    ApplyFactionRestriction(48037, 48057);
+    ApplyFactionRestriction(48033, 48059);
+    ApplyFactionRestriction(48085, 48088);
+    ApplyFactionRestriction(48082, 48091);
+    ApplyFactionRestriction(48083, 48090);
+    ApplyFactionRestriction(48086, 48087);
+    ApplyFactionRestriction(48084, 48089);
+    ApplyFactionRestriction(48230, 48235);
+    ApplyFactionRestriction(48228, 48237);
+    ApplyFactionRestriction(48232, 48233);
+    ApplyFactionRestriction(48231, 48234);
+    ApplyFactionRestriction(48229, 48236);
+    ApplyFactionRestriction(48262, 48267);
+    ApplyFactionRestriction(48260, 48269);
+    ApplyFactionRestriction(48264, 48265);
+    ApplyFactionRestriction(48263, 48266);
+    ApplyFactionRestriction(48261, 48268);
+    ApplyFactionRestriction(48433, 48468);
+    ApplyFactionRestriction(48455, 48470);
+    ApplyFactionRestriction(48451, 48466);
+    ApplyFactionRestriction(48453, 48467);
+    ApplyFactionRestriction(48447, 48469);
+    ApplyFactionRestriction(48383, 48398);
+    ApplyFactionRestriction(48381, 48400);
+    ApplyFactionRestriction(48385, 48396);
+    ApplyFactionRestriction(48384, 48397);
+    ApplyFactionRestriction(48382, 48399);
+    ApplyFactionRestriction(48545, 48550);
+    ApplyFactionRestriction(48543, 48552);
+    ApplyFactionRestriction(48547, 48548);
+    ApplyFactionRestriction(48546, 48549);
+    ApplyFactionRestriction(48544, 48551);
+    ApplyFactionRestriction(48488, 48493);
+    ApplyFactionRestriction(48486, 48495);
+    ApplyFactionRestriction(48490, 48491);
+    ApplyFactionRestriction(48489, 48492);
+    ApplyFactionRestriction(48487, 48494);
+    ApplyFactionRestriction(47761, 47764);
+    ApplyFactionRestriction(47758, 47767);
+    ApplyFactionRestriction(47759, 47766);
+    ApplyFactionRestriction(47762, 47763);
+    ApplyFactionRestriction(47760, 47765);
+    ApplyFactionRestriction(48141, 48144);
+    ApplyFactionRestriction(48138, 48147);
+    ApplyFactionRestriction(48139, 48146);
+    ApplyFactionRestriction(48142, 48143);
+    ApplyFactionRestriction(48140, 48145);
+    ApplyFactionRestriction(48171, 48174);
+    ApplyFactionRestriction(48168, 48177);
+    ApplyFactionRestriction(48169, 48176);
+    ApplyFactionRestriction(48172, 48173);
+    ApplyFactionRestriction(48170, 48175);
+    ApplyFactionRestriction(48204, 48201);
+    ApplyFactionRestriction(48207, 48198);
+    ApplyFactionRestriction(48206, 48199);
+    ApplyFactionRestriction(48203, 48202);
+    ApplyFactionRestriction(48205, 48200);
+    ApplyFactionRestriction(48292, 48307);
+    ApplyFactionRestriction(48290, 48309);
+    ApplyFactionRestriction(48294, 48305);
+    ApplyFactionRestriction(48293, 48306);
+    ApplyFactionRestriction(48291, 48308);
+    ApplyFactionRestriction(48323, 48328);
+    ApplyFactionRestriction(48321, 48330);
+    ApplyFactionRestriction(48325, 48326);
+    ApplyFactionRestriction(48324, 48327);
+    ApplyFactionRestriction(48322, 48329);
+    ApplyFactionRestriction(48353, 48358);
+    ApplyFactionRestriction(48351, 48360);
+    ApplyFactionRestriction(48355, 48356);
+    ApplyFactionRestriction(48354, 48357);
+    ApplyFactionRestriction(48352, 48359);
+    ApplyFactionRestriction(48582, 48587);
+    ApplyFactionRestriction(48580, 48585);
+    ApplyFactionRestriction(48584, 48589);
+    ApplyFactionRestriction(48583, 48588);
+    ApplyFactionRestriction(48581, 48586);
+    ApplyFactionRestriction(48644, 48649);
+    ApplyFactionRestriction(48646, 48647);
+    ApplyFactionRestriction(48642, 48651);
+    ApplyFactionRestriction(48643, 48650);
+    ApplyFactionRestriction(48645, 48648);
+    ApplyFactionRestriction(48614, 48619);
+    ApplyFactionRestriction(48612, 48621);
+    ApplyFactionRestriction(48616, 48617);
+    ApplyFactionRestriction(48615, 48618);
+    ApplyFactionRestriction(48613, 48620);
     
-    ApplyFactionRestriction(47796, "Horde");
-    ApplyFactionRestriction(47793, "Horde");
-    ApplyFactionRestriction(47794, "Horde");
-    ApplyFactionRestriction(47797, "Horde");
-    ApplyFactionRestriction(47795, "Horde");
-    ApplyFactionRestriction(48058, "Horde");
-    ApplyFactionRestriction(48061, "Horde");
-    ApplyFactionRestriction(48060, "Horde");
-    ApplyFactionRestriction(48057, "Horde");
-    ApplyFactionRestriction(48059, "Horde");
-    ApplyFactionRestriction(48088, "Horde");
-    ApplyFactionRestriction(48091, "Horde");
-    ApplyFactionRestriction(48090, "Horde");
-    ApplyFactionRestriction(48087, "Horde");
-    ApplyFactionRestriction(48089, "Horde");
-    ApplyFactionRestriction(48235, "Horde");
-    ApplyFactionRestriction(48237, "Horde");
-    ApplyFactionRestriction(48233, "Horde");
-    ApplyFactionRestriction(48234, "Horde");
-    ApplyFactionRestriction(48236, "Horde");
-    ApplyFactionRestriction(48267, "Horde");
-    ApplyFactionRestriction(48269, "Horde");
-    ApplyFactionRestriction(48265, "Horde");
-    ApplyFactionRestriction(48266, "Horde");
-    ApplyFactionRestriction(48268, "Horde");
-    ApplyFactionRestriction(48468, "Horde");
-    ApplyFactionRestriction(48470, "Horde");
-    ApplyFactionRestriction(48466, "Horde");
-    ApplyFactionRestriction(48467, "Horde");
-    ApplyFactionRestriction(48469, "Horde");
-    ApplyFactionRestriction(48398, "Horde");
-    ApplyFactionRestriction(48400, "Horde");
-    ApplyFactionRestriction(48396, "Horde");
-    ApplyFactionRestriction(48397, "Horde");
-    ApplyFactionRestriction(48399, "Horde");
-    ApplyFactionRestriction(48550, "Horde");
-    ApplyFactionRestriction(48552, "Horde");
-    ApplyFactionRestriction(48548, "Horde");
-    ApplyFactionRestriction(48549, "Horde");
-    ApplyFactionRestriction(48551, "Horde");
-    ApplyFactionRestriction(48493, "Horde");
-    ApplyFactionRestriction(48495, "Horde");
-    ApplyFactionRestriction(48491, "Horde");
-    ApplyFactionRestriction(48492, "Horde");
-    ApplyFactionRestriction(48494, "Horde");
-    ApplyFactionRestriction(47764, "Horde");
-    ApplyFactionRestriction(47767, "Horde");
-    ApplyFactionRestriction(47766, "Horde");
-    ApplyFactionRestriction(47763, "Horde");
-    ApplyFactionRestriction(47765, "Horde");
-    ApplyFactionRestriction(48144, "Horde");
-    ApplyFactionRestriction(48147, "Horde");
-    ApplyFactionRestriction(48146, "Horde");
-    ApplyFactionRestriction(48143, "Horde");
-    ApplyFactionRestriction(48145, "Horde");
-    ApplyFactionRestriction(48174, "Horde");
-    ApplyFactionRestriction(48177, "Horde");
-    ApplyFactionRestriction(48176, "Horde");
-    ApplyFactionRestriction(48173, "Horde");
-    ApplyFactionRestriction(48175, "Horde");
-    ApplyFactionRestriction(48201, "Horde");
-    ApplyFactionRestriction(48198, "Horde");
-    ApplyFactionRestriction(48199, "Horde");
-    ApplyFactionRestriction(48202, "Horde");
-    ApplyFactionRestriction(48200, "Horde");
-    ApplyFactionRestriction(48307, "Horde");
-    ApplyFactionRestriction(48309, "Horde");
-    ApplyFactionRestriction(48305, "Horde");
-    ApplyFactionRestriction(48306, "Horde");
-    ApplyFactionRestriction(48308, "Horde");
-    ApplyFactionRestriction(48328, "Horde");
-    ApplyFactionRestriction(48330, "Horde");
-    ApplyFactionRestriction(48326, "Horde");
-    ApplyFactionRestriction(48327, "Horde");
-    ApplyFactionRestriction(48329, "Horde");
-    ApplyFactionRestriction(48358, "Horde");
-    ApplyFactionRestriction(48360, "Horde");
-    ApplyFactionRestriction(48356, "Horde");
-    ApplyFactionRestriction(48357, "Horde");
-    ApplyFactionRestriction(48359, "Horde");
-    ApplyFactionRestriction(48587, "Horde");
-    ApplyFactionRestriction(48585, "Horde");
-    ApplyFactionRestriction(48589, "Horde");
-    ApplyFactionRestriction(48588, "Horde");
-    ApplyFactionRestriction(48586, "Horde");
-    ApplyFactionRestriction(48649, "Horde");
-    ApplyFactionRestriction(48647, "Horde");
-    ApplyFactionRestriction(48651, "Horde");
-    ApplyFactionRestriction(48650, "Horde");
-    ApplyFactionRestriction(48648, "Horde");
-    ApplyFactionRestriction(48619, "Horde");
-    ApplyFactionRestriction(48621, "Horde");
-    ApplyFactionRestriction(48617, "Horde");
-    ApplyFactionRestriction(48618, "Horde");
-    ApplyFactionRestriction(48620, "Horde");
     
     -- ToC Patterns
-    ApplyFactionRestriction(47654, "Alliance");
-    ApplyFactionRestriction(47655, "Alliance");
-    ApplyFactionRestriction(47656, "Alliance");
-    ApplyFactionRestriction(47657, "Alliance");
-    ApplyFactionRestriction(47629, "Alliance");
-    ApplyFactionRestriction(47635, "Alliance");
-    ApplyFactionRestriction(47631, "Alliance");
-    ApplyFactionRestriction(47630, "Alliance");
-    ApplyFactionRestriction(47628, "Alliance");
-    ApplyFactionRestriction(47634, "Alliance");
-    ApplyFactionRestriction(47632, "Alliance");
-    ApplyFactionRestriction(47633, "Alliance");
-    ApplyFactionRestriction(47622, "Alliance");
-    ApplyFactionRestriction(47623, "Alliance");
-    ApplyFactionRestriction(47627, "Alliance");
-    ApplyFactionRestriction(47626, "Alliance");
-    ApplyFactionRestriction(47624, "Alliance");
-    ApplyFactionRestriction(47625, "Alliance");
+    ApplyFactionRestriction(47654, 47639);
+    ApplyFactionRestriction(47655, 47638);
+    ApplyFactionRestriction(47656, 47637);
+    ApplyFactionRestriction(47657, 47636);
+    ApplyFactionRestriction(47629, 47646);
+    ApplyFactionRestriction(47635, 47647);
+    ApplyFactionRestriction(47631, 47648);
+    ApplyFactionRestriction(47630, 47649);
+    ApplyFactionRestriction(47628, 47650);
+    ApplyFactionRestriction(47634, 47651);
+    ApplyFactionRestriction(47632, 47652);
+    ApplyFactionRestriction(47633, 47653);
+    ApplyFactionRestriction(47622, 47640);
+    ApplyFactionRestriction(47623, 47641);
+    ApplyFactionRestriction(47627, 47642);
+    ApplyFactionRestriction(47626, 47643);
+    ApplyFactionRestriction(47624, 47644);
+    ApplyFactionRestriction(47625, 47645);
     
-    ApplyFactionRestriction(47639, "Horde");
-    ApplyFactionRestriction(47638, "Horde");
-    ApplyFactionRestriction(47637, "Horde");
-    ApplyFactionRestriction(47636, "Horde");
-    ApplyFactionRestriction(47646, "Horde");
-    ApplyFactionRestriction(47647, "Horde");
-    ApplyFactionRestriction(47648, "Horde");
-    ApplyFactionRestriction(47649, "Horde");
-    ApplyFactionRestriction(47650, "Horde");
-    ApplyFactionRestriction(47651, "Horde");
-    ApplyFactionRestriction(47652, "Horde");
-    ApplyFactionRestriction(47653, "Horde");
-    ApplyFactionRestriction(47640, "Horde");
-    ApplyFactionRestriction(47641, "Horde");
-    ApplyFactionRestriction(47642, "Horde");
-    ApplyFactionRestriction(47643, "Horde");
-    ApplyFactionRestriction(47644, "Horde");
-    ApplyFactionRestriction(47645, "Horde");
     
-    -- ToC 10 Alliance
+    -- ToC 10
     
     -- The Beasts of Northrend
     
     -- Normal
-    ApplyFactionRestriction(47617, "Alliance");
-    ApplyFactionRestriction(47613, "Alliance");
-    ApplyFactionRestriction(47608, "Alliance");
-    ApplyFactionRestriction(47616, "Alliance");
-    ApplyFactionRestriction(47610, "Alliance");
-    ApplyFactionRestriction(47611, "Alliance");
-    ApplyFactionRestriction(47609, "Alliance");
-    ApplyFactionRestriction(47615, "Alliance");
-    ApplyFactionRestriction(47614, "Alliance");
-    ApplyFactionRestriction(47607, "Alliance");
-    ApplyFactionRestriction(47578, "Alliance");
-    ApplyFactionRestriction(47612, "Alliance");
+    ApplyFactionRestriction(47617, 47855);
+    ApplyFactionRestriction(47613, 47857);
+    ApplyFactionRestriction(47608, 47853);
+    ApplyFactionRestriction(47616, 47860);
+    ApplyFactionRestriction(47610, 47850);
+    ApplyFactionRestriction(47611, 47852);
+    ApplyFactionRestriction(47609, 47851);
+    ApplyFactionRestriction(47615, 47859);
+    ApplyFactionRestriction(47614, 47858);
+    ApplyFactionRestriction(47607, 47849);
+    ApplyFactionRestriction(47578, 47854);
+    ApplyFactionRestriction(47612, 47856);
     
     -- Heroic
-    ApplyFactionRestriction(47921, "Alliance");
-    ApplyFactionRestriction(47923, "Alliance");
-    ApplyFactionRestriction(47919, "Alliance");
-    ApplyFactionRestriction(47926, "Alliance");
-    ApplyFactionRestriction(47916, "Alliance");
-    ApplyFactionRestriction(47918, "Alliance");
-    ApplyFactionRestriction(47917, "Alliance");
-    ApplyFactionRestriction(47924, "Alliance");
-    ApplyFactionRestriction(47925, "Alliance");
-    ApplyFactionRestriction(47915, "Alliance");
-    ApplyFactionRestriction(47920, "Alliance");
-    ApplyFactionRestriction(47922, "Alliance");
+    ApplyFactionRestriction(47921, 47994);
+    ApplyFactionRestriction(47923, 47996);
+    ApplyFactionRestriction(47919, 47992);
+    ApplyFactionRestriction(47926, 47999);
+    ApplyFactionRestriction(47916, 47989);
+    ApplyFactionRestriction(47918, 47991);
+    ApplyFactionRestriction(47917, 47990);
+    ApplyFactionRestriction(47924, 47998);
+    ApplyFactionRestriction(47925, 47997);
+    ApplyFactionRestriction(47915, 47988);
+    ApplyFactionRestriction(47920, 47993);
+    ApplyFactionRestriction(47922, 47995);
     
     -- Lord Jaraxxus
     
     -- Normal
-    ApplyFactionRestriction(47663, "Alliance");
-    ApplyFactionRestriction(47620, "Alliance");
-    ApplyFactionRestriction(47669, "Alliance");
-    ApplyFactionRestriction(47621, "Alliance");
-    ApplyFactionRestriction(49235, "Alliance");
-    ApplyFactionRestriction(47683, "Alliance");
-    ApplyFactionRestriction(47680, "Alliance");
-    ApplyFactionRestriction(47711, "Alliance");
-    ApplyFactionRestriction(47619, "Alliance");
-    ApplyFactionRestriction(47679, "Alliance");
-    ApplyFactionRestriction(47618, "Alliance");
-    ApplyFactionRestriction(47703, "Alliance");
-    ApplyFactionRestriction(47676, "Alliance");
+    ApplyFactionRestriction(47663, 47861);
+    ApplyFactionRestriction(47620, 47865);
+    ApplyFactionRestriction(47669, 47863);
+    ApplyFactionRestriction(47621, 47866);
+    ApplyFactionRestriction(49235, 49236);
+    ApplyFactionRestriction(47683, 47867);
+    ApplyFactionRestriction(47680, 47869);
+    ApplyFactionRestriction(47711, 47870);
+    ApplyFactionRestriction(47619, 47872);
+    ApplyFactionRestriction(47679, 47864);
+    ApplyFactionRestriction(47618, 47862);
+    ApplyFactionRestriction(47703, 47868);
+    ApplyFactionRestriction(47676, 47871);
     
     -- Heroic
-    ApplyFactionRestriction(47927, "Alliance");
-    ApplyFactionRestriction(47931, "Alliance");
-    ApplyFactionRestriction(47929, "Alliance");
-    ApplyFactionRestriction(47932, "Alliance");
-    ApplyFactionRestriction(49238, "Alliance");
-    ApplyFactionRestriction(47933, "Alliance");
-    ApplyFactionRestriction(47935, "Alliance");
-    ApplyFactionRestriction(47937, "Alliance");
-    ApplyFactionRestriction(47930, "Alliance");
-    ApplyFactionRestriction(47939, "Alliance");
-    ApplyFactionRestriction(47928, "Alliance");
-    ApplyFactionRestriction(47934, "Alliance");
-    ApplyFactionRestriction(47938, "Alliance");
+    ApplyFactionRestriction(47927, 48000);
+    ApplyFactionRestriction(47931, 48004);
+    ApplyFactionRestriction(47929, 48002);
+    ApplyFactionRestriction(47932, 48005);
+    ApplyFactionRestriction(49238, 49237);
+    ApplyFactionRestriction(47933, 48006);
+    ApplyFactionRestriction(47935, 48008);
+    ApplyFactionRestriction(47937, 48009);
+    ApplyFactionRestriction(47930, 48011);
+    ApplyFactionRestriction(47939, 48003);
+    ApplyFactionRestriction(47928, 48001);
+    ApplyFactionRestriction(47934, 48007);
+    ApplyFactionRestriction(47938, 48010);
     
     -- Faction Champions
     
     -- Normal
-    ApplyFactionRestriction(47721, "Alliance");
-    ApplyFactionRestriction(47719, "Alliance");
-    ApplyFactionRestriction(47718, "Alliance");
-    ApplyFactionRestriction(47717, "Alliance");
-    ApplyFactionRestriction(47720, "Alliance");
-    ApplyFactionRestriction(47728, "Alliance");
-    ApplyFactionRestriction(47727, "Alliance");
-    ApplyFactionRestriction(47726, "Alliance");
-    ApplyFactionRestriction(47725, "Alliance");
-    ApplyFactionRestriction(47724, "Alliance");
+    ApplyFactionRestriction(47721, 47873);
+    ApplyFactionRestriction(47719, 47878);
+    ApplyFactionRestriction(47718, 47875);
+    ApplyFactionRestriction(47717, 47876);
+    ApplyFactionRestriction(47720, 47877);
+    ApplyFactionRestriction(47728, 47880);
+    ApplyFactionRestriction(47727, 47882);
+    ApplyFactionRestriction(47726, 47879);
+    ApplyFactionRestriction(47725, 47881);
+    ApplyFactionRestriction(47724, 47874);
     
     -- Heroic
-    ApplyFactionRestriction(47940, "Alliance");
-    ApplyFactionRestriction(47945, "Alliance");
-    ApplyFactionRestriction(47942, "Alliance");
-    ApplyFactionRestriction(47943, "Alliance");
-    ApplyFactionRestriction(47944, "Alliance");
-    ApplyFactionRestriction(47947, "Alliance");
-    ApplyFactionRestriction(47949, "Alliance");
-    ApplyFactionRestriction(47946, "Alliance");
-    ApplyFactionRestriction(47948, "Alliance");
-    ApplyFactionRestriction(47941, "Alliance");
+    ApplyFactionRestriction(47940, 48012);
+    ApplyFactionRestriction(47945, 48017);
+    ApplyFactionRestriction(47942, 48014);
+    ApplyFactionRestriction(47943, 48015);
+    ApplyFactionRestriction(47944, 48016);
+    ApplyFactionRestriction(47947, 48019);
+    ApplyFactionRestriction(47949, 48021);
+    ApplyFactionRestriction(47946, 48018);
+    ApplyFactionRestriction(47948, 48020);
+    ApplyFactionRestriction(47941, 48013);
     
     -- The Twin Val'kyr
     
     -- Normal
-    ApplyFactionRestriction(47745, "Alliance");
-    ApplyFactionRestriction(49231, "Alliance");
-    ApplyFactionRestriction(47746, "Alliance");
-    ApplyFactionRestriction(47739, "Alliance");
-    ApplyFactionRestriction(47744, "Alliance");
-    ApplyFactionRestriction(47738, "Alliance");
-    ApplyFactionRestriction(47747, "Alliance");
-    ApplyFactionRestriction(47700, "Alliance");
-    ApplyFactionRestriction(47742, "Alliance");
-    ApplyFactionRestriction(47736, "Alliance");
-    ApplyFactionRestriction(47737, "Alliance");
-    ApplyFactionRestriction(47743, "Alliance");
-    ApplyFactionRestriction(47740, "Alliance");
+    ApplyFactionRestriction(47745, 47889);
+    ApplyFactionRestriction(49231, 49232);
+    ApplyFactionRestriction(47746, 47891);
+    ApplyFactionRestriction(47739, 47887);
+    ApplyFactionRestriction(47744, 47893);
+    ApplyFactionRestriction(47738, 47885);
+    ApplyFactionRestriction(47747, 47890);
+    ApplyFactionRestriction(47700, 47888);
+    ApplyFactionRestriction(47742, 47913);
+    ApplyFactionRestriction(47736, 47886);
+    ApplyFactionRestriction(47737, 47884);
+    ApplyFactionRestriction(47743, 47892);
+    ApplyFactionRestriction(47740, 47883);
     
     -- Heroic
-    ApplyFactionRestriction(47956, "Alliance");
-    ApplyFactionRestriction(49234, "Alliance");
-    ApplyFactionRestriction(47959, "Alliance");
-    ApplyFactionRestriction(47954, "Alliance");
-    ApplyFactionRestriction(47961, "Alliance");
-    ApplyFactionRestriction(47952, "Alliance");
-    ApplyFactionRestriction(47957, "Alliance");
-    ApplyFactionRestriction(47955, "Alliance");
-    ApplyFactionRestriction(47958, "Alliance");
-    ApplyFactionRestriction(47953, "Alliance");
-    ApplyFactionRestriction(47951, "Alliance");
-    ApplyFactionRestriction(47960, "Alliance");
-    ApplyFactionRestriction(47950, "Alliance");
+    ApplyFactionRestriction(47956, 48028);
+    ApplyFactionRestriction(49234, 49233);
+    ApplyFactionRestriction(47959, 48034);
+    ApplyFactionRestriction(47954, 48026);
+    ApplyFactionRestriction(47961, 48038);
+    ApplyFactionRestriction(47952, 48024);
+    ApplyFactionRestriction(47957, 48030);
+    ApplyFactionRestriction(47955, 48027);
+    ApplyFactionRestriction(47958, 48032);
+    ApplyFactionRestriction(47953, 48025);
+    ApplyFactionRestriction(47951, 48023);
+    ApplyFactionRestriction(47960, 48036);
+    ApplyFactionRestriction(47950, 48022);
     
     -- Anub'arak
     
     -- Normal
-    ApplyFactionRestriction(47838, "Alliance");
-    ApplyFactionRestriction(47837, "Alliance");
-    ApplyFactionRestriction(47832, "Alliance");
-    ApplyFactionRestriction(47813, "Alliance");
-    ApplyFactionRestriction(47829, "Alliance");
-    ApplyFactionRestriction(47811, "Alliance");
-    ApplyFactionRestriction(47836, "Alliance");
-    ApplyFactionRestriction(47830, "Alliance");
-    ApplyFactionRestriction(47810, "Alliance");
-    ApplyFactionRestriction(47814, "Alliance");
-    ApplyFactionRestriction(47808, "Alliance");
-    ApplyFactionRestriction(47809, "Alliance");
-    ApplyFactionRestriction(47816, "Alliance");
-    ApplyFactionRestriction(47834, "Alliance");
-    ApplyFactionRestriction(47815, "Alliance");
-    ApplyFactionRestriction(47835, "Alliance");
-    ApplyFactionRestriction(47812, "Alliance");
-    ApplyFactionRestriction(47741, "Alliance");
+    ApplyFactionRestriction(47838, 47906);
+    ApplyFactionRestriction(47837, 47909);
+    ApplyFactionRestriction(47832, 47904);
+    ApplyFactionRestriction(47813, 47897);
+    ApplyFactionRestriction(47829, 47901);
+    ApplyFactionRestriction(47811, 47896);
+    ApplyFactionRestriction(47836, 47902);
+    ApplyFactionRestriction(47830, 47908);
+    ApplyFactionRestriction(47810, 47899);
+    ApplyFactionRestriction(47814, 47903);
+    ApplyFactionRestriction(47808, 47898);
+    ApplyFactionRestriction(47809, 47894);
+    ApplyFactionRestriction(47816, 47905);
+    ApplyFactionRestriction(47834, 47911);
+    ApplyFactionRestriction(47815, 47900);
+    ApplyFactionRestriction(47835, 47910);
+    ApplyFactionRestriction(47812, 47895);
+    ApplyFactionRestriction(47741, 47907);
     
     -- Heroic
-    ApplyFactionRestriction(47974, "Alliance");
-    ApplyFactionRestriction(47977, "Alliance");
-    ApplyFactionRestriction(47972, "Alliance");
-    ApplyFactionRestriction(47965, "Alliance");
-    ApplyFactionRestriction(47969, "Alliance");
-    ApplyFactionRestriction(47964, "Alliance");
-    ApplyFactionRestriction(47976, "Alliance");
-    ApplyFactionRestriction(47970, "Alliance");
-    ApplyFactionRestriction(47967, "Alliance");
-    ApplyFactionRestriction(47971, "Alliance");
-    ApplyFactionRestriction(47966, "Alliance");
-    ApplyFactionRestriction(47962, "Alliance");
-    ApplyFactionRestriction(47973, "Alliance");
-    ApplyFactionRestriction(47979, "Alliance");
-    ApplyFactionRestriction(47968, "Alliance");
-    ApplyFactionRestriction(47978, "Alliance");
-    ApplyFactionRestriction(47963, "Alliance");
-    ApplyFactionRestriction(47975, "Alliance");
+    ApplyFactionRestriction(47974, 48051);
+    ApplyFactionRestriction(47977, 48054);
+    ApplyFactionRestriction(47972, 48049);
+    ApplyFactionRestriction(47965, 48042);
+    ApplyFactionRestriction(47969, 48046);
+    ApplyFactionRestriction(47964, 48041);
+    ApplyFactionRestriction(47976, 48047);
+    ApplyFactionRestriction(47970, 48053);
+    ApplyFactionRestriction(47967, 48044);
+    ApplyFactionRestriction(47971, 48048);
+    ApplyFactionRestriction(47966, 48043);
+    ApplyFactionRestriction(47962, 48039);
+    ApplyFactionRestriction(47973, 48050);
+    ApplyFactionRestriction(47979, 48056);
+    ApplyFactionRestriction(47968, 48045);
+    ApplyFactionRestriction(47978, 48055);
+    ApplyFactionRestriction(47963, 48040);
+    ApplyFactionRestriction(47975, 48052);
     
     -- Tribute Chest
-    ApplyFactionRestriction(48712, "Alliance");
-    ApplyFactionRestriction(48714, "Alliance");
-    ApplyFactionRestriction(48709, "Alliance");
-    ApplyFactionRestriction(48708, "Alliance");
-    ApplyFactionRestriction(48710, "Alliance");
-    ApplyFactionRestriction(48713, "Alliance");
-    ApplyFactionRestriction(48711, "Alliance");
-    ApplyFactionRestriction(49044, "Alliance");
-    ApplyFactionRestriction(48671, "Alliance");
-    ApplyFactionRestriction(48672, "Alliance");
-    ApplyFactionRestriction(48674, "Alliance");
-    ApplyFactionRestriction(48673, "Alliance");
-    ApplyFactionRestriction(48675, "Alliance");
+    ApplyFactionRestriction(48712, 48703);
+    ApplyFactionRestriction(48714, 48699);
+    ApplyFactionRestriction(48709, 48693);
+    ApplyFactionRestriction(48708, 48701);
+    ApplyFactionRestriction(48710, 48705);
+    ApplyFactionRestriction(48713, 48695);
+    ApplyFactionRestriction(48711, 48697);
+    ApplyFactionRestriction(49044, 49046);
+    ApplyFactionRestriction(48671, 48669);
+    ApplyFactionRestriction(48672, 48668);
+    ApplyFactionRestriction(48674, 48670);
+    ApplyFactionRestriction(48673, 48666);
+    ApplyFactionRestriction(48675, 48667);
     
-    -- ToC 10 Horde
     
-    -- The Beasts of Northrend
-    
-    -- Normal
-    ApplyFactionRestriction(47855, "Horde");
-    ApplyFactionRestriction(47857, "Horde");
-    ApplyFactionRestriction(47853, "Horde");
-    ApplyFactionRestriction(47860, "Horde");
-    ApplyFactionRestriction(47850, "Horde");
-    ApplyFactionRestriction(47852, "Horde");
-    ApplyFactionRestriction(47851, "Horde");
-    ApplyFactionRestriction(47859, "Horde");
-    ApplyFactionRestriction(47858, "Horde");
-    ApplyFactionRestriction(47849, "Horde");
-    ApplyFactionRestriction(47854, "Horde");
-    ApplyFactionRestriction(47856, "Horde");
-    
-    -- Heroic
-    ApplyFactionRestriction(47994, "Horde");
-    ApplyFactionRestriction(47996, "Horde");
-    ApplyFactionRestriction(47992, "Horde");
-    ApplyFactionRestriction(47999, "Horde");
-    ApplyFactionRestriction(47989, "Horde");
-    ApplyFactionRestriction(47991, "Horde");
-    ApplyFactionRestriction(47990, "Horde");
-    ApplyFactionRestriction(47998, "Horde");
-    ApplyFactionRestriction(47997, "Horde");
-    ApplyFactionRestriction(47988, "Horde");
-    ApplyFactionRestriction(47993, "Horde");
-    ApplyFactionRestriction(47995, "Horde");
-    
-    -- Lord Jaraxxus
-    
-    -- Normal
-    ApplyFactionRestriction(47861, "Horde");
-    ApplyFactionRestriction(47865, "Horde");
-    ApplyFactionRestriction(47863, "Horde");
-    ApplyFactionRestriction(47866, "Horde");
-    ApplyFactionRestriction(49236, "Horde");
-    ApplyFactionRestriction(47867, "Horde");
-    ApplyFactionRestriction(47869, "Horde");
-    ApplyFactionRestriction(47870, "Horde");
-    ApplyFactionRestriction(47872, "Horde");
-    ApplyFactionRestriction(47864, "Horde");
-    ApplyFactionRestriction(47862, "Horde");
-    ApplyFactionRestriction(47868, "Horde");
-    ApplyFactionRestriction(47871, "Horde");
-    
-    -- Heroic
-    ApplyFactionRestriction(48000, "Horde");
-    ApplyFactionRestriction(48004, "Horde");
-    ApplyFactionRestriction(48002, "Horde");
-    ApplyFactionRestriction(48005, "Horde");
-    ApplyFactionRestriction(49237, "Horde");
-    ApplyFactionRestriction(48006, "Horde");
-    ApplyFactionRestriction(48008, "Horde");
-    ApplyFactionRestriction(48009, "Horde");
-    ApplyFactionRestriction(48011, "Horde");
-    ApplyFactionRestriction(48003, "Horde");
-    ApplyFactionRestriction(48001, "Horde");
-    ApplyFactionRestriction(48007, "Horde");
-    ApplyFactionRestriction(48010, "Horde");
-    
-    -- Faction Champions
-    
-    -- Normal
-    ApplyFactionRestriction(47873, "Horde");
-    ApplyFactionRestriction(47878, "Horde");
-    ApplyFactionRestriction(47875, "Horde");
-    ApplyFactionRestriction(47876, "Horde");
-    ApplyFactionRestriction(47877, "Horde");
-    ApplyFactionRestriction(47880, "Horde");
-    ApplyFactionRestriction(47882, "Horde");
-    ApplyFactionRestriction(47879, "Horde");
-    ApplyFactionRestriction(47881, "Horde");
-    ApplyFactionRestriction(47874, "Horde");
-    
-    -- Heroic
-    ApplyFactionRestriction(48012, "Horde");
-    ApplyFactionRestriction(48017, "Horde");
-    ApplyFactionRestriction(48014, "Horde");
-    ApplyFactionRestriction(48015, "Horde");
-    ApplyFactionRestriction(48016, "Horde");
-    ApplyFactionRestriction(48019, "Horde");
-    ApplyFactionRestriction(48021, "Horde");
-    ApplyFactionRestriction(48018, "Horde");
-    ApplyFactionRestriction(48020, "Horde");
-    ApplyFactionRestriction(48013, "Horde");
-    
-    -- The Twin Val'kyr
-    
-    -- Normal
-    ApplyFactionRestriction(47889, "Horde");
-    ApplyFactionRestriction(49232, "Horde");
-    ApplyFactionRestriction(47891, "Horde");
-    ApplyFactionRestriction(47887, "Horde");
-    ApplyFactionRestriction(47893, "Horde");
-    ApplyFactionRestriction(47885, "Horde");
-    ApplyFactionRestriction(47890, "Horde");
-    ApplyFactionRestriction(47888, "Horde");
-    ApplyFactionRestriction(47913, "Horde");
-    ApplyFactionRestriction(47886, "Horde");
-    ApplyFactionRestriction(47884, "Horde");
-    ApplyFactionRestriction(47892, "Horde");
-    ApplyFactionRestriction(47883, "Horde");
-    
-    -- Heroic
-    ApplyFactionRestriction(48028, "Horde");
-    ApplyFactionRestriction(49233, "Horde");
-    ApplyFactionRestriction(48034, "Horde");
-    ApplyFactionRestriction(48026, "Horde");
-    ApplyFactionRestriction(48038, "Horde");
-    ApplyFactionRestriction(48024, "Horde");
-    ApplyFactionRestriction(48030, "Horde");
-    ApplyFactionRestriction(48027, "Horde");
-    ApplyFactionRestriction(48032, "Horde");
-    ApplyFactionRestriction(48025, "Horde");
-    ApplyFactionRestriction(48023, "Horde");
-    ApplyFactionRestriction(48036, "Horde");
-    ApplyFactionRestriction(48022, "Horde");
-    
-    -- Anub'arak
-    
-    -- Normal
-    ApplyFactionRestriction(47906, "Horde");
-    ApplyFactionRestriction(47909, "Horde");
-    ApplyFactionRestriction(47904, "Horde");
-    ApplyFactionRestriction(47897, "Horde");
-    ApplyFactionRestriction(47901, "Horde");
-    ApplyFactionRestriction(47896, "Horde");
-    ApplyFactionRestriction(47902, "Horde");
-    ApplyFactionRestriction(47908, "Horde");
-    ApplyFactionRestriction(47899, "Horde");
-    ApplyFactionRestriction(47903, "Horde");
-    ApplyFactionRestriction(47898, "Horde");
-    ApplyFactionRestriction(47894, "Horde");
-    ApplyFactionRestriction(47905, "Horde");
-    ApplyFactionRestriction(47911, "Horde");
-    ApplyFactionRestriction(47900, "Horde");
-    ApplyFactionRestriction(47910, "Horde");
-    ApplyFactionRestriction(47895, "Horde");
-    ApplyFactionRestriction(47907, "Horde");
-    
-    -- Heroic
-    ApplyFactionRestriction(48051, "Horde");
-    ApplyFactionRestriction(48054, "Horde");
-    ApplyFactionRestriction(48049, "Horde");
-    ApplyFactionRestriction(48042, "Horde");
-    ApplyFactionRestriction(48046, "Horde");
-    ApplyFactionRestriction(48041, "Horde");
-    ApplyFactionRestriction(48047, "Horde");
-    ApplyFactionRestriction(48053, "Horde");
-    ApplyFactionRestriction(48044, "Horde");
-    ApplyFactionRestriction(48048, "Horde");
-    ApplyFactionRestriction(48043, "Horde");
-    ApplyFactionRestriction(48039, "Horde");
-    ApplyFactionRestriction(48050, "Horde");
-    ApplyFactionRestriction(48056, "Horde");
-    ApplyFactionRestriction(48045, "Horde");
-    ApplyFactionRestriction(48055, "Horde");
-    ApplyFactionRestriction(48040, "Horde");
-    ApplyFactionRestriction(48052, "Horde");
-    
-    -- Tribute Chest
-    ApplyFactionRestriction(48703, "Horde");
-    ApplyFactionRestriction(48699, "Horde");
-    ApplyFactionRestriction(48693, "Horde");
-    ApplyFactionRestriction(48701, "Horde");
-    ApplyFactionRestriction(48697, "Horde");
-    ApplyFactionRestriction(48705, "Horde");
-    ApplyFactionRestriction(48695, "Horde");
-    ApplyFactionRestriction(49046, "Horde");
-    ApplyFactionRestriction(48669, "Horde");
-    ApplyFactionRestriction(48668, "Horde");
-    ApplyFactionRestriction(48670, "Horde");
-    ApplyFactionRestriction(48666, "Horde");
-    ApplyFactionRestriction(48667, "Horde");
-    
-    -- ToGC 25 Alliance
+    -- ToGC 25
     
     -- The Beasts of Northrend
     
     -- Normal
-    ApplyFactionRestriction(46992, "Alliance");
-    ApplyFactionRestriction(46972, "Alliance");
-    ApplyFactionRestriction(46974, "Alliance");
-    ApplyFactionRestriction(46988, "Alliance");
-    ApplyFactionRestriction(46960, "Alliance");
-    ApplyFactionRestriction(46990, "Alliance");
-    ApplyFactionRestriction(46962, "Alliance");
-    ApplyFactionRestriction(46961, "Alliance");
-    ApplyFactionRestriction(46985, "Alliance");
-    ApplyFactionRestriction(46970, "Alliance");
-    ApplyFactionRestriction(46976, "Alliance");
-    ApplyFactionRestriction(46959, "Alliance");
-    ApplyFactionRestriction(46979, "Alliance");
-    ApplyFactionRestriction(46958, "Alliance");
-    ApplyFactionRestriction(46963, "Alliance");
+    ApplyFactionRestriction(46992, 47264);
+    ApplyFactionRestriction(46972, 47258);
+    ApplyFactionRestriction(46974, 47259);
+    ApplyFactionRestriction(46988, 47262);
+    ApplyFactionRestriction(46960, 47251);
+    ApplyFactionRestriction(46990, 47265);
+    ApplyFactionRestriction(46962, 47254);
+    ApplyFactionRestriction(46961, 47253);
+    ApplyFactionRestriction(46985, 47263);
+    ApplyFactionRestriction(46970, 47257);
+    ApplyFactionRestriction(46976, 47256);
+    ApplyFactionRestriction(46959, 47252);
+    ApplyFactionRestriction(46979, 47261);
+    ApplyFactionRestriction(46958, 47255);
+    ApplyFactionRestriction(46963, 47260);
     
     -- Heroic
-    ApplyFactionRestriction(46993, "Alliance");
-    ApplyFactionRestriction(46973, "Alliance");
-    ApplyFactionRestriction(46975, "Alliance");
-    ApplyFactionRestriction(46989, "Alliance");
-    ApplyFactionRestriction(46965, "Alliance");
-    ApplyFactionRestriction(46991, "Alliance");
-    ApplyFactionRestriction(46968, "Alliance");
-    ApplyFactionRestriction(46967, "Alliance");
-    ApplyFactionRestriction(46986, "Alliance");
-    ApplyFactionRestriction(46971, "Alliance");
-    ApplyFactionRestriction(46977, "Alliance");
-    ApplyFactionRestriction(46966, "Alliance");
-    ApplyFactionRestriction(46980, "Alliance");
-    ApplyFactionRestriction(46969, "Alliance");
-    ApplyFactionRestriction(46964, "Alliance");
+    ApplyFactionRestriction(46993, 47425);
+    ApplyFactionRestriction(46973, 47419);
+    ApplyFactionRestriction(46975, 47420);
+    ApplyFactionRestriction(46989, 47423);
+    ApplyFactionRestriction(46965, 47412);
+    ApplyFactionRestriction(46991, 47426);
+    ApplyFactionRestriction(46968, 47415);
+    ApplyFactionRestriction(46967, 47414);
+    ApplyFactionRestriction(46986, 47424);
+    ApplyFactionRestriction(46971, 47418);
+    ApplyFactionRestriction(46977, 47417);
+    ApplyFactionRestriction(46966, 47413);
+    ApplyFactionRestriction(46980, 47422);
+    ApplyFactionRestriction(46969, 47416);
+    ApplyFactionRestriction(46964, 47421);
     
     -- Lord Jaraxxus
     
     -- Normal
-    ApplyFactionRestriction(47051, "Alliance");
-    ApplyFactionRestriction(47000, "Alliance");
-    ApplyFactionRestriction(47055, "Alliance");
-    ApplyFactionRestriction(47056, "Alliance");
-    ApplyFactionRestriction(46999, "Alliance");
-    ApplyFactionRestriction(47057, "Alliance");
-    ApplyFactionRestriction(47052, "Alliance");
-    ApplyFactionRestriction(46997, "Alliance");
-    ApplyFactionRestriction(47042, "Alliance");
-    ApplyFactionRestriction(47043, "Alliance");
-    ApplyFactionRestriction(47223, "Alliance");
-    ApplyFactionRestriction(47041, "Alliance");
-    ApplyFactionRestriction(47053, "Alliance");
-    ApplyFactionRestriction(46996, "Alliance");
-    ApplyFactionRestriction(46994, "Alliance");
+    ApplyFactionRestriction(47051, 47274);
+    ApplyFactionRestriction(47000, 47270);
+    ApplyFactionRestriction(47055, 47277);
+    ApplyFactionRestriction(47056, 47280);
+    ApplyFactionRestriction(46999, 47268);
+    ApplyFactionRestriction(47057, 47279);
+    ApplyFactionRestriction(47052, 47273);
+    ApplyFactionRestriction(46997, 47269);
+    ApplyFactionRestriction(47042, 47275);
+    ApplyFactionRestriction(47043, 47272);
+    ApplyFactionRestriction(47223, 47278);
+    ApplyFactionRestriction(47041, 47271);
+    ApplyFactionRestriction(47053, 47276);
+    ApplyFactionRestriction(46996, 47266);
+    ApplyFactionRestriction(46994, 47267);
     
     -- Heroic
-    ApplyFactionRestriction(47062, "Alliance");
-    ApplyFactionRestriction(47004, "Alliance");
-    ApplyFactionRestriction(47066, "Alliance");
-    ApplyFactionRestriction(47068, "Alliance");
-    ApplyFactionRestriction(47002, "Alliance");
-    ApplyFactionRestriction(47067, "Alliance");
-    ApplyFactionRestriction(47061, "Alliance");
-    ApplyFactionRestriction(47003, "Alliance");
-    ApplyFactionRestriction(47063, "Alliance");
-    ApplyFactionRestriction(47060, "Alliance");
-    ApplyFactionRestriction(47224, "Alliance");
-    ApplyFactionRestriction(47059, "Alliance");
-    ApplyFactionRestriction(47064, "Alliance");
-    ApplyFactionRestriction(47001, "Alliance");
-    ApplyFactionRestriction(46995, "Alliance");
+    ApplyFactionRestriction(47062, 47435);
+    ApplyFactionRestriction(47004, 47431);
+    ApplyFactionRestriction(47066, 47438);
+    ApplyFactionRestriction(47068, 47441);
+    ApplyFactionRestriction(47002, 47429);
+    ApplyFactionRestriction(47067, 47440);
+    ApplyFactionRestriction(47061, 47434);
+    ApplyFactionRestriction(47003, 47430);
+    ApplyFactionRestriction(47063, 47436);
+    ApplyFactionRestriction(47060, 47433);
+    ApplyFactionRestriction(47224, 47439);
+    ApplyFactionRestriction(47059, 47432);
+    ApplyFactionRestriction(47064, 47437);
+    ApplyFactionRestriction(47001, 47427);
+    ApplyFactionRestriction(46995, 47428);
     
     -- Faction Champions
     
     -- Normal
-    ApplyFactionRestriction(47081, "Alliance");
-    ApplyFactionRestriction(47092, "Alliance");
-    ApplyFactionRestriction(47094, "Alliance");
-    ApplyFactionRestriction(47071, "Alliance");
-    ApplyFactionRestriction(47073, "Alliance");
-    ApplyFactionRestriction(47083, "Alliance");
-    ApplyFactionRestriction(47090, "Alliance");
-    ApplyFactionRestriction(47082, "Alliance");
-    ApplyFactionRestriction(47093, "Alliance");
-    ApplyFactionRestriction(47072, "Alliance");
-    ApplyFactionRestriction(47089, "Alliance");
-    ApplyFactionRestriction(47070, "Alliance");
-    ApplyFactionRestriction(47080, "Alliance");
-    ApplyFactionRestriction(47069, "Alliance");
-    ApplyFactionRestriction(47079, "Alliance");
+    ApplyFactionRestriction(47081, 47286);
+    ApplyFactionRestriction(47092, 47293);
+    ApplyFactionRestriction(47094, 47292);
+    ApplyFactionRestriction(47071, 47284);
+    ApplyFactionRestriction(47073, 47281);
+    ApplyFactionRestriction(47083, 47289);
+    ApplyFactionRestriction(47090, 47295);
+    ApplyFactionRestriction(47082, 47288);
+    ApplyFactionRestriction(47093, 47294);
+    ApplyFactionRestriction(47072, 47283);
+    ApplyFactionRestriction(47089, 47291);
+    ApplyFactionRestriction(47070, 47282);
+    ApplyFactionRestriction(47080, 47290);
+    ApplyFactionRestriction(47069, 47285);
+    ApplyFactionRestriction(47079, 47287);
     
     -- Heroic
-    ApplyFactionRestriction(47084, "Alliance");
-    ApplyFactionRestriction(47097, "Alliance");
-    ApplyFactionRestriction(47096, "Alliance");
-    ApplyFactionRestriction(47077, "Alliance");
-    ApplyFactionRestriction(47074, "Alliance");
-    ApplyFactionRestriction(47087, "Alliance");
-    ApplyFactionRestriction(47099, "Alliance");
-    ApplyFactionRestriction(47086, "Alliance");
-    ApplyFactionRestriction(47098, "Alliance");
-    ApplyFactionRestriction(47076, "Alliance");
-    ApplyFactionRestriction(47095, "Alliance");
-    ApplyFactionRestriction(47075, "Alliance");
-    ApplyFactionRestriction(47088, "Alliance");
-    ApplyFactionRestriction(47078, "Alliance");
-    ApplyFactionRestriction(47085, "Alliance");
+    ApplyFactionRestriction(47084, 47447);
+    ApplyFactionRestriction(47097, 47454);
+    ApplyFactionRestriction(47096, 47453);
+    ApplyFactionRestriction(47077, 47445);
+    ApplyFactionRestriction(47074, 47442);
+    ApplyFactionRestriction(47087, 47450);
+    ApplyFactionRestriction(47099, 47456);
+    ApplyFactionRestriction(47086, 47449);
+    ApplyFactionRestriction(47098, 47455);
+    ApplyFactionRestriction(47076, 47444);
+    ApplyFactionRestriction(47095, 47452);
+    ApplyFactionRestriction(47075, 47443);
+    ApplyFactionRestriction(47088, 47451);
+    ApplyFactionRestriction(47078, 47446);
+    ApplyFactionRestriction(47085, 47448);
     
     -- The Twin Val'kyr
     
     -- Normal
-    ApplyFactionRestriction(47126, "Alliance");
-    ApplyFactionRestriction(47141, "Alliance");
-    ApplyFactionRestriction(47107, "Alliance");
-    ApplyFactionRestriction(47140, "Alliance");
-    ApplyFactionRestriction(47106, "Alliance");
-    ApplyFactionRestriction(47142, "Alliance");
-    ApplyFactionRestriction(47108, "Alliance");
-    ApplyFactionRestriction(47121, "Alliance");
-    ApplyFactionRestriction(47116, "Alliance");
-    ApplyFactionRestriction(47105, "Alliance");
-    ApplyFactionRestriction(47139, "Alliance");
-    ApplyFactionRestriction(47115, "Alliance");
-    ApplyFactionRestriction(47138, "Alliance");
-    ApplyFactionRestriction(47104, "Alliance");
-    ApplyFactionRestriction(47114, "Alliance");
+    ApplyFactionRestriction(47126, 47301);
+    ApplyFactionRestriction(47141, 47306);
+    ApplyFactionRestriction(47107, 47308);
+    ApplyFactionRestriction(47140, 47299);
+    ApplyFactionRestriction(47106, 47296);
+    ApplyFactionRestriction(47142, 47310);
+    ApplyFactionRestriction(47108, 47298);
+    ApplyFactionRestriction(47121, 47304);
+    ApplyFactionRestriction(47116, 47307);
+    ApplyFactionRestriction(47105, 47305);
+    ApplyFactionRestriction(47139, 47297);
+    ApplyFactionRestriction(47115, 47303);
+    ApplyFactionRestriction(47138, 47309);
+    ApplyFactionRestriction(47104, 47300);
+    ApplyFactionRestriction(47114, 47302);
     
     -- Heroic
-    ApplyFactionRestriction(47129, "Alliance");
-    ApplyFactionRestriction(47143, "Alliance");
-    ApplyFactionRestriction(47112, "Alliance");
-    ApplyFactionRestriction(47145, "Alliance");
-    ApplyFactionRestriction(47109, "Alliance");
-    ApplyFactionRestriction(47147, "Alliance");
-    ApplyFactionRestriction(47111, "Alliance");
-    ApplyFactionRestriction(47132, "Alliance");
-    ApplyFactionRestriction(47133, "Alliance");
-    ApplyFactionRestriction(47110, "Alliance");
-    ApplyFactionRestriction(47144, "Alliance");
-    ApplyFactionRestriction(47131, "Alliance");
-    ApplyFactionRestriction(47146, "Alliance");
-    ApplyFactionRestriction(47113, "Alliance");
-    ApplyFactionRestriction(47130, "Alliance");
+    ApplyFactionRestriction(47129, 47462);
+    ApplyFactionRestriction(47143, 47467);
+    ApplyFactionRestriction(47112, 47469);
+    ApplyFactionRestriction(47145, 47460);
+    ApplyFactionRestriction(47109, 47457);
+    ApplyFactionRestriction(47147, 47471);
+    ApplyFactionRestriction(47111, 47459);
+    ApplyFactionRestriction(47132, 47465);
+    ApplyFactionRestriction(47133, 47468);
+    ApplyFactionRestriction(47110, 47466);
+    ApplyFactionRestriction(47144, 47458);
+    ApplyFactionRestriction(47131, 47464);
+    ApplyFactionRestriction(47146, 47470);
+    ApplyFactionRestriction(47113, 47461);
+    ApplyFactionRestriction(47130, 47463);
     
     -- Anub'arak
     
     -- Normal
-    ApplyFactionRestriction(47203, "Alliance");
-    ApplyFactionRestriction(47235, "Alliance");
-    ApplyFactionRestriction(47187, "Alliance");
-    ApplyFactionRestriction(47194, "Alliance");
-    ApplyFactionRestriction(47151, "Alliance");
-    ApplyFactionRestriction(47186, "Alliance");
-    ApplyFactionRestriction(47204, "Alliance");
-    ApplyFactionRestriction(47152, "Alliance");
-    ApplyFactionRestriction(47184, "Alliance");
-    ApplyFactionRestriction(47234, "Alliance");
-    ApplyFactionRestriction(47195, "Alliance");
-    ApplyFactionRestriction(47150, "Alliance");
-    ApplyFactionRestriction(47225, "Alliance");
-    ApplyFactionRestriction(47183, "Alliance");
-    ApplyFactionRestriction(47054, "Alliance");
-    ApplyFactionRestriction(47149, "Alliance");
-    ApplyFactionRestriction(47182, "Alliance");
-    ApplyFactionRestriction(47148, "Alliance");
-    ApplyFactionRestriction(47193, "Alliance");
-    ApplyFactionRestriction(47233, "Alliance");
+    ApplyFactionRestriction(47203, 47324);
+    ApplyFactionRestriction(47235, 47326);
+    ApplyFactionRestriction(47187, 47317);
+    ApplyFactionRestriction(47194, 47321);
+    ApplyFactionRestriction(47151, 47313);
+    ApplyFactionRestriction(47186, 47318);
+    ApplyFactionRestriction(47204, 47325);
+    ApplyFactionRestriction(47152, 47311);
+    ApplyFactionRestriction(47184, 47319);
+    ApplyFactionRestriction(47234, 47330);
+    ApplyFactionRestriction(47195, 47323);
+    ApplyFactionRestriction(47150, 47312);
+    ApplyFactionRestriction(47225, 47328);
+    ApplyFactionRestriction(47183, 47320);
+    ApplyFactionRestriction(47054, 47315);
+    ApplyFactionRestriction(47149, 47327);
+    ApplyFactionRestriction(47182, 47316);
+    ApplyFactionRestriction(47148, 47314);
+    ApplyFactionRestriction(47193, 47322);
+    ApplyFactionRestriction(47233, 47329);
     
     -- Heroic
-    ApplyFactionRestriction(47208, "Alliance");
-    ApplyFactionRestriction(47236, "Alliance");
-    ApplyFactionRestriction(47189, "Alliance");
-    ApplyFactionRestriction(47205, "Alliance");
-    ApplyFactionRestriction(47155, "Alliance");
-    ApplyFactionRestriction(47190, "Alliance");
-    ApplyFactionRestriction(47209, "Alliance");
-    ApplyFactionRestriction(47153, "Alliance");
-    ApplyFactionRestriction(47191, "Alliance");
-    ApplyFactionRestriction(47240, "Alliance");
-    ApplyFactionRestriction(47207, "Alliance");
-    ApplyFactionRestriction(47154, "Alliance");
-    ApplyFactionRestriction(47238, "Alliance");
-    ApplyFactionRestriction(47192, "Alliance");
-    ApplyFactionRestriction(47237, "Alliance");
-    ApplyFactionRestriction(47157, "Alliance");
-    ApplyFactionRestriction(47188, "Alliance");
-    ApplyFactionRestriction(47156, "Alliance");
-    ApplyFactionRestriction(47206, "Alliance");
-    ApplyFactionRestriction(47239, "Alliance");
+    ApplyFactionRestriction(47208, 47485);
+    ApplyFactionRestriction(47236, 47487);
+    ApplyFactionRestriction(47189, 47478);
+    ApplyFactionRestriction(47205, 47482);
+    ApplyFactionRestriction(47155, 47474);
+    ApplyFactionRestriction(47190, 47479);
+    ApplyFactionRestriction(47209, 47486);
+    ApplyFactionRestriction(47153, 47472);
+    ApplyFactionRestriction(47191, 47480);
+    ApplyFactionRestriction(47240, 47492);
+    ApplyFactionRestriction(47207, 47484);
+    ApplyFactionRestriction(47154, 47473);
+    ApplyFactionRestriction(47238, 47490);
+    ApplyFactionRestriction(47192, 47481);
+    ApplyFactionRestriction(47237, 47476);
+    ApplyFactionRestriction(47157, 47489);
+    ApplyFactionRestriction(47188, 47477);
+    ApplyFactionRestriction(47156, 47475);
+    ApplyFactionRestriction(47206, 47483);
+    ApplyFactionRestriction(47239, 47491);
     
     -- Tribute
-    ApplyFactionRestriction(47506, "Alliance");
-    ApplyFactionRestriction(47526, "Alliance");
-    ApplyFactionRestriction(47517, "Alliance");
-    ApplyFactionRestriction(47519, "Alliance");
-    ApplyFactionRestriction(47524, "Alliance");
-    ApplyFactionRestriction(47515, "Alliance");
-    ApplyFactionRestriction(47521, "Alliance");
-    ApplyFactionRestriction(49096, "Alliance");
-    ApplyFactionRestriction(47552, "Alliance");
-    ApplyFactionRestriction(47553, "Alliance");
-    ApplyFactionRestriction(47547, "Alliance");
-    ApplyFactionRestriction(47545, "Alliance");
-    ApplyFactionRestriction(47549, "Alliance");
-    
-    -- ToGC 25 Horde
-    
-    -- The Beasts of Northrend
-    
-    -- Normal
-    ApplyFactionRestriction(47264, "Horde");
-    ApplyFactionRestriction(47258, "Horde");
-    ApplyFactionRestriction(47259, "Horde");
-    ApplyFactionRestriction(47262, "Horde");
-    ApplyFactionRestriction(47251, "Horde");
-    ApplyFactionRestriction(47265, "Horde");
-    ApplyFactionRestriction(47254, "Horde");
-    ApplyFactionRestriction(47253, "Horde");
-    ApplyFactionRestriction(47263, "Horde");
-    ApplyFactionRestriction(47257, "Horde");
-    ApplyFactionRestriction(47256, "Horde");
-    ApplyFactionRestriction(47252, "Horde");
-    ApplyFactionRestriction(47261, "Horde");
-    ApplyFactionRestriction(47255, "Horde");
-    ApplyFactionRestriction(47260, "Horde");
-    
-    -- Heroic
-    ApplyFactionRestriction(47425, "Horde");
-    ApplyFactionRestriction(47419, "Horde");
-    ApplyFactionRestriction(47420, "Horde");
-    ApplyFactionRestriction(47423, "Horde");
-    ApplyFactionRestriction(47412, "Horde");
-    ApplyFactionRestriction(47426, "Horde");
-    ApplyFactionRestriction(47415, "Horde");
-    ApplyFactionRestriction(47414, "Horde");
-    ApplyFactionRestriction(47424, "Horde");
-    ApplyFactionRestriction(47418, "Horde");
-    ApplyFactionRestriction(47417, "Horde");
-    ApplyFactionRestriction(47413, "Horde");
-    ApplyFactionRestriction(47422, "Horde");
-    ApplyFactionRestriction(47416, "Horde");
-    ApplyFactionRestriction(47421, "Horde");
-    
-    -- Lord Jaraxxus
-    
-    -- Normal
-    ApplyFactionRestriction(47274, "Horde");
-    ApplyFactionRestriction(47270, "Horde");
-    ApplyFactionRestriction(47277, "Horde");
-    ApplyFactionRestriction(47280, "Horde");
-    ApplyFactionRestriction(47268, "Horde");
-    ApplyFactionRestriction(47279, "Horde");
-    ApplyFactionRestriction(47273, "Horde");
-    ApplyFactionRestriction(47269, "Horde");
-    ApplyFactionRestriction(47275, "Horde");
-    ApplyFactionRestriction(47272, "Horde");
-    ApplyFactionRestriction(47278, "Horde");
-    ApplyFactionRestriction(47271, "Horde");
-    ApplyFactionRestriction(47276, "Horde");
-    ApplyFactionRestriction(47266, "Horde");
-    ApplyFactionRestriction(47267, "Horde");
-    
-    -- Heroic
-    ApplyFactionRestriction(47435, "Horde");
-    ApplyFactionRestriction(47431, "Horde");
-    ApplyFactionRestriction(47438, "Horde");
-    ApplyFactionRestriction(47441, "Horde");
-    ApplyFactionRestriction(47429, "Horde");
-    ApplyFactionRestriction(47440, "Horde");
-    ApplyFactionRestriction(47434, "Horde");
-    ApplyFactionRestriction(47430, "Horde");
-    ApplyFactionRestriction(47436, "Horde");
-    ApplyFactionRestriction(47433, "Horde");
-    ApplyFactionRestriction(47439, "Horde");
-    ApplyFactionRestriction(47432, "Horde");
-    ApplyFactionRestriction(47437, "Horde");
-    ApplyFactionRestriction(47427, "Horde");
-    ApplyFactionRestriction(47428, "Horde");
-    
-    -- Faction Champions
-    
-    -- Normal
-    ApplyFactionRestriction(47286, "Horde");
-    ApplyFactionRestriction(47293, "Horde");
-    ApplyFactionRestriction(47292, "Horde");
-    ApplyFactionRestriction(47284, "Horde");
-    ApplyFactionRestriction(47281, "Horde");
-    ApplyFactionRestriction(47289, "Horde");
-    ApplyFactionRestriction(47295, "Horde");
-    ApplyFactionRestriction(47288, "Horde");
-    ApplyFactionRestriction(47294, "Horde");
-    ApplyFactionRestriction(47283, "Horde");
-    ApplyFactionRestriction(47291, "Horde");
-    ApplyFactionRestriction(47282, "Horde");
-    ApplyFactionRestriction(47290, "Horde");
-    ApplyFactionRestriction(47285, "Horde");
-    ApplyFactionRestriction(47287, "Horde");
-    
-    -- Heroic
-    ApplyFactionRestriction(47447, "Horde");
-    ApplyFactionRestriction(47454, "Horde");
-    ApplyFactionRestriction(47453, "Horde");
-    ApplyFactionRestriction(47445, "Horde");
-    ApplyFactionRestriction(47442, "Horde");
-    ApplyFactionRestriction(47450, "Horde");
-    ApplyFactionRestriction(47456, "Horde");
-    ApplyFactionRestriction(47449, "Horde");
-    ApplyFactionRestriction(47455, "Horde");
-    ApplyFactionRestriction(47444, "Horde");
-    ApplyFactionRestriction(47452, "Horde");
-    ApplyFactionRestriction(47443, "Horde");
-    ApplyFactionRestriction(47451, "Horde");
-    ApplyFactionRestriction(47446, "Horde");
-    ApplyFactionRestriction(47448, "Horde");
-    
-    -- The Twin Val'kyr
-    
-    -- Normal
-    ApplyFactionRestriction(47301, "Horde");
-    ApplyFactionRestriction(47306, "Horde");
-    ApplyFactionRestriction(47308, "Horde");
-    ApplyFactionRestriction(47299, "Horde");
-    ApplyFactionRestriction(47296, "Horde");
-    ApplyFactionRestriction(47310, "Horde");
-    ApplyFactionRestriction(47298, "Horde");
-    ApplyFactionRestriction(47304, "Horde");
-    ApplyFactionRestriction(47307, "Horde");
-    ApplyFactionRestriction(47305, "Horde");
-    ApplyFactionRestriction(47297, "Horde");
-    ApplyFactionRestriction(47303, "Horde");
-    ApplyFactionRestriction(47309, "Horde");
-    ApplyFactionRestriction(47300, "Horde");
-    ApplyFactionRestriction(47302, "Horde");
-    
-    -- Heroic
-    ApplyFactionRestriction(47462, "Horde");
-    ApplyFactionRestriction(47467, "Horde");
-    ApplyFactionRestriction(47469, "Horde");
-    ApplyFactionRestriction(47460, "Horde");
-    ApplyFactionRestriction(47457, "Horde");
-    ApplyFactionRestriction(47471, "Horde");
-    ApplyFactionRestriction(47459, "Horde");
-    ApplyFactionRestriction(47465, "Horde");
-    ApplyFactionRestriction(47468, "Horde");
-    ApplyFactionRestriction(47466, "Horde");
-    ApplyFactionRestriction(47458, "Horde");
-    ApplyFactionRestriction(47464, "Horde");
-    ApplyFactionRestriction(47470, "Horde");
-    ApplyFactionRestriction(47461, "Horde");
-    ApplyFactionRestriction(47463, "Horde");
-    
-    -- Anub'arak
-    
-    -- Normal
-    ApplyFactionRestriction(47324, "Horde");
-    ApplyFactionRestriction(47326, "Horde");
-    ApplyFactionRestriction(47317, "Horde");
-    ApplyFactionRestriction(47321, "Horde");
-    ApplyFactionRestriction(47313, "Horde");
-    ApplyFactionRestriction(47318, "Horde");
-    ApplyFactionRestriction(47325, "Horde");
-    ApplyFactionRestriction(47311, "Horde");
-    ApplyFactionRestriction(47319, "Horde");
-    ApplyFactionRestriction(47330, "Horde");
-    ApplyFactionRestriction(47323, "Horde");
-    ApplyFactionRestriction(47312, "Horde");
-    ApplyFactionRestriction(47328, "Horde");
-    ApplyFactionRestriction(47320, "Horde");
-    ApplyFactionRestriction(47315, "Horde");
-    ApplyFactionRestriction(47327, "Horde");
-    ApplyFactionRestriction(47316, "Horde");
-    ApplyFactionRestriction(47314, "Horde");
-    ApplyFactionRestriction(47322, "Horde");
-    ApplyFactionRestriction(47329, "Horde");
-    
-    -- Heroic
-    ApplyFactionRestriction(47485, "Horde");
-    ApplyFactionRestriction(47487, "Horde");
-    ApplyFactionRestriction(47478, "Horde");
-    ApplyFactionRestriction(47482, "Horde");
-    ApplyFactionRestriction(47474, "Horde");
-    ApplyFactionRestriction(47479, "Horde");
-    ApplyFactionRestriction(47486, "Horde");
-    ApplyFactionRestriction(47472, "Horde");
-    ApplyFactionRestriction(47480, "Horde");
-    ApplyFactionRestriction(47492, "Horde");
-    ApplyFactionRestriction(47484, "Horde");
-    ApplyFactionRestriction(47473, "Horde");
-    ApplyFactionRestriction(47490, "Horde");
-    ApplyFactionRestriction(47481, "Horde");
-    ApplyFactionRestriction(47476, "Horde");
-    ApplyFactionRestriction(47489, "Horde");
-    ApplyFactionRestriction(47477, "Horde");
-    ApplyFactionRestriction(47475, "Horde");
-    ApplyFactionRestriction(47483, "Horde");
-    ApplyFactionRestriction(47491, "Horde");
-    
-    -- Tribute
-    ApplyFactionRestriction(47513, "Horde");
-    ApplyFactionRestriction(47528, "Horde");
-    ApplyFactionRestriction(47518, "Horde");
-    ApplyFactionRestriction(47520, "Horde");
-    ApplyFactionRestriction(47523, "Horde");
-    ApplyFactionRestriction(47525, "Horde");
-    ApplyFactionRestriction(47516, "Horde");
-    
-    ApplyFactionRestriction(49098, "Horde");
-    ApplyFactionRestriction(47548, "Horde");
-    ApplyFactionRestriction(47546, "Horde");
-    ApplyFactionRestriction(47550, "Horde");
-    ApplyFactionRestriction(47551, "Horde");
-    ApplyFactionRestriction(47554, "Horde");
+    ApplyFactionRestriction(47506, 47513);
+    ApplyFactionRestriction(47526, 47528);
+    ApplyFactionRestriction(47517, 47518);
+    ApplyFactionRestriction(47519, 47520);
+    ApplyFactionRestriction(47524, 47525);
+    ApplyFactionRestriction(47515, 47516);
+    ApplyFactionRestriction(47521, 47523);
+    ApplyFactionRestriction(49096, 49098);
+    ApplyFactionRestriction(47552, 47548);
+    ApplyFactionRestriction(47553, 47546);
+    ApplyFactionRestriction(47547, 47550);
+    ApplyFactionRestriction(47545, 47551);
+    ApplyFactionRestriction(47549, 47554);
     
     
     -- Baradin Hold PvP Trinkets
-    ApplyFactionRestriction(60794, "Alliance");
-    ApplyFactionRestriction(60799, "Alliance");
-    ApplyFactionRestriction(60800, "Alliance");
-    ApplyFactionRestriction(60801, "Horde");
-    ApplyFactionRestriction(60806, "Horde");
-    ApplyFactionRestriction(60807, "Horde");
+    ApplyFactionRestriction(60794, 60801);
+    ApplyFactionRestriction(60799, 60806);
+    ApplyFactionRestriction(60800, 60807);
     
-    ApplyFactionRestriction(70390, "Alliance");
-    ApplyFactionRestriction(70391, "Alliance");
-    ApplyFactionRestriction(70392, "Alliance");
-    ApplyFactionRestriction(70393, "Horde");
-    ApplyFactionRestriction(70394, "Horde");
-    ApplyFactionRestriction(70395, "Horde");
+    ApplyFactionRestriction(70390, 70393);
+    ApplyFactionRestriction(70391, 70394);
+    ApplyFactionRestriction(70392, 70395);
     
-    ApplyFactionRestriction(73539, "Alliance");
-    ApplyFactionRestriction(73535, "Alliance");
-    ApplyFactionRestriction(73536, "Alliance");
-    ApplyFactionRestriction(73538, "Horde");
-    ApplyFactionRestriction(73534, "Horde");
-    ApplyFactionRestriction(73537, "Horde");
+    ApplyFactionRestriction(73539, 73538);
+    ApplyFactionRestriction(73535, 73534);
+    ApplyFactionRestriction(73536, 73537);
 end
 
 
 -- Classic only restrictions
 if LootReserve:GetCurrentExpansion() == 0 then
+    
+    -- SoD items
+    
+    -- Blackfathom Deeps
+    ApplySingleFactionRestriction(209574, "Alliance"); -- Discarded Tenets of the Silver Hand
+    ApplySingleFactionRestriction(209575, "Horde");    -- Carved Driftwood Idol
+    
+    
+    -- Gnomeregan
+    ApplySingleFactionRestriction(215435, "Alliance"); -- Libram of Benediction
+    ApplySingleFactionRestriction(215436, "Horde");    -- Totem of Invigorating Flame
+    
+    
+    -- Sunken Temple
+    ApplySingleFactionRestriction(220605, "Alliance"); -- Libram of Sacrilege
+    ApplySingleFactionRestriction(220607, "Horde");    -- Totem of Tormented Ancestry
+    
+    
+    
     -- T1
-    ApplyFactionRestriction(16853, "Alliance");
-    ApplyFactionRestriction(16854, "Alliance");
-    ApplyFactionRestriction(16855, "Alliance");
-    ApplyFactionRestriction(16856, "Alliance");
-    ApplyFactionRestriction(16857, "Alliance");
-    ApplyFactionRestriction(16858, "Alliance");
-    ApplyFactionRestriction(16859, "Alliance");
-    ApplyFactionRestriction(16860, "Alliance");
-    ApplyFactionRestriction(16837, "Horde");
-    ApplyFactionRestriction(16838, "Horde");
-    ApplyFactionRestriction(16839, "Horde");
-    ApplyFactionRestriction(16840, "Horde");
-    ApplyFactionRestriction(16841, "Horde");
-    ApplyFactionRestriction(16842, "Horde");
-    ApplyFactionRestriction(16843, "Horde");
-    ApplyFactionRestriction(16844, "Horde");
+    ApplySingleFactionRestriction(16853, "Alliance");
+    ApplySingleFactionRestriction(16854, "Alliance");
+    ApplySingleFactionRestriction(16855, "Alliance");
+    ApplySingleFactionRestriction(16856, "Alliance");
+    ApplySingleFactionRestriction(16857, "Alliance");
+    ApplySingleFactionRestriction(16858, "Alliance");
+    ApplySingleFactionRestriction(16859, "Alliance");
+    ApplySingleFactionRestriction(16860, "Alliance");
+    ApplySingleFactionRestriction(16837, "Horde");
+    ApplySingleFactionRestriction(16838, "Horde");
+    ApplySingleFactionRestriction(16839, "Horde");
+    ApplySingleFactionRestriction(16840, "Horde");
+    ApplySingleFactionRestriction(16841, "Horde");
+    ApplySingleFactionRestriction(16842, "Horde");
+    ApplySingleFactionRestriction(16843, "Horde");
+    ApplySingleFactionRestriction(16844, "Horde");
         
     -- T2
-    ApplyFactionRestriction(16951, "Alliance");
-    ApplyFactionRestriction(16952, "Alliance");
-    ApplyFactionRestriction(16953, "Alliance");
-    ApplyFactionRestriction(16954, "Alliance");
-    ApplyFactionRestriction(16955, "Alliance");
-    ApplyFactionRestriction(16956, "Alliance");
-    ApplyFactionRestriction(16957, "Alliance");
-    ApplyFactionRestriction(16958, "Alliance");
-    ApplyFactionRestriction(16943, "Horde");
-    ApplyFactionRestriction(16944, "Horde");
-    ApplyFactionRestriction(16945, "Horde");
-    ApplyFactionRestriction(16946, "Horde");
-    ApplyFactionRestriction(16947, "Horde");
-    ApplyFactionRestriction(16948, "Horde");
-    ApplyFactionRestriction(16949, "Horde");
-    ApplyFactionRestriction(16950, "Horde");
+    ApplySingleFactionRestriction(16951, "Alliance");
+    ApplySingleFactionRestriction(16952, "Alliance");
+    ApplySingleFactionRestriction(16953, "Alliance");
+    ApplySingleFactionRestriction(16954, "Alliance");
+    ApplySingleFactionRestriction(16955, "Alliance");
+    ApplySingleFactionRestriction(16956, "Alliance");
+    ApplySingleFactionRestriction(16957, "Alliance");
+    ApplySingleFactionRestriction(16958, "Alliance");
+    ApplySingleFactionRestriction(16943, "Horde");
+    ApplySingleFactionRestriction(16944, "Horde");
+    ApplySingleFactionRestriction(16945, "Horde");
+    ApplySingleFactionRestriction(16946, "Horde");
+    ApplySingleFactionRestriction(16947, "Horde");
+    ApplySingleFactionRestriction(16948, "Horde");
+    ApplySingleFactionRestriction(16949, "Horde");
+    ApplySingleFactionRestriction(16950, "Horde");
         
     -- BWL trinkets
-    ApplyFactionRestriction(19343, "Alliance");
-    ApplyFactionRestriction(19344, "Horde");
+    ApplySingleFactionRestriction(19343, "Alliance");
+    ApplySingleFactionRestriction(19344, "Horde");
     
     -- ZG set items
-    ApplyFactionRestriction(19825, "Alliance");
-    ApplyFactionRestriction(19827, "Alliance");
-    ApplyFactionRestriction(19826, "Alliance");
-    ApplyFactionRestriction(19828, "Horde");
-    ApplyFactionRestriction(19830, "Horde");
-    ApplyFactionRestriction(19829, "Horde");
+    ApplySingleFactionRestriction(19825, "Alliance");
+    ApplySingleFactionRestriction(19827, "Alliance");
+    ApplySingleFactionRestriction(19826, "Alliance");
+    ApplySingleFactionRestriction(19828, "Horde");
+    ApplySingleFactionRestriction(19830, "Horde");
+    ApplySingleFactionRestriction(19829, "Horde");
         
     -- ZG gloves
-    ApplyFactionRestriction(20264, "Alliance");
-    ApplyFactionRestriction(20257, "Horde");
+    ApplySingleFactionRestriction(20264, "Alliance");
+    ApplySingleFactionRestriction(20257, "Horde");
     
     -- ZG enchants
-    ApplyFactionRestriction(19783, "Alliance");
-    ApplyFactionRestriction(19786, "Horde");
+    ApplySingleFactionRestriction(19783, "Alliance");
+    ApplySingleFactionRestriction(19786, "Horde");
     
     -- AQ20 set items
-    ApplyFactionRestriction(21397, "Alliance");
-    ApplyFactionRestriction(21396, "Alliance");
-    ApplyFactionRestriction(21395, "Alliance");
-    ApplyFactionRestriction(21400, "Horde");
-    ApplyFactionRestriction(21399, "Horde");
-    ApplyFactionRestriction(21398, "Horde");
+    ApplySingleFactionRestriction(21397, "Alliance");
+    ApplySingleFactionRestriction(21396, "Alliance");
+    ApplySingleFactionRestriction(21395, "Alliance");
+    ApplySingleFactionRestriction(21400, "Horde");
+    ApplySingleFactionRestriction(21399, "Horde");
+    ApplySingleFactionRestriction(21398, "Horde");
     
     -- AQ20 books
-    ApplyFactionRestriction(21288, "Alliance");
-    ApplyFactionRestriction(21289, "Alliance");
-    ApplyFactionRestriction(21290, "Alliance");
-    ApplyFactionRestriction(21291, "Horde");
-    ApplyFactionRestriction(21292, "Horde");
-    ApplyFactionRestriction(21293, "Horde");
+    ApplySingleFactionRestriction(21288, "Alliance");
+    ApplySingleFactionRestriction(21289, "Alliance");
+    ApplySingleFactionRestriction(21290, "Alliance");
+    ApplySingleFactionRestriction(21291, "Horde");
+    ApplySingleFactionRestriction(21292, "Horde");
+    ApplySingleFactionRestriction(21293, "Horde");
     
     -- AQ20 equipment
-    ApplyFactionRestriction(21453, "Alliance");
-    ApplyFactionRestriction(21486, "Alliance");
-    ApplyFactionRestriction(21803, "Alliance");
-    ApplyFactionRestriction(21454, "Horde");
-    ApplyFactionRestriction(21487, "Horde");
-    ApplyFactionRestriction(21804, "Horde");
+    ApplySingleFactionRestriction(21453, "Alliance");
+    ApplySingleFactionRestriction(21486, "Alliance");
+    ApplySingleFactionRestriction(21803, "Alliance");
+    ApplySingleFactionRestriction(21454, "Horde");
+    ApplySingleFactionRestriction(21487, "Horde");
+    ApplySingleFactionRestriction(21804, "Horde");
     
     -- AQ40 set items
-    ApplyFactionRestriction(21387, "Alliance");
-    ApplyFactionRestriction(21391, "Alliance");
-    ApplyFactionRestriction(21389, "Alliance");
-    ApplyFactionRestriction(21390, "Alliance");
-    ApplyFactionRestriction(21388, "Alliance");
-    ApplyFactionRestriction(21372, "Horde");
-    ApplyFactionRestriction(21376, "Horde");
-    ApplyFactionRestriction(21374, "Horde");
-    ApplyFactionRestriction(21375, "Horde");
-    ApplyFactionRestriction(21373, "Horde");
+    ApplySingleFactionRestriction(21387, "Alliance");
+    ApplySingleFactionRestriction(21391, "Alliance");
+    ApplySingleFactionRestriction(21389, "Alliance");
+    ApplySingleFactionRestriction(21390, "Alliance");
+    ApplySingleFactionRestriction(21388, "Alliance");
+    ApplySingleFactionRestriction(21372, "Horde");
+    ApplySingleFactionRestriction(21376, "Horde");
+    ApplySingleFactionRestriction(21374, "Horde");
+    ApplySingleFactionRestriction(21375, "Horde");
+    ApplySingleFactionRestriction(21373, "Horde");
     
     -- AQ40 boots
-    ApplyFactionRestriction(21704, "Alliance");
-    ApplyFactionRestriction(21705, "Horde");
+    ApplySingleFactionRestriction(21704, "Alliance");
+    ApplySingleFactionRestriction(21705, "Horde");
     
     -- AQ40 trash paladin gloves
-    ApplyFactionRestriction(21889, "Alliance");
+    ApplySingleFactionRestriction(21889, "Alliance");
     
     -- Naxx40 set items
-    ApplyFactionRestriction(22428, "Alliance");
-    ApplyFactionRestriction(22429, "Alliance");
-    ApplyFactionRestriction(22425, "Alliance");
-    ApplyFactionRestriction(22424, "Alliance");
-    ApplyFactionRestriction(22426, "Alliance");
-    ApplyFactionRestriction(22431, "Alliance");
-    ApplyFactionRestriction(22427, "Alliance");
-    ApplyFactionRestriction(22430, "Alliance");
-    ApplyFactionRestriction(23066, "Alliance");
-    ApplyFactionRestriction(22466, "Horde");
-    ApplyFactionRestriction(22467, "Horde");
-    ApplyFactionRestriction(22464, "Horde");
-    ApplyFactionRestriction(22471, "Horde");
-    ApplyFactionRestriction(22469, "Horde");
-    ApplyFactionRestriction(22470, "Horde");
-    ApplyFactionRestriction(22465, "Horde");
-    ApplyFactionRestriction(22468, "Horde");
-    ApplyFactionRestriction(23065, "Horde");
+    ApplySingleFactionRestriction(22428, "Alliance");
+    ApplySingleFactionRestriction(22429, "Alliance");
+    ApplySingleFactionRestriction(22425, "Alliance");
+    ApplySingleFactionRestriction(22424, "Alliance");
+    ApplySingleFactionRestriction(22426, "Alliance");
+    ApplySingleFactionRestriction(22431, "Alliance");
+    ApplySingleFactionRestriction(22427, "Alliance");
+    ApplySingleFactionRestriction(22430, "Alliance");
+    ApplySingleFactionRestriction(23066, "Alliance");
+    ApplySingleFactionRestriction(22466, "Horde");
+    ApplySingleFactionRestriction(22467, "Horde");
+    ApplySingleFactionRestriction(22464, "Horde");
+    ApplySingleFactionRestriction(22471, "Horde");
+    ApplySingleFactionRestriction(22469, "Horde");
+    ApplySingleFactionRestriction(22470, "Horde");
+    ApplySingleFactionRestriction(22465, "Horde");
+    ApplySingleFactionRestriction(22468, "Horde");
+    ApplySingleFactionRestriction(23065, "Horde");
     
     -- Naxx40 rings
-    ApplyFactionRestriction(23066, "Alliance");
-    ApplyFactionRestriction(23065, "Horde");
+    ApplySingleFactionRestriction(23066, "Alliance");
+    ApplySingleFactionRestriction(23065, "Horde");
     
     -- Naxx40 trash drops
-    ApplyFactionRestriction(23666, "Alliance");
-    ApplyFactionRestriction(23667, "Alliance");
-    ApplyFactionRestriction(23668, "Alliance");
-    ApplyFactionRestriction(23664, "Horde");
-    ApplyFactionRestriction(23665, "Horde");
+    ApplySingleFactionRestriction(23666, "Alliance");
+    ApplySingleFactionRestriction(23667, "Alliance");
+    ApplySingleFactionRestriction(23668, "Alliance");
+    ApplySingleFactionRestriction(23664, "Horde");
+    ApplySingleFactionRestriction(23665, "Horde");
 end
 
+--@debug@
+if CHECK_FACTION_CONVERTED_ITEMS then
+    ConcatenateIf(allianceItems, true, hordeItems);
+    local allItems = allianceItems;
+    
+    function LootReserve:CheckFactionConvertedItems()
+        LootReserve:debug("Checking " .. #hordeItems .. " items...")
+        local count = 0;
+        LootReserve.ItemCache:OnCache(allItems, function()
+            for i, itemID in ipairs(hordeItems) do
+                local alliance = LootReserve.ItemCache(allianceItems[i]);
+                local horde    = LootReserve.ItemCache(itemID);
+                if alliance == horde then
+                    LootReserve:debug(alliance:GetLink(), horde:GetLink());
+                else
+                    if alliance:Exists() and horde:Exists() then
+                        count = count + 1;
+                        for funcName, compare in pairs({
+                            GetName          = false,
+                            GetType          = true,
+                            GetSubType       = true,
+                            GetQuality       = true,
+                            GetLevel         = true,
+                            GetEquipLocation = true,
+                            GetSkillRequired = true,
+                        }) do
+                            if compare and alliance[funcName](alliance) ~= horde[funcName](horde) then
+                                LootReserve:debug(alliance:GetLink(), horde:GetLink());
+                                break;
+                            end
+                        end
+                    end
+                end
+            end
+            LootReserve:debug("Done checking " .. count .. " existing items.")
+        end);
+    end
+end
+--@end-debug@
 
 local tokenMap = {
     -- Blackfathom Deeps

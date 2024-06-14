@@ -1538,6 +1538,9 @@ function LootReserve.Server:PrepareSession()
 
             local function handleItemCommand(itemID, command, count)
                 count = count or 1;
+                if LootReserve.Data.FactionConversionItems[itemID] then
+                    itemID = LootReserve.Data.FactionConversionItems[itemID];
+                end
                 if self.ReservableRewardIDs[itemID] then
                     itemID = LootReserve.Data:GetToken(itemID);
                 end
