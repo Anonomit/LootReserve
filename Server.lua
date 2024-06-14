@@ -1983,8 +1983,10 @@ function LootReserve.Server:ResumeSession()
             if self.Settings.ChatReservesList then
                 if self.CurrentSession.Settings.Blind then
                     LootReserve:SendChatMessage("To see your reserves, whisper me: !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+                elseif self.Settings.ChatReservesListLimit > 0 then
+                    LootReserve:SendChatMessage("To see reserves made, whisper me: !reserves [ItemLinkOrName]  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
                 else
-                    LootReserve:SendChatMessage("To see reserves made, whisper me: !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionResume));
+                    LootReserve:SendChatMessage("To see reserves made, whisper me: !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
                 end
             end
         end
@@ -2005,6 +2007,8 @@ function LootReserve.Server:ResumeSession()
             if self.Settings.ChatReservesList then
                 if self.CurrentSession.Settings.Blind then
                     LootReserve:SendChatMessage("To see your reserves, whisper me: !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
+                elseif self.Settings.ChatReservesListLimit > 0 then
+                    LootReserve:SendChatMessage("To see reserves made, whisper me: !reserves [ItemLinkOrName]  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
                 else
                     LootReserve:SendChatMessage("To see reserves made, whisper me: !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
                 end
@@ -4054,8 +4058,10 @@ function LootReserve.Server:BroadcastInstructions()
     if self.Settings.ChatReservesList then
         if self.CurrentSession.Settings.Blind then
             LootReserve:SendChatMessage("To see your reserves, whisper me: !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
+        elseif self.Settings.ChatReservesListLimit > 0 then
+            LootReserve:SendChatMessage("To see reserves made, whisper me: !reserves [ItemLinkOrName]  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
         else
-            LootReserve:SendChatMessage("To see reserves made, whisper me: !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionInstructions));
+            LootReserve:SendChatMessage("To see reserves made, whisper me: !reserves  or  !myreserves", self:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionStart));
         end
     end
 end
