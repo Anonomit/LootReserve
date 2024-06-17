@@ -1,5 +1,24 @@
+<h3>Host</h3>
+<ul>
+  <li>Minor UI changes for some items. This applies to items which players may want to win multiple times for mainspec (such as certain tokens, and non-unique rings and trinkets).</li>
+  <ul>
+    <li>There won't be a prompt for confirmation when rolling these items to reservers if a reserver has already won it.</li>
+    <li>Players who have already won a copy of this item will not have their names highlighted in red when rolling on it again.</li>
+  </ul>
+  <li>Messages describing the !reserves command will only mention item name filtering when an item fetch limit for this command is enabled.</li>
+  <li>Added two new default stages: PvP and Cosmetic. This only applies to new addon users.</li>
+</ul>
+<h3>Raider</h3>
+<ul>
+  <li>Raiders can now see how many players have completed their reserves. They do not see which players are still incomplete if Blind reserving is enabled.</li>
+  <li>Using chat to attempt to reserve an item from the wrong faction now self-corrects, and the corresponding item of your own faction will be reserved instead (if available).</li>
+</ul>
 <h3>Fixes</h3>
 <ul>
-  <li>Fixed some PvP item loot in Baradin Hold.</li>
-  <li>Fixed the search bar in the Reserves window.</li>
+  <li>Unavailable bosses in Baradin Hold are no longer visible. They will be added again when they're released.</li>
+  <li>Tie rolls will never be ended automatically, even when the option to do so is turned on.</li>
+  <li>Bonus reserves are now recognized in Softresit export.</li>
+  <li>Limited the number of stages visible horizontally in the Roll dropdown.</li>
+  <li>Stage reset button now clears active stages too.</li>
+  <li>Some list sorting was optimized too aggressively, and some lists would sometimes skip being sorted when they actually needed to be sorted.</li>
 </ul>
