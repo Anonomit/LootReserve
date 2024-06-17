@@ -1253,6 +1253,9 @@
 									if #phaseMenu > 0 and first then
 										table.insert(phaseMenu, LootReserve:MakeMenuSeparator());
 									end
+									if first then
+										table.insert(phaseMenu, { text = contains and "Active" or "Inactive", isTitle = true });
+									end
 									first = false;
 									i = i + 1;
 									table.insert(phaseMenu,
@@ -1346,6 +1349,9 @@
 								if LootReserve:Contains(LootReserve.Server.Settings.RollDisenchanters, name) == contains then
 									if #disenchanterMenu > 0 and first then
 										table.insert(disenchanterMenu, LootReserve:MakeMenuSeparator());
+									end
+									if first then
+										table.insert(disenchanterMenu, { text = contains and "Active" or "Inactive", isTitle = true });
 									end
 									first = false;
 									i = i + 1;
