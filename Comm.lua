@@ -29,6 +29,7 @@ local Opcodes =
     OptResult                 = 17,
     OptInfo                   = 18,
     SendWinner                = 19,
+    ReservesTotalMissing      = 20,
 };
 
 local LAST_UNCOMPRESSED_OPCODE = Opcodes.Hello;
@@ -320,6 +321,17 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
     for i, category in ipairs(session.Settings.LootCategories) do
         lootCategories = format("%s%s%s", lootCategories, i == 1 and "" or ";", category);
     end
+    
+    local missing = 0;
+    local total = 0;
+    if LootReserve.Server.CurrentSession then
+        for player, member in pairs(LootReserve.Server.CurrentSession.Members) do
+            total = total + 1;
+            if member.ReservesLeft > 0 and not member.OptedOut then
+                missing = missing + 1;
+            end
+        end
+    end
 
     LootReserve.Comm:Send(realTarget, Opcodes.SessionInfo,
         starting == true,
@@ -334,9 +346,11 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
         session.Settings.Equip,
         session.Settings.Blind,
         session.Settings.Multireserve or 1,
-        optInfo);
+        optInfo,
+        total,
+        missing);
 end
-LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, startTime, acceptingReserves, membersInfo, lootCategories, duration, maxDuration, itemReserves, itemConditions, equip, blind, multireserve, optInfo)
+LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, startTime, acceptingReserves, membersInfo, lootCategories, duration, maxDuration, itemReserves, itemConditions, equip, blind, multireserve, optInfo, total, missing)
     starting = tonumber(starting) == 1;
     startTime = tonumber(startTime);
     acceptingReserves = tonumber(acceptingReserves) == 1;
@@ -346,6 +360,8 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
     blind = tonumber(blind) == 1;
     multireserve = tonumber(multireserve);
     multireserve = math.max(1, multireserve);
+    total = tonumber(total);
+    missing = tonumber(missing);
 
     if LootReserve.Client.SessionServer and LootReserve.Client.SessionServer ~= sender and LootReserve.Client.StartTime > startTime then
         LootReserve:ShowError("%s is attempting to broadcast their older loot reserve session, but you're already connected to %s.|n|nPlease tell %s that they need to reset their session.", LootReserve:ColoredPlayer(sender), LootReserve:ColoredPlayer(LootReserve.Client.SessionServer), LootReserve:ColoredPlayer(sender));
@@ -416,6 +432,9 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
             LootReserve.Client.ItemConditions[tonumber(itemID)] = LootReserve.ItemConditions:Unpack(packed);
         end
     end
+    
+    LootReserve.Client.TotalReserves    = total;
+    LootReserve.Client.CompleteReserves = total - missing;
 
     LootReserve.Client:UpdateCategories();
     LootReserve.Client:UpdateLootList();
@@ -474,6 +493,34 @@ LootReserve.Comm.Handlers[Opcodes.OptInfo] = function(sender, out)
         end
     end
     LootReserve.Client.Window:PendOpen();
+end
+
+-- ReservesTotalMissing
+function LootReserve.Comm:BroadcastReservesTotalMissing()
+    local missing = 0;
+    local total = 0;
+    if LootReserve.Server.CurrentSession then
+        for player, member in pairs(LootReserve.Server.CurrentSession.Members) do
+            total = total + 1;
+            if member.ReservesLeft > 0 and not member.OptedOut then
+                missing = missing + 1;
+            end
+        end
+    end
+    
+    LootReserve.Comm:Broadcast(Opcodes.ReservesTotalMissing,
+        total,
+        missing);
+end
+LootReserve.Comm.Handlers[Opcodes.ReservesTotalMissing] = function(sender, total, missing)
+    total = tonumber(total);
+    missing = tonumber(missing);
+    
+    if LootReserve.Client.SessionServer == sender then
+        LootReserve.Client.TotalReserves    = total;
+        LootReserve.Client.CompleteReserves = total - missing;
+        LootReserve.Client:UpdateCategories();
+    end
 end
 
 -- Opt Out
@@ -601,14 +648,33 @@ function LootReserve.Comm:BroadcastReserveInfo(itemID, players)
     LootReserve.Comm:SendReserveInfo(nil, itemID, players);
 end
 function LootReserve.Comm:SendReserveInfo(target, itemID, players)
+    local missing = 0;
+    local total = 0;
+    if LootReserve.Server.CurrentSession then
+        for player, member in pairs(LootReserve.Server.CurrentSession.Members) do
+            total = total + 1;
+            if member.ReservesLeft > 0 and not member.OptedOut then
+                missing = missing + 1;
+            end
+        end
+    end
+    
     LootReserve.Comm:Send(target, Opcodes.ReserveInfo,
         itemID,
-        strjoin(",", unpack(players)));
+        strjoin(",", unpack(players)),
+        total,
+        missing);
 end
-LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, players)
+LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, players, total, missing)
     itemID = tonumber(itemID);
+    total = tonumber(total);
+    missing = tonumber(missing);
 
     if LootReserve.Client.SessionServer == sender then
+        LootReserve.Client.TotalReserves    = total;
+        LootReserve.Client.CompleteReserves = total - missing;
+        LootReserve.Client:UpdateCategories();
+        
         local wasReserver = LootReserve.Client:IsItemReservedByMe(itemID, true);
 
         if #players > 0 then

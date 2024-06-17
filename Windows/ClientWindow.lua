@@ -547,7 +547,14 @@ function LootReserve.Client:UpdateCategories()
             end
             frame.Text:SetText(format(categoryCollapsed and "|cFF806900%s|r" or "%s", category.Name));
         else
-            frame.Text:SetText(category.IndentType == 1 and (" - " .. category.Name) or category.IndentType == 2 and (" + " .. category.Name) or category.Name);
+            local indent = category.IndentType == 1 and " - " or category.IndentType == 2 and " + " or "";
+            local name = indent .. category.Name;
+            
+            if category.Reserves == "all" and self.SessionServer and self.AcceptingReserves then
+                name = format("%s (%d/%d)", name, self.CompleteReserves, self.TotalReserves);
+            end
+            
+            frame.Text:SetText(name);
             frame:RegisterForClicks("LeftButtonDown");
             frame:SetScript("OnClick", function(frame) self:OnCategoryClick(frame); end);
         end

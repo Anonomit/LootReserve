@@ -1237,6 +1237,8 @@ function LootReserve.Server:PrepareGuildTracking()
 end
 
 function LootReserve.Server:UpdateGroupMembers()
+    local changed = false;
+    
     if self.CurrentSession then
         -- Remove member info for players who left with no reserves
         local leavers = { };
@@ -1251,6 +1253,7 @@ function LootReserve.Server:UpdateGroupMembers()
         end
 
         for _, player in ipairs(leavers) do
+            changed = true;
             self.CurrentSession.Members[player] = nil;
             self.MembersEdit:UpdateMembersList();
         end
@@ -1258,6 +1261,7 @@ function LootReserve.Server:UpdateGroupMembers()
         -- Add member info for players who joined
         LootReserve:ForEachRaider(function(name, _, _, _, _, _, _, _, _, _, _, _, index)
             if not self.CurrentSession.Members[name] then
+                changed = true;
                 self.CurrentSession.Members[name] =
                 {
                     Class         = select(3, LootReserve:UnitClass(index)),
@@ -1276,6 +1280,12 @@ function LootReserve.Server:UpdateGroupMembers()
             end
         end);
     end
+    
+    if changed then
+        -- send updated info to client about how many reserves are complete
+        LootReserve.Comm:BroadcastReservesTotalMissing();
+    end
+    
     self:UpdateReserveList();
     self:UpdateRollList();
     self:UpdateAddonUsers();
@@ -2330,6 +2340,7 @@ function LootReserve.Server:Reserve(player, itemID, count, chat, skipChecks)
         if masquerade then
             LootReserve.Comm:SendReserveInfo(masquerade, itemID, LootReserve:RepeatedTable(player, myReserves));
         end
+        LootReserve.Comm:BroadcastReservesTotalMissing();
     else
         LootReserve.Comm:BroadcastReserveInfo(itemID, reserve.Players);
     end
@@ -2486,6 +2497,7 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
         if masquerade then
             LootReserve.Comm:SendReserveInfo(masquerade, itemID, LootReserve:RepeatedTable(player, myReserves));
         end
+        LootReserve.Comm:BroadcastReservesTotalMissing();
     else
         LootReserve.Comm:BroadcastReserveInfo(itemID, reserve.Players);
     end
