@@ -82,6 +82,8 @@ LootReserve.Constants.ChatAnnouncement = {
 LootReserve.Constants.DefaultPhases = {
     "Main Spec",
     "Off Spec",
+    "PvP",
+    "Cosmetic",
     "Collection",
     "Vendor",
 };
