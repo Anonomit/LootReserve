@@ -1466,7 +1466,7 @@
 								func = function(_, _, _, checked) LootReserve.Server.Settings.RollUseTiered = checked; LootReserve:ReopenMenu(self); end,
 							},
 							{
-								text = format(LootReserve.Server.Settings.RollUsePhases and "Roll For: |cFF00FF00%s|r" or "Roll For...", strjoin(", ", unpack(LootReserve.Server.Settings.RollPhases))),
+								text = format(LootReserve.Server.Settings.RollUsePhases and #LootReserve.Server.Settings.RollPhases > 0 and "Roll For: |cFF00FF00%s|r" or "Roll For...", strjoin(", ", unpack(LootReserve.Server.Settings.RollPhases, 1, math.min(#LootReserve.Server.Settings.RollPhases, 5))) .. (#LootReserve.Server.Settings.RollPhases > 5 and ", ..." or "")),
 								arg1 = "#phases",
 								checked = LootReserve.Server.Settings.RollUsePhases,
 								func = function(_, _, _, checked) LootReserve.Server.Settings.RollUsePhases = checked; LootReserve:ReopenMenu(self); end,
@@ -1562,7 +1562,7 @@
 									table.insert(phases, phase);
 								end
 								table.insert(menu, 3,
-								{ text = format("Among All Players (|cff00ff00%s|r)", strjoin(", ", unpack(phases))), arg2 = 1, func = function(...)
+								{ text = format("Among All Players (|cff00ff00%s|r)", strjoin(", ", strjoin(", ", unpack(phases, 1, math.min(#phases, 5))) .. (#phases > 5 and ", ..." or ""))), arg2 = 1, func = function(...)
 									if not LootReserve.Server.CurrentSession or not LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then
 										StartRoll(...)
 									else
