@@ -85,6 +85,10 @@ LootReserve.Constants.DefaultPhases = {
     "Collection",
     "Vendor",
 };
+LootReserve.Constants.DefaultRollPhases = {
+    "Main Spec",
+    "Off Spec",
+};
 LootReserve.Constants.WonRollPhase = {
     Reserve  = 1,
     RaidRoll = 2,

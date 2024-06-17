@@ -39,7 +39,7 @@ LootReserve.Server =
         RollUseTiered                   = true,
         Phases                          = LootReserve:Deepcopy(LootReserve.Constants.DefaultPhases),
         RollUsePhases                   = false,
-        RollPhases                      = {"Main Spec", "Off Spec"},
+        RollPhases                      = LootReserve:Deepcopy(LootReserve.Constants.DefaultRollPhases),
         RollAdvanceOnExpire             = true,
         RollLimitDuration               = false,
         RollDuration                    = 30,
@@ -329,7 +329,8 @@ StaticPopupDialogs["LOOTRESERVE_CONFIRM_RESET_PHASES"] =
     whileDead    = 1,
     hideOnEscape = 1,
     OnAccept = function(self)
-        LootReserve.Server.Settings.Phases = LootReserve:Deepcopy(LootReserve.Constants.DefaultPhases);
+        LootReserve.Server.Settings.Phases     = LootReserve:Deepcopy(LootReserve.Constants.DefaultPhases);
+        LootReserve.Server.Settings.RollPhases = LootReserve:Deepcopy(LootReserve.Constants.DefaultRollPhases);
     end,
 };
 
