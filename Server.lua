@@ -2685,7 +2685,7 @@ function LootReserve.Server:ExpireRollRequest()
             if self.Settings.RollAdvanceOnExpire and not self.RequestedRoll.Tiered then
                 if not self:AdvanceRollPhase(self.RequestedRoll.Item) then
                     -- If the phase cannot advance (i.e. because we ran out of phases) - end the roll
-                    if self.Settings.RollFinishOnExpire and #winners == 1 then
+                    if self.Settings.RollFinishOnExpire then
                         self:FinishRollRequest(self.RequestedRoll.Item);
                         if disenchanter then
                             self:RecordDisenchant(item, disenchanter);
@@ -2694,7 +2694,7 @@ function LootReserve.Server:ExpireRollRequest()
                 end
             elseif not self.RequestedRoll.Phases or #self.RequestedRoll.Phases <= 1 or self.RequestedRoll.Tiered then
                 -- If no more phases remaining - end the roll
-                if self.Settings.RollFinishOnExpire and #winners == 1 then
+                if self.Settings.RollFinishOnExpire then
                     self:FinishRollRequest(self.RequestedRoll.Item);
                     if disenchanter then
                         self:RecordDisenchant(item, disenchanter);
