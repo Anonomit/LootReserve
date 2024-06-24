@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 7
+local MAJOR, MINOR = ADDON_NAME, 8
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -84,27 +84,40 @@ end
 
 do
   Addon.expansions = {
-    retail  = 10,
-    wrath   = 3,
-    wotlk   = 3,
-    tbc     = 2,
-    bcc     = 2,
-    classic = 1,
+    retail = 11,
+    tww    = 11,
+    df     = 10,
+    sl     = 9,
+    bfa    = 8,
+    legion = 7,
+    wod    = 6,
+    mop    = 5,
+    cata   = 4,
+    wrath  = 3,
+    tbc    = 2,
+    era    = 1,
   }
+  
   Addon.expansionLevel = tonumber(GetBuildInfo():match"^(%d+)%.")
-  if Addon.expansionLevel >= Addon.expansions.retail then
-    Addon.expansionName = "retail"
-  elseif Addon.expansionLevel >= Addon.expansions.wrath then
-    Addon.expansionName = "wrath"
-  elseif Addon.expansionLevel == Addon.expansions.tbc then
-    Addon.expansionName = "tbc"
-  elseif Addon.expansionLevel == Addon.expansions.classic then
-    Addon.expansionName = "classic"
-  end
-  Addon.isRetail  = Addon.expansionName == "retail"
-  Addon.isWrath   = Addon.expansionName == "wrath"
-  Addon.isTBC     = Addon.expansionName == "tbc"
-  Addon.isClassic = Addon.expansionName == "classic"
+  
+  Addon.isRetail  = Addon.expansionLevel >= Addon.expansions.retail
+  Addon.isClassic = not Addon.isRetail
+  
+  Addon.isTWW     = Addon.expansionLevel == Addon.expansions.tww
+  Addon.isDF      = Addon.expansionLevel == Addon.expansions.df
+  Addon.isSL      = Addon.expansionLevel == Addon.expansions.sl
+  Addon.isBfA     = Addon.expansionLevel == Addon.expansions.bfa
+  Addon.isLegion  = Addon.expansionLevel == Addon.expansions.legion
+  Addon.isWoD     = Addon.expansionLevel == Addon.expansions.wod
+  Addon.isMoP     = Addon.expansionLevel == Addon.expansions.mop
+  Addon.isCata    = Addon.expansionLevel == Addon.expansions.cata
+  Addon.isWrath   = Addon.expansionLevel == Addon.expansions.wrath
+  Addon.isTBC     = Addon.expansionLevel == Addon.expansions.tbc
+  Addon.isEra     = Addon.expansionLevel == Addon.expansions.era
+  
+  local season = ((C_Seasons or {}).GetActiveSeason or nop)() or 0
+  Addon.isSoM = season == Enum.SeasonID.SeasonOfMastery
+  Addon.isSoD = season == Enum.SeasonID.SeasonOfDiscovery
 end
 
 local MY_CLASS = select(2, UnitClassBase"player")
@@ -354,10 +367,10 @@ local itemMeta = {
   __index     = function(_, k) assert(k == "GetDebugName" or Item[k], "Item has no field: " .. tostring(k) .. ". Make sure ItemCache is up to date.") return Item[k] end,
   __newindex  = function(self, k, v) error("Item cannot be modified") end,
   __metatable = matchMeta,
-  __eq        = function(item1, item2) return item1:GetID() == item2:GetID() and item1:GetSuffix() == item2:GetSuffix() end,
+  __eq        = function(item1, item2) return item1:GetID() == item2:GetID() and item1:GetSuffix() == item2:GetSuffix() and item1:GetUniqueID() == item2:GetUniqueID() end,
   __lt        = function(item1, item2) return (item1:GetName() or "") <  (item2:GetName() or "") end,
   __le        = function(item1, item2) return (item1:GetName() or "") <= (item2:GetName() or "") end,
-  __tostring  = function(self) return "Item " .. self:GetID() .. (self:HasSuffix() and (":" .. self:GetSuffix()) or "") end,
+  __tostring  = function(self) return "Item " .. self:GetID() .. (self:HasSuffix() and (":" .. self:GetSuffix()) or "") .. (self:HasUniqueID() and (":" .. self:GetUniqueID()) or "") end,
 }
 
 function ItemCache:DoesItemExistByID(id)
@@ -380,16 +393,23 @@ local function IsItem(item)
   return type(item) == "table" and getmetatable(item) == matchMeta
 end
 
-local function MakeItem(id, suffix)
+local function MakeItem(id, suffix, uniqueID)
   if suffix == 0 then
     suffix = nil
   end
-  local facade = {id, suffix} -- this table could be used to rebuild the Item without a metatable (like after being stored in savedvars). it is NOT protected from editing, but should not be changed
+  if not suffix or suffix > 0 then
+    uniqueID = nil
+  end
+  if uniqueID then
+    uniqueID = bit.band(uniqueID, 0xffff) -- keep only the lower 16 bits
+  end
+  
+  local facade = {id, suffix, uniqueID} -- this table could be used to rebuild the Item without a metatable (like after being stored in savedvars). it is NOT protected from editing, but should not be changed
   local item -- this table is protected from editing, and contains the actual id and suffix used by Item
   if storage[id] and storage[id][suffix or 0] then
     item = storage[id][suffix or 0]
   else
-    item = {id = id, suffix = suffix}
+    item = {id = id, suffix = suffix, uniqueID = uniqueID}
   end
   setPrivate(facade, item)
   setPrivate(item, _G.Item:CreateFromItemID(id))
@@ -400,26 +420,28 @@ function ItemCache:FormatSearchText(text)
   return text:gsub("%W", ""):lower()
 end
 
-local function InterpretItem(arg, suffix)
+local function InterpretItem(arg, suffix, uniqueID)
   if IsItem(arg) then
     return arg:GetID(), arg:GetSuffix()
   end
   local argType = type(arg)
-  if argType == "table" and (arg.id or #arg > 0) then
-    return arg.id or arg[1], arg.suffix or arg[2]
+  if argType == "table" then
+    if arg.id or #arg > 0 then
+      return arg.id or arg[1], arg.suffix or arg[2], arg.uniqueID or arg.uniqueId or arg[3]
+    end
   elseif argType == "string" then -- try to decipher itemlink
     local id = tonumber(arg)
     if id then
       return id
     end
-    local id, suffix = strmatch(arg, "^.-item:(%d-):[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:([%-%d]*):")
-    id, suffix = tonumber(id or ""), tonumber(suffix or "")
+    local id, suffix, uniqueID = strmatch(arg, "^.-item:(%d-):[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:([^:]*):([^:]*):")
+    id, suffix, uniqueID = tonumber(id or ""), tonumber(suffix or ""), tonumber(uniqueID or "")
     if id then
-      return id, suffix
+      return id, suffix, uniqueID
     end
     return nil -- this can happen if GetItemInfo is passed an item name or any random string
   elseif argType == "number" then -- must be an itemID
-    return arg, suffix
+    return arg, suffix, uniqueID
   else
     return nil
   end
@@ -437,13 +459,13 @@ function ItemCache:GetItemInfo(...)
   return ItemCache:Item(...):GetInfo()
 end
 
-function ItemCache:Item(arg, suffix)
+function ItemCache:Item(arg, suffix, uniqueID)
   if IsItem(arg) then
     return arg
   else
-    local id, suffix = InterpretItem(arg, suffix)
+    local id, suffix, uniqueID = InterpretItem(arg, suffix, uniqueID)
     assert(id, format("Bad Item format: %s", arg and tostring(arg) or "nil"))
-    return ItemDB:Get(id, suffix)
+    return ItemDB:Get(id, suffix, uniqueID)
   end
   return nil
 end
@@ -461,13 +483,13 @@ function ItemDB:Check(id, suffix)
   end
   return self.cache[id][suffix or 0]
 end
-function ItemDB:Get(id, suffix)
+function ItemDB:Get(id, suffix, uniqueID)
   if not self.cache[id] then
     self.cache[id] = {}
   end
   local item = self.cache[id][suffix or 0]
   if not item then
-    item = MakeItem(id, suffix)
+    item = MakeItem(id, suffix, uniqueID)
     self.cache[id][suffix or 0] = item
   end
   return item
@@ -497,7 +519,7 @@ function ItemDB:Filter(func)
   local list = {}
   for id, items in pairs(self.cache) do
     for suffix, item in pairs(items) do
-      if self:IsStored(item) and func(item, id, suffix) then
+      if self:IsStored(item) and func(item, id, suffix, item:GetUniqueID()) then
         tblinsert(list, item)
       end
     end
@@ -596,11 +618,11 @@ function ItemDB:InitQueryCallbacks()
           end
           local item = queue:pop()
           if not IsItem(item) then
-            local id, suffix = InterpretItem(item)
+            local id, suffix, uniqueID = InterpretItem(item)
             if not self:Check(id, suffix) then
               yieldThreshold = yieldThreshold - 1
             end
-            item = ItemCache:Item(id, suffix)
+            item = ItemCache:Item(id, suffix, uniqueID)
           end
           if IsRetrieved(item) then
             self:RunLoadCallbacks(item)
@@ -655,7 +677,7 @@ function ItemDB:InitItemInfoListener()
   self.ItemInfoListenerFrame:SetScript("OnEvent", function(_, event, id, success)
     self:Get(id)
     for suffix in pairs(self.cache[id]) do
-      local item = self:Get(id, suffix)
+      local item = self:Get(id, suffix) -- don't need to include uniqueID since this item must exist in cache
       if not item:IsCached() then
         if success then
           item:Cache()
@@ -694,9 +716,9 @@ function ItemDB:InitChatListener()
   self:RegisterEvents(self.ChatListenerFrame)
   self.ChatListenerFrame:SetScript("OnEvent", function(_, event, message)
     for itemString in strgmatch(message, "item[%-?%d:]+") do
-      local id, suffix = InterpretItem(itemString)
+      local id, suffix, uniqueID = InterpretItem(itemString)
       if id then
-        local item = self:Get(id, suffix)
+        local item = self:Get(id, suffix, uniqueID)
         if item:Exists() then
           item:Cache()
         end
@@ -714,17 +736,17 @@ function ItemDB:InitMouseoverHook()
     if not link then return end
     local itemString = strmatch(link, "item[%-?%d:]+")
     
-    local id, suffix = InterpretItem(itemString)
+    local id, suffix, uniqueID = InterpretItem(itemString)
     if id and id ~= 0 then
-      local item = self:Get(id, suffix)
+      local item = self:Get(id, suffix, uniqueID)
       if item:Exists() then
         item:Cache()
       end
     elseif TradeSkillFrame and TradeSkillFrame:IsVisible() then
       if GetMouseFocus():GetName() == "TradeSkillSkillIcon" then
-        local id, suffix = InterpretItem(GetTradeSkillItemLink(TradeSkillFrame.selectedSkill))
+        local id, suffix, uniqueID = InterpretItem(GetTradeSkillItemLink(TradeSkillFrame.selectedSkill))
         if id then
-          local item = self:Get(id, suffix)
+          local item = self:Get(id, suffix, uniqueID)
           if item:Exists() then
             item:Cache()
           end
@@ -732,9 +754,9 @@ function ItemDB:InitMouseoverHook()
       else
         for i = 1, 8 do
           if GetMouseFocus():GetName() == "TradeSkillReagent"..i then
-            local id, suffix = InterpretItem(GetTradeSkillReagentItemLink(TradeSkillFrame.selectedSkill, i))
+            local id, suffix, uniqueID = InterpretItem(GetTradeSkillReagentItemLink(TradeSkillFrame.selectedSkill, i))
             if id then
-              local item = self:Get(id, suffix)
+              local item = self:Get(id, suffix, uniqueID)
               if item:Exists() then
                 item:Cache()
               end
@@ -751,9 +773,9 @@ function ItemDB:InitGetItemInfoHook()
   self.GetItemInfoHook = true
   hooksecurefunc("GetItemInfo", function(...)
     if not self.GetItemInfoHook then return end
-    local id, suffix = InterpretItem(...)
+    local id, suffix, uniqueID = InterpretItem(...)
     if id then
-      local item = self:Get(id, suffix)
+      local item = self:Get(id, suffix, uniqueID)
       if item then
         item:Cache()
       end
@@ -784,9 +806,10 @@ function ItemDB:Init()
   end
   local db = ItemCacheStorage
   
-  if not db._BUILD or db._BUILD < build then
+  if not db._BUILD or db._BUILD < build or not db._MINOR or db._MINOR < MINOR then
     wipe(db)
     db._BUILD = build
+    db._MINOR = MINOR
   end
   if IsStandalone and not Addon:GetGlobalOption"UsePersistentStorage" then
     ItemCacheStorage = nil
@@ -817,7 +840,7 @@ function ItemDB:Init()
   for id, items in pairs(storage) do
     if type(id) == "number" then
       for suffix, item in pairs(items) do
-        self:Get(id, suffix)
+        self:Get(id, suffix, item.uniqueID)
       end
     end
   end
@@ -838,14 +861,14 @@ local function Items_OnCacheOrLoad(items, self, retrieveMode, func, ...)
   local itemsToLoad = {}
   local IsRetrieved = retrieveModes[retrieveMode].IsRetrieved
   for _, item in pairs(items) do
-    local id, suffix = InterpretItem(item)
+    local id, suffix, uniqueID = InterpretItem(item)
     assert(id, format("Bad Item format: %s", item and tostring(item) or "nil"))
     local loadItem = true
     if not ItemCache:DoesItemExistByID(id) then
       loadItem = false
     end
     if loadItem and ItemDB:Check(id, suffix) then
-      item = ItemDB:Get(id, suffix)
+      item = ItemDB:Get(id, suffix) -- don't need to include uniqueID since this item must exist in cache
       if IsRetrieved(item) then
         loadItem = false
       end
@@ -909,14 +932,26 @@ end
 function Item:HasSuffix()
   return private(self).suffix ~= nil
 end
+function Item:GetUniqueID()
+  return private(self).uniqueID
+end
+Item.GetUniqueId = Item.GetUniqueID
+function Item:HasUniqueID()
+  return private(self).uniqueID ~= nil
+end
+Item.HasUniqueId = Item.HasUniqueID
 function Item:GetIDSuffix()
   return self:GetID(), self:GetSuffix()
 end
 Item.GetIdSuffix = Item.GetIDSuffix
+function Item:GetIDSuffixUniqueID()
+  return self:GetID(), self:GetSuffix(), self:GetUniqueID()
+end
+Item.GetIdSuffixUniqueId = Item.GetIDSuffixUniqueID
 
 
 function Item:GetString()
-  return format("item:%d::::::%d:::::::::::", self:GetID(), self:GetSuffix() or "")
+  return format("item:%d::::::%d:%d::::::::::", self:GetID(), self:GetSuffix() or "", self:GetUniqueID() or "")
 end
 
 function Item:Exists()
@@ -948,7 +983,10 @@ function Item:GetInfo()
       end
       local info = ItemDB:GetItemInfoPacked(self:GetString())
       private(self).dne = nil
-      info[2] = strgsub(info[2], "(item:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:)([^:]*):", "%1:")
+      
+      -- strip character level and insert uniqueID
+      info[2] = strgsub(info[2], "(item:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*):([^:]*):([^:]*:)", "%1:" .. (self:GetUniqueID() or "") .. "::")
+      
       private(self).info = info
       -- local name, link, quality, level, minLevel, itemType, itemSubType, maxStackSize, equipLoc, texture, sellPrice, classID, subclassID, bindType = unpack(info)
       private(self).searchName = ItemCache:FormatSearchText(info[1])
@@ -993,7 +1031,8 @@ function Item:GetInfo()
   end
   local info = private(self).info
   if info then
-    return info[1], strgsub(info[2], "(item:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*)([^:]*)(:.*)", "%1" .. UnitLevel"player" .. "%3"), select(3, unpack(info))
+    -- add character level
+    return info[1], strgsub(info[2], "(item:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*)([^:]*)(:.*)", "%1" .. UnitLevel"player" .. "%3"), select(3, unpack(info))
   end
   return nil
 end
@@ -1082,6 +1121,10 @@ function Item:Matches(text)
     return strfind(searchName, text)
   end
   return nil
+end
+
+function Item:GetLinkUncached()
+  return format("|Hitem:%d:::::::::::::::::|h[Item %d]|h", self:GetID(), self:GetID())
 end
 
 function Item:GetName()
