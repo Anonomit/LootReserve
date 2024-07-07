@@ -372,6 +372,9 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
                 end
 
                 local itemID = LootReserve.ItemCache:Item(link):GetID();
+                if LootReserve.Data.FactionConversionItems[itemID] then
+                    itemID = LootReserve.Data.FactionConversionItems[itemID];
+                end
                 local tokenID = LootReserve.Data:GetToken(itemID);
                 if LootReserve.Client.SessionServer and not LootReserve.Client.ReservableIDs[tokenID] then
                     tokenID = nil;

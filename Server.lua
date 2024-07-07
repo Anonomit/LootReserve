@@ -1354,6 +1354,9 @@ function LootReserve.Server:PrepareSession()
                 end
 
                 local itemID = LootReserve.ItemCache:Item(link):GetID();
+                if LootReserve.Data.FactionConversionItems[itemID] then
+                    itemID = LootReserve.Data.FactionConversionItems[itemID];
+                end
                 itemID = LootReserve.Data:GetToken(itemID) or itemID;
                 
                 if self.CurrentSession.WonItems[itemID] then
@@ -1549,9 +1552,6 @@ function LootReserve.Server:PrepareSession()
 
             local function handleItemCommand(itemID, command, count)
                 count = count or 1;
-                if LootReserve.Data.FactionConversionItems[itemID] then
-                    itemID = LootReserve.Data.FactionConversionItems[itemID];
-                end
                 if self.ReservableRewardIDs[itemID] then
                     itemID = LootReserve.Data:GetToken(itemID);
                 end
@@ -1592,6 +1592,9 @@ function LootReserve.Server:PrepareSession()
                     end
                     itemID = tonumber(itemID);
                     if itemID then
+                        if LootReserve.Data.FactionConversionItems[itemID] then
+                            itemID = LootReserve.Data.FactionConversionItems[itemID];
+                        end
                         table.insert(items, {s = s, e = e, ID = itemID});
                         charI = e + 1;
                     else
