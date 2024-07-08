@@ -817,7 +817,7 @@ local bagCacheHooked = nil;
 local function CheckBagCache(self)
     if not bagCacheHooked then
         bagCacheHooked = true;
-        LootReserve:RegisterEvent("BAG_UPDATE", function() -- Return to hooking BAG_UPDATED_DELAYED when blizzard fixes it
+        LootReserve:RegisterEvent("BAG_UPDATE_DELAYED", function()
             LootReserve:WipeBagCache();
             C_Timer.After(0, function() LootReserve:WipeBagCache(); end);
         end);

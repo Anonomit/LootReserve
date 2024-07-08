@@ -936,7 +936,7 @@ function LootReserve.Server:OnWindowLoad(window)
         LootReserve.Server:UpdateRollList();
     end);
     local tempBagFix;
-    LootReserve:RegisterEvent("BAG_UPDATE", function() -- Return to hooking BAG_UPDATED_DELAYED when blizzard fixes it
+    LootReserve:RegisterEvent("BAG_UPDATE_DELAYED", function()
         if not tempBagFix then
             tempBagFix = C_Timer.NewTicker(0, function()
                 LootReserve:WipeBagCache();
