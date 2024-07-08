@@ -2650,14 +2650,16 @@ function LootReserve.Server:SendReservesList(player, onlyRelevant, force, itemLi
                 end
             else
                 local count = 0;
-                for _ in pairs(itemList or {}) do
+                local lastItem;
+                for itemID in pairs(itemList or {}) do
                     count = count + 1;
+                    lastItem = LootReserve.ItemCache:Item(itemID);
                 end
                 local message;
                 if onlyRelevant then
                     message = "You currently have no reserves. To reserve an item, whisper me: !reserve ItemLinkOrName";
                 elseif count > 0 then
-                    message = count > 1 and "There are currently no reserves on these items" or "There are currently no reserves on this item";
+                    message = count > 1 and format("There are currently no reserves on these %d items", count) or format("There are currently no reserves on %s", lastItem:GetLink());
                 else
                     message = "There are currently no reserves";
                 end
