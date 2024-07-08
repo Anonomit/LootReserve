@@ -806,9 +806,9 @@ local function CacheBagSlot(self, bag, slot, i)
     local containerInfo = LootReserve:GetContainerItemInfo(bag, slot);
     if containerInfo then
         if i then
-            table.insert(self.BagCache, i, {bag = bag, slot = slot, item = self.ItemCache:Item(containerInfo.hyperlink), quantity = containerInfo.stackCount, locked = containerInfo.isLocked});
+            table.insert(self.BagCache, i, {bag = bag, slot = slot, item = self.ItemCache:Item(containerInfo.hyperlink), quantity = containerInfo.stackCount, locked = containerInfo.isLocked, tradeTime = self:GetSoulboundTradeableDuration(bag, slot)});
         else
-            table.insert(self.BagCache, {bag = bag, slot = slot, item = self.ItemCache:Item(containerInfo.hyperlink), quantity = containerInfo.stackCount, locked = containerInfo.isLocked});
+            table.insert(self.BagCache, {bag = bag, slot = slot, item = self.ItemCache:Item(containerInfo.hyperlink), quantity = containerInfo.stackCount, locked = containerInfo.isLocked, tradeTime = self:GetSoulboundTradeableDuration(bag, slot)});
         end
     end
 end
@@ -879,16 +879,25 @@ function LootReserve:GetTradeableItemCount(itemOrID, includeLoot)
     return count;
 end
     
-function LootReserve:GetBagSlot(itemOrID, permitLocked, skipCount)
+function LootReserve:GetBagSlot(itemOrID, permitLocked)
     CheckBagCache(self);
-    skipCount = skipCount or 0;
+    local lowest;
+    local response;
     for _, slotData in ipairs(self.BagCache) do
         if match(slotData.item, itemOrID) and (permitLocked or not slotData.locked) and self:IsTradeableItem(slotData.bag, slotData.slot) then
-            skipCount = skipCount - 1;
-            if skipCount < 0 then
-                return slotData.bag, slotData.slot;
+            if not lowest then
+                lowest = slotData.tradeTime;
+                response = {slotData.bag, slotData.slot};
+            else
+                if slotData.tradeTime and slotData.tradeTime < lowest then
+                    lowest = slotData.tradeTime;
+                    response = {slotData.bag, slotData.slot};
+                end
             end
         end
+    end
+    if response then
+        return unpack(response);
     end
     return nil;
 end
@@ -901,7 +910,7 @@ function LootReserve:IsItemSoulbound(bag, slot)
 
     self.TooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
     self.TooltipScanner:SetBagItem(bag, slot);
-    for i = LootReserve.TooltipScanner:NumLines(), 1, -1 do
+    for i = 1, LootReserve.TooltipScanner:NumLines() do
         local line = _G[self.TooltipScanner:GetName() .. "TextLeft" .. i];
         if line and line:GetText() and line:GetText() == ITEM_SOULBOUND then
             self.TooltipScanner:Hide();
@@ -912,27 +921,76 @@ function LootReserve:IsItemSoulbound(bag, slot)
     return false;
 end
 
-function LootReserve:IsItemSoulboundTradeable(bag, slot)
+--[[local]] function ReadDuration(text)
+    if not LootReserve.TooltipScanner then
+        LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", nil, "GameTooltipTemplate");
+        LootReserve.TooltipScanner:Hide();
+    end
+
+    if not LootReserve.TooltipScanner.TimeData then
+        LootReserve.TooltipScanner.TimeData = { };
+        
+        for pattern, seconds in pairs({
+            [INT_SPELL_DURATION_SEC]   = 1,
+            [INT_SPELL_DURATION_MIN]   = 60,
+            [INT_SPELL_DURATION_HOURS] = 60 * 60,
+            [INT_SPELL_DURATION_DAYS]  = 60 * 60 * 24,
+        }) do
+            local alt1, alt2 = pattern:match("|4([^:]+):([^;]+);");
+            if alt1 then
+                local prefix = pattern:match("^(%%d *)"):gsub("%%d", "(%%d+)");
+                local suffix = pattern:match(";(.*)"):gsub("%.", "%%%0");
+                
+                LootReserve.TooltipScanner.TimeData[seconds] = {prefix .. alt1 .. suffix, prefix .. alt2 .. suffix};
+            else
+                LootReserve.TooltipScanner.TimeData[seconds] = {pattern:gsub("%.", "%%%0"):gsub("%%d", "(%%d+)")};
+            end
+        end
+        LootReserve.TooltipScanner.TimeData[60][2] = "(%d+) mins%f[^A-Za-z]";
+    end
+    
+    local duration = 0;
+    for multiple, patterns in pairs(LootReserve.TooltipScanner.TimeData) do
+        for _, pattern in ipairs(patterns) do
+            local delta = text:match(pattern);
+            if delta and not text:match(pattern .. "[A-Za-z]") then
+                duration = duration + delta * multiple;
+                break;
+            end
+        end
+    end
+    return duration;
+end
+
+function LootReserve:GetSoulboundTradeableDuration(bag, slot)
     if not self.TooltipScanner then
         self.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", nil, "GameTooltipTemplate");
         self.TooltipScanner:Hide();
     end
 
     if not self.TooltipScanner.SoulboundTradeable then
-        self.TooltipScanner.SoulboundTradeable = BIND_TRADE_TIME_REMAINING:gsub("%.", "%%."):gsub("%%s", "(.+)");
+        self.TooltipScanner.SoulboundTradeable = BIND_TRADE_TIME_REMAINING:gsub("[().+-]", "%%%0"):gsub("%%%%s", "(.+)");
     end
-
+    
     self.TooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
     self.TooltipScanner:SetBagItem(bag, slot);
     for i = LootReserve.TooltipScanner:NumLines(), 1, -1 do
         local line = _G[self.TooltipScanner:GetName() .. "TextLeft" .. i];
-        if line and line:GetText() and line:GetText():match(self.TooltipScanner.SoulboundTradeable) then
-            self.TooltipScanner:Hide();
-            return true;
+        if line and line:GetText() then
+            local duration = line:GetText():match(self.TooltipScanner.SoulboundTradeable);
+            if duration then
+                duration = ReadDuration(duration);
+                self.TooltipScanner:Hide();
+                return duration;
+            end
         end
     end
     self.TooltipScanner:Hide();
-    return false;
+    return nil;
+end
+
+function LootReserve:IsItemSoulboundTradeable(bag, slot)
+    return self:GetSoulboundTradeableDuration(bag, slot) and true or false;
 end
 
 function LootReserve:IsItemBeingTraded(item)
