@@ -3155,7 +3155,7 @@ function LootReserve.Server:GetContinueRollData(oldRoll)
         for _, winner in ipairs(Roll.Winners or {}) do
             Roll.Players[winner] = nil;
         end
-        if not next(Roll.Players) then
+        if not next(Roll.Players) and not Roll.Tiered then
             local phases = Roll.Phases;
             if phases and #phases > 1 then
                 table.remove(phases, 1);
