@@ -597,6 +597,9 @@ function LootReserve.Client:UpdateCategories()
     local needsSelect = not self.SelectedCategory;
     for i, frame in ipairs(list.Frames) do
         local expansionCollapsed = self.Settings.CollapsedExpansions[frame.Expansion];
+        if LootReserve:GetCurrentExpansion() == 0 then
+            expansionCollapsed = false;
+        end
         local categoryCollapsed = self.Settings.CollapsedCategories[frame.CategoryID];
         if self.LootCategories and LootReserve:Contains(self.LootCategories, frame.CategoryID) then
             expansionCollapsed = false;
