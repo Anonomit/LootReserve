@@ -3034,7 +3034,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
                                 smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
                                 
                             -- Make sure the item is not unique and is not a quest starter.
-                            elseif not reservedItem:IsUnique() and not item:StartsQuest() and not (reservedItem:GetType() == "Recipe" and reservedItem:GetBindType() == LE_ITEM_BIND_ON_ACQUIRE) then
+                            elseif not reservedItem:IsUnique() and not item:StartsQuest() and not (reservedItem:GetType() == "Recipe" and reservedItem:IsBindOnPickup()) then
                                 -- Players may genuinely want multiple copies of the same ring to equip together.
                                 if reservedItem:GetEquipLocation() == "INVTYPE_FINGER" or reservedItem:GetEquipLocation() == "INVTYPE_TRINKET" then
                                     smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;

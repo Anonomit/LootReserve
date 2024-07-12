@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 8
+local MAJOR, MINOR = ADDON_NAME, 9
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -126,7 +126,7 @@ local MY_CLASS = select(2, UnitClassBase"player")
 
 
 local CLASS_MAP_TO_ID = {}
-for i = 1, GetNumClasses() do
+for i = 1, 15 do -- Don't use GetNumClasses() because there are currently gaps between the class IDs
   local name, file, id = GetClassInfo(i)
   if name then
     local maleNames, femaleNames = LOCALIZED_CLASS_NAMES_MALE[file], LOCALIZED_CLASS_NAMES_FEMALE[file]
@@ -194,7 +194,9 @@ do
   
   if Addon.expansionLevel <= Addon.expansions.tbc then
     usableTypes[weapon][subWeapon.Axe1H][ID.ROGUE]   = nil
-    usableTypes[weapon][subWeapon.Polearm][ID.DRUID] = nil
+    
+    -- druids can now use polearms in era
+    -- usableTypes[weapon][subWeapon.Polearm][ID.DRUID] = nil
   end
   
   local dualWielders = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER, ID.ROGUE, ID.SHAMAN, ID.WARRIOR}
@@ -1156,6 +1158,16 @@ end
 function Item:GetTypeSubType()
   local _, itemType, itemSubType = self:GetInfoInstant()
   return itemType, itemSubType
+end
+function Item:GetClass()
+  return (select(6, self:GetInfoInstant()))
+end
+function Item:GetSubClass()
+  return (select(7, self:GetInfoInstant()))
+end
+function Item:GetClassSubClass()
+  local itemClass, itemSubClass = select(6, self:GetInfoInstant())
+  return itemClass, itemSubClass
 end
 
 function Item:GetQuality()
