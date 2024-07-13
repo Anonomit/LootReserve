@@ -921,7 +921,7 @@ function LootReserve:IsItemSoulbound(bag, slot)
     return false;
 end
 
---[[local]] function ReadDuration(text)
+local function ReadDuration(text)
     if not LootReserve.TooltipScanner then
         LootReserve.TooltipScanner = CreateFrame("GameTooltip", "LootReserveTooltipScanner", nil, "GameTooltipTemplate");
         LootReserve.TooltipScanner:Hide();
@@ -969,7 +969,7 @@ function LootReserve:GetSoulboundTradeableDuration(bag, slot)
     end
 
     if not self.TooltipScanner.SoulboundTradeable then
-        self.TooltipScanner.SoulboundTradeable = BIND_TRADE_TIME_REMAINING:gsub("[().+-]", "%%%0"):gsub("%%%%s", "(.+)");
+        self.TooltipScanner.SoulboundTradeable = BIND_TRADE_TIME_REMAINING:gsub("[().+-]", "%%%0"):gsub("%%s", "(.+)");
     end
     
     self.TooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
