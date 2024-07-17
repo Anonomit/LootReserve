@@ -293,7 +293,7 @@ function LootReserve.Server:UpdateReserveList(lockdown)
                     if child.Loot then
                         for lootIndex, loot in ipairs(child.Loot) do
                             if LootReserve.ItemCache(loot) == item then
-                                return id * 10000 + childIndex * 100 + lootIndex;
+                                return (10^8)*childIndex + (10^6)*lootIndex + id;
                             end
                         end
                     end

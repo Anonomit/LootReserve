@@ -255,7 +255,7 @@ function LootReserve.Client:UpdateLootList()
                     if child.Loot then
                         for lootIndex, loot in ipairs(child.Loot) do
                             if LootReserve.ItemCache(loot):GetID() == item:GetID() then
-                                return id * 10000 + childIndex * 100 + lootIndex;
+                                return (10^8)*childIndex + (10^6)*lootIndex + id;
                             end
                         end
                     end
