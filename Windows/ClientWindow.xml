@@ -341,6 +341,22 @@
 			</Layer>
 		</Layers>
 	</Frame>
+	<Frame name="LootReserveLootEmptyHint" virtual="true" setAllPoints="true">
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeKey="$parent.$parent" />
+			<Anchor point="BOTTOMRIGHT" relativeKey="$parent.$parent" />
+		</Anchors>
+		<Layers>
+			<Layer>
+				<FontString inherits="GameFontDisable" text="No items available" setAllPoints="true">
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+						<Anchor point="BOTTOMRIGHT" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+	</Frame>
 	<Frame name="LootReserveLootFavoritesHeader" virtual="true">
 		<Size y="16" />
 		<Layers>

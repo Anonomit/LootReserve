@@ -134,9 +134,13 @@ function LootReserve.Client:UpdateLootList()
         list.GlobalFavoritesHeader:Hide();
     end
 
+    local itemsShown  = 0;
     local missing     = { };
     local missingLoad = { };
     local function createFrame(item, source)
+        if item:GetID() ~= 0 then
+            itemsShown = itemsShown + 1;
+        end
         if item:GetID() ~= 0 and not item:IsCached() then
             return;
         end
@@ -486,7 +490,15 @@ function LootReserve.Client:UpdateLootList()
     for i = list.LastIndex + 1, #list.Frames do
         list.Frames[i]:Hide();
     end
-
+    if #missing == 0 and #missingLoad == 0 and itemsShown == 0 then
+        if not list.EmptyHint then
+            list.EmptyHint = CreateFrame("Frame", nil, list, "LootReserveLootEmptyHint");
+        end
+    end
+    if list.EmptyHint then
+        list.EmptyHint:SetShown(itemsShown == 0 and self.SelectedCategory and self.SelectedCategory.Loot);
+    end
+    
     if self.Blind and not list.BlindHint then
         list.BlindHint = CreateFrame("Frame", nil, list, "LootReserveLootBlindHint");
     end
