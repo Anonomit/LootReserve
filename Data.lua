@@ -20,21 +20,19 @@ ClassMask id
 Wrath loot tables depend on this setting
 Changing it demands a new required addon version
 
-Season of Discovery:
-    1.01: initial
-
 Classic:
-    1.1: Initial
+    1.0: Initial
     1.5: AQ40 server attunement quest items added to raid loot
 
 TBC:
+    2.0: Prepatch
     2.1: Initial
     2.2: S1 arena gear available from tokens
     2.3: S2 arena gear available from tokens
     2.5: S3 arena gear available from tokens
 
 Wrath:
-    3.0: Naxx 60 removed, Amani War Bear removed from ZA
+    3.0: Prepatch: Naxx 60 removed, Amani War Bear removed from ZA
     3.1: Naxxramas / EoE / OS
     3.2: Ulduar, new VoA boss. Naxx/EoE/OS 10m drop 25m items instead, except the mount in OS.
     3.3: ToC / Ony, new VoA boss. Ulduar25 drops changed.
@@ -56,12 +54,12 @@ local SEASONS = {
 local EXPANSION_PHASE
 if LootReserve:GetCurrentExpansion() == 0 then
     if SEASON_NUMBER == SEASONS.DISCOVERY then
-        EXPANSION_PHASE = 1.01; -- Season of Discovery
+        EXPANSION_PHASE = 1.0; -- Season of Discovery
     else
         EXPANSION_PHASE = 1.5; -- Classic Era
     end
 else
-    EXPANSION_PHASE = 3.5; -- Classic
+    EXPANSION_PHASE = 4.1; -- Classic
 end
 
 local hidden = { Hidden = true };
@@ -453,10 +451,321 @@ LootReserve.Data =
             },
         }),
         
+        [930] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+            Name = "Azuregos",
+            NameShort = "Azuregos",
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Azuregos",
+                    Loot =
+                    {
+                        228384, 228345, 228385, 228340, 0,
+                        228389, 228383, 0,
+                        228381, 228382, 228349, 228347, 0,
+                        18704, 0,
+                        11938, 0,
+                    },
+                },
+            },
+        }),
+        [935] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+            Name = "Lord Kazzak",
+            NameShort = "Kazzak",
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Lord Kazzak",
+                    Loot =
+                    {
+                        228352, 228357, 228355, 228351, 228353, 0,
+                        228359, 228354, 228360, 0,
+                        228356, 228397, 0,
+                        18665, 0,
+                        11938, 0,
+                    },
+                },
+            },
+        }),
+        
+        [940] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+            Name = "Molten Core",
+            NameShort = "MC",
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Tokens",
+                    Loot =
+                    {
+                        227532, 227764, 227755, 0,
+                        227537, 227762, 227752, 0,
+                        227535, 227766, 227758, 0,
+                        227531, 227760, 227750, 0,
+                        227533, 227759, 227756, 0,
+                        227530, 227761, 227751, 0,
+                        227534, 227763, 227754, 0,
+                        227536, 227765, 227757, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Lucifron",
+                    Loot =
+                    {
+                        228239, 228244, 228245, 228246, 228285, 228240, 0,
+                        228247, 228243, 228242, 0,
+                        228263, 228262, 0,
+                        16665, 0
+                    },
+                },
+                {
+                    Name = "Magmadar",
+                    Loot =
+                    {
+                        228256, 228257, 228253, 228258, 228254, 228260, 228240, 0,
+                        228255, 228261, 228249, 0,
+                        228259, 228350, 228229, 228248, 228252, 0
+                    },
+                },
+                {
+                    Name = "Gehennas",
+                    Loot =
+                    {
+                        228239, 228244, 228245, 228246, 228285, 228240, 0,
+                        228243, 228242, 0,
+                        228263, 228262, 0
+                    },
+                },
+                {
+                    Name = "Garr",
+                    Loot =
+                    {
+                        18564, 0,
+                        228256, 228257, 228253, 228258, 228254, 228260, 228240, 0,
+                        228255, 228261, 0,
+                        228259, 228264, 228267, 228265, 228229, 228266, 0
+                    },
+                },
+                {
+                    Name = "Baron Geddon",
+                    Loot =
+                    {
+                        18563, 0,
+                        228256, 228257, 228253, 228258, 228254, 228260, 228240, 0,
+                        228255, 228261, 228268, 0,
+                        228259, 228229, 0
+                    },
+                },
+                {
+                    Name = "Shazzrah",
+                    Loot =
+                    {
+                        228239, 228244, 228245, 228246, 228285, 228240, 0,
+                        228243, 228242, 0,
+                        228263, 228262, 0
+                    },
+                },
+                {
+                    Name = "Golemagg the Incinerator",
+                    Loot =
+                    {
+                        228256, 228257, 228253, 228258, 228254, 228260, 228240, 0,
+                        228255, 228261, 0,
+                        228259, 228269, 228271, 228270, 228229, 0,
+                        17203, 0
+                    },
+                },
+                {
+                    Name = "Sulfuron Harbinger",
+                    Loot =
+                    {
+                        16816, 16823, 16848, 16868, 0,
+                        228239, 228244, 228245, 228246, 228285, 228240, 0,
+                        228242, 228243, 0,
+                        228263, 228262, 228272, 0
+                    },
+                },
+                {
+                    Name = "Majordomo Executus",
+                    Loot =
+                    {
+                        18646, 18703, 0,
+                        228282, 228281, 228283, 228279, 228284, 228275, 0,
+                        228280, 228274, 0,
+                        228277, 228278, 0
+                    },
+                },
+                {
+                    Name = "Ragnaros",
+                    Loot =
+                    {
+                        227728, 0,
+                        228291, 228295, 0,
+                        228289, 228287, 228290, 228292, 228286, 228297, 228293, 0,
+                        228294, 228296, 228299, 228288, 0
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Molten",
+                    Loot =
+                    {
+                        228517, 228922, 0,
+                        228462, 0,
+                        228701, 228511, 228506, 0,
+                        228463, 228459, 228461, 228460, 0,
+                        228519, 0,
+                        228702, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Trash",
+                    Loot =
+                    ConcatenateIf({
+                        17011, 17010, 11382, 17012, 0,
+                    }, EXPANSION_PHASE >= 1.5, {20951, 0,}),
+                },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
+                {
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        18265, 21371, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        18252, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        18264, 0,
+                    },
+                },
+                {
+                    Name = "Engineering",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        18292, 18291, 18290, 0,
+                    },
+                },
+                {
+                    Name = "Alchemy",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        18257, 0,
+                    },
+                },
+                {
+                    Name = "Enchanting",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        18259, 18260, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Tier 1 Pieces",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        -- Warlock
+                        226549, 226550, 226548, 226553, 226552, 226551, 226547, 226554, 0,
+                        216922, 216925, 216924, 216920, 216921, 216919, 216923, 216918, 0,
+                        -- Mage
+                        226562, 226560, 226559, 226558, 226556, 226555, 226561, 226557, 0,
+                        226564, 226566, 226563, 226567, 226569, 226570, 226565, 226568, 0,
+                        -- Priest
+                        226584, 226581, 226582, 226579, 226585, 226580, 226583, 226586, 0,
+                        226573, 226576, 226575, 226578, 226572, 226577, 226574, 226571, 0,
+                        -- Druid
+                        226658, 226653, 226656, 226655, 226654, 226657, 226651, 226652, 0,
+                        226647, 226644, 221785, 226649, 226648, 226650, 226646, 226645, 0,
+                        226659, 226665, 226661, 226662, 226664, 226660, 226666, 226663, 0,
+                        226670, 226674, 226675, 226668, 226669, 226667, 226671, 226673, 0,
+                        -- Rogue
+                        226446, 226444, 226447, 226442, 226441, 226440, 226445, 226443, 0,
+                        226480, 226478, 226473, 226476, 226475, 226474, 226479, 226477, 0,
+                        -- Hunter
+                        226533, 226527, 226534, 226530, 226528, 226529, 226532, 226531, 0,
+                        226536, 226543, 226535, 226541, 226540, 226542, 226537, 226538, 0,
+                        -- Shaman
+                        226622, 226624, 226619, 226626, 226621, 226625, 226623, 226620, 0,
+                        226612, 226611, 226617, 226618, 226615, 226616, 226614, 226613, 0,
+                        226638, 226640, 226635, 226642, 226637, 226641, 226639, 226636, 0,
+                        226630, 226632, 226627, 226634, 226629, 226633, 226631, 226628, 0,
+                        -- Paladin
+                        226590, 226588, 226610, 226589, 226591, 226592, 226594, 226593, 0,
+                        226599, 221783, 226602, 226596, 226600, 226597, 226598, 226601, 0,
+                        226607, 226605, 226595, 226603, 226608, 226604, 226606, 226609, 0,
+                        -- Warrior
+                        226495, 226492, 226494, 226499, 226497, 226498, 226493, 226496, 0,
+                        226488, 226491, 226489, 226484, 226486, 226485, 226490, 226487, 0,
+                    },
+                },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        
+                        227683, 0,
+                        228335, 228336, 0,
+                        18714, 228334, 228332, 0,
+                    },
+                },
+            },
+        }),
+        [945] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+            Name = "Onyxia",
+            NameShort = ShortCircuit(EXPANSION_PHASE >= 3.3, "Ony 40", "Ony"),
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Onyxia",
+                    Loot =
+                    {
+                        18705, 0,
+                        228688, 228689, 0,
+                        17078, 228298, 18813, 228759, 0,
+                        228955, 17068, 17075, 0,
+                        228992, 11938, 0,
+                        15410, 0
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        228685, 228687, 228686, 0,
+                    },
+                },
+            },
+        }),
+        
         
         -- Classic
         
-        [1010] = {
+        [1010] = ShortCircuit(SEASON_NUMBER ~= SEASONS.DISCOVERY, {
             Name = "Molten Core",
             NameShort = "MC",
             Expansion = 0,
@@ -663,10 +972,10 @@ LootReserve.Data =
                     },
                 },
             },
-        },
-        [1020] = {
+        }),
+        [1020] = ShortCircuit(SEASON_NUMBER ~= SEASONS.DISCOVERY, {
             Name = "Onyxia",
-            NameShort = "Ony 40",
+            NameShort = ShortCircuit(EXPANSION_PHASE >= 3.3, "Ony 40", "Ony"),
             Expansion = 0,
             Children =
             Squish{
@@ -693,7 +1002,7 @@ LootReserve.Data =
                     },
                 },
             },
-        },
+        }),
         [1030] = {
             Name = "Blackwing Lair",
             NameShort = "BWL",
@@ -8877,7 +9186,8 @@ LootReserve.Data =
         [66998] = true, -- Essence of the Forlorn
     },
     ItemLevelOverrides = {},
-    FactionConversionItems = {},
+    IntendedItems = {},
+    OtherFactionItems = {},
 };
 
 
@@ -8908,31 +9218,31 @@ local hordeItems    = {};
 --@end-debug@
 local AddFactionConversionItem;
 do
-    local FactionConversionItems = LootReserve.Data.FactionConversionItems;
+    local OtherFactionItems = LootReserve.Data.OtherFactionItems;
     if CHECK_FACTION_CONVERTED_ITEMS then
         if UnitFactionGroup("player") == "Alliance" then
             AddFactionConversionItem = function(alliance, horde)
                 allianceItems[#allianceItems+1] = alliance;
                 hordeItems[#hordeItems+1]       = horde;
                 
-                FactionConversionItems[horde] = alliance;
+                OtherFactionItems[horde] = alliance;
             end;
         else
             AddFactionConversionItem = function(alliance, horde)
                 allianceItems[#allianceItems+1] = alliance;
                 hordeItems[#hordeItems+1]       = horde;
                 
-                FactionConversionItems[alliance] = horde;
+                OtherFactionItems[alliance] = horde;
             end;
         end
     else
         if UnitFactionGroup("player") == "Alliance" then
             AddFactionConversionItem = function(alliance, horde)
-                FactionConversionItems[horde] = alliance;
+                OtherFactionItems[horde] = alliance;
             end;
         else
             AddFactionConversionItem = function(alliance, horde)
-                FactionConversionItems[alliance] = horde;
+                OtherFactionItems[alliance] = horde;
             end;
         end
     end
@@ -8954,11 +9264,16 @@ end
 
 -- Hidden Items
 do
-    -- Gnomeregan items
-    HideItem(213427); -- Grime-Encrusted Salvage
-    
-    -- Sunken Temple items
-    HideItem(221312); -- Flask of Atal'ai Mojo
+    if SEASON_NUMBER == SEASONS.DISCOVERY then
+        -- Gnomeregan items
+        HideItem(213427); -- Grime-Encrusted Salvage
+        
+        -- Sunken Temple items
+        HideItem(221312); -- Flask of Atal'ai Mojo
+        
+        -- Hand of Rag items
+        HideItem(227728); -- Eye of Sulfuras
+    end
     
     -- Molten Core trash
     HideItem(11382);
@@ -9122,12 +9437,16 @@ end
 
 -- Class Restricted Items
 do
-    -- Atiesh splinters should have a class mask since they cannot be traded
-    ApplyClassRestriction(22726, 1424);
+    if SEASON_NUMBER == SEASONS.DISCOVERY then
+        ApplyClassRestriction(227728, 1091); -- Eye of Sulfuras
+    end
     
     -- Hand of Rag items
     ApplyClassRestriction(17204, 1091);
     ApplyClassRestriction(17203, 1091);
+    
+    -- Atiesh splinters should have a class mask since they cannot be traded
+    ApplyClassRestriction(22726, 1424);
     
     -- Shadowfrost Shards should have a class mask since they cannot be traded
     ApplyClassRestriction(50274, 35);
@@ -9138,24 +9457,30 @@ end
 do
     
     -- SoD items
-    
-    -- Blackfathom Deeps
-    
-    -- Perfect Blackfathom Pearl
-    ApplyFactionRestriction(209693, 211452);
-    
-    
-    -- Gnomeregan
-    
-    -- Thermaplugg's Engineering Notes
-    ApplyFactionRestriction(217350, 217351);
-    
-    
-    -- Sunken Temple
-    
-    -- Scapula of the Fallen Avatar
-    ApplyFactionRestriction(221346, 221363);
-    
+    if SEASON_NUMBER == SEASONS.DISCOVERY then
+        -- Blackfathom Deeps
+        
+        -- Perfect Blackfathom Pearl
+        ApplyFactionRestriction(209693, 211452);
+        
+        
+        -- Gnomeregan
+        
+        -- Thermaplugg's Engineering Notes
+        ApplyFactionRestriction(217350, 217351);
+        
+        
+        -- Sunken Temple
+        
+        -- Scapula of the Fallen Avatar
+        ApplyFactionRestriction(221346, 221363);
+        
+        
+        -- Molten Core
+        
+        -- Head of Onyxia
+        ApplyFactionRestriction(228688, 228689);
+    end
     
     
     -- Head of Onyxia
@@ -9894,20 +10219,82 @@ end
 if LootReserve:GetCurrentExpansion() == 0 then
     
     -- SoD items
-    
-    -- Blackfathom Deeps
-    ApplySingleFactionRestriction(209574, "Alliance"); -- Discarded Tenets of the Silver Hand
-    ApplySingleFactionRestriction(209575, "Horde");    -- Carved Driftwood Idol
-    
-    
-    -- Gnomeregan
-    ApplySingleFactionRestriction(215435, "Alliance"); -- Libram of Benediction
-    ApplySingleFactionRestriction(215436, "Horde");    -- Totem of Invigorating Flame
-    
-    
-    -- Sunken Temple
-    ApplySingleFactionRestriction(220605, "Alliance"); -- Libram of Sacrilege
-    ApplySingleFactionRestriction(220607, "Horde");    -- Totem of Tormented Ancestry
+    if SEASON_NUMBER == SEASONS.DISCOVERY then
+        -- Blackfathom Deeps
+        ApplySingleFactionRestriction(209574, "Alliance"); -- Discarded Tenets of the Silver Hand
+        ApplySingleFactionRestriction(209575, "Horde");    -- Carved Driftwood Idol
+        
+        
+        -- Gnomeregan
+        ApplySingleFactionRestriction(215435, "Alliance"); -- Libram of Benediction
+        ApplySingleFactionRestriction(215436, "Horde");    -- Totem of Invigorating Flame
+        
+        
+        -- Sunken Temple
+        ApplySingleFactionRestriction(220605, "Alliance"); -- Libram of Sacrilege
+        ApplySingleFactionRestriction(220607, "Horde");    -- Totem of Tormented Ancestry
+        
+        
+        -- Molten Core
+        
+        -- T1
+        ApplySingleFactionRestriction(226592, "Alliance");
+        ApplySingleFactionRestriction(226593, "Alliance");
+        ApplySingleFactionRestriction(226589, "Alliance");
+        ApplySingleFactionRestriction(226610, "Alliance");
+        ApplySingleFactionRestriction(226591, "Alliance");
+        ApplySingleFactionRestriction(226590, "Alliance");
+        ApplySingleFactionRestriction(226594, "Alliance");
+        ApplySingleFactionRestriction(226588, "Alliance");
+        ApplySingleFactionRestriction(226601, "Alliance");
+        ApplySingleFactionRestriction(226602, "Alliance");
+        ApplySingleFactionRestriction(226599, "Alliance");
+        ApplySingleFactionRestriction(226597, "Alliance");
+        ApplySingleFactionRestriction(226600, "Alliance");
+        ApplySingleFactionRestriction(226598, "Alliance");
+        ApplySingleFactionRestriction(221783, "Alliance");
+        ApplySingleFactionRestriction(226596, "Alliance");
+        ApplySingleFactionRestriction(226604, "Alliance");
+        ApplySingleFactionRestriction(226595, "Alliance");
+        ApplySingleFactionRestriction(226608, "Alliance");
+        ApplySingleFactionRestriction(226607, "Alliance");
+        ApplySingleFactionRestriction(226606, "Alliance");
+        ApplySingleFactionRestriction(226605, "Alliance");
+        ApplySingleFactionRestriction(226609, "Alliance");
+        ApplySingleFactionRestriction(226603, "Alliance");
+        ApplySingleFactionRestriction(226621, "Horde");
+        ApplySingleFactionRestriction(226623, "Horde");
+        ApplySingleFactionRestriction(226624, "Horde");
+        ApplySingleFactionRestriction(226619, "Horde");
+        ApplySingleFactionRestriction(226622, "Horde");
+        ApplySingleFactionRestriction(226625, "Horde");
+        ApplySingleFactionRestriction(226620, "Horde");
+        ApplySingleFactionRestriction(226626, "Horde");
+        ApplySingleFactionRestriction(226616, "Horde");
+        ApplySingleFactionRestriction(226613, "Horde");
+        ApplySingleFactionRestriction(226618, "Horde");
+        ApplySingleFactionRestriction(226611, "Horde");
+        ApplySingleFactionRestriction(226615, "Horde");
+        ApplySingleFactionRestriction(226612, "Horde");
+        ApplySingleFactionRestriction(226614, "Horde");
+        ApplySingleFactionRestriction(226617, "Horde");
+        ApplySingleFactionRestriction(226636, "Horde");
+        ApplySingleFactionRestriction(226642, "Horde");
+        ApplySingleFactionRestriction(226639, "Horde");
+        ApplySingleFactionRestriction(226635, "Horde");
+        ApplySingleFactionRestriction(226641, "Horde");
+        ApplySingleFactionRestriction(226637, "Horde");
+        ApplySingleFactionRestriction(226638, "Horde");
+        ApplySingleFactionRestriction(226640, "Horde");
+        ApplySingleFactionRestriction(226630, "Horde");
+        ApplySingleFactionRestriction(226629, "Horde");
+        ApplySingleFactionRestriction(226632, "Horde");
+        ApplySingleFactionRestriction(226628, "Horde");
+        ApplySingleFactionRestriction(226631, "Horde");
+        ApplySingleFactionRestriction(226627, "Horde");
+        ApplySingleFactionRestriction(226633, "Horde");
+        ApplySingleFactionRestriction(226634, "Horde");
+    end
     
     
     
@@ -10042,6 +10429,103 @@ if LootReserve:GetCurrentExpansion() == 0 then
     ApplySingleFactionRestriction(23665, "Horde");
 end
 
+-- Season of Discovery item updates
+do
+    local upgrades = {
+        [16837] = 226613, -- Earthfury Boots
+        [19145] = 228239, -- Robe of Volatile Power
+        [18872] = 228244, -- Manastorm Leggings
+        [18875] = 228245, -- Salamander Scale Pants
+        [19146] = 228246, -- Wristguards of Stability
+        [18870] = 228285, -- Helm of the Lifegiver
+        [18861] = 228240, -- Flamewaker Legplates
+        [17109] = 228247, -- Choker of Enlightenment
+        [19147] = 228243, -- Ring of Spell Power
+        [18879] = 228242, -- Heavy Dark Iron Ring
+        [18878] = 228263, -- Sorcerous Dagger
+        [17077] = 228262, -- Crimson Shocker
+        [16843] = 226614, -- Earthfury Legguards
+        [19136] = 228256, -- Mana Igniting Cord
+        [18823] = 228257, -- Aged Core Leather Gloves
+        [19144] = 228253, -- Sabatons of the Flamewalker
+        [18829] = 228258, -- Deep Earth Spaulders
+        [18824] = 228254, -- Magma Tempered Boots
+        [19143] = 228260, -- Flameguard Gauntlets
+        [18820] = 228255, -- Talisman of Ephemeral Power
+        [18821] = 228261, -- Quick Strike Ring
+        [17065] = 228249, -- Medallion of Steadfast Might
+        [19142] = 228259, -- Fire Runed Grimoire
+        [18203] = 228350, -- Eskhandar's Right Claw
+        [18822] = 228229, -- Obsidian Edged Blade
+        [17073] = 228248, -- Earthshaker
+        [17069] = 228252, -- Striker's Mark
+        [16839] = 226615, -- Earthfury Gauntlets
+        [16842] = 226612, -- Earthfury Helmet
+        [17105] = 228264, -- Aurastone Hammer
+        [17071] = 228267, -- Gutgore Ripper
+        [18832] = 228265, -- Brutality Blade
+        [17066] = 228266, -- Drillborer Disk
+        [16844] = 226611, -- Earthfury Epaulets
+        [17110] = 228268, -- Seal of the Archmagus
+        [16841] = 226617, -- Earthfury Vestments
+        [17103] = 228269, -- Azuresong Mageblade
+        [18842] = 228271, -- Staff of Dominance
+        [17072] = 228270, -- Blastershot Launcher
+        [17074] = 228272, -- Shadowstrike
+        [18809] = 228282, -- Sash of Whispered Secrets
+        [18808] = 228281, -- Gloves of the Hypnotic Flame
+        [18810] = 228283, -- Wild Growth Spaulders
+        [19139] = 228279, -- Fireguard Shoulders
+        [18812] = 228284, -- Wristguards of True Flight
+        [18806] = 228275, -- Core Forged Greaves
+        [18811] = 228280, -- Fireproof Cloak
+        [19140] = 228274, -- Cauterizing Band
+        [18805] = 228277, -- Core Hound Tooth
+        [18803] = 228278, -- Hyperthermically Insulated Lava Dredger
+        [17204] = 227728, -- Eye of Sulfuras
+        [18817] = 228291, -- Crown of Destruction
+        [19137] = 228295, -- Onslaught Girdle
+        [18814] = 228289, -- Choker of the Fire Lord
+        [19138] = 228287, -- Band of Sulfuras
+        [17102] = 228290, -- Cloak of the Shrouded Mists
+        [17107] = 228292, -- Dragon's Blood Cape
+        [17063] = 228286, -- Band of Accuria
+        [17082] = 228297, -- Shard of the Flame
+        [18815] = 228293, -- Essence of the Pure Flame
+        [17106] = 228294, -- Malistar's Defender
+        [18816] = 228296, -- Perdition's Blade
+        [17104] = 228299, -- Spinal Reaper
+        [17076] = 228288, -- Bonereaver's Edge
+        [17182] = 227683, -- Sulfuras, Hand of Ragnaros
+        
+        [18608] = 228335, -- Benediction
+        [18609] = 228336, -- Anathema
+        [18713] = 228334, -- Rhok'delar, Longbow of the Ancient Keepers
+        [18715] = 228332, -- Lok'delar, Stave of the Ancient Keepers
+        
+        [18423] = 228688, -- Head of Onyxia
+        [18422] = 228689, -- Head of Onyxia
+        [17064] = 228298, -- Shard of the Scale
+        [18205] = 228759, -- Eskhandar's Collar
+        [17067] = 228955, -- Ancient Cornerstone Grimoire
+        [17966] = 228992, -- Onyxia Hide Backpack
+        [18404] = 228685, -- Onyxia Tooth Pendant
+        [18403] = 228687, -- Dragonslayer's Signet
+        [18406] = 228686, -- Onyxia Blood Talisman
+    };
+    
+    local IntendedItems = LootReserve.Data.IntendedItems;
+    if SEASON_NUMBER == SEASONS.DISCOVERY then
+        for eraItem, sodItem in pairs(upgrades) do
+            IntendedItems[eraItem] = sodItem;
+        end
+    else
+        for eraItem, sodItem in pairs(upgrades) do
+            IntendedItems[sodItem] = eraItem;
+        end
+    end
+end
+
 --@debug@
 if CHECK_FACTION_CONVERTED_ITEMS then
     ConcatenateIf(allianceItems, true, hordeItems);
@@ -10116,22 +10600,59 @@ local tokenMap = {
     [221363] = UnitFactionGroup("player") == "Horde"    and {220628, 220626, 220627, 220629, 220630} or nil,
     
     
-    -- MC
+    -- Molten Core
+    
+    [227532] = {226584, 226573, 226562, 226564, 226549, 216922}, -- Incandescent Hood (Season of Discovery)
+    [227764] = {226495, 226488, 226446, 226480, 226658, 226647, 226659, 226670}, -- Scorched Core  Helm (Season of Discovery)
+    [227755] = {226590, 226599, 226607, 226533, 226536, 226622, 226612, 226638, 226630}, -- Molten Scaled Helm (Season of Discovery)
+    
+    [227537] = {226581, 226576, 226560, 226566, 226550, 216925}, -- Incandescent Shoulderpads (Season of Discovery)
+    [227762] = {226492, 226491, 226444, 226478, 226653, 226644, 226665, 226674}, -- Scorched Core Shoulderpads (Season of Discovery)
+    [227752] = {226588, 221783, 226605, 226527, 226543, 226624, 226611, 226640, 226632}, -- Molten Scaled Shoulderpads (Season of Discovery)
+    
+    [227535] = {226582, 226575, 226559, 226563, 226548, 216924}, -- Incandescent Robe (Season of Discovery)
+    [227766] = {226494, 226489, 226447, 226473, 226656, 221785, 226661, 226675}, -- Scorched Core Chest (Season of Discovery)
+    [227758] = {226610, 226602, 226595, 226534, 226535, 226619, 226617, 226635, 226627}, -- Molten Scaled Chest (Season of Discovery)
+    
+    [227531] = {226579, 226578, 226558, 226567, 226553, 216920}, -- Incandescent Bindings (Season of Discovery)
+    [227760] = {226499, 226484, 226442, 226476, 226655, 226649, 226662, 226668}, -- Scorched Core Bindings (Season of Discovery)
+    [227750] = {226589, 226596, 226603, 226530, 226541, 226626, 226618, 226642, 226634}, -- Molten Scaled Bindings (Season of Discovery)
+    
+    [227533] = {226585, 226572, 226556, 226569, 226552, 216921}, -- Incandescent Gloves (Season of Discovery)
+    [227759] = {226497, 226486, 226441, 226475, 226654, 226648, 226664, 226669}, -- Scorched Core Gloves (Season of Discovery)
+    [227756] = {226591, 226600, 226608, 226528, 226540, 226621, 226615, 226637, 226629}, -- Molten Scaled Gloves (Season of Discovery)
+    
+    [227530] = {226580, 226577, 226555, 226570, 226551, 216919}, -- Incandescent Belt (Season of Discovery)
+    [227761] = {226498, 226485, 226440, 226474, 226657, 226650, 226660, 226667}, -- Scorched Core Belt (Season of Discovery)
+    [227751] = {226592, 226597, 226604, 226529, 226542, 226625, 226616, 226641, 226633}, -- Molten Scaled Belt (Season of Discovery)
+    
+    [227534] = {226583, 226574, 226561, 226565, 226547, 216923}, -- Incandescent Leggings (Season of Discovery)
+    [227763] = {226493, 226490, 226445, 226479, 226651, 226646, 226666, 226671}, -- Scorched Core Leggings (Season of Discovery)
+    [227754] = {226594, 226598, 226606, 226532, 226537, 226623, 226614, 226639, 226631}, -- Molten Scaled Leggings (Season of Discovery)
+    
+    [227536] = {226586, 226571, 226557, 226568, 226554, 216918}, -- Incandescent Boots (Season of Discovery)
+    [227765] = {226496, 226487, 226443, 226477, 226652, 226645, 226663, 226673}, -- Scorched Core Boots (Season of Discovery)
+    [227757] = {226593, 226601, 226609, 226531, 226538, 226620, 226613, 226636, 226628}, -- Molten Scaled Boots (Season of Discovery)
     
     -- Eye of Sulfuras
     [17204] = {17182},
+    -- Eye of Sulfuras (Season of Discovery)
+    [227728] = {227683},
+    
     -- The Eye of Divinity
-    [18646] = {18608, 18609},
+    [18646] = {18608, 18609, 228335, 228336},
     -- Ancient Petrified Leaf
-    [18703] = {18714, 18713, 18715},
+    [18703] = {18714, 18713, 18715, 228334, 228332},
     
     
     -- Ony
     
     -- Can't add mature black dragon sinew because it's a token reward in MC
     -- Head of Onyxia
-    [18423] = UnitFactionGroup("player") == "Alliance" and {18404, 18403, 18406} or nil,
-    [18422] = UnitFactionGroup("player") == "Horde"    and {18404, 18403, 18406} or nil,
+    [18423]  = UnitFactionGroup("player") == "Alliance" and {18404, 18403, 18406} or nil,
+    [18422]  = UnitFactionGroup("player") == "Horde"    and {18404, 18403, 18406} or nil,
+    [228688] = UnitFactionGroup("player") == "Alliance" and {228685, 228687, 228686} or nil,
+    [228689] = UnitFactionGroup("player") == "Horde"    and {228685, 228687, 228686} or nil,
     
     
     -- Ony/BWL
@@ -10791,6 +11312,21 @@ end
 
 
 local heroicMirrors = {
+    -- Season of Discovery
+    [228459] = 228229, -- Obsidian Edged Blade
+    [228463] = 228248, -- Earthshaker
+    [228519] = 228252, -- Striker's Mark
+    [228462] = 228264, -- Aurastone Hammer
+    [228506] = 228265, -- Brutality Blade
+    [228702] = 228266, -- Drillborer Disk
+    [228517] = 228269, -- Azuresong Mageblade
+    [228922] = 228271, -- Staff of Dominance
+    [228701] = 228277, -- Core Hound Tooth
+    [228511] = 228296, -- Perdition's Blade
+    [228460] = 228299, -- Spinal Reaper
+    [228461] = 228288, -- Bonereaver's Edge
+    
+    
     -- ToC 10 Alliance
     [47617] = 47921, -- Icehowl Cinch
     [47613] = 47923, -- Shoulderpads of the Glacial Wilds
