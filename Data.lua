@@ -12153,10 +12153,10 @@ do
         
         [{18665, 18646}] = 75, -- Benediction / Anathema
         [{18703, 18704, 18705}] = 75, -- Lok'delar, Rhok'delar, Lamina
-        [{17204}] = 80, -- Sulfuras
+        [{17204, 227728}] = 80, -- Sulfuras
         [{18563, 18564}] = 80, -- Thunderfury
         
-        [{18422, 18423}] = 74, -- Head of Onyxia
+        [{18422, 18423, 228688, 228689}] = 74, -- Head of Onyxia
         
         [{19002, 19003}] = 83, -- Head of Nefarian
         
