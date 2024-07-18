@@ -840,6 +840,9 @@ local function CheckBagCache(self)
                 CacheBagSlot(self, bag, slot);
             end
         end
+        for slot = 1, LootReserve:GetContainerNumSlots(KEYRING_CONTAINER) do
+            CacheBagSlot(self, KEYRING_CONTAINER, slot);
+        end
     end
 end
 
@@ -909,7 +912,11 @@ function LootReserve:IsItemSoulbound(bag, slot)
     end
 
     self.TooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
-    self.TooltipScanner:SetBagItem(bag, slot);
+    if bag == KEYRING_CONTAINER then
+        self.TooltipScanner:SetInventoryItem("player", KeyRingButtonIDToInvSlotID(slot));
+    else
+        self.TooltipScanner:SetBagItem(bag, slot);
+    end
     for i = 1, LootReserve.TooltipScanner:NumLines() do
         local line = _G[self.TooltipScanner:GetName() .. "TextLeft" .. i];
         if line and line:GetText() and line:GetText() == ITEM_SOULBOUND then
