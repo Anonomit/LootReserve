@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 9
+local MAJOR, MINOR = ADDON_NAME, 10
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -193,10 +193,10 @@ do
   
   
   if Addon.expansionLevel <= Addon.expansions.tbc then
-    usableTypes[weapon][subWeapon.Axe1H][ID.ROGUE]   = nil
-    
-    -- druids can now use polearms in era
-    -- usableTypes[weapon][subWeapon.Polearm][ID.DRUID] = nil
+    usableTypes[weapon][subWeapon.Axe1H][ID.ROGUE] = nil
+    if not Addon.isSoD then
+      usableTypes[weapon][subWeapon.Polearm][ID.DRUID] = nil
+    end
   end
   
   local dualWielders = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER, ID.ROGUE, ID.SHAMAN, ID.WARRIOR}
@@ -393,6 +393,9 @@ end
 
 local function IsItem(item)
   return type(item) == "table" and getmetatable(item) == matchMeta
+end
+function ItemCache:IsItem(...)
+  return IsItem(...)
 end
 
 local function MakeItem(id, suffix, uniqueID)
