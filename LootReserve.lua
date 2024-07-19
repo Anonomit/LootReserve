@@ -313,7 +313,7 @@ function LootReserve:GetContainerItemInfo(bag, slot)
 end
 
 function LootReserve:GetContainerNumSlots(bag)
-    if C_Container and C_Container.PickupContainerItem then
+    if C_Container and C_Container.GetContainerNumSlots then
         return C_Container.GetContainerNumSlots(bag);
     else
         return GetContainerNumSlots(bag);
@@ -818,6 +818,10 @@ local function CheckBagCache(self)
     if not bagCacheHooked then
         bagCacheHooked = true;
         LootReserve:RegisterEvent("BAG_UPDATE_DELAYED", function()
+            LootReserve:WipeBagCache();
+            C_Timer.After(0, function() LootReserve:WipeBagCache(); end);
+        end);
+        LootReserve:RegisterEvent("MERCHANT_CONFIRM_TRADE_TIMER_REMOVAL", function()
             LootReserve:WipeBagCache();
             C_Timer.After(0, function() LootReserve:WipeBagCache(); end);
         end);
