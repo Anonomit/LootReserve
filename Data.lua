@@ -12329,3 +12329,16 @@ end
 function LootReserve.Data:GetItemLevelOverride(itemID)
     return self.ItemLevelOverrides[itemID];
 end
+
+function LootReserve.Data:GetIntendedItem(itemID)
+    local intendedItem = self.OtherFactionItems[itemID] or self.IntendedItems[itemID];
+    if intendedItem then
+        if intendedItem == itemID then
+            return intendedItem;
+        else
+            return self:GetIntendedItem(intendedItem);
+        end
+    else
+        return itemID;
+    end
+end
