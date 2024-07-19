@@ -452,7 +452,7 @@ LootReserve.Data =
         }),
         
         [930] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
-            Name = "Azuregos",
+            Name = "Storm Cliffs",
             NameShort = "Azuregos",
             Expansion = 0,
             Children =
@@ -471,7 +471,7 @@ LootReserve.Data =
             },
         }),
         [935] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
-            Name = "Lord Kazzak",
+            Name = "The Tainted Scar",
             NameShort = "Kazzak",
             Expansion = 0,
             Children =
