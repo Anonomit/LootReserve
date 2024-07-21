@@ -2816,9 +2816,13 @@
 									GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 									GameTooltip:SetText("AddOn Users");
 									for _, compatibility in ipairs({ true, false }) do
-										for player, compatible in LootReserve:Ordered(LootReserve.Server.AddonUsers) do
-											if compatible == compatibility and LootReserve:UnitInGroup(player) then
-												GameTooltip:AddLine(format("%s%s", LootReserve:ColoredPlayer(player), compatible and "" or "|cFFFF0000 (outdated)|r"));
+										for player, version in LootReserve:Ordered(LootReserve.Server.AddonUsers) do
+											local compatible = version >= LootReserve.MinAllowedVersion;
+											local compatibilityFilter = compatible == compatibility;
+											local latest = version == LootReserve.LatestKnownVersion;
+											version = version == "" and "???" or version;
+											if compatibilityFilter and LootReserve:UnitInGroup(player) then
+												GameTooltip:AddLine(format("%s: %s%s%s|r", LootReserve:ColoredPlayer(player), latest and "|cFF00FF00" or compatible and "" or "|cFFFF0000", version, compatible and "" or " (outdated)"));
 											end
 										end
 									end

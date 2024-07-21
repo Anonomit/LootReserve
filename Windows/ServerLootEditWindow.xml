@@ -114,7 +114,7 @@
 										self:SetText("Reservable");
 									end
 									self:SetShown(self.shown);
-									self:SetEnabled(self.enabled);
+									self:SetEnabled(not self.disabled);
 									self:SetWidth(10 + self.Text:GetStringWidth() + 10);
 									if self:GetParent().Update then
 										self:GetParent():Update();

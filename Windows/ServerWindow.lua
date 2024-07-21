@@ -1072,8 +1072,8 @@ function LootReserve.Server:UpdateAddonUsers()
         self.Window.PanelSession.AddonUsers:UpdateTooltip();
     end
     local count = 0;
-    for player, compatible in pairs(self.AddonUsers) do
-        if compatible and LootReserve:UnitInGroup(player) then
+    for player, version in pairs(self.AddonUsers) do
+        if version and version >= LootReserve.MinAllowedVersion and LootReserve:UnitInGroup(player) then
             count = count + 1;
         end
     end

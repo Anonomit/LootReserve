@@ -100,9 +100,17 @@ function LootReserve.Comm:StartListening()
     if not self.Listening then
         self.Listening = true;
         LootReserve:RegisterComm(self.Prefix, function(prefix, text, channel, sender)
-            if LootReserve.Enabled and prefix == self.Prefix then
+            if prefix == self.Prefix then
                 local opcode, message = strsplit("|", text, 2);
                 opcode = tonumber(opcode);
+                
+                if not LootReserve.Enabled then
+                    if opcode == Opcodes.Hello and not LootReserve:IsMe(sender) then
+                        LootReserve.Comm:ForceSendVersion(sender);
+                    end
+                    return;
+                end
+                
                 if not opcode or not message then
                     return ThrottlingError();
                 end
@@ -128,7 +136,7 @@ function LootReserve.Comm:StartListening()
                     end
 
                     sender = LootReserve:Player(sender);
-                    LootReserve.Server:SetAddonUser(sender, true);
+                    -- LootReserve.Server:SetAddonUser(sender, true);
                     
                     if COMM_DEBUG_SHOW_MESSAGES then
                         local opKey;
@@ -191,7 +199,15 @@ function LootReserve.Comm:SendVersion(target)
         LootReserve.Version,
         LootReserve.MinAllowedVersion);
 end
+function LootReserve.Comm:ForceSendVersion(target)
+    if LootReserve:IsPlayerOnline(target) then
+        self:SendCommMessage("WHISPER", target, Opcodes.Version,
+            LootReserve.Version,
+            LootReserve.MinAllowedVersion);
+    end
+end
 LootReserve.Comm.Handlers[Opcodes.Version] = function(sender, version, minAllowedVersion)
+    LootReserve.Server:SetAddonUser(sender, version);
     if LootReserve.LatestKnownVersion >= version then return; end
     LootReserve.LatestKnownVersion = version;
 
@@ -213,10 +229,12 @@ end
 
 -- ReportIncompatibleVersion
 function LootReserve.Comm:BroadcastReportIncompatibleVersion()
-    LootReserve.Comm:Broadcast(Opcodes.ReportIncompatibleVersion);
+    LootReserve.Comm:Broadcast(Opcodes.ReportIncompatibleVersion,
+        LootReserve.Version);
 end
-LootReserve.Comm.Handlers[Opcodes.ReportIncompatibleVersion] = function(sender)
-    LootReserve.Server:SetAddonUser(sender, false);
+LootReserve.Comm.Handlers[Opcodes.ReportIncompatibleVersion] = function(sender, version)
+    -- LootReserve.Server:SetAddonUser(sender, false);
+    LootReserve.Server:SetAddonUser(sender, version);
 end
 
 -- Hello

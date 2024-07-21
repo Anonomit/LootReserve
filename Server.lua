@@ -438,12 +438,12 @@ function LootReserve.Server:HasRelevantRecentChat(roll, player)
 end
 
 function LootReserve.Server:IsAddonUser(player)
-    return LootReserve:IsMe(player) or self.AddonUsers[player];
+    return LootReserve:IsMe(player) or self.AddonUsers[player] and true or false;
 end
 
-function LootReserve.Server:SetAddonUser(player, isUser)
-    if self.AddonUsers[player] ~= isUser then
-        self.AddonUsers[player] = isUser;
+function LootReserve.Server:SetAddonUser(player, version)
+    if not self.AddonUsers[player] or self.AddonUsers[player] ~= version and version ~= "" then
+        self.AddonUsers[player] = version;
         self:UpdateAddonUsers();
     end
 end
