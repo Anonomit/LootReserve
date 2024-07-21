@@ -2815,8 +2815,10 @@
 								self.UpdateTooltip = function(self)
 									GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 									GameTooltip:SetText("AddOn Users");
+									local seen = { };
 									for _, compatibility in ipairs({ true, false }) do
 										for player, version in LootReserve:Ordered(LootReserve.Server.AddonUsers) do
+											seen[player] = true;
 											local compatible = version >= LootReserve.MinAllowedVersion;
 											local compatibilityFilter = compatible == compatibility;
 											local latest = version == LootReserve.LatestKnownVersion;
@@ -2826,6 +2828,19 @@
 											end
 										end
 									end
+									local titled = false;
+									LootReserve:ForEachRaider(function(name)
+										if not seen[name] then
+											if not titled then
+												GameTooltip:AddLine(" ");
+												GameTooltip:AddLine("AddOn Missing");
+												titled = true;
+											end
+											if not seen[name] then
+												GameTooltip:AddLine(LootReserve:ColoredPlayer(name));
+											end
+										end
+									end)
 									GameTooltip:Show();
 								end
 							</OnLoad>
