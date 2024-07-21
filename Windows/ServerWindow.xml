@@ -1724,6 +1724,17 @@
 												table.insert(bagMenus, { });
 											end
 										end
+										if LootReserve:ShouldScanKeyring() then
+											local bag = KEYRING_CONTAINER;
+											local bagMenu = { isKeyring = true };
+											table.insert(bagMenus, bagMenu);
+											for slot = 1, 32 do
+												local containerInfo = LootReserve:GetContainerItemInfo(bag, slot);
+												if containerInfo and LootReserve:IsTradeableItem(bag, slot) then
+													table.insert(bagMenu, MakeItem(containerInfo.stackCount, LootReserve.ItemCache:Item(containerInfo.hyperlink), containerInfo.iconFileID));
+												end
+											end
+										end
 										local menu =
 										{
 											{ text = "Recent Loot", isTitle = true },
@@ -1776,7 +1787,7 @@
 											for bag, bagMenu in ipairs(bagMenus) do
 												table.insert(menu, 3 + bag,
 												{
-													text = bag == 1 and "Backpack" or format("Bag %d", bag - 1),
+													text = bag == 1 and "Backpack" or bagMenu.isKeyring and "Keyring" or format("Bag %d", bag - 1),
 													menuList = #bagMenu > 0 and bagMenu or nil,
 													disabled = #bagMenu == 0,
 												});

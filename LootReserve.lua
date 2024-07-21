@@ -84,6 +84,10 @@ function LootReserve:GetCurrentExpansion()
     return tonumber(expansion) - 1;
 end
 
+function LootReserve:GetCurrentSeason()
+    return ((C_Seasons or {}).GetActiveSeason or nop)() or 0;
+end
+
 LootReserve.Version = GetAddOnMetadata(addon, "Version");
 LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, LootReserve:GetCurrentExpansion() == 0 and "X-Min-Allowed-Version-Era" or "X-Min-Allowed-Version-Classic");
 LootReserve.LatestKnownVersion = LootReserve.Version;
@@ -455,7 +459,7 @@ function LootReserve:SendChatMessage(text, channel, target)
 end
 
 function LootReserve:IsCrossRealm()
-    return self:GetCurrentExpansion() == 0 and not C_Seasons.HasActiveSeason();
+    return self:GetCurrentExpansion() == 0 and LootReserve:GetCurrentSeason() == 0;
     -- This doesn't really work, because even in non-connected realms UnitFullName ends up returning your realm name,
     -- and we can't use UnitName either, because that one NEVER returns a realm for "player". WTB good API, 5g.
     --[[
@@ -802,6 +806,10 @@ function LootReserve:IsTradeableItem(bag, slot)
     return not LootReserve:IsItemSoulbound(bag, slot) or LootReserve:IsItemSoulboundTradeable(bag, slot);
 end
 
+function LootReserve:ShouldScanKeyring()
+    return LootReserve:GetCurrentExpansion() < 3 and LootReserve:GetCurrentSeason() == 2 and _G.KeyRingButtonIDToInvSlotID and true or false;
+end
+
 local function CacheBagSlot(self, bag, slot, i)
     local containerInfo = LootReserve:GetContainerItemInfo(bag, slot);
     if containerInfo then
@@ -844,7 +852,7 @@ local function CheckBagCache(self)
                 CacheBagSlot(self, bag, slot);
             end
         end
-        if Addon.expansionLevel < Addon.expansions.cata and _G.KeyRingButtonIDToInvSlotID then
+        if LootReserve:ShouldScanKeyring() then
             for slot = 1, LootReserve:GetContainerNumSlots(KEYRING_CONTAINER) do
                 CacheBagSlot(self, KEYRING_CONTAINER, slot);
             end
