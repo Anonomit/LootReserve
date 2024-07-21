@@ -844,8 +844,10 @@ local function CheckBagCache(self)
                 CacheBagSlot(self, bag, slot);
             end
         end
-        for slot = 1, LootReserve:GetContainerNumSlots(KEYRING_CONTAINER) do
-            CacheBagSlot(self, KEYRING_CONTAINER, slot);
+        if Addon.expansionLevel < Addon.expansions.cata and _G.KeyRingButtonIDToInvSlotID then
+            for slot = 1, LootReserve:GetContainerNumSlots(KEYRING_CONTAINER) do
+                CacheBagSlot(self, KEYRING_CONTAINER, slot);
+            end
         end
     end
 end
