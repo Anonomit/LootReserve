@@ -46,7 +46,7 @@ Cata:
     4.?: Alizabal added to Baradin Hold
 --]]
 
-local SEASON_NUMBER = C_Seasons and C_Seasons.GetActiveSeason() or 0
+local SEASON_NUMBER = ((C_Seasons or {}).GetActiveSeason or nop)() or 0
 local SEASONS = {
     MASTERY   = 1,
     DISCOVERY = 2,
@@ -10432,6 +10432,33 @@ end
 -- Season of Discovery item updates
 do
     local upgrades = {
+        -- Azuregos
+        [19131] = 228384, -- Snowblind Shoes
+        [18545] = 228345, -- Leggings of Arcane Supremacy
+        [19132] = 228385, -- Crystal Adorned Crown
+        [18547] = 228340, -- Unmelting Ice Girdle
+        [18208] = 228389, -- Drape of Benediction
+        [18541] = 228383, -- Puissant Cape
+        [19130] = 228381, -- Cold Snap
+        [17070] = 228382, -- Fang of the Mystics
+        [18202] = 228349, -- Eskhandar's Left Claw
+        [18542] = 228347, -- Typhoon
+        
+        
+        -- Kazzak
+        [19133] = 228352, -- Fel Infused Leggings
+        [19135] = 228357, -- Blacklight Bracer
+        [19134] = 228355, -- Flayed Doomguard Belt
+        [18544] = 228351, -- Doomhide Gauntlets
+        [18546] = 228353, -- Infernal Headcage
+        [18543] = 228359, -- Ring of Entropy
+        [17111] = 228354, -- Blazefury Medallion
+        [18204] = 228360, -- Eskhandar's Pelt
+        [17113] = 228356, -- Amberseal Keeper
+        [17112] = 228397, -- Empyrean Demolisher
+        
+        
+        -- Molten Core
         [16837] = 226613, -- Earthfury Boots
         [19145] = 228239, -- Robe of Volatile Power
         [18872] = 228244, -- Manastorm Leggings
@@ -10503,6 +10530,8 @@ do
         [18713] = 228334, -- Rhok'delar, Longbow of the Ancient Keepers
         [18715] = 228332, -- Lok'delar, Stave of the Ancient Keepers
         
+        
+        -- Onyxia
         [18423] = 228688, -- Head of Onyxia
         [18422] = 228689, -- Head of Onyxia
         [17064] = 228298, -- Shard of the Scale
