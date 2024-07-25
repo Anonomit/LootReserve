@@ -2815,18 +2815,27 @@
 								self.UpdateTooltip = function(self)
 									GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 									GameTooltip:SetText("AddOn Users");
+									
+									local players = { };
 									local seen = { };
-									for _, compatibility in ipairs({ true, false }) do
-										for player, version in LootReserve:Ordered(LootReserve.Server.AddonUsers) do
-											seen[player] = true;
-											local compatible = version >= LootReserve.MinAllowedVersion;
-											local compatibilityFilter = compatible == compatibility;
-											local latest = version == LootReserve.LatestKnownVersion;
-											version = version == "" and "???" or version;
-											if compatibilityFilter and LootReserve:UnitInGroup(player) then
-												GameTooltip:AddLine(format("%s: %s%s%s|r", LootReserve:ColoredPlayer(player), latest and "|cFF00FF00" or compatible and "" or "|cFFFF0000", version, compatible and "" or " (outdated)"));
-											end
+									for player, version in LootReserve:Ordered(LootReserve.Server.AddonUsers) do
+										seen[player] = true;
+										local compatible = version >= LootReserve.MinAllowedVersion;
+										local latest = version == LootReserve.LatestKnownVersion;
+										local versionText = version == "" and "???" or version;
+										if LootReserve:UnitInGroup(player) then
+											players[#players+1] = {player = player, version = version, text = format("%s: %s%s%s|r", LootReserve:ColoredPlayer(player), latest and "|cFF00FF00" or compatible and "" or "|cFFFF0000", versionText, compatible and "" or " (outdated)")};
 										end
+									end
+									table.sort(players, function(a, b)
+										if a.version == b.version then
+											return a.player &lt; b.player;
+										else
+											return a.version > b.version;
+										end
+									end)
+									for _, playerData in ipairs(players) do
+										GameTooltip:AddLine(playerData.text);
 									end
 									local titled = false;
 									LootReserve:ForEachRaider(function(name)
