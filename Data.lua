@@ -609,6 +609,26 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
+                    Name = "Unconfirmed Items",
+                    Loot =
+                    {
+                        228129, 0,
+                        228100, 228102, 228137, 228122, 0,
+                        228147, 228145, 228146, 0,
+                        228142, 228160, 228128, 228139, 0,
+                    },
+                },
+                {
+                    Name = "Unconfirmed Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        
+                        228143, 0,
+                    },
+                },
+                { Separator = true },
+                {
                     Name = "Molten",
                     Loot =
                     {
@@ -747,6 +767,26 @@ LootReserve.Data =
                         228955, 17068, 17075, 0,
                         228992, 11938, 0,
                         15410, 0
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Unconfirmed Items",
+                    Loot =
+                    {
+                        228129, 0,
+                        228188, 0,
+                        228147, 228145, 228146, 0,
+                        228160, 228166, 228128, 228139, 0,
+                    },
+                },
+                {
+                    Name = "Unconfirmed Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        
+                        228143, 0,
                     },
                 },
                 { Separator = true },
@@ -10661,6 +10701,9 @@ local tokenMap = {
     [227536] = {226586, 226571, 226557, 226568, 226554, 216918}, -- Incandescent Boots (Season of Discovery)
     [227765] = {226496, 226487, 226443, 226477, 226652, 226645, 226663, 226673}, -- Scorched Core Boots (Season of Discovery)
     [227757] = {226593, 226601, 226609, 226531, 226538, 226620, 226613, 226636, 226628}, -- Molten Scaled Boots (Season of Discovery)
+    
+    -- Shadowflame Sword (Season of Discovery)
+    [228129] = {228143},
     
     -- Eye of Sulfuras
     [17204] = {17182},
