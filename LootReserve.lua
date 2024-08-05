@@ -89,7 +89,7 @@ function LootReserve:GetCurrentSeason()
 end
 
 LootReserve.Version = GetAddOnMetadata(addon, "Version");
-LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, LootReserve:GetCurrentExpansion() == 0 and "X-Min-Allowed-Version-Era" or "X-Min-Allowed-Version-Classic");
+LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, LootReserve:GetCurrentExpansion() == 0 and LootReserve:GetCurrentSeason() == 2 and "X-Min-Allowed-Version-SoD" or "X-Min-Allowed-Version-Era" or "X-Min-Allowed-Version-Classic");
 LootReserve.LatestKnownVersion = LootReserve.Version;
 
 
