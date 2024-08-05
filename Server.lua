@@ -993,7 +993,7 @@ function LootReserve.Server:UpdateTradeFrameAutoButton(accepting)
     end
 end
 
-function LootReserve.Server:AddRecentLoot(item, acceptAllQualities)
+function LootReserve.Server:AddRecentLoot(item, skipChecks)
     if self.Settings.RecentLootBlacklist[item:GetID()] or LootReserve.Data.RecentLootBlacklist[item:GetID()] then return; end
     if not item:IsCached() then
         if item:Exists() then
@@ -1002,7 +1002,16 @@ function LootReserve.Server:AddRecentLoot(item, acceptAllQualities)
         return
     end
     
-    if not acceptAllQualities and item:GetQuality() < self.Settings.MinimumLootQuality then return; end
+    if not skipChecks then
+        local tokenID = LootReserve.Data:GetToken(item:GetID()) or item:GetID();
+        if self.CurrentSession and self.ReservableIDs[tokenID] then
+            -- item is reservable
+        elseif item:GetQuality() < self.Settings.MinimumLootQuality then
+            -- item is below minimum quality
+            return;
+        end
+    end
+    
     if item:GetStackSize() > 1 then
         LootReserve:TableRemove(self.RecentLoot, item);
     end
