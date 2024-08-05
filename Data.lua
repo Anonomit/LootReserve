@@ -490,6 +490,46 @@ LootReserve.Data =
             },
         }),
         
+        [938] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+            Name = "Onyxia",
+            NameShort = ShortCircuit(EXPANSION_PHASE >= 3.3, "Ony 40", "Ony"),
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Onyxia",
+                    Loot =
+                    {
+                        18423, 18422, 0,
+                        18705, 228129, 0,
+                        17078, 228759, 228188, 228298, 228163, 18813, 0,
+                        228955, 228166, 17068, 17075, 228162, 228165, 0,
+                        228992, 0,
+                        15410, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Tokens",
+                    Loot =
+                    {
+                        227532, 227537, 227535, 227531, 227533, 227530, 227534, 227536, 0,
+                        227764, 227762, 227766, 227760, 227759, 227761, 227763, 227765, 0,
+                        227755, 227752, 227758, 227750, 227756, 227751, 227754, 227757, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        228685, 228687, 228686, 0,
+                        228143, 0,
+                    },
+                },
+            },
+        }),
         [940] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Molten Core",
             NameShort = "MC",
@@ -600,7 +640,7 @@ LootReserve.Data =
                     {
                         18646, 18703, 228129, 0,
                         228282, 228281, 228283, 228279, 228284, 228275, 0,
-                        228280, 228274, 0,
+                        228274, 228280, 228102, 0,
                         228277, 228278, 0,
                     },
                 },
@@ -610,13 +650,13 @@ LootReserve.Data =
                     {
                         227728, 0,
                         228291, 228295, 0,
-                        228289, 228287, 228290, 228292, 228286, 228297, 228293, 0,
+                        228289, 228287, 228100, 228290, 228292, 228286, 228297, 228293, 0,
                         228294, 228296, 228145, 228299, 228288, 0,
                     },
                 },
                 { Separator = true },
                 {
-                    Name = "Molten",
+                    Name = "Molten Heat",
                     Loot =
                     {
                         228517, 228922, 0,
@@ -666,6 +706,7 @@ LootReserve.Data =
                     IndentType = 1,
                     Loot =
                     {
+                        228304, 0,
                         18292, 18291, 18290, 0,
                     },
                 },
@@ -734,47 +775,6 @@ LootReserve.Data =
                         227683, 0,
                         228335, 228336, 0,
                         18714, 228334, 228332, 0,
-                        228143, 0,
-                    },
-                },
-            },
-        }),
-        [945] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
-            Name = "Onyxia",
-            NameShort = ShortCircuit(EXPANSION_PHASE >= 3.3, "Ony 40", "Ony"),
-            Expansion = 0,
-            Children =
-            Squish{
-                {
-                    Name = "Onyxia",
-                    Loot =
-                    {
-                        228688, 228689, 0,
-                        18705, 0,
-                        228129, 0,
-                        17078, 228759, 228188, 228298, 228163, 18813, 0,
-                        228955, 228166, 17068, 17075, 0,
-                        228992, 11938, 0,
-                        15410, 0,
-                    },
-                },
-                { Separator = true },
-                {
-                    Name = "Tokens",
-                    Loot =
-                    {
-                        227532, 227537, 227535, 227531, 227533, 227530, 227534, 227536, 0,
-                        227764, 227762, 227766, 227760, 227759, 227761, 227763, 227765, 0,
-                        227755, 227752, 227758, 227750, 227756, 227751, 227754, 227757, 0,
-                    },
-                },
-                { Separator = true },
-                {
-                    Name = "Quest Rewards",
-                    IndentType = 2,
-                    Loot =
-                    {
-                        228685, 228687, 228686, 0,
                         228143, 0,
                     },
                 },
@@ -9176,7 +9176,8 @@ LootReserve.Data =
         [220637] = true, -- Atal'ai Ritual Token
         
         -- Ony/BWL
-        [11938] = true, -- Sack of Gems
+        [11938]  = true,  -- Sack of Gems
+        [228992] = true, -- Onyxia Hide Backpack (Season of Discovery)
         
         -- ZG
         [22637] = true, -- Primal Hakkari Idol
@@ -9493,12 +9494,6 @@ do
         
         -- Scapula of the Fallen Avatar
         ApplyFactionRestriction(221346, 221363);
-        
-        
-        -- Molten Core
-        
-        -- Head of Onyxia
-        ApplyFactionRestriction(228688, 228689);
     end
     
     
@@ -10551,8 +10546,6 @@ do
         
         
         -- Onyxia
-        [18423] = 228688, -- Head of Onyxia
-        [18422] = 228689, -- Head of Onyxia
         [17064] = 228298, -- Shard of the Scale
         [18205] = 228759, -- Eskhandar's Collar
         [17067] = 228955, -- Ancient Cornerstone Grimoire
@@ -10705,10 +10698,8 @@ local tokenMap = {
     
     -- Can't add mature black dragon sinew because it's a token reward in MC
     -- Head of Onyxia
-    [18423]  = UnitFactionGroup("player") == "Alliance" and {18404, 18403, 18406} or nil,
-    [18422]  = UnitFactionGroup("player") == "Horde"    and {18404, 18403, 18406} or nil,
-    [228688] = UnitFactionGroup("player") == "Alliance" and {228685, 228687, 228686} or nil,
-    [228689] = UnitFactionGroup("player") == "Horde"    and {228685, 228687, 228686} or nil,
+    [18423]  = UnitFactionGroup("player") == "Alliance" and {18404, 18403, 18406, 228685, 228687, 228686} or nil,
+    [18422]  = UnitFactionGroup("player") == "Horde"    and {18404, 18403, 18406, 228685, 228687, 228686} or nil,
     
     
     -- Ony/BWL
@@ -12212,7 +12203,7 @@ do
         [{17204, 227728}] = 80, -- Sulfuras
         [{18563, 18564}] = 80, -- Thunderfury
         
-        [{18422, 18423, 228688, 228689}] = 74, -- Head of Onyxia
+        [{18422, 18423}] = 74, -- Head of Onyxia
         
         [{19002, 19003}] = 83, -- Head of Nefarian
         
