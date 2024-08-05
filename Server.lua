@@ -1003,6 +1003,11 @@ function LootReserve.Server:AddRecentLoot(item, skipChecks)
     end
     
     if not skipChecks then
+        local instanceSize = select(5, GetInstanceInfo());
+        if instanceSize and instanceSize < 10 then
+            return;
+        end
+        
         local tokenID = LootReserve.Data:GetToken(item:GetID()) or item:GetID();
         if self.CurrentSession and self.ReservableIDs[tokenID] then
             -- item is reservable
