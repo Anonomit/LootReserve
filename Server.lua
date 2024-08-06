@@ -2454,10 +2454,6 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
         return Failure(LootReserve.Constants.CancelReserveResult.Locked, "#");
     end
 
-    if not self.ReservableIDs[itemID] then
-        return Failure(LootReserve.Constants.CancelReserveResult.ItemNotReservable, member.ReservesLeft);
-    end
-
     if not LootReserve:Contains(member.ReservedItems, itemID) then
         return Failure(LootReserve.Constants.CancelReserveResult.NotReserved, member.ReservesLeft);
     end
