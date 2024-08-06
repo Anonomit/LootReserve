@@ -3,9 +3,12 @@ local LibDeflate = LibStub:GetLibrary("LibDeflate");
 LootReserve = LootReserve or { };
 LootReserve.Comm =
 {
-    Prefix    = "LootReserve",
-    Handlers  = { },
-    Listening = false,
+    Prefix     = "LootReserve",
+    PrefixMax  = 40,
+    Prefixes   = { },
+    PrefixKeys = { },
+    Handlers   = { },
+    Listening  = false,
 };
 
 local Opcodes =
@@ -35,14 +38,37 @@ local Opcodes =
 local LAST_UNCOMPRESSED_OPCODE = Opcodes.Hello;
 local MAX_UNCOMPRESSED_SIZE = 20;
 
-local COMM_DEBUG_SHOW_MESSAGES = false;
-local COMM_DEBUG_CANCEL_BYPASS = false;
+local COMM_DEBUG_SHOW_MESSAGES = nil;
+local COMM_DEBUG_CANCEL_BYPASS = nil;
+local COMM_FORCE_COMPATIBLE    = nil;
+--@debug@
+    COMM_DEBUG_SHOW_MESSAGES = false;
+    COMM_DEBUG_CANCEL_BYPASS = false;
+    COMM_FORCE_COMPATIBLE    = false;
+--@end-debug@
+
+
+for i = 0, LootReserve.Comm.PrefixMax do
+    local prefix = LootReserve.Comm.Prefix;
+    if i > 0 then
+        prefix = prefix .. i;
+        LootReserve.Comm.Prefixes[#LootReserve.Comm.Prefixes+1] = prefix
+    end
+    LootReserve.Comm.PrefixKeys[prefix] = true
+end
+
+local nextPrefix = 1;
+local function GetNextPrefix()
+    local prefix = LootReserve.Comm.Prefixes[nextPrefix];
+    nextPrefix = (nextPrefix % LootReserve.Comm.PrefixMax) + 1;
+    return prefix;
+end
 
 local function ThrottlingError()
     LootReserve:ShowError("There was an error when reading session host's communications.|n|nIf both your and the host's addons are up to date, then this is likely due to Blizzard's excessive addon communication throttling which results in some messages outright not being delivered.|n|nWait a few seconds and click \"Search For Host\" in LootReserve client window's settings menu to request up to date information from the host.");
 end
 
-function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
+local function SendCommMessage(prefix, channel, target, opcode, ...)
     if COMM_DEBUG_SHOW_MESSAGES then
         local opKey;
         for k, v in pairs(Opcodes) do
@@ -51,7 +77,7 @@ function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
                 break;
             end
         end
-        LootReserve:debug("Sending", channel, target, opKey or opcode, ...);
+        LootReserve:debug("Sending", format("(%s)", prefix), channel, target, opKey or opcode, ...);
     end
     
     local message = "";
@@ -86,94 +112,107 @@ function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
                 message = message and LibDeflate:DecompressDeflate(message);
             end
         end
-        C_Timer.After(0, function() self.Handlers[opcode](LootReserve:Me(), strsplit("|", message)); end);
+        C_Timer.After(0, function() LootReserve.Comm.Handlers[opcode](LootReserve:Me(), strsplit("|", message)); end);
     end
 
     message = opcode .. "|" .. message;
 
-    LootReserve:SendCommMessage(self.Prefix, message, channel, target, "ALERT");
+    LootReserve:SendCommMessage(prefix, message, channel, target, "ALERT");
 
     return message;
+end
+
+function LootReserve.Comm:SendCommMessage(channel, target, opcode, ...)
+    SendCommMessage(COMM_FORCE_COMPATIBLE and self.Prefix or GetNextPrefix(), channel, target, opcode, ...)
+end
+
+function LootReserve.Comm:SendCommMessageCompatible(channel, target, opcode, ...)
+    SendCommMessage(self.Prefix, channel, target, opcode, ...)
 end
 
 function LootReserve.Comm:StartListening()
     if not self.Listening then
         self.Listening = true;
-        LootReserve:RegisterComm(self.Prefix, function(prefix, text, channel, sender)
-            if prefix == self.Prefix then
-                local opcode, message = strsplit("|", text, 2);
-                opcode = tonumber(opcode);
-                
-                if not LootReserve.Enabled then
-                    if opcode == Opcodes.Hello and not LootReserve:IsMe(sender) then
-                        LootReserve.Comm:ForceSendVersion(sender);
-                    end
-                    return;
+        local function OnCommReceived(prefix, text, channel, sender)
+            if not self.PrefixKeys[prefix] then return; end
+            
+            local opcode, message = strsplit("|", text, 2);
+            opcode = tonumber(opcode);
+            
+            if not LootReserve.Enabled then
+                if opcode == Opcodes.Hello and not LootReserve:IsMe(sender) then
+                    LootReserve.Comm:SendVersion(sender);
                 end
-                
-                if not opcode or not message then
-                    return ThrottlingError();
-                end
-
-                local handler = self.Handlers[opcode];
-                if handler then
-                    local length;
-                    if opcode > LAST_UNCOMPRESSED_OPCODE then
-                        length, message = strsplit("|", message, 2);
-                        length = tonumber(length);
-                        if not length or not message then
-                            return ThrottlingError();
-                        end
-
-                        if length > 0 then
-                            message = LibDeflate:DecodeForWoWAddonChannel(message);
-                            message = message and LibDeflate:DecompressDeflate(message);
-                        end
-
-                        if not message or #message ~= math.abs(length) then
-                            return ThrottlingError();
-                        end
+                return;
+            end
+            
+            if not opcode or not message then
+                return ThrottlingError();
+            end
+            
+            local handler = self.Handlers[opcode];
+            if handler then
+                local length;
+                if opcode > LAST_UNCOMPRESSED_OPCODE then
+                    length, message = strsplit("|", message, 2);
+                    length = tonumber(length);
+                    if not length or not message then
+                        return ThrottlingError();
                     end
-
-                    sender = LootReserve:Player(sender);
-                    -- LootReserve.Server:SetAddonUser(sender, true);
                     
-                    if COMM_DEBUG_SHOW_MESSAGES then
-                        local opKey;
-                        for k, v in pairs(Opcodes) do
-                            if v == opcode then
-                                opKey = k;
-                                break;
-                            end
+                    if length > 0 then
+                        message = LibDeflate:DecodeForWoWAddonChannel(message);
+                        message = message and LibDeflate:DecompressDeflate(message);
+                    end
+                    
+                    if not message or #message ~= math.abs(length) then
+                        return ThrottlingError();
+                    end
+                end
+                
+                sender = LootReserve:Player(sender);
+                
+                if COMM_DEBUG_SHOW_MESSAGES then
+                    local opKey;
+                    for k, v in pairs(Opcodes) do
+                        if v == opcode then
+                            opKey = k;
+                            break;
                         end
-                        LootReserve:debug("Received", channel, target, opKey or opcode, strsplit("|", message));
                     end
-                    if COMM_DEBUG_CANCEL_BYPASS or not LootReserve:IsMe(sender) then
-                        handler(sender, strsplit("|", message));
-                    end
+                    LootReserve:debug(format("Received (%s)", prefix), channel, sender, opKey or opcode, strsplit("|", message));
+                end
+                if COMM_DEBUG_CANCEL_BYPASS or not LootReserve:IsMe(sender) then
+                    handler(sender, strsplit("|", message));
                 end
             end
-        end);
+        end
+        
+        for prefix in pairs(LootReserve.Comm.PrefixKeys) do
+            LootReserve:RegisterComm(prefix, OnCommReceived);
+        end
     end
 end
 
 function LootReserve.Comm:CanWhisper(target)
     return LootReserve.Enabled and LootReserve:IsPlayerOnline(target);
 end
+function LootReserve.Comm:CanWhisperCompatible(target)
+    return LootReserve:IsPlayerOnline(target);
+end
 
 function LootReserve.Comm:Broadcast(opcode, ...)
     if not LootReserve.Enabled then return; end
 
-    local message;
     if IsInGroup() then
-        message = self:SendCommMessage(IsInRaid() and "RAID" or "PARTY", nil, opcode, ...);
+        self:SendCommMessage(IsInRaid() and "RAID" or "PARTY", nil, opcode, ...);
     else
-        message = self:SendCommMessage("WHISPER", LootReserve:Me(), opcode, ...);
+        self:SendCommMessage("WHISPER", LootReserve:Me(), opcode, ...);
     end
 end
 function LootReserve.Comm:Whisper(target, opcode, ...)
     if not self:CanWhisper(target) then return; end
-    local message = self:SendCommMessage("WHISPER", target, opcode, ...);
+    self:SendCommMessage("WHISPER", target, opcode, ...);
 end
 function LootReserve.Comm:Send(target, opcode, ...)
     if target then
@@ -190,21 +229,33 @@ function LootReserve.Comm:WhisperServer(opcode, ...)
     end
 end
 
+function LootReserve.Comm:BroadcastCompatible(opcode, ...)
+    if IsInGroup() then
+        self:SendCommMessageCompatible(IsInRaid() and "RAID" or "PARTY", nil, opcode, ...);
+    else
+        self:SendCommMessageCompatible("WHISPER", LootReserve:Me(), opcode, ...);
+    end
+end
+function LootReserve.Comm:WhisperCompatible(target, opcode, ...)
+    if not self:CanWhisperCompatible(target) then return; end
+    self:SendCommMessageCompatible("WHISPER", target, opcode, ...);
+end
+function LootReserve.Comm:SendCompatible(target, opcode, ...)
+    if target then
+        self:WhisperCompatible(target, opcode, ...);
+    else
+        self:BroadcastCompatible(opcode, ...);
+    end
+end
+
 -- Version
 function LootReserve.Comm:BroadcastVersion()
     LootReserve.Comm:SendVersion();
 end
 function LootReserve.Comm:SendVersion(target)
-    LootReserve.Comm:Send(target, Opcodes.Version,
+    LootReserve.Comm:SendCompatible(target, Opcodes.Version,
         LootReserve.Version,
         LootReserve.MinAllowedVersion);
-end
-function LootReserve.Comm:ForceSendVersion(target)
-    if LootReserve:IsPlayerOnline(target) then
-        self:SendCommMessage("WHISPER", target, Opcodes.Version,
-            LootReserve.Version,
-            LootReserve.MinAllowedVersion);
-    end
 end
 LootReserve.Comm.Handlers[Opcodes.Version] = function(sender, version, minAllowedVersion)
     LootReserve.Server:SetAddonUser(sender, version);
@@ -239,7 +290,7 @@ end
 
 -- Hello
 function LootReserve.Comm:BroadcastHello()
-    LootReserve.Comm:Broadcast(Opcodes.Hello);
+    LootReserve.Comm:BroadcastCompatible(Opcodes.Hello);
     LootReserve.Comm:BroadcastVersion();
 end
 LootReserve.Comm.Handlers[Opcodes.Hello] = function(sender)
