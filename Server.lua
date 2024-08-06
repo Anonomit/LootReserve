@@ -1567,7 +1567,9 @@ function LootReserve.Server:PrepareSession()
                 if self.ReservableRewardIDs[itemID] then
                     itemID = LootReserve.Data:GetToken(itemID);
                 end
-                if self.ReservableIDs[itemID] then
+                if command == "cancel" and self.CurrentSession.Members[sender] and LootReserve:Contains(self.CurrentSession.Members[sender].ReservedItems, itemID) then
+                    self:CancelReserve(sender, itemID, count, true);
+                elseif self.ReservableIDs[itemID] then
                     if command == "reserve" then
                         LootReserve.ItemCache(itemID):OnCache(function()
                             self:Reserve(sender, itemID, count, true);
@@ -2452,6 +2454,10 @@ function LootReserve.Server:CancelReserve(player, itemID, count, chat, forced, w
 
     if not forced and not masquerade and self.CurrentSession.Settings.Lock and member.Locked then
         return Failure(LootReserve.Constants.CancelReserveResult.Locked, "#");
+    end
+
+    if not self.ReservableIDs[itemID] and not LootReserve:Contains(member.ReservedItems, itemID) then
+        return Failure(LootReserve.Constants.CancelReserveResult.ItemNotReservable, member.ReservesLeft);
     end
 
     if not LootReserve:Contains(member.ReservedItems, itemID) then
