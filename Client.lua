@@ -45,6 +45,7 @@ LootReserve.Client =
 
     ReservableIDs            = { },
     PendingItems             = { },
+    PendingTimers            = { },
     PendingOpt               = nil,
     PendingOpen              = false,
     SkipOpen                 = false,
@@ -417,6 +418,11 @@ function LootReserve.Client:ResetSession(refresh)
     self.Multireserve      = 1;
     self.PendingItems      = { };
     self.PendingOpts       = nil;
+    
+    for _, timer in pairs(self.PendingTimers) do
+        timer:Cancel();
+    end
+    wipe(self.PendingTimers);
 
     if not refresh then
         self:StopCategoryFlashing();
@@ -454,6 +460,16 @@ function LootReserve.Client:IsItemPending(itemID)
 end
 function LootReserve.Client:SetItemPending(itemID, pending)
     self.PendingItems[itemID] = pending or nil;
+    if self.PendingTimers[itemID] then
+        self.PendingTimers[itemID]:Cancel();
+        self.PendingTimers[itemID] = nil;
+    end
+    if pending then
+        self.PendingTimers[itemID] = C_Timer.NewTimer(30, function()
+            LootReserve.Client:SetItemPending(itemID, false);
+            LootReserve.Client:UpdateReserveStatus();
+        end);
+    end
 end
 
 function LootReserve.Client:Reserve(itemID)
