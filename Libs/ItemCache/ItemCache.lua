@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 10
+local MAJOR, MINOR = ADDON_NAME, 11
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -28,7 +28,6 @@ end
 
 
 
-local assert       = assert
 local type         = type
 local next         = next
 local ipairs       = ipairs
@@ -238,8 +237,13 @@ end
 
 local Queue = {}
 local queueMeta = {
-  __index    = function(_, k) assert(Queue[k], "Queue has no field: " .. tostring(k) .. ". Make sure ItemCache is up to date.") return Queue[k] end,
-  __tostring = function(self) return "Queue" end,
+  __index     = function(_, k)
+                  if not Queue[k] then
+                    error("Queue has no field: " .. tostring(k) .. ". Make sure ItemCache is up to date.", 2)
+                  end
+                  return Queue[k]
+                end,
+  __tostring  = function(self) return "Queue" end,
 }
 local function MakeQueue(_, vals)
   local queue = vals or {}
@@ -290,7 +294,12 @@ local retrieveModes = {
 
 local CallbackController = {}
 local callbackControllerMeta = {
-  __index    = function(_, k) assert(CallbackController[k], "CallbackController has no field: " .. tostring(k) .. ". Make sure ItemCache is up to date.") return CallbackController[k] end,
+  __index     = function(_, k)
+                  if not CallbackController[k] then
+                    error("CallbackController has no field: " .. tostring(k) .. ". Make sure ItemCache is up to date.", 2)
+                  end
+                  return CallbackController[k]
+                end,
   __tostring = function(self) return "CallbackController" end,
 }
 local function MakeCallbackController(_, items, retrieveMode, callback, ...)
@@ -366,8 +375,13 @@ local storage
 local matchMeta = {}
 local itemMeta = {
   -- GetDebugName because of Blizzard_DebugTools\Blizzard_TableInspectorAttributeDataProvider.lua:61
-  __index     = function(_, k) assert(k == "GetDebugName" or Item[k], "Item has no field: " .. tostring(k) .. ". Make sure ItemCache is up to date.") return Item[k] end,
-  __newindex  = function(self, k, v) error("Item cannot be modified") end,
+  __index     = function(_, k)
+                  if k ~= "GetDebugName" and not Item[k] then
+                    error("Item has no field: " .. tostring(k) .. ". Make sure ItemCache is up to date.", 2)
+                  end
+                  return Item[k]
+                end,
+  __newindex  = function(self, k, v) error("Item cannot be modified", 2) end,
   __metatable = matchMeta,
   __eq        = function(item1, item2) return item1:GetID() == item2:GetID() and item1:GetSuffix() == item2:GetSuffix() and item1:GetUniqueID() == item2:GetUniqueID() end,
   __lt        = function(item1, item2) return (item1:GetName() or "") <  (item2:GetName() or "") end,
@@ -469,7 +483,9 @@ function ItemCache:Item(arg, suffix, uniqueID)
     return arg
   else
     local id, suffix, uniqueID = InterpretItem(arg, suffix, uniqueID)
-    assert(id, format("Bad Item format: %s", arg and tostring(arg) or "nil"))
+    if not id then
+      error(format("Bad Item format: %s", arg and tostring(arg) or "nil"), 2)
+    end
     return ItemDB:Get(id, suffix, uniqueID)
   end
   return nil
@@ -867,7 +883,9 @@ local function Items_OnCacheOrLoad(items, self, retrieveMode, func, ...)
   local IsRetrieved = retrieveModes[retrieveMode].IsRetrieved
   for _, item in pairs(items) do
     local id, suffix, uniqueID = InterpretItem(item)
-    assert(id, format("Bad Item format: %s", item and tostring(item) or "nil"))
+    if not id then
+      error(format("Bad Item format: %s", item and tostring(item) or "nil"), 2)
+    end
     local loadItem = true
     if not ItemCache:DoesItemExistByID(id) then
       loadItem = false
