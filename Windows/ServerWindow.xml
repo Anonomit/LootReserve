@@ -2329,7 +2329,7 @@
 							MakeMenuToggle("24 Hour Clock", "Use24HourTime", "Shows and broadcasts times using a 24 hour format. Disable for 12 hour formatting.", RefreshRolls),
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Rolls", isTitle = true },
-							MakeMenuToggle("Accept All Roll Formats", "AcceptAllRollFormats", "If enabled, custom rolls will be honored. If disabled, only 1-100 rolls will be considered and all others will be ignored.", ToggleAcceptAllRollFormats),
+							MakeMenuToggle("Accept All Roll Formats", "AcceptAllRollFormats", "If enabled, custom rolls will be honored.|nIf disabled, only 1-100 rolls will be considered and all others will be ignored.|n|nDoes not affect Tiered rolls.", ToggleAcceptAllRollFormats),
 							MakeMenuToggle("Allow Multiple Rolls on Reserves", "AllowMultipleRollsOnReserves", "If enabled, reserving an item multiple times will allow you to roll on it multiple times when it drops. If disabled, you will only be able to roll once each time it drops.", function() LootReserve:ReopenMenu(self) end),
 							{ text = format("Remove winners' reserves: |cFF00FF00%s|r", LootReserve.Constants.WinnerReservesRemovalText[not GetValue("AllowMultipleRollsOnReserves") and LootReserve.Constants.WinnerReservesRemoval.Single or LootReserve.Server.Settings.WinnerReservesRemoval] or "???"), arg1 = "#reservesRemoval", disabled = not GetValue("AllowMultipleRollsOnReserves"), menuList = {
 								MakeMenuRadio(LootReserve.Constants.WinnerReservesRemovalText[LootReserve.Constants.WinnerReservesRemoval.None], "WinnerReservesRemoval", LootReserve.Constants.WinnerReservesRemoval.None, "Don't adjust reserves when a reserved item is won.", RefreshWinnerReservesRemoval),
