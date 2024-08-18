@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 11
+local MAJOR, MINOR = ADDON_NAME, 12
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -50,10 +50,12 @@ local strmatch  = string.match
 local strfind   = string.find
 local strgmatch = string.gmatch
 local strgsub   = string.gsub
+
 local tblinsert = table.insert
 local tblremove = table.remove
-local floor     = math.floor
 
+local mathFloor = math.floor
+local mathHuge  = math.huge
 
 
 function Addon:MakeLookupTable(t, val, keepOrigVals)
@@ -230,7 +232,7 @@ end
 
 local function Round(num, decimalPlaces)
   local mult = 10^(tonumber(decimalPlaces) or 0)
-  return floor(tonumber(num) * mult + 0.5) / mult
+  return mathFloor(tonumber(num) * mult + 0.5) / mult
 end
 
 
@@ -384,8 +386,17 @@ local itemMeta = {
   __newindex  = function(self, k, v) error("Item cannot be modified", 2) end,
   __metatable = matchMeta,
   __eq        = function(item1, item2) return item1:GetID() == item2:GetID() and item1:GetSuffix() == item2:GetSuffix() and item1:GetUniqueID() == item2:GetUniqueID() end,
-  __lt        = function(item1, item2) return (item1:GetName() or "") <  (item2:GetName() or "") end,
-  __le        = function(item1, item2) return (item1:GetName() or "") <= (item2:GetName() or "") end,
+  __lt        = function(item1, item2)
+                  if item1:GetID() ~= item2:GetID() then
+                    return item1:GetID() < item2:GetID()
+                  elseif item1:GetSuffix() ~= item2:GetSuffix() then
+                    return (item1:GetSuffix() or -1*mathHuge) < (item2:GetSuffix() or -1*mathHuge)
+                  elseif item1:GetUniqueID() ~= item2:GetUniqueID() then
+                    return (item1:GetUniqueID() or -1*mathHuge) < (item2:GetUniqueID() or -1*mathHuge)
+                  end
+                  return false
+                end,
+  __le        = function(item1, item2) return item1 == item2 or item1 < item2 end,
   __tostring  = function(self) return "Item " .. self:GetID() .. (self:HasSuffix() and (":" .. self:GetSuffix()) or "") .. (self:HasUniqueID() and (":" .. self:GetUniqueID()) or "") end,
 }
 
