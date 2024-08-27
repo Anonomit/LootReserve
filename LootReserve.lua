@@ -994,7 +994,11 @@ function LootReserve:GetSoulboundTradeableDuration(bag, slot)
     end
     
     self.TooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
-    self.TooltipScanner:SetBagItem(bag, slot);
+    if bag == KEYRING_CONTAINER then
+        self.TooltipScanner:SetInventoryItem("player", KeyRingButtonIDToInvSlotID(slot));
+    else
+        self.TooltipScanner:SetBagItem(bag, slot);
+    end
     for i = LootReserve.TooltipScanner:NumLines(), 1, -1 do
         local line = _G[self.TooltipScanner:GetName() .. "TextLeft" .. i];
         if line and line:GetText() then
