@@ -499,6 +499,25 @@ LootReserve.Data =
                 },
             },
         }),
+        [936] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+            Name = "The Crystal Vale",
+            ButtonName = "[20] The Crystal Vale",
+            NameShort = "Thunderaan",
+            Color = LootReserve.Constants.Colors.Size20Tiny,
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Prince Thunderaan",
+                    Loot =
+                    {
+                        18564, 18563, 0,
+                        231783, 0,
+                        231387, 0,
+                    },
+                },
+            },
+        }),
         
         [938] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Onyxia",
