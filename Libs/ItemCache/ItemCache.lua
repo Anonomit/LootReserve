@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 12
+local MAJOR, MINOR = ADDON_NAME, 13
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -1116,6 +1116,7 @@ end
 function Item:RequiresCooking(...)        return self:RequiresSkill(PROFESSIONS_COOKING,                 ...) end
 function Item:RequiresFirstAid(...)       return self:RequiresSkill(PROFESSIONS_FIRST_AID,               ...) end
 function Item:RequiresFishing(...)        return self:RequiresSkill(PROFESSIONS_FISHING,                 ...) end
+function Item:RequiresArchaeology(...)    return self:RequiresSkill(PROFESSIONS_ARCHAEOLOGY,             ...) end
 
 -- these GlobalStrings are not appearing ingame (yet?)
   
@@ -1232,11 +1233,11 @@ Item.GetValue       = Item.GetSellPrice
 function Item:GetBindType()
   return (select(14, self:GetInfo()))
 end
-function Item:DoesNotBind()    return self:GetBindType() == LE_ITEM_BIND_NONE       end
-function Item:CanBind()        return self:GetBindType() ~= LE_ITEM_BIND_NONE       end
-function Item:IsBindOnPickup() return self:GetBindType() == LE_ITEM_BIND_ON_ACQUIRE end
-function Item:IsBindOnEquip()  return self:GetBindType() == LE_ITEM_BIND_ON_EQUIP   end
-function Item:IsBindOnUse()    return self:GetBindType() == LE_ITEM_BIND_ON_USE     end
+function Item:DoesNotBind()    return self:GetBindType() == Enum.ItemBind.None      end
+function Item:CanBind()        return self:GetBindType() ~= Enum.ItemBind.None      end
+function Item:IsBindOnPickup() return self:GetBindType() == Enum.ItemBind.OnAcquire end
+function Item:IsBindOnEquip()  return self:GetBindType() == Enum.ItemBind.OnEquip   end
+function Item:IsBindOnUse()    return self:GetBindType() == Enum.ItemBind.OnUse     end
 Item.Binds = Item.CanBind
 Item.IsBoP = Item.IsBindOnPickup
 Item.IsBoE = Item.IsBindOnEquip
