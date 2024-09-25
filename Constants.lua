@@ -187,8 +187,9 @@ LootReserve.Constants.Colors = {
     Size10     = "b1fc99",
     Size20Tiny = "8cffdb",
     Size20     = "8ab9f1",
-    Size25     = "b1fc99",
-    Size10or25 = "b1fc99",
+    Size25Tiny = "ffff00",
+    Size25     = "ffff00",
+    Size10or25 = "7fff00",
     Size40Tiny = "dea681",
     Size40     = "f87217",
 };

@@ -2375,6 +2375,7 @@ LootReserve.Data =
             Name = "Karazhan",
             ButtonName = "[10] Karazhan",
             NameShort = "Kara",
+            Color = LootReserve.Constants.Colors.Size10,
             Expansion = 1,
             Children =
             Squish{
@@ -2633,6 +2634,7 @@ LootReserve.Data =
             Name = "Gruul's Lair",
             ButtonName = "[25] Gruul's Lair",
             NameShort = "Gruul",
+            Color = LootReserve.Constants.Colors.Size25Tiny,
             Expansion = 1,
             Children =
             Squish{
