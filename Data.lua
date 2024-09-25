@@ -511,9 +511,43 @@ LootReserve.Data =
                     Name = "Prince Thunderaan",
                     Loot =
                     {
-                        18564, 18563, 0,
+                        231708, 231716, 231725, 0,
                         231783, 0,
                         231387, 0,
+                        18564, 18563, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Tier 2 Pieces",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        231078, 231097, 0,
+                        231100, 231108, 0,
+                        231171, 231161, 0,
+                        231252, 231236, 231260, 231244, 0,
+                        231045, 231053, 0,
+                        231056, 231065, 0,
+                        231216, 231200, 231224, 231208, 0,
+                        231191, 231175, 231183, 0,
+                        231032, 231024, 0,
+                    },
+                },
+                {
+                    Name = "Core Forged",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        232232, 232240, 0,
+                        232128, 232136, 0,
+                        232168, 232176, 0,
+                        232080, 232088, 232096, 232104, 0,
+                        232184, 232192, 0,
+                        232120, 232112, 0,
+                        232200, 232208, 232216, 232224, 0,
+                        232152, 232144, 232160, 0,
+                        232248, 232256, 0,
                     },
                 },
             },
@@ -1045,8 +1079,8 @@ LootReserve.Data =
                         232187, 232185, 232190, 232183, 232188, 232184, 232186, 232189, 0,
                         232195, 232193, 232198, 232191, 232196, 232192, 232194, 232197, 0,
                         -- Hunter
-                        232115, 232113, 232118, 232111, 232116, 232112, 232114, 232117, 0,
                         232123, 232121, 232126, 232119, 232124, 232120, 232122, 232125, 0,
+                        232115, 232113, 232118, 232111, 232116, 232112, 232114, 232117, 0,
                         -- Shaman
                         232203, 232201, 232206, 232199, 232204, 232200, 232202, 232205, 0,
                         232211, 232209, 232214, 232207, 232212, 232208, 232210, 232213, 0,
@@ -2714,6 +2748,7 @@ LootReserve.Data =
             Name = "Magtheridon's Lair",
             ButtonName = "[25] Magtheridon's Lair",
             NameShort = "Mag",
+            Color = LootReserve.Constants.Colors.Size25Tiny,
             Expansion = 1,
             Children =
             Squish{
@@ -2777,6 +2812,7 @@ LootReserve.Data =
             Name = "Serpentshrine Cavern",
             ButtonName = "[25] Serpentshrine Cavern",
             NameShort = "SSC",
+            Color = LootReserve.Constants.Colors.Size25,
             Expansion = 1,
             Children =
             Squish{
@@ -2934,6 +2970,7 @@ LootReserve.Data =
             Name = "The Eye",
             ButtonName = "[25] The Eye",
             NameShort = "TK",
+            Color = LootReserve.Constants.Colors.Size25,
             Expansion = 1,
             Children =
             Squish{
@@ -3077,6 +3114,7 @@ LootReserve.Data =
             Name = "Battle for Mount Hyjal",
             ButtonName = "[25] Battle for Mount Hyjal",
             NameShort = "Hyjal",
+            Color = LootReserve.Constants.Colors.Size25,
             Expansion = 1,
             Children =
             Squish{
@@ -3224,6 +3262,7 @@ LootReserve.Data =
             Name = "Black Temple",
             ButtonName = "[25] Black Temple",
             NameShort = "BT",
+            Color = LootReserve.Constants.Colors.Size25,
             Expansion = 1,
             Children =
             Squish{
@@ -3403,6 +3442,7 @@ LootReserve.Data =
             Name = "Zul'Aman",
             ButtonName = "[10] Zul'Aman",
             NameShort = "ZA",
+            Color = LootReserve.Constants.Colors.Size10,
             Expansion = 1,
             Children =
             Squish{
@@ -3514,6 +3554,7 @@ LootReserve.Data =
             Name = "Sunwell Plateau",
             ButtonName = "[25] Sunwell Plateau",
             NameShort = "SWP",
+            Color = LootReserve.Constants.Colors.Size25,
             Expansion = 1,
             Children =
             Squish{
@@ -3677,6 +3718,7 @@ LootReserve.Data =
             Name = "Naxxramas 10",
             ButtonName = "[10] Naxxramas",
             NameShort = "Naxx 10",
+            Color = LootReserve.Constants.Colors.Size10,
             Expansion = 2,
             Children =
             Squish{
@@ -3872,6 +3914,7 @@ LootReserve.Data =
             Name = ShortCircuit(EXPANSION_PHASE <= 3.1, "Naxxramas 25", "Naxxramas"),
             ButtonName = ShortCircuit(EXPANSION_PHASE <= 3.1, "[25] Naxxramas", "Naxxramas"),
             NameShort = ShortCircuit(EXPANSION_PHASE <= 3.1, "Naxx 25", "Naxx"),
+            Color = ShortCircuit(EXPANSION_PHASE <= 3.1, LootReserve.Constants.Colors.Size25, LootReserve.Constants.Colors.Size10or25),
             Expansion = 2,
             Children =
             Squish{
@@ -4071,6 +4114,7 @@ LootReserve.Data =
             Name = "Eye of Eternity 10",
             ButtonName = "[10] Eye of Eternity",
             NameShort = "EoE 10",
+            Color = LootReserve.Constants.Colors.Size10Tiny,
             Expansion = 2,
             Children =
             Squish{
@@ -4090,6 +4134,7 @@ LootReserve.Data =
             Name = ShortCircuit(EXPANSION_PHASE <= 3.1, "Eye of Eternity 25", "Eye of Eternity"),
             ButtonName = ShortCircuit(EXPANSION_PHASE <= 3.1, "[25] Eye of Eternity", "Eye of Eternity"),
             NameShort = ShortCircuit(EXPANSION_PHASE <= 3.1, "EoE 25", "EoE"),
+            Color = ShortCircuit(EXPANSION_PHASE <= 3.1, LootReserve.Constants.Colors.Size25Tiny, LootReserve.Constants.Colors.Size10or25Tiny),
             Expansion = 2,
             Children =
             Squish{
@@ -4110,6 +4155,7 @@ LootReserve.Data =
             Name = "The Obsidian Sanctum 10",
             ButtonName = "[10] The Obsidian Sanctum",
             NameShort = "OS 10",
+            Color = LootReserve.Constants.Colors.Size10Tiny,
             Expansion = 2,
             Children =
             Squish{
@@ -4174,6 +4220,7 @@ LootReserve.Data =
             Name = "The Obsidian Sanctum 10",
             ButtonName = "[10] The Obsidian Sanctum",
             NameShort = "OS 10",
+            Color = LootReserve.Constants.Colors.Size10Tiny,
             Expansion = 2,
             Children =
             Squish{
@@ -4237,6 +4284,7 @@ LootReserve.Data =
             Name = "The Obsidian Sanctum 25",
             ButtonName = "[25] The Obsidian Sanctum",
             NameShort = "OS 25",
+            Color = LootReserve.Constants.Colors.Size25Tiny,
             Expansion = 2,
             Children =
             Squish{
@@ -4302,6 +4350,7 @@ LootReserve.Data =
             Name = "Ulduar 10",
             ButtonName = "[10] Ulduar",
             NameShort = "Uld 10",
+            Color = LootReserve.Constants.Colors.Size10,
             Expansion = 2,
             Children =
             Squish{
@@ -4619,6 +4668,7 @@ LootReserve.Data =
             Name = "Ulduar 10",
             ButtonName = "[10] Ulduar",
             NameShort = "Uld 10",
+            Color = LootReserve.Constants.Colors.Size10,
             Expansion = 2,
             Children =
             Squish{
@@ -4950,6 +5000,7 @@ LootReserve.Data =
             Name = "Ulduar 25",
             ButtonName = "[25] Ulduar",
             NameShort = "Uld 25",
+            Color = LootReserve.Constants.Colors.Size25,
             Expansion = 2,
             Children =
             Squish{
@@ -5288,6 +5339,7 @@ LootReserve.Data =
             Name = "Trial of the Crusader 10",
             ButtonName = "[10] Trial of the Crusader",
             NameShort = "ToC 10",
+            Color = LootReserve.Constants.Colors.Size10,
             Expansion = 2,
             Children =
             Squish{
@@ -5668,6 +5720,7 @@ LootReserve.Data =
             Name = "Trial of the Crusader 25",
             ButtonName = "[25] Trial of the Crusader",
             NameShort = "ToC 25",
+            Color = LootReserve.Constants.Colors.Size25,
             Expansion = 2,
             Children =
             Squish{
@@ -6227,6 +6280,7 @@ LootReserve.Data =
             Name = "Onyxia's Lair 10",
             ButtonName = "[10] Onyxia's Lair",
             NameShort = "Ony 10",
+            Color = LootReserve.Constants.Colors.Size10Tiny,
             Expansion = 2,
             Children =
             Squish{
@@ -6267,6 +6321,7 @@ LootReserve.Data =
             Name = "Onyxia's Lair 25",
             ButtonName = "[25] Onyxia's Lair",
             NameShort = "Ony 25",
+            Color = LootReserve.Constants.Colors.Size25Tiny,
             Expansion = 2,
             Children =
             Squish{
@@ -6309,6 +6364,7 @@ LootReserve.Data =
             Name = "Icecrown Citadel 10",
             ButtonName = "[10] Icecrown Citadel",
             NameShort = "ICC 10",
+            Color = LootReserve.Constants.Colors.Size10,
             Expansion = 2,
             Children =
             Squish{
@@ -6756,6 +6812,7 @@ LootReserve.Data =
             Name = "Icecrown Citadel 25",
             ButtonName = "[25] Icecrown Citadel",
             NameShort = "ICC 25",
+            Color = LootReserve.Constants.Colors.Size25,
             Expansion = 2,
             Children =
             Squish{
@@ -7316,6 +7373,7 @@ LootReserve.Data =
             Name = "The Ruby Sanctum 10",
             ButtonName = "[10] The Ruby Sanctum",
             NameShort = "RS 10",
+            Color = LootReserve.Constants.Colors.Size10Tiny,
             Expansion = 2,
             Children =
             Squish{
@@ -7353,6 +7411,7 @@ LootReserve.Data =
             Name = "The Ruby Sanctum 25",
             ButtonName = "[25] The Ruby Sanctum",
             NameShort = "RS 25",
+            Color = LootReserve.Constants.Colors.Size25Tiny,
             Expansion = 2,
             Children =
             Squish{
@@ -7392,6 +7451,7 @@ LootReserve.Data =
             Name = "Vault of Archavon 10",
             ButtonName = "[10] Vault of Archavon",
             NameShort = "VoA 10",
+            Color = LootReserve.Constants.Colors.Size10Tiny,
             Expansion = 2,
             Children =
             Squish{
@@ -7662,6 +7722,7 @@ LootReserve.Data =
             Name = "Vault of Archavon 25",
             ButtonName = "[25] Vault of Archavon",
             NameShort = "VoA 25",
+            Color = LootReserve.Constants.Colors.Size25Tiny,
             Expansion = 2,
             Children =
             Squish{
@@ -7925,6 +7986,7 @@ LootReserve.Data =
         [4010] = {
             Name = "Blackwing Descent",
             NameShort = "BWD",
+            Color = LootReserve.Constants.Colors.Size10or25,
             Expansion = 3,
             Children =
             Squish{
@@ -8249,6 +8311,7 @@ LootReserve.Data =
         [4020] = {
             Name = "The Bastion of Twilight",
             NameShort = "BoT",
+            Color = LootReserve.Constants.Colors.Size10or25,
             Expansion = 3,
             Children =
             Squish{
@@ -8518,6 +8581,7 @@ LootReserve.Data =
         [4030] = {
             Name = "Throne of the Four Winds",
             NameShort = "ToFW",
+            Color = LootReserve.Constants.Colors.Size10or25,
             Expansion = 3,
             Children =
             Squish{
@@ -8800,6 +8864,7 @@ LootReserve.Data =
         [4510] = {
             Name = "Baradin Hold",
             NameShort = "BH",
+            Color = LootReserve.Constants.Colors.Size10or25Tiny,
             Expansion = 3,
             Children =
             Squish{
@@ -11645,7 +11710,7 @@ local tokenMap = {
     
     [231708] = {231078, 231097, 231100, 231108, 231171, 231161, 232232, 232240, 232128, 232136, 232168, 232176, }, -- Draconian Belt (Season of Discovery)
     [231716] = {231032, 231024, 231045, 231053, 231252, 231236, 231260, 231244, 232248, 232256, 232184, 232192, 232080, 232088, 232096, 232104, }, -- Primeval Belt (Season of Discovery)
-    [231725] = {231191, 231175, 231183, 231056, 231065, 231216, 231200, 231224, 231208, 232152, 232144, 232160, 232112, 232120, 232200, 232208, 232216, 232224, }, -- Ancient Belt (Season of Discovery)
+    [231725] = {231191, 231175, 231183, 231056, 231065, 231216, 231200, 231224, 231208, 232152, 232144, 232160, 232120, 232112, 232200, 232208, 232216, 232224, }, -- Ancient Belt (Season of Discovery)
     
     [231710] = {231075, 231093, 231104, 231112, 231168, 231158, 232234, 232242, 232130, 232138, 232170, 232178, }, -- Draconian Leggings (Season of Discovery)
     [231718] = {231034, 231026, 231044, 231052, 231250, 231234, 231258, 231242, 232250, 232258, 232186, 232194, 232082, 232090, 232098, 232106, }, -- Primeval Leggings (Season of Discovery)
