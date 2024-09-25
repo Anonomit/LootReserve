@@ -2919,7 +2919,8 @@
 												});
 											end
 											if not collapsed then
-												info.text             = category.Name;
+												-- info.text             = (category.Color and ("|cff" .. category.Color) or "") .. (category.ButtonName or category.Name);
+												info.text             = category.ButtonName or category.Name;
 												info.isNotRadio       = true;
 												info.keepShownOnClick = true;
 												info.value            = id;

@@ -126,7 +126,9 @@ LootReserve.Data =
         
         [910] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Blackfathom Deeps",
+            ButtonName = "[10] Blackfathom Deeps",
             NameShort = "BFD",
+            Color = LootReserve.Constants.Colors.Size10,
             Expansion = 0,
             Children =
             Squish{
@@ -220,7 +222,9 @@ LootReserve.Data =
         }),
         [920] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Gnomeregan",
+            ButtonName = "[10] Gnomeregan",
             NameShort = "Gnomer",
+            Color = LootReserve.Constants.Colors.Size10,
             Expansion = 0,
             Children =
             Squish{
@@ -321,7 +325,9 @@ LootReserve.Data =
         }),
         [925] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Temple of Atal'Hakkar",
+            ButtonName = "[20] Temple of Atal'Hakkar",
             NameShort = "ST",
+            Color = LootReserve.Constants.Colors.Size20,
             Expansion = 0,
             Children =
             Squish{
@@ -453,7 +459,9 @@ LootReserve.Data =
         
         [930] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Storm Cliffs",
+            ButtonName = "[20] Storm Cliffs",
             NameShort = "Azuregos",
+            Color = LootReserve.Constants.Colors.Size20Tiny,
             Expansion = 0,
             Children =
             Squish{
@@ -472,7 +480,9 @@ LootReserve.Data =
         }),
         [935] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "The Tainted Scar",
+            ButtonName = "[20] The Tainted Scar",
             NameShort = "Kazzak",
+            Color = LootReserve.Constants.Colors.Size20Tiny,
             Expansion = 0,
             Children =
             Squish{
@@ -492,7 +502,9 @@ LootReserve.Data =
         
         [938] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Onyxia",
-            NameShort = ShortCircuit(EXPANSION_PHASE >= 3.3, "Ony 40", "Ony"),
+            ButtonName = "[20] Onyxia",
+            NameShort = "Ony",
+            Color = LootReserve.Constants.Colors.Size20Tiny,
             Expansion = 0,
             Children =
             Squish{
@@ -571,7 +583,9 @@ LootReserve.Data =
         }),
         [940] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Molten Core",
+            ButtonName = "[20] Molten Core",
             NameShort = "MC",
+            Color = LootReserve.Constants.Colors.Size20,
             Expansion = 0,
             Children =
             Squish{
@@ -824,7 +838,9 @@ LootReserve.Data =
         
         [942] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Blackwing Lair",
+            ButtonName = "[20] Blackwing Lair",
             NameShort = "BWL",
+            Color = LootReserve.Constants.Colors.Size20,
             Expansion = 0,
             Children =
             Squish{
@@ -1038,7 +1054,9 @@ LootReserve.Data =
         }),
         [944] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
             Name = "Zul'Gurub",
+            ButtonName = "[10] Zul'Gurub",
             NameShort = "ZG",
+            Color = LootReserve.Constants.Colors.Size10,
             Expansion = 0,
             Children =
             Squish{
@@ -1244,7 +1262,9 @@ LootReserve.Data =
         
         [1010] = ShortCircuit(SEASON_NUMBER ~= SEASONS.DISCOVERY, {
             Name = "Molten Core",
+            ButtonName = "[40] Molten Core",
             NameShort = "MC",
+            Color = LootReserve.Constants.Colors.Size40,
             Expansion = 0,
             Children =
             Squish{
@@ -1452,7 +1472,9 @@ LootReserve.Data =
         }),
         [1020] = ShortCircuit(SEASON_NUMBER ~= SEASONS.DISCOVERY, {
             Name = "Onyxia",
+            ButtonName = "[40] Onyxia",
             NameShort = ShortCircuit(EXPANSION_PHASE >= 3.3, "Ony 40", "Ony"),
+            Color = LootReserve.Constants.Colors.Size40Tiny,
             Expansion = 0,
             Children =
             Squish{
@@ -1482,7 +1504,9 @@ LootReserve.Data =
         }),
         [1030] = ShortCircuit(SEASON_NUMBER ~= SEASONS.DISCOVERY, {
             Name = "Blackwing Lair",
+            ButtonName = "[40] Blackwing Lair",
             NameShort = "BWL",
+            Color = LootReserve.Constants.Colors.Size40,
             Expansion = 0,
             Children =
             Squish{
@@ -1621,7 +1645,9 @@ LootReserve.Data =
         }),
         [1040] = ShortCircuit(EXPANSION_PHASE < 4.0 and SEASON_NUMBER ~= SEASONS.DISCOVERY, {
             Name = "Zul'Gurub",
+            ButtonName = "[20] Zul'Gurub",
             NameShort = "ZG",
+            Color = LootReserve.Constants.Colors.Size20,
             Expansion = 0,
             Children =
             Squish{
@@ -1799,7 +1825,9 @@ LootReserve.Data =
         }),
         [1050] = {
             Name = "Ruins of Ahn'Qiraj",
+            ButtonName = "[20] Ruins of Ahn'Qiraj",
             NameShort = "AQ20",
+            Color = LootReserve.Constants.Colors.Size20,
             Expansion = 0,
             Children =
             Squish{
@@ -1923,7 +1951,9 @@ LootReserve.Data =
         },
         [1060] = {
             Name = "Temple of Ahn'Qiraj",
+            ButtonName = "[40] Temple of Ahn'Qiraj",
             NameShort = "AQ40",
+            Color = LootReserve.Constants.Colors.Size40,
             Expansion = 0,
             Children =
             Squish{
@@ -2113,7 +2143,9 @@ LootReserve.Data =
         },
         [1070] = ShortCircuit(EXPANSION_PHASE < 3.0, {
             Name = "Naxxramas",
+            ButtonName = "[40] Naxxramas",
             NameShort = "Naxx 40",
+            Color = LootReserve.Constants.Colors.Size40,
             Expansion = 0,
             Children =
             Squish{
@@ -2322,6 +2354,7 @@ LootReserve.Data =
         
         [2010] = {
             Name = "Karazhan",
+            ButtonName = "[10] Karazhan",
             NameShort = "Kara",
             Expansion = 1,
             Children =
@@ -2579,6 +2612,7 @@ LootReserve.Data =
         },
         [2020] = {
             Name = "Gruul's Lair",
+            ButtonName = "[25] Gruul's Lair",
             NameShort = "Gruul",
             Expansion = 1,
             Children =
@@ -2656,6 +2690,7 @@ LootReserve.Data =
         },
         [2030] = {
             Name = "Magtheridon's Lair",
+            ButtonName = "[25] Magtheridon's Lair",
             NameShort = "Mag",
             Expansion = 1,
             Children =
@@ -2718,6 +2753,7 @@ LootReserve.Data =
         },
         [2040] = {
             Name = "Serpentshrine Cavern",
+            ButtonName = "[25] Serpentshrine Cavern",
             NameShort = "SSC",
             Expansion = 1,
             Children =
@@ -2874,6 +2910,7 @@ LootReserve.Data =
         },
         [2050] = {
             Name = "The Eye",
+            ButtonName = "[25] The Eye",
             NameShort = "TK",
             Expansion = 1,
             Children =
@@ -3016,6 +3053,7 @@ LootReserve.Data =
         },
         [2060] = {
             Name = "Battle for Mount Hyjal",
+            ButtonName = "[25] Battle for Mount Hyjal",
             NameShort = "Hyjal",
             Expansion = 1,
             Children =
@@ -3162,6 +3200,7 @@ LootReserve.Data =
         },
         [2070] = {
             Name = "Black Temple",
+            ButtonName = "[25] Black Temple",
             NameShort = "BT",
             Expansion = 1,
             Children =
@@ -3340,6 +3379,7 @@ LootReserve.Data =
         },
         [2080] = ShortCircuit(EXPANSION_PHASE < 4.0, {
             Name = "Zul'Aman",
+            ButtonName = "[10] Zul'Aman",
             NameShort = "ZA",
             Expansion = 1,
             Children =
@@ -3450,6 +3490,7 @@ LootReserve.Data =
         }),
         [2090] = {
             Name = "Sunwell Plateau",
+            ButtonName = "[25] Sunwell Plateau",
             NameShort = "SWP",
             Expansion = 1,
             Children =
@@ -3612,6 +3653,7 @@ LootReserve.Data =
         -- Naxxramas
         [3010] = ShortCircuit(EXPANSION_PHASE <= 3.1, {
             Name = "Naxxramas 10",
+            ButtonName = "[10] Naxxramas",
             NameShort = "Naxx 10",
             Expansion = 2,
             Children =
@@ -3806,6 +3848,7 @@ LootReserve.Data =
         }),
         [3011] = {
             Name = ShortCircuit(EXPANSION_PHASE <= 3.1, "Naxxramas 25", "Naxxramas"),
+            ButtonName = ShortCircuit(EXPANSION_PHASE <= 3.1, "[25] Naxxramas", "Naxxramas"),
             NameShort = ShortCircuit(EXPANSION_PHASE <= 3.1, "Naxx 25", "Naxx"),
             Expansion = 2,
             Children =
@@ -4004,6 +4047,7 @@ LootReserve.Data =
         -- Eye of Eternity
         [3020] = ShortCircuit(EXPANSION_PHASE <= 3.1, {
             Name = "Eye of Eternity 10",
+            ButtonName = "[10] Eye of Eternity",
             NameShort = "EoE 10",
             Expansion = 2,
             Children =
@@ -4022,6 +4066,7 @@ LootReserve.Data =
         }),
         [3021] = {
             Name = ShortCircuit(EXPANSION_PHASE <= 3.1, "Eye of Eternity 25", "Eye of Eternity"),
+            ButtonName = ShortCircuit(EXPANSION_PHASE <= 3.1, "[25] Eye of Eternity", "Eye of Eternity"),
             NameShort = ShortCircuit(EXPANSION_PHASE <= 3.1, "EoE 25", "EoE"),
             Expansion = 2,
             Children =
@@ -4041,6 +4086,7 @@ LootReserve.Data =
         -- The Obsidian Sanctum
         [3030] = ShortCircuit(EXPANSION_PHASE <= 3.1, {
             Name = "The Obsidian Sanctum 10",
+            ButtonName = "[10] The Obsidian Sanctum",
             NameShort = "OS 10",
             Expansion = 2,
             Children =
@@ -4104,6 +4150,7 @@ LootReserve.Data =
         }),
         [3029] = ShortCircuit(EXPANSION_PHASE > 3.1, {
             Name = "The Obsidian Sanctum 10",
+            ButtonName = "[10] The Obsidian Sanctum",
             NameShort = "OS 10",
             Expansion = 2,
             Children =
@@ -4166,6 +4213,7 @@ LootReserve.Data =
         }),
         [3031] = {
             Name = "The Obsidian Sanctum 25",
+            ButtonName = "[25] The Obsidian Sanctum",
             NameShort = "OS 25",
             Expansion = 2,
             Children =
@@ -4230,6 +4278,7 @@ LootReserve.Data =
         -- Ulduar
         [3040] = ShortCircuit(EXPANSION_PHASE <= 3.2, {
             Name = "Ulduar 10",
+            ButtonName = "[10] Ulduar",
             NameShort = "Uld 10",
             Expansion = 2,
             Children =
@@ -4546,6 +4595,7 @@ LootReserve.Data =
         }),
         [3039] = ShortCircuit(EXPANSION_PHASE > 3.2, {
             Name = "Ulduar 10",
+            ButtonName = "[10] Ulduar",
             NameShort = "Uld 10",
             Expansion = 2,
             Children =
@@ -4876,6 +4926,7 @@ LootReserve.Data =
         }),
         [3041] = {
             Name = "Ulduar 25",
+            ButtonName = "[25] Ulduar",
             NameShort = "Uld 25",
             Expansion = 2,
             Children =
@@ -5213,6 +5264,7 @@ LootReserve.Data =
         -- Trial of the Crusader
         [3051] = {
             Name = "Trial of the Crusader 10",
+            ButtonName = "[10] Trial of the Crusader",
             NameShort = "ToC 10",
             Expansion = 2,
             Children =
@@ -5592,6 +5644,7 @@ LootReserve.Data =
         },
         [3053] = {
             Name = "Trial of the Crusader 25",
+            ButtonName = "[25] Trial of the Crusader",
             NameShort = "ToC 25",
             Expansion = 2,
             Children =
@@ -6150,6 +6203,7 @@ LootReserve.Data =
         -- Onyxia's Lair
         [3060] = {
             Name = "Onyxia's Lair 10",
+            ButtonName = "[10] Onyxia's Lair",
             NameShort = "Ony 10",
             Expansion = 2,
             Children =
@@ -6189,6 +6243,7 @@ LootReserve.Data =
         },
         [3061] = {
             Name = "Onyxia's Lair 25",
+            ButtonName = "[25] Onyxia's Lair",
             NameShort = "Ony 25",
             Expansion = 2,
             Children =
@@ -6230,6 +6285,7 @@ LootReserve.Data =
         -- Icecrown Citadel
         [3071] = {
             Name = "Icecrown Citadel 10",
+            ButtonName = "[10] Icecrown Citadel",
             NameShort = "ICC 10",
             Expansion = 2,
             Children =
@@ -6676,6 +6732,7 @@ LootReserve.Data =
         },
         [3073] = {
             Name = "Icecrown Citadel 25",
+            ButtonName = "[25] Icecrown Citadel",
             NameShort = "ICC 25",
             Expansion = 2,
             Children =
@@ -7235,6 +7292,7 @@ LootReserve.Data =
         -- The Ruby Sanctum
         [3081] = {
             Name = "The Ruby Sanctum 10",
+            ButtonName = "[10] The Ruby Sanctum",
             NameShort = "RS 10",
             Expansion = 2,
             Children =
@@ -7271,6 +7329,7 @@ LootReserve.Data =
         },
         [3083] = {
             Name = "The Ruby Sanctum 25",
+            ButtonName = "[25] The Ruby Sanctum",
             NameShort = "RS 25",
             Expansion = 2,
             Children =
@@ -7309,6 +7368,7 @@ LootReserve.Data =
         -- Vault of Archavon
         [3090] = {
             Name = "Vault of Archavon 10",
+            ButtonName = "[10] Vault of Archavon",
             NameShort = "VoA 10",
             Expansion = 2,
             Children =
@@ -7578,6 +7638,7 @@ LootReserve.Data =
         },
         [3091] = {
             Name = "Vault of Archavon 25",
+            ButtonName = "[25] Vault of Archavon",
             NameShort = "VoA 25",
             Expansion = 2,
             Children =

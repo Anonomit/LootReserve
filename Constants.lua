@@ -183,6 +183,15 @@ LootReserve.Constants.ItemLevelInvTypeWhitelist = setmetatable({
     INVTYPE_TABARD = false,
     INVTYPE_BODY   = false,
 }, { __index = function() return true end });
+LootReserve.Constants.Colors = {
+    Size10     = "b1fc99",
+    Size20Tiny = "8cffdb",
+    Size20     = "8ab9f1",
+    Size25     = "b1fc99",
+    Size10or25 = "b1fc99",
+    Size40Tiny = "dea681",
+    Size40     = "f87217",
+};
 LootReserve.Constants.LocomotionPhrases = {
     "Advance",
     "Amble",
