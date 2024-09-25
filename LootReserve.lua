@@ -1100,11 +1100,11 @@ function LootReserve:GetItemDescription(itemID, noTokenRedirect)
         itemText = itemText .. itemType;
     end
     
-    if bindType == LE_ITEM_BIND_ON_ACQUIRE then
+    if bindType == Enum.ItemBind.OnAcquire then
         -- itemText = itemText .. "  (BoP)";
-    elseif bindType == LE_ITEM_BIND_ON_EQUIP then
+    elseif bindType == Enum.ItemBind.OnEquip then
         itemText = itemText .. "  (BoE)";
-    elseif itemText == LE_ITEM_BIND_ON_USE then
+    elseif itemText == Enum.ItemBind.OnUse then
         itemText = itemText .. "  (BoU)";
     end
     

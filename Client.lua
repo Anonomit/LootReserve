@@ -202,7 +202,7 @@ function LootReserve.Client:SetFavorite(itemID, enabled)
     if not item or not item:GetInfo() then return; end
     local bindType = item:GetBindType();
 
-    local favorites = bindType == LE_ITEM_BIND_ON_ACQUIRE and self.CharacterFavorites or self.GlobalFavorites;
+    local favorites = bindType == Enum.ItemBind.OnAcquire and self.CharacterFavorites or self.GlobalFavorites;
     favorites[itemID] = enabled and true or nil;
     
     LootReserve.Client:UpdateLootList();
