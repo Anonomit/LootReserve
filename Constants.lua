@@ -184,14 +184,20 @@ LootReserve.Constants.ItemLevelInvTypeWhitelist = setmetatable({
     INVTYPE_BODY   = false,
 }, { __index = function() return true end });
 LootReserve.Constants.Colors = {
-    Size10     = "b1fc99",
-    Size20Tiny = "8cffdb",
-    Size20     = "8ab9f1",
-    Size25Tiny = "ffff00",
-    Size25     = "ffff00",
-    Size10or25 = "7fff00",
-    Size40Tiny = "dea681",
-    Size40     = "f87217",
+    Size10Tiny     = "98fcc5",
+    -- Size10         = "b1fc99",
+    Size10         = "ffff00",
+    Size20Tiny     = "8cffdb",
+    Size20         = LootReserve:GetCurrentExpansion() == 0 and "f87217" or "8ab9f1",
+    Size25Tiny     = "b7b2ff",
+    -- Size25         = "ffff00",
+    Size25         = "f87217",
+    Size10or25Tiny = "00ffd5",
+    -- Size10or25     = "7fff00",
+    Size10or25     = "f87217",
+    -- Size40Tiny     = "dea681",
+    Size40Tiny     = "b7b2ff",
+    Size40         = "f87217",
 };
 LootReserve.Constants.LocomotionPhrases = {
     "Advance",

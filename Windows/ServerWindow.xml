@@ -2919,11 +2919,7 @@
 												});
 											end
 											if not collapsed then
-												if LootReserve:GetCurrentExpansion() == 0 then
-													info.text             = (category.Color and ("|cff" .. category.Color) or "") .. (category.ButtonName or category.Name);
-												else
-													info.text             = category.ButtonName or category.Name;
-												end
+												info.text             = (category.Color and ("|cff" .. category.Color) or "") .. (category.ButtonName or category.Name);
 												info.isNotRadio       = true;
 												info.keepShownOnClick = true;
 												info.value            = id;
