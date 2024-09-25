@@ -1743,20 +1743,20 @@ function LootReserve.Server:PrepareSession()
                             ), "WHISPER", sender);
                             self:SendSupportString(sender, true);
                         end
+                        if command == "reserves" and self.Settings.ChatReservesList then
+                            local count = 0;
+                            for i in pairs(whitelist) do
+                                count = count + 1;
+                            end
+                            if self.Settings.ChatReservesListLimit == LootReserve.Constants.ChatReservesListLimit.None or count <= self.Settings.ChatReservesListLimit then
+                                self:SendReservesList(sender, nil, nil, whitelist);
+                            else
+                                LootReserve:SendChatMessage(format("Too many items to send at once. You may enter up to %d item%s at a time to see reserves on those items. This limit is in place due to the game's chat throttling. Whisper: !reserves ItemLinkOrName", self.Settings.ChatReservesListLimit, self.Settings.ChatReservesListLimit == 1 and "" or "s"), "WHISPER", sender);
+                                self:SendSupportString(sender, true);
+                            end
+                        end
                     else
                         LootReserve.ItemCache:OnCache(missing, handleItemCommandByName);
-                    end
-                    if command == "reserves" and self.Settings.ChatReservesList then
-                        local count = 0;
-                        for i in pairs(whitelist) do
-                            count = count + 1;
-                        end
-                        if self.Settings.ChatReservesListLimit == LootReserve.Constants.ChatReservesListLimit.None or count <= self.Settings.ChatReservesListLimit then
-                            self:SendReservesList(sender, nil, nil, whitelist);
-                        else
-                            LootReserve:SendChatMessage(format("Too many items to send at once. You may enter up to %d item%s at a time to see reserves on those items. This limit is in place due to the game's chat throttling. Whisper: !reserves ItemLinkOrName", self.Settings.ChatReservesListLimit, self.Settings.ChatReservesListLimit == 1 and "" or "s"), "WHISPER", sender);
-                            self:SendSupportString(sender, true);
-                        end
                     end
                 end
 
