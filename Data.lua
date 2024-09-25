@@ -46,7 +46,7 @@ Cata:
     4.?: Alizabal added to Baradin Hold
 --]]
 
-local SEASON_NUMBER = ((C_Seasons or {}).GetActiveSeason or nop)() or 0
+local SEASON_NUMBER = ((C_Seasons or {}).GetActiveSeason or nop)() or 0;
 local SEASONS = {
     MASTERY   = 1,
     DISCOVERY = 2,
@@ -822,6 +822,423 @@ LootReserve.Data =
             },
         }),
         
+        [942] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+            Name = "Blackwing Lair",
+            NameShort = "BWL",
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Tokens",
+                    Loot =
+                    {
+                        231711, 231709, 231714, 231707, 231712, 231708, 231710, 231713, 0,
+                        231719, 231717, 231723, 231715, 231720, 231716, 231718, 231721, 0,
+                        231728, 231726, 231731, 231724, 231729, 231725, 231727, 231730, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Razorgore the Untamed",
+                    Loot =
+                    {
+                        -- 231707, 231715, 231724, 0,
+                        230238, 230237, 0,
+                        230240, 230239, 0,
+                        230242, 230241, 0,
+                    },
+                },
+                {
+                    Name = "Vaelastrasz the Corrupt",
+                    Loot =
+                    {
+                        -- 231708, 231716, 231725, 0,
+                        230243, 210980, 0,
+                        230246, 0,
+                        230245, 0,
+                        230248, 230247, 0,
+                    },
+                },
+                {
+                    Name = "Broodlord Lashlayer",
+                    Loot =
+                    ConcatenateIf({
+                        -- 231713, 231721, 231730, 0,
+                        230250, 230249, 0,
+                        230252, 230251, 0,
+                        230253, 230254, 0,
+                    }, EXPANSION_PHASE >= 1.5, {20383, 0,}),
+                },
+                {
+                    Name = "Firemaw",
+                    Loot =
+                    {
+                        -- 231712, 231720, 231729, 0,
+                        230273, 230272, 0,
+                        230275, 230274, 230279, 230255, 230278, 230256, 0,
+                        230257, 230269, 230277, 0,
+                        230270, 230276, 230271, 0,
+                    },
+                },
+                {
+                    Name = "Ebonroc",
+                    Loot =
+                    {
+                        -- 231712, 231720, 231729, 0,
+                        230280, 0,
+                        230723, 230725, 230255, 230256, 0,
+                        230281, 230257, 230269, 230282, 0,
+                        230270, 230271, 230726, 0,
+                    },
+                },
+                {
+                    Name = "Flamegor",
+                    Loot =
+                    {
+                        -- 231712, 231720, 231729, 0,
+                        230733, 230255, 230735, 230256, 0,
+                        230257, 230269, 230734, 230736, 0,
+                        230270, 230737, 230271, 230738, 0,
+                    },
+                },
+                {
+                    Name = "Chromaggus",
+                    Loot =
+                    {
+                        -- 231709, 231717, 231726, 0,
+                        230743, 230739, 230746, 230742, 230740, 230800, 230745, 230741, 0,
+                        230744, 0,
+                        230794, 230747, 230801, 230802, 0,
+                    },
+                },
+                {
+                    Name = "Nefarian",
+                    Loot =
+                    ConcatenateIf({
+                        -- 231711, 231714, 0,
+                        -- 231719, 231723, 0,
+                        -- 231728, 231731, 0,
+                        19003, 19002, 0,
+                        230812, 230805, 230806, 0,
+                        230810, 230804, 230811, 231803, 230808, 0,
+                        230813, 230838, 230818, 230837, 0,
+                        11938, 0,
+                    }, EXPANSION_PHASE >= 1.5, {21138, 0,}),
+                },
+                { Separator = true },
+                {
+                    Name = "Shadowflame",
+                    Loot =
+                    {
+                        232557, 232563, 232556, 0,
+                        232552, 0,
+                        232565, 232564, 232558, 232555, 232561, 232567, 0,
+                        232559, 232551, 232550, 232566, 232562, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Trash",
+                    Loot =
+                    {
+                        230849, 230843, 230848, 0,
+                        230846, 230842, 0,
+                        230847, 230845, 230844, 232357, 0,
+                        18562, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Tier 2 Pieces",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        -- Warlock
+                        231074, 231077, 231076, 231079, 231073, 231078, 231075, 231072, 0,
+                        231092, 231096, 231095, 231098, 231091, 231097, 231093, 231090, 0,
+                        -- Mage
+                        231103, 231106, 231105, 231107, 231102, 231100, 231104, 231101, 0,
+                        231111, 231114, 231113, 231115, 231110, 231108, 231112, 231109, 0,
+                        -- Priest
+                        231167, 231170, 231169, 231172, 231166, 231171, 231168, 231165, 0,
+                        231157, 231160, 231159, 231162, 231156, 231161, 231158, 231155, 0,
+                        -- Druid
+                        231249, 231251, 231246, 231253, 231248, 231252, 231250, 231247, 0,
+                        231233, 231235, 231230, 231237, 231232, 231236, 231234, 231231, 0,
+                        231257, 231259, 231254, 231261, 231256, 231260, 231258, 231255, 0,
+                        231241, 231243, 231238, 231245, 231240, 231244, 231242, 231239, 0,
+                        -- Rogue
+                        231043, 231039, 231040, 231046, 231042, 231045, 231044, 231041, 0,
+                        231051, 231047, 231048, 231054, 231050, 231053, 231052, 231049, 0,
+                        -- Hunter
+                        231059, 231057, 231062, 231055, 231060, 231056, 231058, 231061, 0,
+                        231068, 231066, 231071, 231063, 231069, 231065, 231067, 231070, 0,
+                        -- Shaman
+                        231219, 231217, 231221, 231215, 231214, 231216, 231218, 231220, 0,
+                        231203, 231201, 231205, 231199, 231198, 231200, 231202, 231204, 0,
+                        231227, 231225, 231229, 231223, 231222, 231224, 231226, 231228, 0,
+                        231211, 231209, 231213, 231207, 231206, 231208, 231210, 231212, 0,
+                        -- Paladin
+                        231194, 231192, 231197, 231190, 231195, 231191, 231193, 231196, 0,
+                        231178, 231176, 231181, 231174, 231179, 231175, 231177, 231180, 0,
+                        231186, 231184, 231187, 231182, 231188, 231183, 231185, 231189, 0,
+                        -- Warrior
+                        231035, 231033, 231038, 231031, 231036, 231032, 231034, 231037, 0,
+                        231027, 231025, 231030, 231023, 231028, 231024, 231026, 231029, 0,
+                    },
+                },
+                {
+                    Name = "Core Forged",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        -- Warlock
+                        232235, 232233, 232238, 232231, 232236, 232232, 232234, 232237, 0,
+                        232243, 232241, 232246, 232239, 232244, 232240, 232242, 232245, 0,
+                        -- Mage
+                        232131, 232129, 232134, 232127, 232132, 232128, 232130, 232133, 0,
+                        232139, 232137, 232142, 232135, 232140, 232136, 232138, 232141, 0,
+                        -- Priest
+                        232171, 232169, 232174, 232167, 232172, 232168, 232170, 232173, 0,
+                        232179, 232177, 232182, 232175, 232180, 232176, 232178, 232181, 0,
+                        -- Druid
+                        232083, 232081, 232086, 232079, 232084, 232080, 232082, 232085, 0,
+                        232091, 232089, 232094, 232087, 232092, 232088, 232090, 232093, 0,
+                        232099, 232097, 232102, 232095, 232100, 232096, 232098, 232101, 0,
+                        232107, 232105, 232110, 232103, 232108, 232104, 232106, 232109, 0,
+                        -- Rogue
+                        232187, 232185, 232190, 232183, 232188, 232184, 232186, 232189, 0,
+                        232195, 232193, 232198, 232191, 232196, 232192, 232194, 232197, 0,
+                        -- Hunter
+                        232115, 232113, 232118, 232111, 232116, 232112, 232114, 232117, 0,
+                        232123, 232121, 232126, 232119, 232124, 232120, 232122, 232125, 0,
+                        -- Shaman
+                        232203, 232201, 232206, 232199, 232204, 232200, 232202, 232205, 0,
+                        232211, 232209, 232214, 232207, 232212, 232208, 232210, 232213, 0,
+                        232219, 232217, 232222, 232215, 232220, 232216, 232218, 232221, 0,
+                        232227, 232225, 232230, 232223, 232228, 232224, 232226, 232229, 0,
+                        -- Paladin
+                        232155, 232153, 232158, 232151, 232156, 232152, 232154, 232157, 0,
+                        232147, 232145, 232150, 232143, 232148, 232144, 232146, 232149, 0,
+                        232163, 232161, 232166, 232159, 232164, 232160, 232162, 232165, 0,
+                        -- Warrior
+                        232251, 232249, 232254, 232247, 232252, 232248, 232250, 232253, 0,
+                        232259, 232257, 232262, 232255, 232260, 232256, 232258, 232261, 0,
+                    },
+                },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        230840, 230839, 230841, 0,
+                    },
+                },
+            },
+        }),
+        [944] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+            Name = "Zul'Gurub",
+            NameShort = "ZG",
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "High Priestess Jeklik",
+                    Loot =
+                    {
+                        19721, 19724, 19723, 19722, 19717, 19716, 19718, 19719, 19720, 0,
+                        230856, 230862, 230912, 230857, 230916, 230859, 230914, 230861, 0,
+                        230854, 230913, 230915, 230855, 0,
+                        230863, 230911, 232299, 0,
+                    },
+                },
+                {
+                    Name = "High Priest Venoxis",
+                    Loot =
+                    {
+                        19721, 19724, 19723, 19722, 19717, 19716, 19718, 19719, 19720, 0,
+                        230856, 230862, 230866, 230857, 230864, 230859, 230861, 0,
+                        230854, 230867, 232311, 230855, 0,
+                        230865, 230863, 230868, 0,
+                    },
+                },
+                {
+                    Name = "High Priestess Mar'li",
+                    Loot =
+                    {
+                        19721, 19724, 19723, 19722, 19717, 19716, 19718, 19719, 19720, 0,
+                        230917, 230856, 230862, 230857, 230919, 230859, 230861, 0,
+                        230854, 230920, 230855, 230921, 230922, 0,
+                        230863, 230918, 0,
+                    },
+                },
+                {
+                    Name = "Bloodlord Mandokir",
+                    Loot =
+                    {
+                        19721, 19724, 19723, 19722, 19717, 19716, 19718, 19719, 19720, 0,
+                        231512, 0,
+                        230997, 230994, 230995, 230996, 0,
+                        231001, 231000, 230998, 230999, 0,
+                        230993, 230992, 230991, 230989, 0,
+                        19872, 0,
+                    },
+                },
+                { Name = "Edge of Madness", Header = true },
+                {
+                    Name = "Gri'lek",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        231513, 0,
+                        231274, 231273, 0,
+                    },
+                },
+                {
+                    Name = "Hazza'rah",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        231516, 0,
+                        231276, 19968, 0,
+                    },
+                },
+                {
+                    Name = "Renataki",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        231514, 0,
+                        232309, 231277, 0,
+                    },
+                },
+                {
+                    Name = "Wushoolay",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        231515, 0,
+                        231279, 231278, 0,
+                    },
+                },
+                {
+                    Name = "High Priest Thekal",
+                    Loot =
+                    {
+                        19721, 19724, 19723, 19722, 19717, 19716, 19718, 19719, 19720, 0,
+                        230923, 230856, 230927, 230862, 230857, 230928, 230859, 230926, 230861, 0,
+                        230854, 230929, 230855, 0,
+                        230863, 230930, 230925, 0,
+                        19902, 0,
+                    },
+                },
+                {
+                    Name = "High Priestess Arlokk",
+                    Loot =
+                    {
+                        19721, 19724, 19723, 19722, 19717, 19716, 19718, 19719, 19720, 0,
+                        230856, 230862, 230857, 230859, 230861, 230942, 0,
+                        230854, 230855, 230943, 0,
+                        230941, 230939, 230863, 230934, 0,
+                        230944, 0,
+                    },
+                },
+                {
+                    Name = "Jin'do the Hexxer",
+                    Loot =
+                    {
+                        19721, 19724, 19723, 19722, 19717, 19716, 19718, 19719, 19720, 0,
+                        231512, 0,
+                        231013, 231011, 231006, 231009, 231008, 231007, 231010, 0,
+                        231003, 231012, 0,
+                        231005, 231004, 231002, 0,
+                    },
+                },
+                {
+                    Name = "Hakkar",
+                    Loot =
+                    {
+                        19802, 0,
+                        231305, 231303, 231299, 0,
+                        231300, 231306, 231307, 0,
+                        231308, 231296, 231301, 231309, 231293, 231315, 231302, 231289, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Gahz'ranka",
+                    Loot =
+                    {
+                        231014, 0,
+                        231271, 0,
+                        231016, 231272, 0,
+                        22739, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Bloodied",
+                    Loot =
+                    {
+                        231874, 232310, 231858, 231860, 231857, 0,
+                        231871, 231865, 231859, 231850, 231863, 231866, 0,
+                        231855, 231847, 231856, 231867, 0,
+                        231876, 0,
+                        231853, 231869, 0,
+                        231875, 231851, 0,
+                        231873, 231854, 231848, 231861, 231870, 231849, 231864, 231846, 0,
+                        231872, 231868, 231852, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Trash",
+                    Loot =
+                    {
+                        20259, 20261, 20263, 0,
+                        20258, 19921, 19908, 0,
+                        19707, 19708, 19709, 19710, 19711, 19712, 19713, 19714, 19715, 0,
+                        19698, 19699, 19700, 19701, 19702, 19703, 19704, 19705, 19706, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Set Pieces",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        231349, 231348, 231347, 0,
+                        231325, 231327, 231326, 0,
+                        231333, 231335, 231334, 0,
+                        231338, 231337, 231339, 0,
+                        231317, 231319, 231318, 0,
+                        231321, 231323, 231322, 0,
+                        231341, 231343, 231342, 0,
+                        231329, 231331, 231330, 0,
+                        231353, 231351, 231352, 0,
+                    },
+                },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        19950, 19949, 19948, 0,
+                        231376, 231377, 0,
+                        231383, 0,
+                        231367, 231366, 0,
+                        231355, 231354, 231357, 231358, 0,
+                        231370, 231368, 0,
+                        231359, 231384, 0,
+                        231372, 231373, 231371, 231375, 0,
+                        231364, 231363, 231362, 231361, 0,
+                        231379, 231381, 0,
+                    },
+                },
+            },
+        }),
+        
+        
         
         -- Classic
         
@@ -1063,7 +1480,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [1030] = {
+        [1030] = ShortCircuit(SEASON_NUMBER ~= SEASONS.DISCOVERY, {
             Name = "Blackwing Lair",
             NameShort = "BWL",
             Expansion = 0,
@@ -1201,8 +1618,8 @@ LootReserve.Data =
                     },
                 },
             },
-        },
-        [1040] = ShortCircuit(EXPANSION_PHASE < 4.0, {
+        }),
+        [1040] = ShortCircuit(EXPANSION_PHASE < 4.0 and SEASON_NUMBER ~= SEASONS.DISCOVERY, {
             Name = "Zul'Gurub",
             NameShort = "ZG",
             Expansion = 0,
@@ -1365,8 +1782,8 @@ LootReserve.Data =
                         19838, 19840, 19839, 0,
                         19831, 19833, 19832, 0,
                         19828, 19830, 19829, 0,
-                        19822, 19824, 19823, 0,
                         19825, 19827, 19826, 0,
+                        19822, 19824, 19823, 0,
                     },
                 },
                 {
@@ -1375,7 +1792,7 @@ LootReserve.Data =
                     Loot =
                     {
                         19950, 19949, 19948, 0,
-                        19789, 19787, 19788, 19784, 19790, 19785, 19786, 19783, 19782, 0,
+                        19788, 19787, 19789, 19790, 19784, 19785, 19786, 19783, 19782, 0,
                     },
                 },
             },
@@ -6638,7 +7055,7 @@ LootReserve.Data =
                     Loot =
                     {
                         50418, 50629, 50417, 50630, 50202, 50626, 50188, 50619, 50187, 50620, 50199, 50623, 50192, 50624, 50416, 50632, 50190, 50625, 0,
-                        50205, 50628, 50195, 50627, 50185, 50622, 50186, 50618, 0, 
+                        50205, 50628, 50195, 50627, 50185, 50622, 50186, 50618, 0,
                         50183, 50621, 50472, 50631, 0,
                         49908, 0,
                         50274, 0,
@@ -10350,6 +10767,152 @@ if LootReserve:GetCurrentExpansion() == 0 then
         ApplySingleFactionRestriction(226627, "Horde");
         ApplySingleFactionRestriction(226633, "Horde");
         ApplySingleFactionRestriction(226634, "Horde");
+        
+        -- T2
+        ApplySingleFactionRestriction(231194, "Alliance");
+        ApplySingleFactionRestriction(231192, "Alliance");
+        ApplySingleFactionRestriction(231197, "Alliance");
+        ApplySingleFactionRestriction(231190, "Alliance");
+        ApplySingleFactionRestriction(231195, "Alliance");
+        ApplySingleFactionRestriction(231191, "Alliance");
+        ApplySingleFactionRestriction(231193, "Alliance");
+        ApplySingleFactionRestriction(231196, "Alliance");
+        ApplySingleFactionRestriction(231178, "Alliance");
+        ApplySingleFactionRestriction(231176, "Alliance");
+        ApplySingleFactionRestriction(231181, "Alliance");
+        ApplySingleFactionRestriction(231174, "Alliance");
+        ApplySingleFactionRestriction(231179, "Alliance");
+        ApplySingleFactionRestriction(231175, "Alliance");
+        ApplySingleFactionRestriction(231177, "Alliance");
+        ApplySingleFactionRestriction(231180, "Alliance");
+        ApplySingleFactionRestriction(231186, "Alliance");
+        ApplySingleFactionRestriction(231184, "Alliance");
+        ApplySingleFactionRestriction(231187, "Alliance");
+        ApplySingleFactionRestriction(231182, "Alliance");
+        ApplySingleFactionRestriction(231188, "Alliance");
+        ApplySingleFactionRestriction(231183, "Alliance");
+        ApplySingleFactionRestriction(231185, "Alliance");
+        ApplySingleFactionRestriction(231189, "Alliance");
+        ApplySingleFactionRestriction(231219, "Horde");
+        ApplySingleFactionRestriction(231217, "Horde");
+        ApplySingleFactionRestriction(231221, "Horde");
+        ApplySingleFactionRestriction(231215, "Horde");
+        ApplySingleFactionRestriction(231214, "Horde");
+        ApplySingleFactionRestriction(231216, "Horde");
+        ApplySingleFactionRestriction(231218, "Horde");
+        ApplySingleFactionRestriction(231220, "Horde");
+        ApplySingleFactionRestriction(231203, "Horde");
+        ApplySingleFactionRestriction(231201, "Horde");
+        ApplySingleFactionRestriction(231205, "Horde");
+        ApplySingleFactionRestriction(231199, "Horde");
+        ApplySingleFactionRestriction(231198, "Horde");
+        ApplySingleFactionRestriction(231200, "Horde");
+        ApplySingleFactionRestriction(231202, "Horde");
+        ApplySingleFactionRestriction(231204, "Horde");
+        ApplySingleFactionRestriction(231227, "Horde");
+        ApplySingleFactionRestriction(231225, "Horde");
+        ApplySingleFactionRestriction(231229, "Horde");
+        ApplySingleFactionRestriction(231223, "Horde");
+        ApplySingleFactionRestriction(231222, "Horde");
+        ApplySingleFactionRestriction(231224, "Horde");
+        ApplySingleFactionRestriction(231226, "Horde");
+        ApplySingleFactionRestriction(231228, "Horde");
+        ApplySingleFactionRestriction(231211, "Horde");
+        ApplySingleFactionRestriction(231209, "Horde");
+        ApplySingleFactionRestriction(231213, "Horde");
+        ApplySingleFactionRestriction(231207, "Horde");
+        ApplySingleFactionRestriction(231206, "Horde");
+        ApplySingleFactionRestriction(231208, "Horde");
+        ApplySingleFactionRestriction(231210, "Horde");
+        ApplySingleFactionRestriction(231212, "Horde");
+        
+        -- T2 (Core Forged)
+        ApplySingleFactionRestriction(232155, "Alliance");
+        ApplySingleFactionRestriction(232153, "Alliance");
+        ApplySingleFactionRestriction(232158, "Alliance");
+        ApplySingleFactionRestriction(232151, "Alliance");
+        ApplySingleFactionRestriction(232156, "Alliance");
+        ApplySingleFactionRestriction(232152, "Alliance");
+        ApplySingleFactionRestriction(232154, "Alliance");
+        ApplySingleFactionRestriction(232157, "Alliance");
+        ApplySingleFactionRestriction(232147, "Alliance");
+        ApplySingleFactionRestriction(232145, "Alliance");
+        ApplySingleFactionRestriction(232150, "Alliance");
+        ApplySingleFactionRestriction(232143, "Alliance");
+        ApplySingleFactionRestriction(232148, "Alliance");
+        ApplySingleFactionRestriction(232144, "Alliance");
+        ApplySingleFactionRestriction(232146, "Alliance");
+        ApplySingleFactionRestriction(232149, "Alliance");
+        ApplySingleFactionRestriction(232163, "Alliance");
+        ApplySingleFactionRestriction(232161, "Alliance");
+        ApplySingleFactionRestriction(232166, "Alliance");
+        ApplySingleFactionRestriction(232159, "Alliance");
+        ApplySingleFactionRestriction(232164, "Alliance");
+        ApplySingleFactionRestriction(232160, "Alliance");
+        ApplySingleFactionRestriction(232162, "Alliance");
+        ApplySingleFactionRestriction(232165, "Alliance");
+        ApplySingleFactionRestriction(232203, "Horde");
+        ApplySingleFactionRestriction(232201, "Horde");
+        ApplySingleFactionRestriction(232206, "Horde");
+        ApplySingleFactionRestriction(232199, "Horde");
+        ApplySingleFactionRestriction(232204, "Horde");
+        ApplySingleFactionRestriction(232200, "Horde");
+        ApplySingleFactionRestriction(232202, "Horde");
+        ApplySingleFactionRestriction(232205, "Horde");
+        ApplySingleFactionRestriction(232211, "Horde");
+        ApplySingleFactionRestriction(232209, "Horde");
+        ApplySingleFactionRestriction(232214, "Horde");
+        ApplySingleFactionRestriction(232207, "Horde");
+        ApplySingleFactionRestriction(232212, "Horde");
+        ApplySingleFactionRestriction(232208, "Horde");
+        ApplySingleFactionRestriction(232210, "Horde");
+        ApplySingleFactionRestriction(232213, "Horde");
+        ApplySingleFactionRestriction(232219, "Horde");
+        ApplySingleFactionRestriction(232217, "Horde");
+        ApplySingleFactionRestriction(232222, "Horde");
+        ApplySingleFactionRestriction(232215, "Horde");
+        ApplySingleFactionRestriction(232220, "Horde");
+        ApplySingleFactionRestriction(232216, "Horde");
+        ApplySingleFactionRestriction(232218, "Horde");
+        ApplySingleFactionRestriction(232221, "Horde");
+        ApplySingleFactionRestriction(232227, "Horde");
+        ApplySingleFactionRestriction(232225, "Horde");
+        ApplySingleFactionRestriction(232230, "Horde");
+        ApplySingleFactionRestriction(232223, "Horde");
+        ApplySingleFactionRestriction(232228, "Horde");
+        ApplySingleFactionRestriction(232224, "Horde");
+        ApplySingleFactionRestriction(232226, "Horde");
+        ApplySingleFactionRestriction(232229, "Horde");
+        
+        -- BWL trinkets
+        ApplySingleFactionRestriction(230272, "Alliance");
+        ApplySingleFactionRestriction(230273, "Horde");
+            
+        -- ZG paladin/shaman gear
+        ApplySingleFactionRestriction(231303, "Alliance");
+        ApplySingleFactionRestriction(230914, "Alliance");
+        ApplySingleFactionRestriction(230926, "Alliance");
+        ApplySingleFactionRestriction(231305, "Horde");
+        ApplySingleFactionRestriction(230928, "Horde");
+        ApplySingleFactionRestriction(230916, "Horde");
+        
+        -- ZG set items
+        ApplySingleFactionRestriction(231329, "Alliance");
+        ApplySingleFactionRestriction(231331, "Alliance");
+        ApplySingleFactionRestriction(231330, "Alliance");
+        ApplySingleFactionRestriction(231341, "Horde");
+        ApplySingleFactionRestriction(231343, "Horde");
+        ApplySingleFactionRestriction(231342, "Horde");
+        
+        -- ZG enchants
+        ApplySingleFactionRestriction(231364, "Alliance");
+        ApplySingleFactionRestriction(231363, "Alliance");
+        ApplySingleFactionRestriction(231362, "Alliance");
+        ApplySingleFactionRestriction(231361, "Alliance");
+        ApplySingleFactionRestriction(231372, "Horde");
+        ApplySingleFactionRestriction(231373, "Horde");
+        ApplySingleFactionRestriction(231371, "Horde");
+        ApplySingleFactionRestriction(231375, "Horde");
     end
     
     
@@ -10402,9 +10965,14 @@ if LootReserve:GetCurrentExpansion() == 0 then
     ApplySingleFactionRestriction(19830, "Horde");
     ApplySingleFactionRestriction(19829, "Horde");
         
-    -- ZG gloves
+    -- ZG paladin/shaman items
     ApplySingleFactionRestriction(20264, "Alliance");
-    ApplySingleFactionRestriction(20257, "Horde");
+    ApplySingleFactionRestriction(20265, "Alliance");
+    ApplySingleFactionRestriction(20266, "Alliance");
+        
+    ApplySingleFactionRestriction(20257, "Alliance");
+    ApplySingleFactionRestriction(20260, "Alliance");
+    ApplySingleFactionRestriction(20262, "Alliance");
     
     -- ZG enchants
     ApplySingleFactionRestriction(19783, "Alliance");
@@ -10514,6 +11082,16 @@ do
         [17112] = 228397, -- Empyrean Demolisher
         
         
+        -- Onyxia
+        [17064] = 228298, -- Shard of the Scale
+        [18205] = 228759, -- Eskhandar's Collar
+        [17067] = 228955, -- Ancient Cornerstone Grimoire
+        [17966] = 228992, -- Onyxia Hide Backpack
+        [18404] = 228685, -- Onyxia Tooth Pendant
+        [18403] = 228687, -- Dragonslayer's Signet
+        [18406] = 228686, -- Onyxia Blood Talisman
+        
+        
         -- Molten Core
         [16837] = 226613, -- Earthfury Boots
         [19145] = 228239, -- Robe of Volatile Power
@@ -10590,14 +11168,217 @@ do
         
         [18292] = 228304, -- Schematic: Core Marksman Rifle | Schematic: Fiery Core Sharpshooter Rifle
         
-        -- Onyxia
-        [17064] = 228298, -- Shard of the Scale
-        [18205] = 228759, -- Eskhandar's Collar
-        [17067] = 228955, -- Ancient Cornerstone Grimoire
-        [17966] = 228992, -- Onyxia Hide Backpack
-        [18404] = 228685, -- Onyxia Tooth Pendant
-        [18403] = 228687, -- Dragonslayer's Signet
-        [18406] = 228686, -- Onyxia Blood Talisman
+        
+        -- Blackwing Lair
+        [19348] = 230248, -- Red Dragonscale Protector
+        [19349] = 230802, -- Elementium Reinforced Bulwark
+        [19350] = 230253, -- Heartstriker
+        [19354] = 232357, -- Draconic Avenger
+        [19361] = 230801, -- Ashjre'thul, Crossbow of Smiting
+        [19362] = 230845, -- Doom's Edge
+        [19366] = 230841, -- Master Dragonslayer's Orb
+        [19367] = 230737, -- Dragon's Touch
+        [19368] = 230726, -- Dragonbreath Hand Cannon
+        [19369] = 230239, -- Gloves of Rapid Evolution
+        [19370] = 230240, -- Mantle of the Blackwing Cabal
+        [19371] = 230245, -- Pendant of the Fallen Dragon
+        [19372] = 230246, -- Helm of Endless Rage
+        [19373] = 230251, -- Black Brood Pauldrons
+        [19374] = 230252, -- Bracers of Arcane Accuracy
+        [19375] = 230812, -- Mish'undare, Circlet of the Mind Flayer
+        [19376] = 230808, -- Archimtiros' Ring of Reckoning
+        [19377] = 231803, -- Prestor's Talisman of Connivery
+        [19378] = 230804, -- Cloak of the Brood Lord
+        [19379] = 230810, -- Neltharion's Tear
+        [19380] = 230806, -- Therazane's Link
+        [19381] = 230805, -- Boots of the Shadow Flame
+        [19382] = 230811, -- Pure Elementium Band
+        [19383] = 230840, -- Master Dragonslayer's Medallion
+        [19384] = 230839, -- Master Dragonslayer's Ring
+        [19385] = 230746, -- Empowered Leggings
+        [19386] = 230744, -- Elementium Threaded Cloak
+        [19387] = 230741, -- Chromatic Boots
+        [19388] = 230739, -- Angelista's Grasp
+        [19389] = 230740, -- Taut Dragonhide Shoulderpads
+        [19390] = 230742, -- Taut Dragonhide Gloves
+        [19391] = 230743, -- Shimmering Geta
+        [19392] = 230745, -- Girdle of the Fallen Crusader
+        [19393] = 230800, -- Primalist's Linked Waistguard
+        [19394] = 230256, -- Drake Talon Pauldrons
+        [19395] = 230269, -- Rejuvenating Gem
+        [19396] = 230255, -- Taut Dragonhide Belt
+        [19397] = 230257, -- Ring of Blackrock
+        [19398] = 230277, -- Cloak of Firemaw
+        [19399] = 230274, -- Black Ash Robe
+        [19400] = 230275, -- Firemaw's Clutch
+        [19401] = 230279, -- Primalist's Linked Legguards
+        [19402] = 230278, -- Legguards of the Fallen Crusader
+        [19403] = 230281, -- Band of Forced Concentration
+        [19405] = 230725, -- Malfurion's Blessed Bulwark
+        [19406] = 230282, -- Drake Fang Talisman
+        [19407] = 230723, -- Ebony Flame Gloves
+        [19430] = 230733, -- Shroud of Pure Thought
+        [19431] = 230736, -- Styleen's Impeding Scarab
+        [19432] = 230734, -- Circle of Applied Force
+        [19433] = 230735, -- Emberweave Leggings
+        [19434] = 230846, -- Band of Dark Dominion
+        [19435] = 230847, -- Essence Gatherer
+        [19436] = 230842, -- Cloak of Draconic Might
+        [19437] = 230843, -- Boots of Pure Thought
+        [19438] = 230849, -- Ringo's Blizzard Boots
+        [19439] = 230848, -- Interlaced Shadow Jerkin
+        
+        [19336] = 230237, -- Arcane Infused Gem
+        [19337] = 230238, -- The Black Book
+        [19339] = 230243, -- Mind Quickening Gem
+        [19340] = 210980, -- Rune of Metamorphosis
+        [19341] = 230249, -- Lifegiving Gem
+        [19342] = 230250, -- Venomous Totem
+        [19343] = 230272, -- Scrolls of Blinding Light
+        [19344] = 230273, -- Natural Alignment Crystal
+        [19345] = 230280, -- Aegis of Preservation
+        
+        [19334] = 230242, -- The Untamed Blade
+        [19335] = 230241, -- Spineshatter
+        [19346] = 230247, -- Dragonfang Blade
+        [19347] = 230794, -- Claw of Chromaggus
+        [19351] = 230254, -- Maladath, Runed Blade of the Black Flight
+        [19352] = 230747, -- Chromatically Tempered Sword
+        [19353] = 230271, -- Drake Talon Cleaver
+        [19355] = 230270, -- Shadow Wing Focus Staff
+        [19356] = 230813, -- Staff of the Shadow Flame
+        [19357] = 230738, -- Herald of Woe
+        [19358] = 230844, -- Draconic Maul
+        [19360] = 230838, -- Lok'amir il Romathis
+        [19363] = 230837, -- Crul'shorukh, Edge of Chaos
+        [19364] = 230818, -- Ashkandi, Greatsword of the Brotherhood
+        [19365] = 230276, -- Claw of the Black Drake
+        
+        
+        -- Zul'Gurub
+        [19822] = 231353, -- Zandalar Vindicator's Breastplate
+        [19823] = 231352, -- Zandalar Vindicator's Belt
+        [19824] = 231351, -- Zandalar Vindicator's Armguards
+        [19825] = 231329, -- Zandalar Freethinker's Breastplate
+        [19826] = 231330, -- Zandalar Freethinker's Belt
+        [19827] = 231331, -- Zandalar Freethinker's Armguards
+        [19828] = 231341, -- Zandalar Augur's Hauberk
+        [19829] = 231342, -- Zandalar Augur's Belt
+        [19830] = 231343, -- Zandalar Augur's Bracers
+        [19831] = 231321, -- Zandalar Predator's Mantle
+        [19832] = 231322, -- Zandalar Predator's Belt
+        [19833] = 231323, -- Zandalar Predator's Bracers
+        [19834] = 231337, -- Zandalar Madcap's Tunic
+        [19835] = 231338, -- Zandalar Madcap's Mantle
+        [19836] = 231339, -- Zandalar Madcap's Bracers
+        [19838] = 231317, -- Zandalar Haruspex's Tunic
+        [19839] = 231318, -- Zandalar Haruspex's Belt
+        [19840] = 231319, -- Zandalar Haruspex's Bracers
+        [19841] = 231333, -- Zandalar Confessor's Mantle
+        [19842] = 231334, -- Zandalar Confessor's Bindings
+        [19843] = 231335, -- Zandalar Confessor's Wraps
+        [19845] = 231325, -- Zandalar Illusionist's Mantle
+        [19846] = 231326, -- Zandalar Illusionist's Wraps
+        [20034] = 231327, -- Zandalar Illusionist's Robe
+        [19848] = 231347, -- Zandalar Demoniac's Wraps
+        [19849] = 231349, -- Zandalar Demoniac's Mantle
+        [20033] = 231348, -- Zandalar Demoniac's Robe
+        
+        [19855] = 231299, -- Bloodsoaked Legplates
+        [19856] = 231307, -- The Eye of Hakkar
+        [19857] = 231300, -- Cloak of Consumption
+        [19862] = 231289, -- Aegis of the Blood God
+        [19863] = 231000, -- Primalist's Seal
+        [19869] = 230995, -- Blooddrenched Grips
+        [19870] = 230998, -- Hakkari Loa Cloak
+        [19871] = 230922, -- Talisman of Protection
+        [19873] = 230999, -- Overlord's Crimson Band
+        [19875] = 231007, -- Bloodstained Coif
+        [19876] = 231306, -- Soul Corrupter's Necklace
+        [19877] = 230994, -- Animist's Leggings
+        [19878] = 230996, -- Bloodsoaked Pauldrons
+        [19885] = 231003, -- Jin'do's Evil Eye
+        [19886] = 231013, -- The Hexxer's Cover
+        [19887] = 231008, -- Bloodstained Legplates
+        [19888] = 231012, -- Overlord's Embrace
+        [19889] = 231009, -- Blooddrenched Leggings
+        [19891] = 231005, -- Jin'do's Bag of Whammies
+        [19892] = 231006, -- Animist's Boots
+        [19893] = 231001, -- Zanzil's Seal
+        [19894] = 231010, -- Bloodsoaked Gauntlets
+        [19895] = 230997, -- Bloodtinged Kilt
+        [19897] = 230923, -- Betrayer's Boots
+        [19898] = 230929, -- Seal of Jin
+        [19899] = 230927, -- Ritualistic Legguards
+        [19904] = 230864, -- Runed Bloodstained Hauberk
+        [19905] = 230867, -- Zanzil's Band
+        [19906] = 230866, -- Blooddrenched Footpads
+        [19907] = 232311, -- Zulian Tigerhide Cloak
+        [19912] = 230943, -- Overlord's Onyx Band
+        [19913] = 230942, -- Bloodsoaked Greaves
+        [19914] = 230944, -- Panther Hide Sack
+        [19915] = 232299, -- Zulian Defender
+        [19919] = 230919, -- Bloodstained Greaves
+        [19920] = 230915, -- Primalist's Band
+        [19922] = 230941, -- Arlokk's Hoodoo Stick
+        [19923] = 230913, -- Jeklik's Opaline Talisman
+        [19925] = 230921, -- Band of Jin
+        [19928] = 230912, -- Animist's Spaulders
+        [19929] = 231011, -- Bloodtinged Gloves
+        [19930] = 230920, -- Mar'li's Eye
+        [19939] = 231513, -- Gri'lek's Blood
+        [19940] = 231514, -- Renataki's Tooth
+        [19941] = 231515, -- Wushoolay's Mane
+        [19942] = 231516, -- Hazza'rah's Dream Thread
+        [19945] = 231014, -- Lizardscale Eyepatch
+        [19947] = 231271, -- Nat Pagle's Broken Reel
+        [20032] = 230917, -- Flowing Ritual Robes
+        [20257] = 231305, -- Seafury Gauntlets
+        [20260] = 230928, -- Seafury Leggings
+        [20262] = 230916, -- Seafury Boots
+        [20264] = 231303, -- Peacekeeper Gauntlets
+        [20265] = 230914, -- Peacekeeper Boots
+        [20266] = 230926, -- Peacekeeper Leggings
+        [22637] = 231512, -- Primal Hakkari Idol
+        [22714] = 230861, -- Sacrificial Gauntlets
+        [22715] = 230859, -- Gloves of the Tormented
+        [22716] = 230856, -- Belt of Untapped Power
+        [22718] = 230857, -- Blooddrenched Mask
+        [22720] = 230862, -- Zulian Headdress
+        [22721] = 230854, -- Band of Servitude
+        [22722] = 230855, -- Seal of the Gurubashi Berserker
+        
+        [19852] = 231293, -- Ancient Hakkari Manslayer
+        [19853] = 231302, -- Gurubashi Dwarf Destroyer
+        [19854] = 231315, -- Zin'rokh, Destroyer of Worlds
+        [19859] = 231301, -- Fang of the Faceless
+        [19861] = 231308, -- Touch of Chaos
+        [19864] = 231296, -- Bloodcaller
+        [19865] = 231309, -- Warblade of the Hakkari
+        [19866] = 230992, -- Warblade of the Hakkari
+        [19867] = 230989, -- Bloodlord's Defender
+        [19874] = 230991, -- Halberd of Smiting
+        [19884] = 231004, -- Jin'do's Judgement
+        [19890] = 231002, -- Jin'do's Hexxer
+        [19896] = 230925, -- Thekal's Grasp
+        [19900] = 230868, -- Zulian Stone Axe
+        [19901] = 230930, -- Zulian Slicer
+        [19903] = 230865, -- Fang of Venoxis
+        [19909] = 230939, -- Will of Arlokk
+        [19910] = 230934, -- Arlokk's Grasp
+        [19918] = 230911, -- Jeklik's Crusher
+        [19927] = 230918, -- Mar'li's Touch
+        [19944] = 231016, -- Nat Pagle's Fish Terminator
+        [19946] = 231272, -- Tigule's Harpoon
+        [19961] = 231274, -- Gri'lek's Grinder
+        [19962] = 231273, -- Gri'lek's Carver
+        [19963] = 231277, -- Pitchfork of Madness
+        [19964] = 232309, -- Renataki's Soul Conduit
+        [19965] = 231279, -- Wushoolay's Poker
+        [19967] = 231276, -- Thoughtblighter
+        [19993] = 231278, -- Hoodoo Hunting Bow
+        [20038] = 230993, -- Mandokir's Sting
+        [22713] = 230863, -- Zulian Scepter of Rites
     };
     
     local IntendedItems = LootReserve.Data.IntendedItems;
@@ -10756,8 +11537,40 @@ local tokenMap = {
     -- BWL
     
     -- Head of Nefarian
-    [19003] = UnitFactionGroup("player") == "Alliance" and {19383, 19384, 19366} or nil,
-    [19002] = UnitFactionGroup("player") == "Horde"    and {19383, 19384, 19366} or nil,
+    [19003] = UnitFactionGroup("player") == "Alliance" and {19383, 19384, 19366, 230840, 230839, 230841} or nil,
+    [19002] = UnitFactionGroup("player") == "Horde"    and {19383, 19384, 19366, 230840, 230839, 230841} or nil,
+    
+    [231711] = {231074, 231092, 231103, 231111, 231167, 231157, 232235, 232243, 232131, 232139, 232171, 232179, }, -- Draconian Hood (Season of Discovery)
+    [231719] = {231035, 231027, 231043, 231051, 231249, 231233, 231257, 231241, 232251, 232259, 232187, 232195, 232083, 232091, 232099, 232107, }, -- Primeval Helm (Season of Discovery)
+    [231728] = {231194, 231178, 231186, 231059, 231068, 231219, 231203, 231227, 231211, 232155, 232147, 232163, 232115, 232123, 232203, 232211, 232219, 232227, }, -- Ancient Helm (Season of Discovery)
+    
+    [231709] = {231077, 231096, 231106, 231114, 231170, 231160, 232233, 232241, 232129, 232137, 232169, 232177, }, -- Draconian Shoulderpads (Season of Discovery)
+    [231717] = {231033, 231025, 231039, 231047, 231251, 231235, 231259, 231243, 232249, 232257, 232185, 232193, 232081, 232089, 232097, 232105, }, -- Primeval Shoulderpads (Season of Discovery)
+    [231726] = {231192, 231176, 231184, 231057, 231066, 231217, 231201, 231225, 231209, 232153, 232145, 232161, 232113, 232121, 232201, 232209, 232217, 232225, }, -- Ancient Shoulderpads (Season of Discovery)
+    
+    [231714] = {231076, 231095, 231105, 231113, 231169, 231159, 232238, 232246, 232134, 232142, 232174, 232182, }, -- Draconian Robe (Season of Discovery)
+    [231723] = {231038, 231030, 231040, 231048, 231246, 231230, 231254, 231238, 232254, 232262, 232190, 232198, 232086, 232094, 232102, 232110, }, -- Primeval Chest (Season of Discovery)
+    [231731] = {231197, 231181, 231187, 231062, 231071, 231221, 231205, 231229, 231213, 232158, 232150, 232166, 232118, 232126, 232206, 232214, 232222, 232230, }, -- Ancient Chest (Season of Discovery)
+    
+    [231707] = {231079, 231098, 231107, 231115, 231172, 231162, 232231, 232239, 232127, 232135, 232167, 232175, }, -- Draconian Bindings (Season of Discovery)
+    [231715] = {231031, 231023, 231046, 231054, 231253, 231237, 231261, 231245, 232247, 232255, 232183, 232191, 232079, 232087, 232095, 232103, }, -- Primeval Bindings (Season of Discovery)
+    [231724] = {231190, 231174, 231182, 231055, 231063, 231215, 231199, 231223, 231207, 232151, 232143, 232159, 232111, 232119, 232199, 232207, 232215, 232223, }, -- Ancient Bindings (Season of Discovery)
+    
+    [231712] = {231073, 231091, 231102, 231110, 231166, 231156, 232236, 232244, 232132, 232140, 232172, 232180, }, -- Draconian Gloves (Season of Discovery)
+    [231720] = {231036, 231028, 231042, 231050, 231248, 231232, 231256, 231240, 232252, 232260, 232188, 232196, 232084, 232092, 232100, 232108, }, -- Primeval Gloves (Season of Discovery)
+    [231729] = {231195, 231179, 231188, 231060, 231069, 231214, 231198, 231222, 231206, 232156, 232148, 232164, 232116, 232124, 232204, 232212, 232220, 232228, }, -- Ancient Gloves (Season of Discovery)
+    
+    [231708] = {231078, 231097, 231100, 231108, 231171, 231161, 232232, 232240, 232128, 232136, 232168, 232176, }, -- Draconian Belt (Season of Discovery)
+    [231716] = {231032, 231024, 231045, 231053, 231252, 231236, 231260, 231244, 232248, 232256, 232184, 232192, 232080, 232088, 232096, 232104, }, -- Primeval Belt (Season of Discovery)
+    [231725] = {231191, 231175, 231183, 231056, 231065, 231216, 231200, 231224, 231208, 232152, 232144, 232160, 232112, 232120, 232200, 232208, 232216, 232224, }, -- Ancient Belt (Season of Discovery)
+    
+    [231710] = {231075, 231093, 231104, 231112, 231168, 231158, 232234, 232242, 232130, 232138, 232170, 232178, }, -- Draconian Leggings (Season of Discovery)
+    [231718] = {231034, 231026, 231044, 231052, 231250, 231234, 231258, 231242, 232250, 232258, 232186, 232194, 232082, 232090, 232098, 232106, }, -- Primeval Leggings (Season of Discovery)
+    [231727] = {231193, 231177, 231185, 231058, 231067, 231218, 231202, 231226, 231210, 232154, 232146, 232162, 232114, 232122, 232202, 232210, 232218, 232226, }, -- Ancient Leggings (Season of Discovery)
+    
+    [231713] = {231072, 231090, 231101, 231109, 231165, 231155, 232237, 232245, 232133, 232141, 232173, 232181, }, -- Draconian Boots (Season of Discovery)
+    [231721] = {231037, 231029, 231041, 231049, 231247, 231231, 231255, 231239, 232253, 232261, 232189, 232197, 232085, 232093, 232101, 232109, }, -- Primeval Boots (Season of Discovery)
+    [231730] = {231196, 231180, 231189, 231061, 231070, 231220, 231204, 231228, 231212, 232157, 232149, 232165, 232117, 232125, 232205, 232213, 232221, 232229, }, -- Ancient Boots (Season of Discovery)
     
     
     -- ZG
@@ -10766,24 +11579,26 @@ local tokenMap = {
     [19802] = {19950, 19949, 19948},
     -- Primal Hakkari Idol
     [22637] = {19789, 19787, 19788, 19784, 19790, 19785, 19786, 19783, 19782},
+    -- Primal Hakkari Idol (SoD)
+    [231512] = {231376, 231377, 231383, 231367, 231366, 231355, 231354, 231357, 231358, 231370, 231368, 231359, 231384, 231372, 231373, 231371, 231375, 231364, 231363, 231362, 231361, 231379, 231381},
     -- Primal Hakkari Shawl
-    [19721] = {19826, 19832, 19845},
+    [19721] = {19826, 19832, 19845, 231330, 231322, 231325},
     -- Primal Hakkari Aegis
-    [19724] = {19831, 19834, 19841},
+    [19724] = {19831, 19834, 19841, 231321, 231337, 231333},
     -- Primal Hakkari Kossack
-    [19723] = {19822, 20034, 20033},
+    [19723] = {19822, 20034, 20033, 231353, 231327, 231348},
     -- Primal Hakkari Tabard
-    [19722] = {19825, 19828, 19838},
+    [19722] = {19825, 19828, 19838, 231329, 231341, 231317},
     -- Primal Hakkari Armsplint
-    [19717] = {19824, 19836, 19830},
+    [19717] = {19824, 19836, 19830, 231351, 231339, 231343},
     -- Primal Hakkari Bindings
-    [19716] = {19827, 19833, 19846},
+    [19716] = {19827, 19833, 19846, 231331, 231323, 231326},
     -- Primal Hakkari Stanchion
-    [19718] = {19843, 19848, 19840},
+    [19718] = {19843, 19848, 19840, 231335, 231347, 231319},
     -- Primal Hakkari Girdle
-    [19719] = {19823, 19835, 19829},
+    [19719] = {19823, 19835, 19829, 231352, 231338, 231342},
     -- Primal Hakkari Sash
-    [19720] = {19842, 19849, 19839},
+    [19720] = {19842, 19849, 19839, 231334, 231349, 231318},
     
     
     -- AQ20
@@ -11405,6 +12220,8 @@ end
 
 local heroicMirrors = {
     -- Season of Discovery
+    
+    -- Molten
     [228508] = 228128, -- Hammer of The Black Anvil
     [229374] = 228139, -- Fist of the Firesworn
     [229378] = 228145, -- Magmadar's Right Claw
@@ -11427,6 +12244,56 @@ local heroicMirrors = {
     [228511] = 228296, -- Perdition's Blade
     [228460] = 228299, -- Spinal Reaper
     [229379] = 228350, -- Eskhandar's Right Claw
+    
+    -- Shadowflame
+    [232566] = 230242, -- The Untamed Blade
+    [232567] = 230241, -- Spineshatter
+    [232565] = 230247, -- Dragonfang Blade
+    [232557] = 230794, -- Claw of Chromaggus
+    [232564] = 230254, -- Maladath, Runed Blade of the Black Flight
+    [232558] = 230747, -- Chromatically Tempered Sword
+    [232562] = 230271, -- Drake Talon Cleaver
+    [232563] = 230270, -- Shadow Wing Focus Staff
+    [232556] = 230813, -- Staff of the Shadow Flame
+    [232559] = 230738, -- Herald of Woe
+    [232551] = 230844, -- Draconic Maul
+    [232552] = 230838, -- Lok'amir il Romathis
+    [232555] = 230837, -- Crul'shorukh, Edge of Chaos
+    [232550] = 230818, -- Ashkandi, Greatsword of the Brotherhood
+    [232561] = 230276, -- Claw of the Black Drake
+    
+    -- Bloodied
+    [231856] = 231293, -- Ancient Hakkari Manslayer
+    [231852] = 231302, -- Gurubashi Dwarf Destroyer
+    [231854] = 231315, -- Zin'rokh, Destroyer of Worlds
+    [231855] = 231301, -- Fang of the Faceless
+    [231857] = 231308, -- Touch of Chaos
+    [231858] = 231296, -- Bloodcaller
+    [231853] = 231309, -- Warblade of the Hakkari
+    [231869] = 230992, -- Warblade of the Hakkari
+    [231867] = 230989, -- Bloodlord's Defender
+    [231870] = 230991, -- Halberd of Smiting
+    [231860] = 231004, -- Jin'do's Judgement
+    [231859] = 231002, -- Jin'do's Hexxer
+    [231875] = 230925, -- Thekal's Grasp
+    [231873] = 230868, -- Zulian Stone Axe
+    [231876] = 230930, -- Zulian Slicer
+    [231874] = 230865, -- Fang of Venoxis
+    [231850] = 230939, -- Will of Arlokk
+    [231851] = 230934, -- Arlokk's Grasp
+    [231861] = 230911, -- Jeklik's Crusher
+    [231866] = 230918, -- Mar'li's Touch
+    [231848] = 231016, -- Nat Pagle's Fish Terminator
+    [231849] = 231272, -- Tigule's Harpoon
+    [231847] = 231274, -- Gri'lek's Grinder
+    [231846] = 231273, -- Gri'lek's Carver
+    [231864] = 231277, -- Pitchfork of Madness
+    [232310] = 232309, -- Renataki's Soul Conduit
+    [231871] = 231279, -- Wushoolay's Poker
+    [231863] = 231276, -- Thoughtblighter
+    [231872] = 231278, -- Hoodoo Hunting Bow
+    [231868] = 230993, -- Mandokir's Sting
+    [231865] = 230863, -- Zulian Scepter of Rites
     
     
     -- ToC 10 Alliance
