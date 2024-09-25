@@ -1000,7 +1000,7 @@
 
 											LootReserve:SendChatMessage(format("%s for %s%s%s%s:",
 												(not self.Lines or self.Lines == 0) and "Rolls" or format("Top %d out of %d %s", self.Lines, totalRolls, totalRolls == 1 and "roll" or "rolls"),
-												(frame.Roll.Custom or frame.Roll.Disenchant) and "" or "Reserved ",
+												frame.Roll.RaidRoll and "RaidRolled " or (frame.Roll.Custom or frame.Roll.Disenchant) and "" or "Reserved ",
 												frame.Link,
 												frame.Roll.Phases and format(" for %s", frame.Roll.Phases[1] or "") or "",
 												frame.Historical and format(" on %s", (frame.ItemFrame.Misc:GetText() or ""):gsub("%s%s", " at ")) or ""
@@ -1011,7 +1011,7 @@
 													if frame.Roll.Tiered then
 														roll = LootReserve.Server:ConvertFromTieredRoll(roll) .. "/" .. math.floor(roll);
 													end
-													LootReserve:SendChatMessage(format("  %s by %s", roll, player), info.arg1, recipient);
+													LootReserve:SendChatMessage(format("  %s %s %s", roll, frame.Roll.RaidRoll and "=" or "by", player), info.arg1, recipient);
 													i = i + 1;
 												end
 											end
