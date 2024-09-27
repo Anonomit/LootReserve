@@ -42,7 +42,7 @@ Wrath:
 Cata:
     4.0: ZG and ZA removed
     4.1: Bastion of Twilight, Blackwing Descent, Throne of Four Winds, Baradin Hold (only Argaloth)
-    4.?: Occu'thar added to Baradin Hold
+    4.2: Firelands, Occu'thar added to Baradin Hold
     4.?: Alizabal added to Baradin Hold
 --]]
 
@@ -512,8 +512,9 @@ LootReserve.Data =
                     Loot =
                     {
                         231708, 231716, 231725, 0,
-                        231783, 0,
-                        231387, 0,
+                        231782, 0,
+                        231784, 231785, 231781, 231783, 0,
+                        231387, 231753, 231777, 231815, 0,
                         18564, 18563, 0,
                     },
                 },
@@ -643,16 +644,6 @@ LootReserve.Data =
             Children =
             Squish{
                 {
-                    Name = "Tokens",
-                    Loot =
-                    {
-                        227532, 227537, 227535, 227531, 227533, 227530, 227534, 227536, 0,
-                        227764, 227762, 227766, 227760, 227759, 227761, 227763, 227765, 0,
-                        227755, 227752, 227758, 227750, 227756, 227751, 227754, 227757, 0,
-                    },
-                },
-                { Separator = true },
-                {
                     Name = "Lucifron",
                     Loot =
                     {
@@ -763,7 +754,26 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
+                    Name = "Trash",
+                    Loot =
+                    ConcatenateIf({
+                        17011, 17010, 11382, 17012, 0,
+                    }, EXPANSION_PHASE >= 1.5, {20951, 0,}),
+                },
+                { Separator = true },
+                {
+                    Name = "Tokens",
+                    Loot =
+                    {
+                        227532, 227537, 227535, 227531, 227533, 227530, 227534, 227536, 0,
+                        227764, 227762, 227766, 227760, 227759, 227761, 227763, 227765, 0,
+                        227755, 227752, 227758, 227750, 227756, 227751, 227754, 227757, 0,
+                    },
+                },
+                { Separator = true },
+                {
                     Name = "Molten Heat",
+                    IndentType = 1,
                     Loot =
                     {
                         229376, 228517, 228922, 0,
@@ -775,14 +785,6 @@ LootReserve.Data =
                         228702, 0,
                         
                     },
-                },
-                { Separator = true },
-                {
-                    Name = "Trash",
-                    Loot =
-                    ConcatenateIf({
-                        17011, 17010, 11382, 17012, 0,
-                    }, EXPANSION_PHASE >= 1.5, {20951, 0,}),
                 },
                 { Separator = true },
                 { Name = "Recipes", Header = true },
@@ -898,20 +900,11 @@ LootReserve.Data =
             Children =
             Squish{
                 {
-                    Name = "Tokens",
-                    Loot =
-                    {
-                        231711, 231709, 231714, 231707, 231712, 231708, 231710, 231713, 0,
-                        231719, 231717, 231723, 231715, 231720, 231716, 231718, 231721, 0,
-                        231728, 231726, 231731, 231724, 231729, 231725, 231727, 231730, 0,
-                    },
-                },
-                { Separator = true },
-                {
                     Name = "Razorgore the Untamed",
                     Loot =
                     {
-                        -- 231707, 231715, 231724, 0,
+                        231712, 231720, 231729, 0,
+                        231722, 229352, 0,
                         230238, 230237, 0,
                         230240, 230239, 0,
                         230242, 230241, 0,
@@ -921,18 +914,22 @@ LootReserve.Data =
                     Name = "Vaelastrasz the Corrupt",
                     Loot =
                     {
-                        -- 231708, 231716, 231725, 0,
-                        230243, 210980, 0,
-                        230246, 0,
-                        230245, 0,
-                        230248, 230247, 0,
+                        231708, 231710, 231713, 0,
+                        231716, 231718, 231721, 0,
+                        231725, 231727, 231730, 0,
+                        230904, 231378, 0,
+                        230243, 230244, 0,
+                        230849, 230843, 230848, 230246, 0,
+                        230846, 230245, 0,
+                        230248, 230247, 230845, 232357, 0,
                     },
                 },
                 {
                     Name = "Broodlord Lashlayer",
                     Loot =
                     ConcatenateIf({
-                        -- 231713, 231721, 231730, 0,
+                        231713, 231721, 231730, 0,
+                        231882, 231995, 231452, 0,
                         230250, 230249, 0,
                         230252, 230251, 0,
                         230253, 230254, 0,
@@ -942,18 +939,20 @@ LootReserve.Data =
                     Name = "Firemaw",
                     Loot =
                     {
-                        -- 231712, 231720, 231729, 0,
+                        231710, 231718, 231727, 0,
                         230273, 230272, 0,
                         230275, 230274, 230279, 230255, 230278, 230256, 0,
-                        230257, 230269, 230277, 0,
-                        230270, 230276, 230271, 0,
+                        230257, 230269, 230282, 230736, 230842, 230277, 0,
+                        230270, 230847, 230276, 230844, 230271, 0,
                     },
                 },
                 {
                     Name = "Ebonroc",
                     Loot =
                     {
-                        -- 231712, 231720, 231729, 0,
+                        231711, 231709, 231707, 231712, 231713, 0,
+                        231719, 231717, 231715, 231720, 231721, 0,
+                        231728, 231726, 231724, 231729, 231730, 0,
                         230280, 0,
                         230723, 230725, 230255, 230256, 0,
                         230281, 230257, 230269, 230282, 0,
@@ -964,17 +963,17 @@ LootReserve.Data =
                     Name = "Flamegor",
                     Loot =
                     {
-                        -- 231712, 231720, 231729, 0,
                         230733, 230255, 230735, 230256, 0,
-                        230257, 230269, 230734, 230736, 0,
-                        230270, 230737, 230271, 230738, 0,
+                        230257, 230734, 230269, 230736, 230842, 0,
+                        230270, 230737, 230847, 230844, 230738, 230271, 0,
                     },
                 },
                 {
                     Name = "Chromaggus",
                     Loot =
                     {
-                        -- 231709, 231717, 231726, 0,
+                        231709, 231717, 231726, 0,
+                        229906, 231814, 0,
                         230743, 230739, 230746, 230742, 230740, 230800, 230745, 230741, 0,
                         230744, 0,
                         230794, 230747, 230801, 230802, 0,
@@ -984,9 +983,9 @@ LootReserve.Data =
                     Name = "Nefarian",
                     Loot =
                     ConcatenateIf({
-                        -- 231711, 231714, 0,
-                        -- 231719, 231723, 0,
-                        -- 231728, 231731, 0,
+                        231711, 231709, 231714, 231707, 231712, 231710, 231713, 0,
+                        231719, 231717, 231723, 231715, 231720, 231718, 231721, 0,
+                        231728, 231726, 231731, 231724, 231729, 231727, 231730, 0,
                         19003, 19002, 0,
                         230812, 230805, 230806, 0,
                         230810, 230804, 230811, 231803, 230808, 0,
@@ -996,24 +995,33 @@ LootReserve.Data =
                 },
                 { Separator = true },
                 {
+                    Name = "Trash",
+                    Loot =
+                    {
+                        18562, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Tokens",
+                    Loot =
+                    {
+                        231711, 231709, 231714, 231707, 231712, 231708, 231710, 231713, 0,
+                        231719, 231717, 231723, 231715, 231720, 231716, 231718, 231721, 0,
+                        231728, 231726, 231731, 231724, 231729, 231725, 231727, 231730, 0,
+                        231722, 230904, 229906, 231814, 229352, 231882, 231995, 231452, 231378, 0,
+                    },
+                },
+                { Separator = true },
+                {
                     Name = "Shadowflame",
+                    IndentType = 1,
                     Loot =
                     {
                         232557, 232563, 232556, 0,
                         232552, 0,
                         232565, 232564, 232558, 232555, 232561, 232567, 0,
                         232559, 232551, 232550, 232566, 232562, 0,
-                    },
-                },
-                { Separator = true },
-                {
-                    Name = "Trash",
-                    Loot =
-                    {
-                        230849, 230843, 230848, 0,
-                        230846, 230842, 0,
-                        230847, 230845, 230844, 232357, 0,
-                        18562, 0,
                     },
                 },
                 { Separator = true },
@@ -1101,6 +1109,15 @@ LootReserve.Data =
                     Loot =
                     {
                         230840, 230839, 230841, 0,
+                        229910, 0,
+                        229971, 229972, 229909, 0,
+                        231509, 0,
+                        224281, 224282, 0,
+                        224122, 0,
+                        231754, 231755, 0,
+                        231890, 224279, 0,
+                        229806, 229749, 0,
+                        224280, 0,
                     },
                 },
             },
@@ -1623,8 +1640,8 @@ LootReserve.Data =
                     {
                         16913, 16928, 16920, 16907, 16899, 16940, 16948, 16956, 16964, 0,
                         19430, 19396, 19433, 19394, 0,
-                        19397, 19395, 19432, 19431, 0,
-                        19355, 19367, 19353, 19357, 0,
+                        19397, 19432, 19395, 19431, 0,
+                        19355, 19367, 19357, 19353, 0,
                     },
                 },
                 {
@@ -9147,7 +9164,7 @@ LootReserve.Data =
                         0,
                     },
                 },
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Occu'thar",
                     Loot =
                     {
@@ -9158,7 +9175,7 @@ LootReserve.Data =
                         70393, 70394, 70395, 0,
                     },
                 }),
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Druid",
                     IndentType = 1,
                     Loot =
@@ -9189,7 +9206,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Death Knight",
                     IndentType = 1,
                     Loot =
@@ -9213,7 +9230,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Hunter",
                     IndentType = 1,
                     Loot =
@@ -9237,7 +9254,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Mage",
                     IndentType = 1,
                     Loot =
@@ -9261,7 +9278,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Paladin",
                     IndentType = 1,
                     Loot =
@@ -9292,7 +9309,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Priest",
                     IndentType = 1,
                     Loot =
@@ -9319,7 +9336,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Rogue",
                     IndentType = 1,
                     Loot =
@@ -9343,7 +9360,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Shaman",
                     IndentType = 1,
                     Loot =
@@ -9374,7 +9391,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Warlock",
                     IndentType = 1,
                     Loot =
@@ -9398,7 +9415,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                ShortCircuit(EXPANSION_PHASE >= 4.2, {
                     Name = "Warrior",
                     IndentType = 1,
                     Loot =
@@ -9727,7 +9744,16 @@ LootReserve.Data =
         -- Head of Onyxia
         [18422] = 7495,
         [18423] = 7490,
-
+        
+        -- BWL class gear (Season of Discovery)
+        [231722] = 85112,
+        [231814] = 85501,
+        [229352] = 84870,
+        [231882] = 85521,
+        [231995] = 85555,
+        [231452] = 85455,
+        [231378] = 85445,
+        
         -- Head of Nefarian
         [19002] = 7781,
         [19003] = 7783,
@@ -11035,7 +11061,17 @@ if LootReserve:GetCurrentExpansion() == 0 then
         -- BWL trinkets
         ApplySingleFactionRestriction(230272, "Alliance");
         ApplySingleFactionRestriction(230273, "Horde");
-            
+        
+        -- BWL class weapons
+        ApplySingleFactionRestriction(231452, "Alliance");
+        ApplySingleFactionRestriction(231995, "Horde");
+        
+        -- BWL paladin/shaman gear
+        ApplySingleFactionRestriction(230278, "Alliance");
+        ApplySingleFactionRestriction(230745, "Alliance");
+        -- ApplySingleFactionRestriction(230279, "Horde");
+        ApplySingleFactionRestriction(230800, "Horde");
+        
         -- ZG paladin/shaman gear
         ApplySingleFactionRestriction(231303, "Alliance");
         ApplySingleFactionRestriction(230914, "Alliance");
@@ -11104,6 +11140,12 @@ if LootReserve:GetCurrentExpansion() == 0 then
     -- BWL trinkets
     ApplySingleFactionRestriction(19343, "Alliance");
     ApplySingleFactionRestriction(19344, "Horde");
+    
+    -- BWL paladin/shaman gear
+    ApplySingleFactionRestriction(19402, "Alliance");
+    ApplySingleFactionRestriction(19392, "Alliance");
+    -- ApplySingleFactionRestriction(19401, "Horde");
+    ApplySingleFactionRestriction(19393, "Horde");
     
     -- ZG set items
     ApplySingleFactionRestriction(19825, "Alliance");
@@ -11719,6 +11761,17 @@ local tokenMap = {
     [231713] = {231072, 231090, 231101, 231109, 231165, 231155, 232237, 232245, 232133, 232141, 232173, 232181, }, -- Draconian Boots (Season of Discovery)
     [231721] = {231037, 231029, 231041, 231049, 231247, 231231, 231255, 231239, 232253, 232261, 232189, 232197, 232085, 232093, 232101, 232109, }, -- Primeval Boots (Season of Discovery)
     [231730] = {231196, 231180, 231189, 231061, 231070, 231220, 231204, 231228, 231212, 232157, 232149, 232165, 232117, 232125, 232205, 232213, 232221, 232229, }, -- Ancient Boots (Season of Discovery)
+    
+    -- class quest gear
+    [231722] = {229910},                 -- Depleted Staff of Chaos
+    [230904] = {229971, 229972, 229909}, -- Scroll: SEENECS FO RIEF
+    [229906] = {231509},                 -- Tarnished Bronze Scale
+    [231814] = {224281, 224282},         -- Chromatic Heart
+    [229352] = {224122},                 -- Intelligence Findings
+    [231882] = {231754, 231755},         -- Suppression Device Receipt
+    [231995] = {231890, 224279},         -- Hardened Elementium Slag
+    [231452] = {229806, 229749},         -- Blood of the Lightbringer
+    [231378] = {224280},                 -- Shimmering Golden Disk
     
     
     -- ZG
