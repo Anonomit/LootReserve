@@ -188,7 +188,7 @@ LootReserve.Constants.Colors = {
     -- Size10         = "b1fc99",
     Size10         = "ffff00",
     Size20Tiny     = "8cffdb",
-    Size20         = LootReserve:GetCurrentExpansion() == 0 and "f87217" or "8ab9f1",
+    Size20         = LootReserve:GetCurrentSeason() == 2 and "f87217" or "8ab9f1",
     Size25Tiny     = "b7b2ff",
     -- Size25         = "ffff00",
     Size25         = "f87217",
