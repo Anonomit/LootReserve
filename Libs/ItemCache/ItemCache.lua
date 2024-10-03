@@ -4,27 +4,13 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 13
+local MAJOR, MINOR = ADDON_NAME, 14
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
 end
 
-local Addon = {}
-local L
-
-if IsStandalone then
-  Addon = LibStub("AceAddon-3.0"):GetAddon(ADDON_NAME)
-  L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
-  
-  Addon.AceConfig         = LibStub"AceConfig-3.0"
-  Addon.AceConfigDialog   = LibStub"AceConfigDialog-3.0"
-  Addon.AceConfigRegistry = LibStub"AceConfigRegistry-3.0"
-  Addon.AceDB             = LibStub"AceDB-3.0"
-  Addon.AceDBOptions      = LibStub"AceDBOptions-3.0"
-  
-  Addon.SemVer = LibStub"SemVer"
-end
+local Addon = ItemCacheAddon or {}
 
 
 
@@ -58,7 +44,7 @@ local mathFloor = math.floor
 local mathHuge  = math.huge
 
 
-function Addon:MakeLookupTable(t, val, keepOrigVals)
+local function MakeLookupTable(t, val, keepOrigVals)
   local ValFunc
   if val ~= nil then
     if type(val) == "function" then
@@ -82,9 +68,9 @@ function Addon:MakeLookupTable(t, val, keepOrigVals)
 end
 
 
-
+local expansionsHelper = {}
 do
-  Addon.expansions = {
+  expansionsHelper.expansions = {
     retail = 11,
     tww    = 11,
     df     = 10,
@@ -99,26 +85,26 @@ do
     era    = 1,
   }
   
-  Addon.expansionLevel = tonumber(GetBuildInfo():match"^(%d+)%.")
+  expansionsHelper.expansionLevel = tonumber(GetBuildInfo():match"^(%d+)%.")
   
-  Addon.isRetail  = Addon.expansionLevel >= Addon.expansions.retail
-  Addon.isClassic = not Addon.isRetail
+  expansionsHelper.isRetail  = expansionsHelper.expansionLevel >= expansionsHelper.expansions.retail
+  expansionsHelper.isClassic = not expansionsHelper.isRetail
   
-  Addon.isTWW     = Addon.expansionLevel == Addon.expansions.tww
-  Addon.isDF      = Addon.expansionLevel == Addon.expansions.df
-  Addon.isSL      = Addon.expansionLevel == Addon.expansions.sl
-  Addon.isBfA     = Addon.expansionLevel == Addon.expansions.bfa
-  Addon.isLegion  = Addon.expansionLevel == Addon.expansions.legion
-  Addon.isWoD     = Addon.expansionLevel == Addon.expansions.wod
-  Addon.isMoP     = Addon.expansionLevel == Addon.expansions.mop
-  Addon.isCata    = Addon.expansionLevel == Addon.expansions.cata
-  Addon.isWrath   = Addon.expansionLevel == Addon.expansions.wrath
-  Addon.isTBC     = Addon.expansionLevel == Addon.expansions.tbc
-  Addon.isEra     = Addon.expansionLevel == Addon.expansions.era
+  expansionsHelper.isTWW     = expansionsHelper.expansionLevel == expansionsHelper.expansions.tww
+  expansionsHelper.isDF      = expansionsHelper.expansionLevel == expansionsHelper.expansions.df
+  expansionsHelper.isSL      = expansionsHelper.expansionLevel == expansionsHelper.expansions.sl
+  expansionsHelper.isBfA     = expansionsHelper.expansionLevel == expansionsHelper.expansions.bfa
+  expansionsHelper.isLegion  = expansionsHelper.expansionLevel == expansionsHelper.expansions.legion
+  expansionsHelper.isWoD     = expansionsHelper.expansionLevel == expansionsHelper.expansions.wod
+  expansionsHelper.isMoP     = expansionsHelper.expansionLevel == expansionsHelper.expansions.mop
+  expansionsHelper.isCata    = expansionsHelper.expansionLevel == expansionsHelper.expansions.cata
+  expansionsHelper.isWrath   = expansionsHelper.expansionLevel == expansionsHelper.expansions.wrath
+  expansionsHelper.isTBC     = expansionsHelper.expansionLevel == expansionsHelper.expansions.tbc
+  expansionsHelper.isEra     = expansionsHelper.expansionLevel == expansionsHelper.expansions.era
   
   local season = ((C_Seasons or {}).GetActiveSeason or nop)() or 0
-  Addon.isSoM = season == Enum.SeasonID.SeasonOfMastery
-  Addon.isSoD = season == Enum.SeasonID.SeasonOfDiscovery
+  expansionsHelper.isSoM = season == Enum.SeasonID.SeasonOfMastery
+  expansionsHelper.isSoD = season == Enum.SeasonID.SeasonOfDiscovery
 end
 
 local MY_CLASS = select(2, UnitClassBase"player")
@@ -153,54 +139,54 @@ do
   local subWeapon   = Enum.ItemWeaponSubclass
   local armor       = Enum.ItemClass.Armor
   local subArmor    = Enum.ItemArmorSubclass
-  local usableTypes = Addon:MakeLookupTable({weapon, armor}, function() return {} end)
+  local usableTypes = MakeLookupTable({weapon, armor}, function() return {} end)
   
-  usableTypes[weapon][subWeapon.Unarmed]  = Addon:MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR} -- Fist Weapons
-  usableTypes[weapon][subWeapon.Axe1H]    = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Axe2H]    = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Bows]     = Addon:MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Guns]     = Addon:MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Mace1H]   = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.PALADIN, ID.PRIEST,  ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Mace2H]   = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Polearm]  = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.HUNTER,  ID.PALADIN, ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Sword1H]  = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.MAGE,    ID.PALADIN, ID.ROGUE,   ID.WARLOCK, ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Sword2H]  = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Staff]    = Addon:MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.MAGE,    ID.PRIEST,  ID.SHAMAN,  ID.WARLOCK, ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Dagger]   = Addon:MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.MAGE,    ID.PRIEST,  ID.ROGUE,   ID.SHAMAN,  ID.WARLOCK, ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Crossbow] = Addon:MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Wand]     = Addon:MakeLookupTable{ID.MAGE,        ID.PRIEST,  ID.WARLOCK}
-  usableTypes[weapon][subWeapon.Thrown]   = Addon:MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Unarmed]  = MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR} -- Fist Weapons
+  usableTypes[weapon][subWeapon.Axe1H]    = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Axe2H]    = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Bows]     = MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Guns]     = MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Mace1H]   = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.PALADIN, ID.PRIEST,  ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Mace2H]   = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Polearm]  = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.HUNTER,  ID.PALADIN, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Sword1H]  = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.MAGE,    ID.PALADIN, ID.ROGUE,   ID.WARLOCK, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Sword2H]  = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Staff]    = MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.MAGE,    ID.PRIEST,  ID.SHAMAN,  ID.WARLOCK, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Dagger]   = MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.MAGE,    ID.PRIEST,  ID.ROGUE,   ID.SHAMAN,  ID.WARLOCK, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Crossbow] = MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Wand]     = MakeLookupTable{ID.MAGE,        ID.PRIEST,  ID.WARLOCK}
+  usableTypes[weapon][subWeapon.Thrown]   = MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
   
-  usableTypes[armor][subArmor.Leather]    = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.HUNTER,  ID.PALADIN, ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[armor][subArmor.Mail]       = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[armor][subArmor.Plate]      = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.PALADIN, ID.WARRIOR}
-  usableTypes[armor][subArmor.Shield]     = Addon:MakeLookupTable{ID.PALADIN,     ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[armor][subArmor.Libram]     = Addon:MakeLookupTable{ID.PALADIN}
-  usableTypes[armor][subArmor.Idol]       = Addon:MakeLookupTable{ID.DRUID}
-  usableTypes[armor][subArmor.Totem]      = Addon:MakeLookupTable{ID.SHAMAN}
-  usableTypes[armor][subArmor.Sigil]      = Addon:MakeLookupTable{ID.DEATHKNIGHT}
-  -- usableTypes[weapon][subWeapon.Warglaive]   = Addon:MakeLookupTable{}
-  -- usableTypes[weapon][subWeapon.Bearclaw]    = Addon:MakeLookupTable{}
-  -- usableTypes[weapon][subWeapon.Catclaw]     = Addon:MakeLookupTable{}
-  -- usableTypes[weapon][subWeapon.Unarmed]     = Addon:MakeLookupTable{}
-  -- usableTypes[weapon][subWeapon.Generic]     = Addon:MakeLookupTable{}
-  -- usableTypes[weapon][subWeapon.Obsolete3]   = Addon:MakeLookupTable{} -- Spears
-  -- usableTypes[weapon][subWeapon.Fishingpole] = Addon:MakeLookupTable{}
+  usableTypes[armor][subArmor.Leather]    = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.HUNTER,  ID.PALADIN, ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[armor][subArmor.Mail]       = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[armor][subArmor.Plate]      = MakeLookupTable{ID.DEATHKNIGHT, ID.PALADIN, ID.WARRIOR}
+  usableTypes[armor][subArmor.Shield]     = MakeLookupTable{ID.PALADIN,     ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[armor][subArmor.Libram]     = MakeLookupTable{ID.PALADIN}
+  usableTypes[armor][subArmor.Idol]       = MakeLookupTable{ID.DRUID}
+  usableTypes[armor][subArmor.Totem]      = MakeLookupTable{ID.SHAMAN}
+  usableTypes[armor][subArmor.Sigil]      = MakeLookupTable{ID.DEATHKNIGHT}
+  -- usableTypes[weapon][subWeapon.Warglaive]   = MakeLookupTable{}
+  -- usableTypes[weapon][subWeapon.Bearclaw]    = MakeLookupTable{}
+  -- usableTypes[weapon][subWeapon.Catclaw]     = MakeLookupTable{}
+  -- usableTypes[weapon][subWeapon.Unarmed]     = MakeLookupTable{}
+  -- usableTypes[weapon][subWeapon.Generic]     = MakeLookupTable{}
+  -- usableTypes[weapon][subWeapon.Obsolete3]   = MakeLookupTable{} -- Spears
+  -- usableTypes[weapon][subWeapon.Fishingpole] = MakeLookupTable{}
   
-  -- usableTypes[armor][subArmor.Generic]       = Addon:MakeLookupTable{}
-  -- usableTypes[armor][subArmor.Cloth]         = Addon:MakeLookupTable{}
-  -- usableTypes[armor][subArmor.Cosmetic]      = Addon:MakeLookupTable{}
-  -- usableTypes[armor][subArmor.Relic]         = Addon:MakeLookupTable{}
+  -- usableTypes[armor][subArmor.Generic]       = MakeLookupTable{}
+  -- usableTypes[armor][subArmor.Cloth]         = MakeLookupTable{}
+  -- usableTypes[armor][subArmor.Cosmetic]      = MakeLookupTable{}
+  -- usableTypes[armor][subArmor.Relic]         = MakeLookupTable{}
   
   
-  if Addon.expansionLevel <= Addon.expansions.tbc then
+  if expansionsHelper.expansionLevel <= expansionsHelper.expansions.tbc then
     usableTypes[weapon][subWeapon.Axe1H][ID.ROGUE] = nil
-    if not Addon.isSoD then
+    if not expansionsHelper.isSoD then
       usableTypes[weapon][subWeapon.Polearm][ID.DRUID] = nil
     end
   end
   
-  local dualWielders = Addon:MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER, ID.ROGUE, ID.SHAMAN, ID.WARRIOR}
+  local dualWielders = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER, ID.ROGUE, ID.SHAMAN, ID.WARRIOR}
   
   IsItemUsable = function(item, classID)
     local invType, _, itemClassID, subClassID = select(4, item:GetInfoInstant())
@@ -361,7 +347,7 @@ function CallbackController:Resume()
   return self
 end
 function CallbackController:Cancel()
-  if not self:IsComplete() and not self.cancelled then
+  if not self:IsComplete() and not private(self).cancelled then
     private(self).cancelled = true
     ItemDB:UnregisterCallbackController(self)
   end
@@ -1295,70 +1281,11 @@ Item.IsShoes = Item.IsBoots
 
 
 
-
-
-function Addon:OnChatCommand(input)
-  local arg = self:GetArgs(input, 1)
-  
-  local func = arg and self.chatArgs[arg] or nil
-  if func then
-    func(self)
-  else
-    self:OpenConfig(ADDON_NAME)
-  end
-end
-
-
-function Addon:CreateOptions()
-  self:MakeAddonOptions(self.chatCommands[1])
-  
-  -- Debug Options
-  if self:IsDebugEnabled() then
-    self:MakeDebugOptions(self.L["Debug"], self.chatCommands[1], "debug", "db", "d")
-  end
-end
-
-function Addon:InitDB()
-  local configVersion = self.SemVer(self:GetOption"version" or tostring(self.version))
-  
-  if not self:GetOption"version" then -- first run
-    
-  else -- upgrade data schema
-    
-  end
-  
-  self:SetOption(tostring(self.version), "version")
-end
-
-
-function Addon:OnInitialize()
-  self.db        = self.AceDB:New(("%sDB"):format(ADDON_NAME), self:MakeDefaultOptions(), true)
-  self.dbDefault = self.AceDB:New({}                         , self:MakeDefaultOptions(), true)
-  
-  self:RunInitializeCallbacks()
-  
-  ItemDB:Init()
-end
-
-function Addon:OnEnable()
-  self.version = self.SemVer(GetAddOnMetadata(ADDON_NAME, "Version"))
-  self:InitDB()
-  self:GetDB().RegisterCallback(self, "OnProfileChanged", "InitDB")
-  self:GetDB().RegisterCallback(self, "OnProfileCopied" , "InitDB")
-  self:GetDB().RegisterCallback(self, "OnProfileReset"  , "InitDB")
-  
-  self:InitChatCommands{"ic", ADDON_NAME:lower()}
-  
-  self:RunEnableCallbacks()
-end
-
-function Addon:OnDisable()
-end
-
-
-
-
-if not IsStandalone then
+if IsStandalone then
+  Addon:RegisterInitializeCallback(function(self)
+    ItemDB:Init()
+  end)
+else
   ItemDB:Init()
 end
 
