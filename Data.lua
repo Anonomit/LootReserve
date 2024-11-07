@@ -9819,17 +9819,18 @@ LootReserve.Data =
         [220637] = true, -- Atal'ai Ritual Token
         
         -- Ony/BWL
-        [11938]  = true,  -- Sack of Gems
+        [11938]  = true, -- Sack of Gems
         [228992] = true, -- Onyxia Hide Backpack (Season of Discovery)
         
         -- ZG
-        [22637] = true, -- Primal Hakkari Idol
+        [22637]  = true, -- Primal Hakkari Idol
+        [231512] = true, -- Primal Hakkari Idol (Season of Discovery)
         
         -- ZA
         [33865] = true, -- Amani Hex Stick
         
         -- Ony 10/25
-        [49294] = {36919, 36922, 36931, 36928, 36934, 36925}, -- Ashen Sack of Gems
+        [49294] = true, -- Ashen Sack of Gems
         
         -- ToC
         [47242] = true, -- Trophy of the Crusade
