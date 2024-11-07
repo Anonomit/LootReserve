@@ -1128,12 +1128,12 @@ function LootReserve:IsLootingItem(itemOrID)
     return firstIndex, count;
 end
 
-function LootReserve:CanLocate()
+function LootReserve:CanUseCoords()
     return not not UnitPosition("player");
 end
 
 function LootReserve:CanUseDBMLocator(unitID)
-    return DBM and DBM.ReleaseRevision > 20220618000000 and self:CanLocate() and UnitIsVisible(unitID) and true or false;
+    return DBM and DBM.ReleaseRevision > 20220618000000 and self:CanUseCoords() and UnitIsVisible(unitID) and true or false;
 end
 
 function LootReserve:GetContinent(unitID)

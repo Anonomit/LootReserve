@@ -738,23 +738,25 @@
 								self.Arrow:Show();
 								self.Arrow:SetRotation(angle);
 							end
-								
+							
 							if LootReserve:IsRangeCheckRestricted(unit) and not angle then
-								if not range then
-									return self:SetState(UnitIsVisible(unit) and "Approach" or "Travel", false, false);
+								if not TradeFrame:IsShown() or not UnitIsUnit("npc", unit) then
+									if not range then
+										return self:SetState(UnitIsVisible(unit) and "Approach" or "Travel", false, false);
+									end
+									if min &lt;= 10 then
+										return self:SetState(format("%s: %s", "Open trade", distText), true, false);
+									end
+									return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Approach" or "Travel", distText), false, false);
 								end
-								if min &lt;= 10 then
-									return self:SetState(format("%s: %s", "Open trade", distText), true, false);
-								end
-								return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Approach" or "Travel", distText), false, false);
 							end
 							
-							if LootReserve:CanLocate() and (not range or range > 9) or not LootReserve:IsRangeCheckRestricted(unit) and not LootReserve:CheckInteractDistance(unit, 2) then
+							if LootReserve:CanUseCoords() and (not range or range > 9) or not LootReserve:IsRangeCheckRestricted(unit) and not LootReserve:CheckInteractDistance(unit, 2) then
 								if not range then
 									return self:SetState(UnitIsVisible(unit) and "Approach" or "Travel", false, false);
 								end
 							
-								if not LootReserve:CanLocate() then
+								if not LootReserve:CanUseCoords() then
 									return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Approach" or "Travel", distText), false, false);
 								end
 								
@@ -767,7 +769,7 @@
 								end
 								
 								if range &lt;= 9 then
-									if not LootReserve:CanLocate() then
+									if not LootReserve:CanUseCoords() then
 										return self:SetState(format("%s: %s", "Above/Below", distText), false, false);
 									else
 										return self:SetState(format("%s: %s", "Open trade", distText), true, true);
