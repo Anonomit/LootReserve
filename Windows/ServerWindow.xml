@@ -981,10 +981,11 @@
 										disabled = not condition,
 										func = function(info)
 											local frame = self:GetParent():GetParent();
-											if not frame.Roll then return; end
+											if not frame.Roll then LootReserve:debug("test") return; end
 											local recipient = UnitIsPlayer("target") and UnitIsConnected("target") and UnitNameUnmodified("target");
 											if info.arg1 == "WHISPER" and not recipient then
-												LootReserve:PrintError("Target is not a valid player to whisper.")
+												LootReserve:PrintError("Target is not a valid player to whisper.");
+												LootReserve:debug("test2")
 												return;
 											end
 
@@ -1006,22 +1007,22 @@
 												frame.Link,
 												frame.Roll.Phases and format(" for %s", frame.Roll.Phases[1] or "") or "",
 												frame.Historical and format(" on %s", (frame.ItemFrame.Misc:GetText() or ""):gsub("%s%s", " at ")) or ""
-											), info.arg1, recipient);
+											), info.arg1, recipient, true);
 											local i = 1;
 											for player, roll, rollNumber in LootReserve.Server:GetOrderedPlayerRolls(frame.Roll.Players) do
 												if roll > LootReserve.Constants.RollType.NotRolled and (not self.Lines or self.Lines == 0 or self.Lines >= i) then
 													if frame.Roll.Tiered then
 														roll = LootReserve.Server:ConvertFromTieredRoll(roll) .. "/" .. math.floor(roll);
 													end
-													LootReserve:SendChatMessage(format("  %s %s %s", roll, frame.Roll.RaidRoll and "=" or "by", player), info.arg1, recipient);
+													LootReserve:SendChatMessage(format("  %s %s %s", roll, frame.Roll.RaidRoll and "=" or "by", player), info.arg1, recipient, true);
 													i = i + 1;
 												end
 											end
 											if i == 1 then
 												if frame.Roll.Winners then
-													LootReserve:SendChatMessage(format("  %s by %s", frame.Roll.Disenchant and "Disenchanted" or "Reserved", frame.Roll.Winners[1]), info.arg1, recipient);
+													LootReserve:SendChatMessage(format("  %s by %s", frame.Roll.Disenchant and "Disenchanted" or "Reserved", frame.Roll.Winners[1]), info.arg1, recipient, true);
 												else
-													LootReserve:SendChatMessage("  No Rolls", info.arg1, recipient);
+													LootReserve:SendChatMessage("  No Rolls", info.arg1, recipient, true);
 												end
 											end
 										end,
@@ -1102,7 +1103,7 @@
 											end
 
 											local reservesText = LootReserve:GetReservesData(LootReserve.Server.CurrentSession.ItemReserves[frame.Item:GetID()].Players);
-											LootReserve:SendChatMessage(format("Reserves for %s: %s", frame.Link, reservesText), info.arg1, recipient);
+											LootReserve:SendChatMessage(format("Reserves for %s: %s", frame.Link, reservesText), info.arg1, recipient, true);
 										end,
 									};
 								end

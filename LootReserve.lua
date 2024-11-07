@@ -416,7 +416,7 @@ function LootReserve:FixText(text)
     return text:gsub("\1", " ");
 end
 
-function LootReserve:SendChatMessage(text, channel, target)
+function LootReserve:SendChatMessage(text, channel, target, skipOnlineCheck)
     if channel == "RAID_WARNING" and not (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
         channel = "RAID";
     end
@@ -426,7 +426,7 @@ function LootReserve:SendChatMessage(text, channel, target)
     if channel == "PARTY" and not IsInGroup() then
         channel, target = "WHISPER", LootReserve:Me();
     end
-    if target and not LootReserve:IsPlayerOnline(target) then return; end
+    if target and not LootReserve:IsPlayerOnline(target) and not skipOnlineCheck then return; end
     local function Send(text)
         if #text > 0 then
             text = self:FixText(text);
