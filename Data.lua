@@ -13965,25 +13965,39 @@ do
         [{215415, 215403}] = 40, -- Waylaid Supplies
         [{217337}] = 30, -- Supply Shipment
         [{217338}] = 35, -- Supply Shipment
-        [{281008, 281009, 281010}] = 45, -- Supply Shipment
+        [{221008, 221009, 221010}] = 45, -- Supply Shipment
+        
+        [{221299, 221289, 221280, 221272}] = 55, -- Darkmoon Decks (SoD)
+        [{19228, 19257, 19267, 19277}] = 66, -- Darkmoon Decks
         
         [{209693, 211452}] = 33, -- Perfect Blackfathom Pearl
         
+        [{217350, 217351}] = 45, -- Thermaplugg's Engineering Notes
+        [{217008, 217009, 217007}] = 45, -- Gnomeregan Set (SoD)
+        
+        [{221346, 221363}] = 55, -- Scapula of the Fallen Avatar
+        [{220637, 220636}] = 55, -- Sunken Temple Set (SoD)
+        
+        [{18422, 18423}] = 74, -- Head of Onyxia
+        
+        [{227532, 227537, 227535, 227531, 227533, 227530, 227534, 227536, 227764, 227762, 227766, 227760, 227759, 227761, 227763, 227765, 227755, 227752, 227758, 227750, 227756, 227751, 227754, 227757}] = 66, -- T1 (SoD)
+        
         [{18665, 18646}] = 75, -- Benediction / Anathema
         [{18703, 18704, 18705}] = 75, -- Lok'delar, Rhok'delar, Lamina
+        [{228129}] = 71, -- Shadowflame Sword
         [{17204, 227728}] = 80, -- Sulfuras
         [{18563, 18564}] = 80, -- Thunderfury
         
-        [{18422, 18423}] = 74, -- Head of Onyxia
+        [{231711, 231709, 231714, 231707, 231712, 231708, 231710, 231713, 231719, 231717, 231723, 231715, 231720, 231716, 231718, 231721, 231728, 231726, 231731, 231724, 231729, 231725, 231727, 231730}] = 76, -- T2 (SoD)
         
         [{19002, 19003}] = 83, -- Head of Nefarian
         
         [{19721}] = 61, -- Primal Hakkari Shawl
-        [{19724}] = GetItemLevelByClass({
-        [3] = 68,
-        [4] = 65,
-        [5] = 68,
-        }), -- Primal Hakkari Aegis
+        [{19724}] = GetItemLevelByClass{
+            [3] = 68,
+            [4] = 65,
+            [5] = 68,
+        }, -- Primal Hakkari Aegis
         [{19723}] = 65, -- Primal Hakkari Kossack
         [{19722}] = 65, -- Primal Hakkari Tabard
         [{19717}] = 61, -- Primal Hakkari Armsplint
@@ -14007,12 +14021,12 @@ do
         
         [{21237}] = 79, -- Imperial Qiraji Regalia
         [{21232}] = 79, -- Imperial Qiraji Armaments
-        [{20928}] = GetItemLevelByClass({
-        [1] = 78,
-        [3] = 81,
-        [4] = 78,
-        [5] = 78,
-        }), -- Qiraji Bindings of Command
+        [{20928}] = GetItemLevelByClass{
+            [1] = 78,
+            [3] = 81,
+            [4] = 78,
+            [5] = 78,
+        }, -- Qiraji Bindings of Command
         [{20932}] = 78, -- Qiraji Bindings of Dominance
         
         [{20930, 20926}] = 81, -- Vek'lor's Diadem, Vek'nilash's Circlet
@@ -14071,6 +14085,11 @@ do
         
         [{63683, 63684, 63682, 64315, 64316, 64314}] = 359, -- T11 N
         [{67429, 67430, 67431, 67428, 67427, 67426, 65001, 65000, 65002, 67423, 67424, 67425, 65088, 65087, 65089, 66998}] = 372, -- T11 H
+        
+        [{71675, 71682, 71668, 71681, 71688, 71674}] = 378, -- T12 N
+        [{71677, 71684, 71670, 71680, 71687, 71673, 71679, 71686, 71672, 71676, 71683, 71669, 71678, 71685, 71671}] = 391, -- T12 H
+        
+        [{71617}] = 391, -- Firestone
     }) do
         for _, id in ipairs(ids) do
             LootReserve.Data.ItemLevelOverrides[id] = ilvl
