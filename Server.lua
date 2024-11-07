@@ -438,7 +438,7 @@ function LootReserve.Server:HasRelevantRecentChat(roll, player)
 end
 
 function LootReserve.Server:IsAddonUser(player)
-    return LootReserve:IsMe(player) or self.AddonUsers[player] and true or false;
+    return LootReserve:IsMe(player) or self.AddonUsers[player] and self.AddonUsers[player] >= LootReserve.MinAllowedVersion and true or false;
 end
 
 function LootReserve.Server:SetAddonUser(player, version)
@@ -4062,11 +4062,10 @@ function LootReserve.Server:WhisperAllWithoutReserves()
 end
 
 function LootReserve.Server:GetSupportString(player, prefix, force)
-    local addonUser = self:IsAddonUser(player);
-    if addonUser and not force then
+    if self:IsAddonUser(player) and not force then
         return "";
     else
-        return format("%sFor full support, %s the addon: LootReserve", prefix or "", addonUser == false and "update" or "install");
+        return format("%sFor full support, %s the addon: LootReserve", prefix or "", self.AddonUsers[player] and "update" or "install");
     end
 end
 
