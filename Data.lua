@@ -11435,7 +11435,7 @@ do
         [19336] = 230237, -- Arcane Infused Gem
         [19337] = 230238, -- The Black Book
         [19339] = 230243, -- Mind Quickening Gem
-        [19340] = 210980, -- Rune of Metamorphosis
+        [19340] = 230244, -- Rune of Metamorphosis | Shapeshifter's Sigil
         [19341] = 230249, -- Lifegiving Gem
         [19342] = 230250, -- Venomous Totem
         [19343] = 230272, -- Scrolls of Blinding Light
