@@ -117,8 +117,7 @@ function LootReserve.Client:Init()
     
     self.RollOnLoot = _G.RollOnLoot
     _G.RollOnLoot = function(...)
-        local args = {...};
-        local success, result = pcall(function() LootReserveRollOnLoot(unpack(args)) end);
+        local success, result = pcall(function(...) LootReserveRollOnLoot(...) end, ...);
         if not success or not result then
             self.RollOnLoot(...)
         end

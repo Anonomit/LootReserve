@@ -829,10 +829,6 @@ local function CheckBagCache(self)
             LootReserve:WipeBagCache();
             C_Timer.After(0, function() LootReserve:WipeBagCache(); end);
         end);
-        LootReserve:RegisterEvent("MERCHANT_CONFIRM_TRADE_TIMER_REMOVAL", function()
-            LootReserve:WipeBagCache();
-            C_Timer.After(0, function() LootReserve:WipeBagCache(); end);
-        end);
         self:RegisterEvent("ITEM_LOCK_CHANGED", function(bag, slot)
             if not slot then return; end
             if self.BagCache then
