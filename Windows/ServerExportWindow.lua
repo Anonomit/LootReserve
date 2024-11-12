@@ -69,10 +69,14 @@ function LootReserve.Server.Export:UpdateRollsExportText(onlySession)
                                 local highest = LootReserve.Server:GetWinningRollAndPlayers(roll);
                                 _, max = LootReserve.Server:ConvertFromTieredRoll(highest);
                             end
+                            local name = roll.Item:GetName();
+                            if name:find(",") then
+                                name = '"' .. name .. '"'
+                            end
                             text = text .. format(self.rollsExportFormatPattern,
                                 roll.StartTime,
                                 roll.Item:GetID(),
-                                roll.Item:GetName(),
+                                name,
                                 winner,
                                 (roll.Custom or roll.Disenchant) and 0 or 1,
                                 roll.RaidRoll and 1 or 0,
