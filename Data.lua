@@ -54,7 +54,7 @@ local SEASONS = {
 local EXPANSION_PHASE
 if LootReserve:GetCurrentExpansion() == 0 then
     if SEASON_NUMBER == SEASONS.DISCOVERY then
-        EXPANSION_PHASE = 1.0; -- Season of Discovery
+        EXPANSION_PHASE = 1.5; -- Season of Discovery
     else
         EXPANSION_PHASE = 1.5; -- Classic Era
     end
@@ -9235,13 +9235,9 @@ LootReserve.Data =
                         -- Warrior
                         71070, 71072, 0,
                         70944, 70941, 0,
-                        -- Death Knig
+                        -- Death Knight
                         71060, 71062, 0,
                         70954, 70951, 0,
-                        
-                        
-                        
-                        
                         --[[
                         -- Warlock
                         71282, 71285, 71284, 71281, 71283, 0,
@@ -9273,8 +9269,6 @@ LootReserve.Data =
                         71060, 71062, 71058, 71059, 71061, 0,
                         70954, 70951, 70955, 70953, 70952, 0,
                         ]]
-                        
-                        
                     },
                 },
                 {
