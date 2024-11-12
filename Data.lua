@@ -9176,6 +9176,7 @@ LootReserve.Data =
                         71640, 71365, 0,
                         70929, 71367, 68972, 68915, 0,
                         71360, 71359, 71361, 71362, 71366, 0,
+                        69237, 71141, 0,
                     },
                 },
                 { Separator = true },
@@ -10587,6 +10588,9 @@ do
     
     -- Precious's Ribbon
     HideItem(52019);
+    
+    HideItem(69237);
+    HideItem(71141);
 end
 
 
