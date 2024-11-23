@@ -403,14 +403,11 @@
 	</Button>
 	<Frame name="LootReserveReserveListTemplate" virtual="true" enableMouse="true" inherits="LootReserveBackdropTemplate">
 		<KeyValues>
-			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_5" type="global" />
+			<KeyValue key="backdropBorderColor" value="WHITE_FONT_COLOR" type="global" />
+			<KeyValue key="backdropBorderColorAlpha" value="1" type="number" />
 		</KeyValues>
 		<Size y="200" />
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
-			<BackgroundInsets left="5" right="5" top="5" bottom="5" />
-			<EdgeSize val="16" />
-			<BorderColor r="1" g="1" b="1" a="1" />
-		</Backdrop>
 		<Frames>
 			<Button parentKey="RequestRollButton" frameLevel="101">
 				<Size x="32" y="32" />
@@ -631,7 +628,7 @@
 					<Anchor point="TOPLEFT" relativeKey="$parent.ItemFrame" relativePoint="BOTTOMLEFT" x="-1" y="-2" />
 				</Anchors>
 				<Layers>
-					<Layer layer="OVERLAY">
+					<Layer level="OVERLAY">
 						<Texture parentKey="Arrow" file="Interface\Minimap\MinimapArrow">
 							<Size x="24" y="24" />
 							<Anchors>
@@ -1201,13 +1198,10 @@
 	</Button>
 	<Frame name="LootReserveRollPlaceholderTemplate" virtual="true" enableMouse="true" inherits="LootReserveBackdropTemplate">
 		<KeyValues>
-			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_5" type="global" />
+			<KeyValue key="backdropBorderColor" value="WHITE_FONT_COLOR" type="global" />
+			<KeyValue key="backdropBorderColorAlpha" value="1" type="number" />
 		</KeyValues>
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
-			<BackgroundInsets left="5" right="5" top="5" bottom="5" />
-			<EdgeSize val="16" />
-			<BorderColor r="1" g="1" b="1" a="1" />
-		</Backdrop>
 		<Frames>
 			<Button parentKey="RequestRollButton" hidden="true">
 				<Size x="32" y="32" />
@@ -2601,7 +2595,7 @@
 							<OnLeave function="GameTooltip_Hide" />
 						</Scripts>
 					</EditBox>
-					<EditBox parentKey="EditBoxMultireserve" inherits="NumericInputSpinnerTemplate" autoFocus="false" motionScriptsWhileDisabled="true">
+					<EditBox parentKey="EditBoxMultireserve" inherits="NumericInputSpinnerTemplate" autoFocus="false">
 						<Size x="40" y="20" />
 						<Anchors>
 							<Anchor point="TOP" relativeKey="$parent.LabelMultireserve" relativePoint="BOTTOM" />

@@ -129,17 +129,13 @@
 				<Frames>
 					<Frame parentKey="Input" inherits="LootReserveBackdropTemplate">
 						<KeyValues>
-							<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+							<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_5" type="global" />
 						</KeyValues>
 						<Size x="150" />
 						<Anchors>
 							<Anchor point="TOPLEFT" y="-12" />
 							<Anchor point="BOTTOMLEFT" />
 						</Anchors>
-						<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
-							<BackgroundInsets left="5" right="5" top="5" bottom="5" />
-							<EdgeSize val="16" />
-						</Backdrop>
 						<Layers>
 							<Layer>
 								<FontString inherits="GameFontNormalSmall" text="Import Settings">
@@ -232,16 +228,12 @@
 					</Frame>
 					<Frame parentKey="Columns" inherits="LootReserveBackdropTemplate">
 						<KeyValues>
-							<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+							<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_5" type="global" />
 						</KeyValues>
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.Input" relativePoint="TOPRIGHT" />
 							<Anchor point="BOTTOMRIGHT" />
 						</Anchors>
-						<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
-							<BackgroundInsets left="5" right="5" top="5" bottom="5" />
-							<EdgeSize val="16" />
-						</Backdrop>
 						<Layers>
 							<Layer>
 								<FontString inherits="GameFontNormalSmall" text="Column Assignments">

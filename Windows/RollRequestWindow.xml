@@ -8,10 +8,6 @@
 		<Anchors>
 			<Anchor point="BOTTOM" y="200" />
 		</Anchors>
-		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
-			<BackgroundInsets left="4" right="4" top="4" bottom="4" />
-			<EdgeSize val="16" />
-		</Backdrop>
 		<Frames>
 			<Frame parentKey="DurationFrame">
 				<Size y="20" />
@@ -118,6 +114,9 @@
 					</Layer>
 				</Layers>
 				<Scripts>
+					<OnLoad inherit="preprend">
+						self.PassedIcon:Disable();
+					</OnLoad>
 					<OnClick>
 						LootReserve.Client:RespondToRollRequest(self.rollMax);
 						self:Disable();
@@ -138,7 +137,7 @@
 				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Dice-Highlight" alphaMode="ADD" />
 				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Dice-Down" />
 				<Frames>
-					<Button parentKey="PassedIcon" hidden="true" disabled="true">
+					<Button parentKey="PassedIcon" hidden="true">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.ButtonRoll1" relativePoint="TOPLEFT" />
 							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.ButtonRoll1" relativePoint="BOTTOMRIGHT" />
@@ -160,6 +159,9 @@
 					<Anchor point="RIGHT" relativeKey="$parent.ButtonPass" relativePoint="LEFT" />
 				</Anchors>
 				<Scripts>
+					<OnLoad inherit="preprend">
+						self.PassedIcon:Disable();
+					</OnLoad>
 					<OnClick>
 						LootReserve.Client:RespondToRollRequest(self.rollMax);
 						self:Disable();
@@ -180,7 +182,7 @@
 				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-Coin-Highlight" alphaMode="ADD" />
 				<PushedTexture file="Interface\Buttons\UI-GroupLoot-Coin-Down" />
 				<Frames>
-					<Button parentKey="PassedIcon" hidden="true" disabled="true">
+					<Button parentKey="PassedIcon" hidden="true">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.ButtonRoll2" relativePoint="TOPLEFT" />
 							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.ButtonRoll2" relativePoint="BOTTOMRIGHT" />
@@ -202,6 +204,9 @@
 					<Anchor point="RIGHT" relativeKey="$parent.ButtonPass" relativePoint="LEFT" />
 				</Anchors>
 				<Scripts>
+					<OnLoad inherit="preprend">
+						self.PassedIcon:Disable();
+					</OnLoad>
 					<OnClick>
 						LootReserve.Client:RespondToRollRequest(self.rollMax);
 						self:Disable();
@@ -222,7 +227,7 @@
 				<HighlightTexture file="Interface\Buttons\UI-GroupLoot-DE-Highlight" alphaMode="ADD" />
 				<PushedTexture file="Interface\Buttons\UI-GroupLoot-DE-Down" />
 				<Frames>
-					<Button parentKey="PassedIcon" hidden="true" disabled="true">
+					<Button parentKey="PassedIcon" hidden="true">
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.ButtonRoll3" relativePoint="TOPLEFT" />
 							<Anchor point="BOTTOMRIGHT" relativeKey="$parent.ButtonRoll3" relativePoint="BOTTOMRIGHT" />

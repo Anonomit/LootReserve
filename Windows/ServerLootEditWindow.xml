@@ -2,15 +2,11 @@
 	<Script file="ServerLootEditWindow.lua" />
 	<Frame name="LootReserveLootEditListTemplate" virtual="true" enableMouse="true" inherits="LootReserveBackdropTemplate">
 		<KeyValues>
-			<KeyValue key="backdropInfo" value="BACKDROP_TOOLTIP_0_16_5555" type="global" />
+			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_TOOLTIP_0_16" type="global" />
 			<KeyValue key="backdropBorderColor" value="NORMAL_FONT_COLOR" type="global" />
 			<KeyValue key="backdropBorderColorAlpha" value="0" type="number" />
 		</KeyValues>
 		<Size y="44" />
-		<Backdrop edgeFile="Interface\Tooltips\UI-Tooltip-Border">
-			<EdgeSize val="16" />
-			<BorderColor r="1" g="0.82" b="0" a="0" />
-		</Backdrop>
 		<Frames>
 			<Frame parentKey="ConditionsFrame">
 				<Size x="112" y="32" />
@@ -695,16 +691,12 @@
 			</EditBox>
 			<Frame parentKey="Categories" inherits="LootReserveBackdropTemplate">
 				<KeyValues>
-					<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+					<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_5" type="global" />
 				</KeyValues>
 				<Anchors>
 					<Anchor point="TOPRIGHT" relativeKey="$parent.Searchbar" relativePoint="BOTTOMRIGHT" x="1" />
 					<Anchor point="BOTTOMLEFT" x="16" y="16" />
 				</Anchors>
-				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
-					<BackgroundInsets left="5" right="5" top="5" bottom="5" />
-					<EdgeSize val="16" />
-				</Backdrop>
 				<Frames>
 					<ScrollFrame parentKey="Scroll" inherits="LootReserveScrollTemplate">
 						<Anchors>
@@ -716,16 +708,12 @@
 			</Frame>
 			<Frame parentKey="Loot" inherits="LootReserveBackdropTemplate">
 				<KeyValues>
-					<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
+					<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_5" type="global" />
 				</KeyValues>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeKey="$parent.Searchbar" relativePoint="TOPRIGHT" />
 					<Anchor point="BOTTOMRIGHT" x="-16" y="16" />
 				</Anchors>
-				<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border">
-					<BackgroundInsets left="5" right="5" top="5" bottom="5" />
-					<EdgeSize val="16" />
-				</Backdrop>
 				<Frames>
 					<ScrollFrame parentKey="Scroll" inherits="LootReserveScrollTemplate">
 						<Anchors>
