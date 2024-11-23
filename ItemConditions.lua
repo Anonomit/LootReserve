@@ -149,26 +149,23 @@ end
 
 
 local function IsItemUsable(itemID, playerClass, isMe)
+    local item = LootReserve.ItemCache:Item(itemID);
+    
     local numOwned;
     if isMe then
         numOwned = GetItemCount(itemID, true) - LootReserve:GetTradeableItemCount(itemID);
     end
     
-    local item = LootReserve.ItemCache:Item(itemID);
-    if not item:Cache():IsCached() then
-        return item:IsUsableBy(playerClass), true;
-    end
-    
-    -- If item is Armor or Weapon then fail if class cannot equip it
-    if not item:IsUsableBy(playerClass) then return false end
-    
     -- If item starts a quest, make sure the quest is not completed and I do not already own the item
     -- If item requires a quest to loot, make sure the quest is not completed, I am on it, and I do not already own the item
     if isMe then
-        local questStartID = LootReserve.Data:GetQuestStarted(itemID);
+        local questStartID = LootReserve.Data:GetQuestStarter(itemID);
         local questDropID  = LootReserve.Data:GetQuestDropRequirement(itemID);
         if questStartID or questDropID then
-            if C_QuestLog.IsQuestFlaggedCompleted(questStartID or questDropID) then
+            if questStartID and C_QuestLog.IsQuestFlaggedCompleted(questStartID) then
+                return false;
+            end
+            if questDropID and C_QuestLog.IsQuestFlaggedCompleted(questDropID) then
                 return false;
             end
             if numOwned > 0 then
@@ -186,25 +183,27 @@ local function IsItemUsable(itemID, playerClass, isMe)
                         table.insert(collapsedHeaders, 1, i);
                         ExpandQuestHeader(i);
                     end
-                elseif questID == questStartID or questID == questDropID then
+                elseif questID == questDropID then
                     found = true;
                     break;
                 end
                 i = i + 1;
             end
-
             for _, i in ipairs(collapsedHeaders) do
                 CollapseQuestHeader(i);
             end
-            if found then
-                return false;
-            end
+            
+            return found;
         end
     end
     
-    if not item:IsUsableBy(playerClass) then
-        return false
+    if not item:Cache():IsCached() then
+        return item:IsUsableBy(playerClass), true;
     end
+    
+    -- If item is Armor or Weapon then fail if class cannot equip it
+    if not item:IsUsableBy(playerClass) then return false end
+    
     if isMe and numOwned > 0 and item:IsUnique() then
         return false
     end

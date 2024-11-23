@@ -14159,7 +14159,7 @@ function LootReserve.Data.CategorySorter(a, b, aID, bID)
     return aID < bID;
 end
 
-function LootReserve.Data:GetQuestStarted(itemID)
+function LootReserve.Data:GetQuestStarter(itemID)
     return self.QuestStarters[itemID];
 end
 function LootReserve.Data:GetQuestDropRequirement(itemID)

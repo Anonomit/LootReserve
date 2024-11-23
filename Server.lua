@@ -3051,7 +3051,7 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
                                 if reservedItem:GetEquipLocation() == "INVTYPE_FINGER" or reservedItem:GetEquipLocation() == "INVTYPE_TRINKET" then
                                     smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
                                 -- Trying to filter to raid mats. Excluding equippable items, tokens, and quest drops.
-                                elseif (reservedItem:GetEquipLocation() == "" or reservedItem:GetEquipLocation() == "INVTYPE_NON_EQUIP_IGNORE") and not LootReserve.Data:IsToken(reservedItem:GetID()) and not LootReserve.Data.QuestDrops[reservedItem:GetID()] then
+                                elseif (reservedItem:GetEquipLocation() == "" or reservedItem:GetEquipLocation() == "INVTYPE_NON_EQUIP_IGNORE") and not LootReserve.Data:IsToken(reservedItem:GetID()) and not LootReserve.Data:GetQuestDropRequirement(reservedItem:GetID()) then
                                     smartOverride = LootReserve.Constants.WinnerReservesRemoval.Single;
                                 end
                             end
