@@ -564,7 +564,7 @@ LootReserve.Data =
                 {
                     Name = "Onyxia",
                     Loot =
-                    {
+                    ConcatenateIf({
                         18423, 18422, 0,
                         18705, 0,
                         17078, 228759, 228188, 228298, 228163, 18813, 0,
@@ -572,7 +572,7 @@ LootReserve.Data =
                         228992, 0,
                         11938, 0,
                         15410, 0,
-                    },
+                    }, EXPANSION_PHASE >= 1.5, {21108, 0,}),
                 },
                 { Separator = true },
                 {
@@ -743,13 +743,13 @@ LootReserve.Data =
                 {
                     Name = "Ragnaros",
                     Loot =
-                    {
+                    ConcatenateIf({
                         227728, 0,
                         228291, 228295, 0,
                         228289, 228287, 228100, 228290, 228292, 228286, 228297, 228293, 0,
                         228294, 228296, 228145, 228299, 228288, 0,
                         19017, 0,
-                    },
+                    }, EXPANSION_PHASE >= 1.5, {21110, 0,}),
                 },
                 { Separator = true },
                 {
@@ -1352,7 +1352,7 @@ LootReserve.Data =
                 {
                     Name = "Onyxia",
                     Loot =
-                    {
+                    ConcatenateIf({
                         16914, 16929, 16921, 16908, 16900, 16939, 16947, 16955, 16963, 0,
                         18705, 0,
                         18423, 18422, 0,
@@ -1360,7 +1360,7 @@ LootReserve.Data =
                         17067, 17068, 17075, 0,
                         17966, 11938, 0,
                         15410, 0,
-                    },
+                    }, EXPANSION_PHASE >= 1.5, {21108, 0,}),
                 },
                 { Separator = true },
                 {
@@ -10269,14 +10269,15 @@ LootReserve.Data =
     
     -- Items that require an active quest to loot and duplicates are not useful
     QuestDrops = {
+        -- Head of the Broodlord Lashlayer
+        [20383] = 8288,
+        
         -- Narain's Scrying Goggles
         [20951] = 8578,
         
         -- Draconic for Dummies
+        [21108] = 8620,
         [21110] = 8620,
-        
-        -- Head of the Broodlord Lashlayer
-        [20383] = 8288,
         
         -- Red Scepter Shard
         [21138] = 8730,
@@ -10417,12 +10418,18 @@ do
         HideItem(227728); -- Eye of Sulfuras
     end
     
+    -- Scepter of the Shifting Sands quest items
+    HideItem(20383);
+    HideItem(20951);
+    HideItem(21108);
+    HideItem(21110);
+    HideItem(21138);
+    
     -- Molten Core trash
     HideItem(11382);
     HideItem(17010);
     HideItem(17011);
     HideItem(17012);
-    HideItem(20951);
     
     -- Hand of Rag items
     HideItem(17204);
@@ -10436,9 +10443,6 @@ do
     
     -- Scale of Onyxia
     HideItem(15410);
-    
-    -- Red Scepter Shard
-    HideItem(21138);
     
     -- ZG Coins
     HideItem(19698);
