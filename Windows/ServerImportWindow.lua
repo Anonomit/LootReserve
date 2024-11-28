@@ -595,8 +595,9 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                                     itemID = 0;
                                 end
                                 if LootReserve.Data:IsTokenReward(itemID) and not LootReserve.Server:GetNewSessionItemConditions()[itemID] then
-                                    itemID = LootReserve.Data:GetToken(itemID)
+                                    itemID = LootReserve.Data:GetToken(itemID);
                                 end
+                                itemID = LootReserve.Data:GetIntendedItem(itemID);
                                 if not row.ItemNames[itemID] then
                                     row.ItemNames[itemID] = {Count = 0, Name = row[itemColumn]};
                                 end
@@ -604,8 +605,9 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                             end
                         else
                             if LootReserve.Data:IsTokenReward(itemID) then
-                                itemID = LootReserve.Data:GetToken(itemID)
+                                itemID = LootReserve.Data:GetToken(itemID);
                             end
+                            itemID = LootReserve.Data:GetIntendedItem(itemID);
                             row.ItemIDs[itemID] = row.ItemIDs[itemID] and row.ItemIDs[itemID] + 1 or 1;
                         end
                     end
