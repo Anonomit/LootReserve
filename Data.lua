@@ -46,15 +46,14 @@ Cata:
     4.?: Alizabal added to Baradin Hold
 --]]
 
-local SEASON_NUMBER = ((C_Seasons or {}).GetActiveSeason or nop)() or 0;
-local SEASONS = {
-    MASTERY   = 1,
-    DISCOVERY = 2,
-};
+
+local IS_SOD = LootReserve.SeasonID == Enum.SeasonID.SeasonofDiscovery
 local EXPANSION_PHASE
 if LootReserve:GetCurrentExpansion() == 0 then
-    if SEASON_NUMBER == SEASONS.DISCOVERY then
+    if IS_SOD then
         EXPANSION_PHASE = 1.5; -- Season of Discovery
+    elseif LootReserve.SeasonID == Enum.SeasonID.Fresh or LootReserve.SeasonID == Enum.SeasonID.FreshHardcore then
+        EXPANSION_PHASE = 1.0; -- Fresh
     else
         EXPANSION_PHASE = 1.5; -- Classic Era
     end
@@ -124,7 +123,7 @@ LootReserve.Data =
         
         -- Season of Discovery
         
-        [910] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+        [910] = ShortCircuit(IS_SOD, {
             Name = "Blackfathom Deeps",
             ButtonName = "[10] Blackfathom Deeps",
             NameShort = "BFD",
@@ -220,7 +219,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [920] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+        [920] = ShortCircuit(IS_SOD, {
             Name = "Gnomeregan",
             ButtonName = "[10] Gnomeregan",
             NameShort = "Gnomer",
@@ -323,7 +322,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [925] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+        [925] = ShortCircuit(IS_SOD, {
             Name = "Temple of Atal'Hakkar",
             ButtonName = "[20] Temple of Atal'Hakkar",
             NameShort = "ST",
@@ -457,7 +456,7 @@ LootReserve.Data =
             },
         }),
         
-        [930] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+        [930] = ShortCircuit(IS_SOD, {
             Name = "Storm Cliffs",
             ButtonName = "[20] Storm Cliffs",
             NameShort = "Azuregos",
@@ -478,7 +477,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [935] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+        [935] = ShortCircuit(IS_SOD, {
             Name = "The Tainted Scar",
             ButtonName = "[20] The Tainted Scar",
             NameShort = "Kazzak",
@@ -499,7 +498,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [936] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+        [936] = ShortCircuit(IS_SOD, {
             Name = "The Crystal Vale",
             ButtonName = "[20] The Crystal Vale",
             NameShort = "Thunderaan",
@@ -554,7 +553,7 @@ LootReserve.Data =
             },
         }),
         
-        [938] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+        [938] = ShortCircuit(IS_SOD, {
             Name = "Onyxia",
             ButtonName = "[20] Onyxia",
             NameShort = "Ony",
@@ -635,7 +634,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [940] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+        [940] = ShortCircuit(IS_SOD, {
             Name = "Molten Core",
             ButtonName = "[20] Molten Core",
             NameShort = "MC",
@@ -892,7 +891,7 @@ LootReserve.Data =
             },
         }),
         
-        [942] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+        [942] = ShortCircuit(IS_SOD, {
             Name = "Blackwing Lair",
             ButtonName = "[20] Blackwing Lair",
             NameShort = "BWL",
@@ -1128,7 +1127,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [944] = ShortCircuit(SEASON_NUMBER == SEASONS.DISCOVERY, {
+        [944] = ShortCircuit(IS_SOD, {
             Name = "Zul'Gurub",
             ButtonName = "[10] Zul'Gurub",
             NameShort = "ZG",
@@ -1341,7 +1340,7 @@ LootReserve.Data =
         
         -- Classic
         
-        [1020] = ShortCircuit(SEASON_NUMBER ~= SEASONS.DISCOVERY, {
+        [1020] = ShortCircuit(not IS_SOD, {
             Sort = 1005,
             Name = "Onyxia",
             ButtonName = "[40] Onyxia",
@@ -1374,7 +1373,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [1010] = ShortCircuit(SEASON_NUMBER ~= SEASONS.DISCOVERY, {
+        [1010] = ShortCircuit(not IS_SOD, {
             Name = "Molten Core",
             ButtonName = "[40] Molten Core",
             NameShort = "MC",
@@ -1585,7 +1584,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [1030] = ShortCircuit(SEASON_NUMBER ~= SEASONS.DISCOVERY, {
+        [1030] = ShortCircuit(not IS_SOD, {
             Name = "Blackwing Lair",
             ButtonName = "[40] Blackwing Lair",
             NameShort = "BWL",
@@ -1726,7 +1725,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [1040] = ShortCircuit(EXPANSION_PHASE < 4.0 and SEASON_NUMBER ~= SEASONS.DISCOVERY, {
+        [1040] = ShortCircuit(EXPANSION_PHASE < 4.0 and not IS_SOD, {
             Name = "Zul'Gurub",
             ButtonName = "[20] Zul'Gurub",
             NameShort = "ZG",
@@ -10404,7 +10403,7 @@ end
 
 -- Hidden Items
 do
-    if SEASON_NUMBER == SEASONS.DISCOVERY then
+    if IS_SOD then
         -- Gnomeregan items
         HideItem(213427); -- Grime-Encrusted Salvage
         
@@ -10596,7 +10595,7 @@ end
 
 -- Class Restricted Items
 do
-    if SEASON_NUMBER == SEASONS.DISCOVERY then
+    if IS_SOD then
         ApplyClassRestriction(227728, 1091); -- Eye of Sulfuras
     end
     
@@ -10616,7 +10615,7 @@ end
 do
     
     -- SoD items
-    if SEASON_NUMBER == SEASONS.DISCOVERY then
+    if IS_SOD then
         -- Blackfathom Deeps
         
         -- Perfect Blackfathom Pearl
@@ -11372,7 +11371,7 @@ end
 if LootReserve:GetCurrentExpansion() == 0 then
     
     -- SoD items
-    if SEASON_NUMBER == SEASONS.DISCOVERY then
+    if IS_SOD then
         -- Blackfathom Deeps
         ApplySingleFactionRestriction(209574, "Alliance"); -- Discarded Tenets of the Silver Hand
         ApplySingleFactionRestriction(209575, "Horde");    -- Carved Driftwood Idol
@@ -12078,7 +12077,7 @@ do
     };
     
     local IntendedItems = LootReserve.Data.IntendedItems;
-    if SEASON_NUMBER == SEASONS.DISCOVERY then
+    if IS_SOD then
         for eraItem, sodItem in pairs(upgrades) do
             IntendedItems[eraItem] = sodItem;
         end

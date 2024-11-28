@@ -97,12 +97,23 @@ function LootReserve:GetCurrentExpansion()
     return tonumber(expansion) - 1;
 end
 
-function LootReserve:GetCurrentSeason()
-    return ((C_Seasons or {}).GetActiveSeason or nop)() or 0;
-end
-
 LootReserve.Version = GetAddOnMetadata(addon, "Version");
-LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, LootReserve:GetCurrentExpansion() == 0 and LootReserve:GetCurrentSeason() == 2 and "X-Min-Allowed-Version-SoD" or "X-Min-Allowed-Version-Era" or "X-Min-Allowed-Version-Classic");
+LootReserve.SeasonID = C_Seasons.GetActiveSeason();
+if LootReserve.SeasonID then
+    if LootReserve.SeasonID == Enum.SeasonID.SeasonOfDiscovery then
+        LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version-SoD");
+    elseif LootReserve.SeasonID == Enum.SeasonID.Fresh or Enum.SeasonID.FreshHardcore then
+        LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version-Fresh");
+    else
+        LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version-Era");
+    end
+else
+    if LootReserve:GetCurrentExpansion() == 0 then
+        LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version-Era");
+    else
+        LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version-Classic");
+    end
+end
 LootReserve.LatestKnownVersion = LootReserve.Version;
 
 
@@ -472,7 +483,7 @@ function LootReserve:SendChatMessage(text, channel, target, skipOnlineCheck)
 end
 
 function LootReserve:IsCrossRealm()
-    return self:GetCurrentExpansion() == 0 and LootReserve:GetCurrentSeason() == 0;
+    return self:GetCurrentExpansion() == 0 and not LootReserve.SeasonID;
     -- This doesn't really work, because even in non-connected realms UnitFullName ends up returning your realm name,
     -- and we can't use UnitName either, because that one NEVER returns a realm for "player". WTB good API, 5g.
     --[[
@@ -820,7 +831,7 @@ function LootReserve:IsTradeableItem(bag, slot)
 end
 
 function LootReserve:ShouldScanKeyring()
-    return LootReserve:GetCurrentExpansion() < 3 and LootReserve:GetCurrentSeason() == 2 and _G.KeyRingButtonIDToInvSlotID and true or false;
+    return LootReserve:GetCurrentExpansion() < 3 and LootReserve.SeasonID == 2 and _G.KeyRingButtonIDToInvSlotID and true or false;
 end
 
 local function CacheBagSlot(self, bag, slot, i)

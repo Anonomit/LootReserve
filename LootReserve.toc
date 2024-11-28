@@ -4,8 +4,9 @@
 
 ## Version: 2024-11-12
 ## X-Min-Allowed-Version-Classic: 2024-11-12
-## X-Min-Allowed-Version-Era: 2024-11-06
-## X-Min-Allowed-Version-SoD: 2024-11-12
+## X-Min-Allowed-Version-Fresh:   2024-11-06
+## X-Min-Allowed-Version-Era:     2024-11-06
+## X-Min-Allowed-Version-SoD:     2024-11-12
 
 ## X-Curse-Project-ID: 390790
 ## X-Wago-ID: WL6JpyGv
