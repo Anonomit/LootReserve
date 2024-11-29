@@ -129,7 +129,7 @@
 				<Frames>
 					<Frame parentKey="Input" inherits="LootReserveBackdropTemplate">
 						<KeyValues>
-							<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_5" type="global" />
+							<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
 						</KeyValues>
 						<Size x="150" />
 						<Anchors>
@@ -228,7 +228,7 @@
 					</Frame>
 					<Frame parentKey="Columns" inherits="LootReserveBackdropTemplate">
 						<KeyValues>
-							<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_5" type="global" />
+							<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
 						</KeyValues>
 						<Anchors>
 							<Anchor point="TOPLEFT" relativeKey="$parent.Input" relativePoint="TOPRIGHT" />

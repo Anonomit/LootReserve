@@ -403,7 +403,7 @@
 	</Button>
 	<Frame name="LootReserveReserveListTemplate" virtual="true" enableMouse="true" inherits="LootReserveBackdropTemplate">
 		<KeyValues>
-			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_5" type="global" />
+			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
 			<KeyValue key="backdropBorderColor" value="WHITE_FONT_COLOR" type="global" />
 			<KeyValue key="backdropBorderColorAlpha" value="1" type="number" />
 		</KeyValues>
@@ -1198,7 +1198,7 @@
 	</Button>
 	<Frame name="LootReserveRollPlaceholderTemplate" virtual="true" enableMouse="true" inherits="LootReserveBackdropTemplate">
 		<KeyValues>
-			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_5" type="global" />
+			<KeyValue key="backdropInfo" value="LOOTRESERVE_BACKDROP_BLACK_4" type="global" />
 			<KeyValue key="backdropBorderColor" value="WHITE_FONT_COLOR" type="global" />
 			<KeyValue key="backdropBorderColorAlpha" value="1" type="number" />
 		</KeyValues>
