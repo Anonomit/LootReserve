@@ -47,7 +47,7 @@ Cata:
 --]]
 
 
-local IS_SOD = LootReserve.SeasonID == Enum.SeasonID.SeasonofDiscovery
+local IS_SOD = LootReserve.SeasonID == Enum.SeasonID.SeasonOfDiscovery
 local EXPANSION_PHASE
 if LootReserve:GetCurrentExpansion() == 0 then
     if IS_SOD then
