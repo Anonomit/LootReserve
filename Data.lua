@@ -1473,6 +1473,7 @@ LootReserve.Data =
                 },
             },
         }),
+        
         [950] = ShortCircuit(IS_SOD, {
             Name = "Ruins of Ahn'Qiraj",
             ButtonName = "[10] Ruins of Ahn'Qiraj",
@@ -1539,6 +1540,35 @@ LootReserve.Data =
                         234108, 234114, 234106, 234105, 234111, 234110, 234109, 234103, 234107, 0,
                         234113, 0,
                         234115, 234104, 234112, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Madness items",
+                    Loot =
+                    {
+                        234614, 0,
+                    },
+                },
+                {
+                    Name = "Void-Touched items",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        235008, 0,
+                        235013, 0,
+                        235010, 0,
+                        235012, 0,
+                        235006, 0,
+                        235007, 0,
+                        235009, 0,
+                        235011, 0,
+                        235005, 0,
+                        234998, 234992, 234995, 0,
+                        235282, 0,
+                        234996, 234994, 234989, 0,
+                        234990, 0,
+                        234993, 234991, 234997, 0,
                     },
                 },
                 { Separator = true },
@@ -1753,7 +1783,18 @@ LootReserve.Data =
                         233352, 233351, 233353, 233356, 233357, 0,
                     },
                 },
-                
+                {
+                    Name = "Void-Touched items",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        234979, 234975, 235001, 234974, 234976, 0,
+                        235014, 235000, 0,
+                        234984, 235002, 234650, 234977, 235003, 234999, 0,
+                        234978, 234986, 234985, 234981, 234987, 0,
+                        234980, 235004, 234983, 0,
+                    },
+                },
                 { Separator = true },
                 {
                     Name = "Trash",
@@ -13189,20 +13230,20 @@ local tokenMap = {
     -- Qiraji Magisterial Ring
     [20884] = {21393, 21396, 21399, 21414, 21408, 233443, 233428, 233437, 233425, 233419},
     -- Qiraji Ornate Hilt
-    [20890] = {21410, 21413, 21416, 21407, 233429, 233423, 233439, 233417},
+    [20890] = {21410, 21413, 21416, 21407, 233429, 233423, 233439, 233417, 235008, 235013, 235010, 235012},
     -- Qiraji Spiked Hilt
-    [20886] = {21392, 21395, 21401, 21404, 21398, 233442, 233426, 233421, 233433, 233435},
-        
+    [20886] = {21392, 21395, 21401, 21404, 21398, 233442, 233426, 233421, 233433, 233435, 235006, 235007, 235009, 235011, 235005},
+    
     -- Void-Touched weapons (AQ20)
-    [233442] = {235005}, -- Sickle of Unyielding Strength
-    [233426] = {235011}, -- Blade of Eternal Justice
-    [233435] = {235009}, -- Hammer of the Gathering Storm
-    [233421] = {235007}, -- Scythe of the Unseen Path
-    [233433] = {235006}, -- Dagger of Veiled Shadows
-    [233417] = {235012}, -- Mace of Unending Life
-    [233429] = {235010}, -- Gavel of Infinite Wisdom
-    [233423] = {235013}, -- Blade of Vaulted Secrets
-    [233439] = {235008}, -- Kris of Unspoken Names
+    -- [233442] = {235005}, -- Sickle of Unyielding Strength
+    -- [233426] = {235011}, -- Blade of Eternal Justice
+    -- [233435] = {235009}, -- Hammer of the Gathering Storm
+    -- [233421] = {235007}, -- Scythe of the Unseen Path
+    -- [233433] = {235006}, -- Dagger of Veiled Shadows
+    -- [233417] = {235012}, -- Mace of Unending Life
+    -- [233429] = {235010}, -- Gavel of Infinite Wisdom
+    -- [233423] = {235013}, -- Blade of Vaulted Secrets
+    -- [233439] = {235008}, -- Kris of Unspoken Names
     [234115] = {234995}, -- Staff of the Ruins
     [234104] = {234993}, -- Crossbow of Imminent Doom
     [234097] = {234992}, -- Stinger of Ayamiss
@@ -13243,9 +13284,9 @@ local tokenMap = {
     [20933] = {21351, 21343, 21334, 21357},
     
     -- Imperial Qiraji Armaments (SoD)
-    [235046] = {234804, 234806, 234805, 234807},
+    [235046] = {234804, 234806, 234805, 234807, 235004, 235002, 235003},
     -- Imperial Qiraji Regalia (SoD)
-    [235045] = {234810, 234808, 234809},
+    [235045] = {234810, 234808, 234809, 235001, 235000, 234999},
     -- Qiraji Bindings of Command (SoD)
     [233370] = {233409, 233407, 233403, 233405, 233376, 233372},
     -- Qiraji Bindings of Dominance (SoD)
@@ -13270,12 +13311,12 @@ local tokenMap = {
     [233634] = {234984}, -- Death's Sting
     [233509] = {234974}, -- Staff of the Qiraji Prophets
     [233640] = {234985}, -- Dark Edge of Insanity
-    [234804] = {235003}, -- Blessed Qiraji War Axe
-    [234806] = {235002}, -- Blessed Qiraji Pugio
-    [234810] = {234999}, -- Blessed Qiraji War Hammer
-    [234805] = {235004}, -- Blessed Qiraji Musket
-    [234808] = {235001}, -- Blessed Qiraji Acolyte Staff
-    [234809] = {235000}, -- Blessed Qiraji Augur Staff
+    -- [234804] = {235003}, -- Blessed Qiraji War Axe
+    -- [234806] = {235002}, -- Blessed Qiraji Pugio
+    -- [234810] = {234999}, -- Blessed Qiraji War Hammer
+    -- [234805] = {235004}, -- Blessed Qiraji Musket
+    -- [234808] = {235001}, -- Blessed Qiraji Acolyte Staff
+    -- [234809] = {235000}, -- Blessed Qiraji Augur Staff
     [233571] = {234976}, -- Wand of Qiraji Nobility
     [233605] = {234980}, -- Huhuran's Stinger
     [233599] = {234979}, -- Sharpened Silithid Femur
