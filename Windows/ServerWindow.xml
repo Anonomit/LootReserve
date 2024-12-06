@@ -739,22 +739,27 @@
 							if LootReserve:IsRangeCheckRestricted(unit) and not angle then
 								if not TradeFrame:IsShown() or not UnitIsUnit("npc", unit) then
 									if not range then
-										return self:SetState(UnitIsVisible(unit) and "Approach" or "Travel", false, false);
+										return self:SetState(UnitIsVisible(unit) and "Follow" or "Travel", true, false);
 									end
-									if min &lt;= 10 then
-										return self:SetState(format("%s: %s", "Open trade", distText), true, false);
+									if UnitIsVisible(unit) then
+										if min &lt;= 8 then
+											return self:SetState(format("%s: %s", "Open trade", distText), true, false);
+										elseif min &lt;= 28 then
+											return self:SetState(format("%s: %s", "Follow", distText), true, false);
+										end
+										return self:SetState(format("%s: %s", "Approach", distText), false, false);
 									end
-									return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Approach" or "Travel", distText), false, false);
+									return self:SetState(format("%s: %s", "Travel", distText), false, false);
 								end
 							end
 							
 							if LootReserve:CanUseCoords() and (not range or range > 9) or not LootReserve:IsRangeCheckRestricted(unit) and not LootReserve:CheckInteractDistance(unit, 2) then
 								if not range then
-									return self:SetState(UnitIsVisible(unit) and "Approach" or "Travel", false, false);
+									return self:SetState(UnitIsVisible(unit) and "Follow" or "Travel", true, false);
 								end
 							
 								if not LootReserve:CanUseCoords() then
-									return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Approach" or "Travel", distText), false, false);
+									return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Follow" or "Travel", distText), true, false);
 								end
 								
 								if not UnitInPhase(unit) then
@@ -775,7 +780,11 @@
 								
 								local prefix = "Travel"
 								if UnitIsVisible(unit) then
-									prefix = "Approach:"
+									if min &lt; 28 then
+										prefix = "Follow:"
+									else
+										prefix = "Approach:"
+									end
 								elseif min > 20000 then
 									prefix = "LOL:"
 								elseif min > 10000 then
@@ -796,7 +805,7 @@
 								
 								local dbmLocator = LootReserve:CanUseDBMLocator(unit);
 								
-								return self:SetState(format("%s %s", prefix, distText), dbmLocator, false);
+								return self:SetState(format("%s %s", prefix, distText), UnitIsVisible(unit) and min &lt; 28 or dbmLocator, false);
 							end
 							
 							if not TradeFrame:IsShown() then
@@ -841,12 +850,44 @@
 											LootReserve:PutItemInTrade(bag, slot);
 										end
 									end
-								elseif LootReserve:IsRangeCheckRestricted(unit) or LootReserve:CheckInteractDistance(unit, 2) then
-									LootReserve:PickupContainerItem(bag, slot);
-									DropItemOnUnit(unit);
-									C_Timer.After(1, function() ClearCursor(); end);
-								elseif LootReserve:CanUseDBMLocator(unit) then
-									self:DMBLocate(unit);
+								elseif LootReserve:IsRangeCheckRestricted(unit) then
+									local playerContinent, playerPos
+									local targetContinent, targetPos
+									if LootReserve:CanUseCoords() then
+										playerContinent, playerPos = LootReserve:GetContinent("player");
+										targetContinent, targetPos = LootReserve:GetContinent(unit);
+										if playerContinent ~= targetContinent then
+											playerPos, targetPos = nil, nil;
+										end
+									end
+									
+									local min, max, angle, distText = LootReserve:GetRange(unit, playerPos, targetPos);
+									
+									if min &lt;= 8 then
+										LootReserve:PickupContainerItem(bag, slot);
+										DropItemOnUnit(unit);
+										C_Timer.After(1, function() ClearCursor(); end);
+									else
+										if min &lt;= 28 then
+											FollowUnit(unit);
+										end
+										if LootReserve:CanUseDBMLocator(unit) then
+											self:DMBLocate(unit);
+										end
+									end
+								else
+									if LootReserve:CheckInteractDistance(unit, 2) then
+										LootReserve:PickupContainerItem(bag, slot);
+										DropItemOnUnit(unit);
+										C_Timer.After(1, function() ClearCursor(); end);
+									else
+										if LootReserve:CheckInteractDistance(unit, 4) then
+											FollowUnit(unit);
+										end
+										if LootReserve:CanUseDBMLocator(unit) then
+											self:DMBLocate(unit);
+										end
+									end
 								end
 							end
 						end
