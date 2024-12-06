@@ -1336,6 +1336,492 @@ LootReserve.Data =
             },
         }),
         
+        -- [946] = ShortCircuit(IS_SOD, {
+        --     Name = "Nightmare Grove",
+        --     ButtonName = "[20] Nightmare Grove",
+        --     NameShort = "Drakes",
+        --     Color = LootReserve.Constants.Colors.Size20Tiny,
+        --     Expansion = 0,
+        --     Children =
+        --     Squish{
+        --         {
+        --             Name = "Shared",
+        --             Loot =
+        --             {
+        --                 20644, 0,
+        --                 20618, 20615, 20617, 20616, 20619, 0,
+        --                 20579, 0,
+        --                 20582, 20581, 20580, 0,
+        --                 20381, 11938, 0,
+        --             },
+        --         },
+        --         {
+        --             Name = "Emeriss",
+        --             IndentType = 1,
+        --             Loot =
+        --             {
+        --                 20623, 20621, 0,
+        --                 20622, 20624, 0,
+        --                 20599, 0,
+        --             },
+        --         },
+        --         {
+        --             Name = "Lethon",
+        --             IndentType = 1,
+        --             Loot =
+        --             {
+        --                 20626, 20625, 20628, 20627, 20629, 20630, 0,
+        --             },
+        --         },
+        --         {
+        --             Name = "Taerar",
+        --             IndentType = 1,
+        --             Loot =
+        --             {
+        --                 20631, 20634, 20633, 0,
+        --                 20632, 0,
+        --                 20577, 0,
+        --             },
+        --         },
+        --         {
+        --             Name = "Ysondre",
+        --             IndentType = 1,
+        --             Loot =
+        --             {
+        --                 20635, 20638, 20639, 20637, 0,
+        --                 20636, 0,
+        --                 20578, 0,
+        --             },
+        --         },
+        --         { Separator = true },
+        --         {
+        --             Name = "Quest Rewards",
+        --             IndentType = 2,
+        --             Loot =
+        --             {
+        --                 20600, 0,
+        --             },
+        --         },
+        --     },
+        -- }),
+        [946] = ShortCircuit(IS_SOD, {
+            Name = "Nightmare Grove",
+            ButtonName = "[20] Nightmare Grove",
+            NameShort = "Drakes",
+            Color = LootReserve.Constants.Colors.Size20Tiny,
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Shared",
+                    Loot =
+                    {
+                        235049, 0,
+                        234150, 234149, 234147, 234148, 234146, 0,
+                        234151, 0,
+                        234154, 234153, 234152, 0,
+                        20381, 11938, 0,
+                    },
+                },
+                {
+                    Name = "Emeriss",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234157, 234156, 0,
+                        234158, 234160, 0,
+                        234159, 0,
+                    },
+                },
+                {
+                    Name = "Lethon",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234162, 234161, 234164, 234163, 234166, 234165, 0,
+                    },
+                },
+                {
+                    Name = "Taerar",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234168, 234167, 234171, 0,
+                        234169, 0,
+                        234170, 0,
+                    },
+                },
+                {
+                    Name = "Ysondre",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234962, 234173, 234963, 234174, 0,
+                        234175, 0,
+                        234172, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        234155, 0,
+                    },
+                },
+            },
+        }),
+        [950] = ShortCircuit(IS_SOD, {
+            Name = "Ruins of Ahn'Qiraj",
+            ButtonName = "[10] Ruins of Ahn'Qiraj",
+            NameShort = "AQ20",
+            Color = LootReserve.Constants.Colors.Size10,
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Kurinnaxx",
+                    Loot =
+                    {
+                        20889, 20885, 20888, 20884, 0,
+                        234062, 234064, 234066, 234065, 234063, 0,
+                        234061, 0,
+                    },
+                },
+                {
+                    Name = "General Rajaxx",
+                    Loot =
+                    {
+                        20889, 20885, 20888, 20884, 0,
+                        234070, 234117, 234068, 234072, 234069, 234071, 0,
+                        234116, 0,
+                        234118, 234067, 0,
+                    },
+                },
+                {
+                    Name = "Moam",
+                    Loot =
+                    {
+                        20884, 20888, 20890, 20886, 0,
+                        234073, 234082, 234081, 234084, 234078, 234077, 234087, 234088, 234075, 0,
+                        234080, 234079, 234083, 0,
+                        234076, 0,
+                    },
+                },
+                {
+                    Name = "Buru the Gorger",
+                    Loot =
+                    {
+                        20890, 20886, 20889, 20885, 20888, 20884, 0,
+                        234093, 234094, 234091, 234090, 234095, 0,
+                        234092, 0,
+                        234089, 0,
+                    },
+                },
+                {
+                    Name = "Ayamiss the Hunter",
+                    Loot =
+                    {
+                        20890, 20886, 20889, 20885, 20888, 20884, 0,
+                        234100, 234099, 234102, 234098, 234075, 0,
+                        234101, 0,
+                        234097, 234096, 0,
+                    },
+                },
+                {
+                    Name = "Ossirian the Unscarred",
+                    Loot =
+                    {
+                        20890, 20886, 20888, 20884, 0,
+                        235048, 0,
+                        234108, 234114, 234106, 234105, 234111, 234110, 234109, 234103, 234107, 0,
+                        234113, 0,
+                        234115, 234104, 234112, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Trash",
+                    Loot =
+                    {
+                        234123, 234120, 21805, 0,
+                        234122, 234119, 234121, 0,
+                        20873, 20869, 20866, 20870, 20868, 20871, 20867, 20872, 0,
+                        20864, 20861, 20863, 20862, 20859, 20865, 20860, 20858, 0,
+                        21761, 21156, 0,
+                        22203, 22202, 0,
+                    },
+                },
+                {
+                    Name = "Class books",
+                    Loot =
+                    {
+                        21281, 21283, 21282, 0,
+                        21279, 21214, 21280, 0,
+                        21284, 21287, 21285, 0,
+                        21294, 21296, 21295, 0,
+                        21300, 21303, 21302, 0,
+                        21306, 21304, 21307, 0,
+                        21291, 21292, 21293, 0,
+                        21288, 21289, 21290, 0,
+                        21298, 21299, 21297, 0,
+                    },
+                },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
+                {
+                    Name = "Enchanting",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        20727, 20729, 20728, 20730, 20731, 20734, 20736, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234085, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Set Pieces",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        233438, 233440, 233439, 0,
+                        233424, 233425, 233423, 0,
+                        233430, 233431, 233429, 0,
+                        233418, 233419, 233417, 0,
+                        233432, 233434, 233433, 0,
+                        233420, 233422, 233421, 0,
+                        233436, 233437, 233435, 0,
+                        233427, 233428, 233426, 0,
+                        233441, 233443, 233442, 0,
+                    },
+                },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        234811, 234812, 234813, 234814, 0,
+                    },
+                },
+            },
+        }),
+        [952] = ShortCircuit(IS_SOD, {
+            Name = "Temple of Ahn'Qiraj",
+            ButtonName = "[20] Temple of Ahn'Qiraj",
+            NameShort = "AQ40",
+            Color = LootReserve.Constants.Colors.Size20,
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "The Prophet Skeram",
+                    Loot =
+                    {
+                        233505, 233506, 233518, 233496, 233517, 233516, 233514, 0,
+                        233507, 233502, 233504, 233503, 0,
+                        233515, 233509, 0,
+                        235045, 235046, 0,
+                    },
+                },
+                {
+                    Name = "Bug Trio",
+                    Loot =
+                    {
+                        233520, 233521, 233522, 233523, 0,
+                        233519, 233524, 0,
+                        235045, 235046, 0,
+                    },
+                },
+                {
+                    Name = "Vem Killed Last",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        233559, 233560, 233561, 0,
+                        233562, 0,
+                    },
+                },
+                {
+                    Name = "Yauj Killed Last",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        233563, 233564, 233566, 233567, 0,
+                        233565, 0,
+                    },
+                },
+                {
+                    Name = "Kri Killed Last",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        233568, 0,
+                        233569, 233570, 0,
+                        233571, 0,
+                    },
+                },
+                {
+                    Name = "Battleguard Sartura",
+                    Loot =
+                    {
+                        233574, 233573, 233575, 233578, 233579, 233577, 233584, 233583, 233582, 0,
+                        233572, 233580, 0,
+                        233581, 233576, 0,
+                        235045, 235046, 0,
+                    },
+                },
+                {
+                    Name = "Fankriss the Unyielding",
+                    Loot =
+                    {
+                        233594, 233592, 233590, 233595, 233591, 233593, 0,
+                        233589, 233587, 233588, 0,
+                        233585, 233586, 233597, 233596, 0,
+                        235045, 235046, 0,
+                    },
+                },
+                {
+                    Name = "Viscidus",
+                    Loot =
+                    {
+                        233371, 233369, 233370, 0,
+                        233604, 233598, 233603, 0,
+                        233601, 233600, 0,
+                        233599, 233602, 0,
+                        235045, 235046, 0,
+                    },
+                },
+                {
+                    Name = "Princess Huhuran",
+                    Loot =
+                    {
+                        233371, 233369, 233370, 0,
+                        233607, 233608, 233610, 0,
+                        233609, 233606, 0,
+                        233605, 0,
+                        235045, 235046, 0,
+                    },
+                },
+                {
+                    Name = "Twin Emperors",
+                    Loot =
+                    {
+                        20926, 20930, 0,
+                        233611, 233617, 233619, 233612, 233618, 233622, 233613, 233623, 233614, 0,
+                        233620, 233615, 0,
+                        233616, 233621, 0,
+                        235045, 235046, 0,
+                    },
+                },
+                {
+                    Name = "Ouro",
+                    Loot =
+                    {
+                        233368, 233365, 233367, 0,
+                        233625, 233624, 0,
+                        233628, 233627, 0,
+                        233626, 233629, 0,
+                        235045, 235046, 0,
+                    },
+                },
+                {
+                    Name = "C'Thun",
+                    Loot =
+                    {
+                        233364, 233362, 233363, 0,
+                        21221, 0,
+                        233633, 233631, 233632, 233635, 233637, 0,
+                        233630, 233641, 233638, 233639, 233642, 0,
+                        233636, 233634, 233640, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Madness items",
+                    Loot =
+                    {
+                        234614, 0,
+                        233352, 233351, 233353, 233356, 233357, 0,
+                    },
+                },
+                
+                { Separator = true },
+                {
+                    Name = "Trash",
+                    Loot =
+                    {
+                        233644, 233645, 233646, 0,
+                        233648, 233649, 0,
+                        233647, 233643, 0,
+                        235513, 235511, 235512, 235514, 0,
+                        22203, 22202, 0,
+                    },
+                },
+                {
+                    Name = "Scarabs",
+                    Loot =
+                    {
+                        20876, 20879, 20875, 20878, 20881, 20877, 20874, 20882, 0,
+                        20864, 20861, 20863, 20862, 20859, 20865, 20860, 20858, 0,
+                        21762, 21156, 0,
+                    },
+                },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
+                {
+                    Name = "Enchanting",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        20727, 20729, 20728, 20730, 20731, 20734, 20736, 20735, 20726, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        235039, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Tier 2.5 Pieces",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        233381, 233379, 233380, 233378, 233377, 0,
+                        233404, 233403, 233402, 233406, 233405, 0,
+                        233393, 233394, 233395, 233396, 233392, 0,
+                        233412, 233413, 233415, 233416, 233414, 0,
+                        233388, 233387, 233389, 233390, 233391, 0,
+                        233410, 233409, 233411, 233408, 233407, 0,
+                        233385, 233383, 233386, 233382, 233384, 0,
+                        233398, 233401, 233397, 233400, 233399, 0,
+                        233375, 233376, 233373, 233374, 233372, 0,
+                    },
+                },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        234803, 234801, 234802, 0,
+                        234808, 234809, 234810, 0,
+                        234805, 234806, 234804, 234807, 0,
+                    },
+                },
+            },
+        }),
+        
         
         
         -- Classic
@@ -1908,7 +2394,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [1050] = {
+        [1050] = ShortCircuit(not IS_SOD, {
             Name = "Ruins of Ahn'Qiraj",
             ButtonName = "[20] Ruins of Ahn'Qiraj",
             NameShort = "AQ20",
@@ -1920,7 +2406,7 @@ LootReserve.Data =
                     Name = "Kurinnaxx",
                     Loot =
                     {
-                        20885, 20889, 20888, 20884, 0,
+                        20889, 20885, 20888, 20884, 0,
                         21499, 21500, 21501, 21502, 21503, 0,
                         21498, 0,
                     },
@@ -1929,7 +2415,7 @@ LootReserve.Data =
                     Name = "General Rajaxx",
                     Loot =
                     {
-                        20885, 20889, 20888, 20884, 0,
+                        20889, 20885, 20888, 20884, 0,
                         21496, 21810, 21493, 21494, 21497, 21495, 0,
                         21809, 0,
                         21806, 21492, 0,
@@ -1943,14 +2429,13 @@ LootReserve.Data =
                         21472, 21468, 21469, 21455, 21474, 21467, 21476, 21475, 21479, 0,
                         21473, 21470, 21477, 0,
                         21471, 0,
-                        22220, 0,
                     },
                 },
                 {
                     Name = "Buru the Gorger",
                     Loot =
                     {
-                        20890, 20886, 20885, 20889, 20888, 20884, 0,
+                        20890, 20886, 20889, 20885, 20888, 20884, 0,
                         21489, 21491, 21487, 21486, 21490, 0,
                         21488, 0,
                         21485, 0,
@@ -1960,7 +2445,7 @@ LootReserve.Data =
                     Name = "Ayamiss the Hunter",
                     Loot =
                     {
-                        20890, 20886, 20885, 20889, 20888, 20884, 0,
+                        20890, 20886, 20889, 20885, 20888, 20884, 0,
                         21484, 21482, 21480, 21481, 21479, 0,
                         21483, 0,
                         21466, 21478, 0,
@@ -1994,7 +2479,15 @@ LootReserve.Data =
                     Name = "Class books",
                     Loot =
                     {
-                        21279, 21214, 21280, 21281, 21283, 21282, 21284, 21287, 21285, 21300, 21303, 21302, 21294, 21296, 21295, 21306, 21304, 21307, 21291, 21292, 21293, 21288, 21289, 21290, 21298, 21299, 21297, 0,
+                        21281, 21283, 21282, 0,
+                        21279, 21214, 21280, 0,
+                        21284, 21287, 21285, 0,
+                        21294, 21296, 21295, 0,
+                        21300, 21303, 21302, 0,
+                        21306, 21304, 21307, 0,
+                        21291, 21292, 21293, 0,
+                        21288, 21289, 21290, 0,
+                        21298, 21299, 21297, 0,
                     },
                 },
                 { Separator = true },
@@ -2004,7 +2497,15 @@ LootReserve.Data =
                     IndentType = 1,
                     Loot =
                     {
-                        20728, 20729, 20727, 20730, 20731, 20734, 20736, 0,
+                        20727, 20729, 20728, 20730, 20731, 20734, 20736, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        22220, 0,
                     },
                 },
                 { Separator = true },
@@ -2016,12 +2517,12 @@ LootReserve.Data =
                         21418, 21417, 21416, 0,
                         21415, 21414, 21413, 0,
                         21412, 21411, 21410, 0,
-                        21406, 21405, 21404, 0,
                         21409, 21408, 21407, 0,
+                        21406, 21405, 21404, 0,
                         21403, 21402, 21401, 0,
                         21400, 21399, 21398, 0,
-                        21394, 21393, 21392, 0,
                         21397, 21396, 21395, 0,
+                        21394, 21393, 21392, 0,
                     },
                 },
                 {
@@ -2033,8 +2534,8 @@ LootReserve.Data =
                     },
                 },
             },
-        },
-        [1060] = {
+        }),
+        [1060] = ShortCircuit(not IS_SOD, {
             Name = "Temple of Ahn'Qiraj",
             ButtonName = "[40] Temple of Ahn'Qiraj",
             NameShort = "AQ40",
@@ -2049,8 +2550,7 @@ LootReserve.Data =
                         21698, 21708, 21705, 21699, 21704, 21814, 21706, 0,
                         21707, 21702, 21701, 21700, 0,
                         21703, 21128, 0,
-                        21232, 21237, 0,
-                        22222, 0,
+                        21237, 21232, 0,
                     },
                 },
                 {
@@ -2063,13 +2563,12 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Kri Killed Last",
+                    Name = "Vem Killed Last",
                     IndentType = 1,
                     Loot =
                     {
-                        21680, 0,
-                        21681, 21685, 0,
-                        21603, 0,
+                        21689, 21691, 21688, 0,
+                        21690, 0,
                     },
                 },
                 {
@@ -2082,12 +2581,13 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Vem Killed Last",
+                    Name = "Kri Killed Last",
                     IndentType = 1,
                     Loot =
                     {
-                        21689, 21691, 21688, 0,
-                        21690, 0,
+                        21680, 0,
+                        21681, 21685, 0,
+                        21603, 0,
                     },
                 },
                 {
@@ -2114,7 +2614,7 @@ LootReserve.Data =
                     Name = "Viscidus",
                     Loot =
                     {
-                        20928, 20932, 0,
+                        20932, 20928, 0,
                         21624, 21626, 21623, 0,
                         21625, 21677, 0,
                         21622, 22399, 0,
@@ -2125,7 +2625,7 @@ LootReserve.Data =
                     Name = "Princess Huhuran",
                     Loot =
                     {
-                        20928, 20932, 0,
+                        20932, 20928, 0,
                         21619, 21617, 21618, 0,
                         21620, 21621, 0,
                         21616, 0,
@@ -2136,12 +2636,11 @@ LootReserve.Data =
                     Name = "Twin Emperors",
                     Loot =
                     {
-                        20930, 20926, 0,
+                        20926, 20930, 0,
                         21600, 21604, 21609, 21602, 21605, 21607, 21599, 21606, 21598, 0,
                         21608, 21601, 0,
                         21597, 21679, 0,
-                        21232, 21237, 0,
-                        20735, 20726, 0,
+                        21237, 21232, 0,
                     },
                 },
                 {
@@ -2159,7 +2658,7 @@ LootReserve.Data =
                     Name = "C'Thun",
                     Loot =
                     {
-                        20929, 20933, 0,
+                        20933, 20929, 0,
                         21221, 0,
                         22730, 21585, 21582, 21586, 21581, 0,
                         22731, 21583, 21596, 21579, 22732, 0,
@@ -2194,7 +2693,15 @@ LootReserve.Data =
                     IndentType = 1,
                     Loot =
                     {
-                        20728, 20729, 20727, 20730, 20731, 20734, 20736, 0,
+                        20727, 20729, 20728, 20730, 20731, 20734, 20736, 20735, 20726, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        22222, 0,
                     },
                 },
                 { Separator = true },
@@ -2206,12 +2713,12 @@ LootReserve.Data =
                         21337, 21335, 21334, 21336, 21338, 0,
                         21347, 21345, 21343, 21346, 21344, 0,
                         21348, 21350, 21351, 21352, 21349, 0,
-                        21360, 21361, 21364, 21362, 21359, 0,
                         21353, 21354, 21357, 21356, 21355, 0,
+                        21360, 21361, 21364, 21362, 21359, 0,
                         21366, 21367, 21370, 21368, 21365, 0,
                         21372, 21376, 21374, 21375, 21373, 0,
-                        21329, 21330, 21331, 21332, 21333, 0,
                         21387, 21391, 21389, 21390, 21388, 0,
+                        21329, 21330, 21331, 21332, 21333, 0,
                     },
                 },
                 {
@@ -2220,12 +2727,12 @@ LootReserve.Data =
                     Loot =
                     {
                         21709, 21712, 21710, 0,
-                        21272, 21244, 21242, 21269, 0,
                         21273, 21275, 21268, 0,
+                        21272, 21244, 21242, 21269, 0,
                     },
                 },
             },
-        },
+        }),
         [1070] = ShortCircuit(EXPANSION_PHASE < 3.0, {
             Name = "Naxxramas",
             ButtonName = "[40] Naxxramas",
@@ -10247,6 +10754,9 @@ LootReserve.Data =
         -- Heart of Hakkar
         [19802] = 8183,
         
+        -- Nightmare Engulfed Object
+        [235049] = 8446,
+        
         -- Head of Ossirian the Unscarred
         [21220] = 8791,
         
@@ -10416,6 +10926,9 @@ do
         
         -- Hand of Rag items
         HideItem(227728); -- Eye of Sulfuras
+        
+        -- Nightmare Grove Dreamscale
+        HideItem(20381);
     end
     
     -- Scepter of the Shifting Sands quest items
@@ -11606,6 +12119,41 @@ if LootReserve:GetCurrentExpansion() == 0 then
         ApplySingleFactionRestriction(231373, "Horde");
         ApplySingleFactionRestriction(231371, "Horde");
         ApplySingleFactionRestriction(231375, "Horde");
+        
+        -- AQ20 set items
+        ApplySingleFactionRestriction(233427, "Alliance");
+        ApplySingleFactionRestriction(233428, "Alliance");
+        ApplySingleFactionRestriction(233426, "Alliance");
+        ApplySingleFactionRestriction(233436, "Horde");
+        ApplySingleFactionRestriction(233437, "Horde");
+        ApplySingleFactionRestriction(233435, "Horde");
+        
+        -- AQ20 equipment
+        ApplySingleFactionRestriction(234109, "Alliance");
+        ApplySingleFactionRestriction(234090, "Alliance");
+        ApplySingleFactionRestriction(234120, "Alliance");
+        ApplySingleFactionRestriction(234111, "Horde");
+        ApplySingleFactionRestriction(234091, "Horde");
+        ApplySingleFactionRestriction(234123, "Horde");
+        
+        -- AQ40 set items
+        ApplySingleFactionRestriction(233398, "Alliance");
+        ApplySingleFactionRestriction(233401, "Alliance");
+        ApplySingleFactionRestriction(233397, "Alliance");
+        ApplySingleFactionRestriction(233400, "Alliance");
+        ApplySingleFactionRestriction(233399, "Alliance");
+        ApplySingleFactionRestriction(233385, "Horde");
+        ApplySingleFactionRestriction(233383, "Horde");
+        ApplySingleFactionRestriction(233386, "Horde");
+        ApplySingleFactionRestriction(233382, "Horde");
+        ApplySingleFactionRestriction(233384, "Horde");
+        
+        -- AQ40 boots
+        ApplySingleFactionRestriction(233517, "Alliance");
+        ApplySingleFactionRestriction(233518, "Horde");
+        
+        -- AQ40 trash paladin gloves
+        ApplySingleFactionRestriction(233646, "Alliance");
     end
     
     
@@ -12078,6 +12626,318 @@ do
         [19993] = 231278, -- Hoodoo Hunting Bow
         [20038] = 230993, -- Mandokir's Sting
         [22713] = 230863, -- Zulian Scepter of Rites
+        
+        
+        -- Nightmare Grove
+        [20577] = 234170, -- Nightmare Blade
+        [20578] = 234172, -- Emerald Dragonfang
+        [20579] = 234151, -- Green Dragonskin Cloak
+        [20580] = 234152, -- Hammer of Bestial Fury
+        [20581] = 234153, -- Staff of Rampant Growth
+        [20582] = 234154, -- Trance Stone
+        [20599] = 234159, -- Polished Ironwood Crossbow
+        [20600] = 234155, -- Malfurion's Signet Ring
+        [20615] = 234149, -- Dragonspur Wraps
+        [20616] = 234148, -- Dragonbone Wristguards
+        [20617] = 234147, -- Ancient Corroded Leggings
+        [20618] = 234150, -- Gloves of Delusional Power
+        [20619] = 234146, -- Acid Inscribed Greaves
+        [20621] = 234156, -- Boots of the Endless Moor
+        [20622] = 234158, -- Dragonheart Necklace
+        [20623] = 234157, -- Circlet of Restless Dreams
+        [20624] = 234160, -- Ring of the Unliving
+        [20625] = 234161, -- Belt of the Dark Bog
+        [20626] = 234162, -- Black Bark Wristbands
+        [20627] = 234163, -- Dark Heart Pants
+        [20628] = 234164, -- Deviate Growth Cap
+        [20629] = 234166, -- Malignant Footguards
+        [20630] = 234165, -- Gauntlets of the Shining Light
+        [20631] = 234168, -- Mendicant's Slippers
+        [20632] = 234169, -- Mindtear Band
+        [20633] = 234171, -- Unnatural Leather Spaulders
+        [20634] = 234167, -- Boots of Fright
+        [20635] = 234962, -- Jade Inlaid Vestments
+        [20636] = 234175, -- Hibernation Crystal
+        [20637] = 234174, -- Acid Inscribed Pauldrons
+        [20638] = 234173, -- Leggings of the Demented Mind
+        [20639] = 234963, -- Strangely Glyphed Legplates
+        [20644] = 235049, -- Nightmare Engulfed Object
+        
+        
+        -- AQ20
+        [21220] = 235048, -- Head of Ossirian the Unscarred
+        [21393] = 233443, -- Signet of Unyielding Strength
+        [21394] = 233441, -- Drape of Unyielding Strength
+        [21396] = 233428, -- Ring of Eternal Justice
+        [21397] = 233427, -- Cape of Eternal Justice
+        [21399] = 233437, -- Ring of the Gathering Storm
+        [21400] = 233436, -- Cloak of the Gathering Storm
+        [21402] = 233422, -- Signet of the Unseen Path
+        [21403] = 233420, -- Cloak of the Unseen Path
+        [21405] = 233434, -- Band of Veiled Shadows
+        [21406] = 233432, -- Cloak of Veiled Shadows
+        [21408] = 233419, -- Band of Unending Life
+        [21409] = 233418, -- Cloak of Unending Life
+        [21411] = 233431, -- Ring of Infinite Wisdom
+        [21412] = 233430, -- Shroud of Infinite Wisdom
+        [21414] = 233425, -- Band of Vaulted Secrets
+        [21415] = 233424, -- Drape of Vaulted Secrets
+        [21417] = 233440, -- Ring of Unspoken Names
+        [21418] = 233438, -- Shroud of Unspoken Names
+        [21453] = 234109, -- Mantle of the Horusath
+        [21454] = 234111, -- Runic Stone Shoulders
+        [21455] = 234084, -- Southwind Helm
+        [21456] = 234113, -- Sandstorm Cloak
+        [21457] = 234103, -- Bracers of Brutality
+        [21458] = 234105, -- Gauntlets of New Life
+        [21460] = 234107, -- Helm of Domination
+        [21461] = 234108, -- Leggings of the Black Blizzard
+        [21462] = 234106, -- Gloves of Dark Wisdom
+        [21463] = 234110, -- Ossirian's Binding
+        [21464] = 234114, -- Shackles of the Unscarred
+        [21467] = 234077, -- Thick Silithid Chestguard
+        [21468] = 234082, -- Mantle of Maz'Nadir
+        [21469] = 234081, -- Gauntlets of Southwind
+        [21470] = 234079, -- Cloak of the Savior
+        [21471] = 234076, -- Talon of Furious Concentration
+        [21472] = 234073, -- Dustwind Turban
+        [21473] = 234080, -- Eye of Moam
+        [21474] = 234078, -- Chitinous Shoulderguards
+        [21475] = 234088, -- Legplates of the Destroyer
+        [21476] = 234087, -- Obsidian Scaled Leggings
+        [21477] = 234083, -- Ring of Fury
+        [21479] = 234075, -- Gauntlets of the Immovable
+        [21480] = 234102, -- Scaled Silithid Gauntlets
+        [21481] = 234098, -- Boots of the Desert Protector
+        [21482] = 234099, -- Boots of the Fiery Sands
+        [21483] = 234101, -- Ring of the Desert Winds
+        [21484] = 234100, -- Helm of Regrowth
+        [21485] = 234089, -- Buru's Skull Fragment
+        [21486] = 234090, -- Gloves of the Swarm
+        [21487] = 234091, -- Slimy Scaled Gauntlets
+        [21488] = 234092, -- Fetish of Chitinous Spikes
+        [21489] = 234093, -- Quicksand Waders
+        [21490] = 234095, -- Slime Kickers
+        [21491] = 234094, -- Scaled Bracers of the Gorger
+        [21493] = 234068, -- Boots of the Vanguard
+        [21494] = 234072, -- Southwind's Grasp
+        [21495] = 234071, -- Legplates of the Qiraji Command
+        [21496] = 234070, -- Bracers of Qiraji Command
+        [21497] = 234069, -- Boots of the Qiraji General
+        [21499] = 234062, -- Vestments of the Shifting Sands
+        [21500] = 234064, -- Belt of the Inquisition
+        [21501] = 234066, -- Toughened Silithid Hide Gloves
+        [21502] = 234065, -- Sand Reaver Wristguards
+        [21503] = 234063, -- Belt of the Sand Reaver
+        [21504] = 234811, -- Charm of the Shifting Sands
+        [21505] = 234813, -- Choker of the Shifting Sands
+        [21506] = 234814, -- Pendant of the Shifting Sands
+        [21507] = 234812, -- Amulet of the Shifting Sands
+        [21803] = 234120, -- Helm of the Holy Avenger
+        [21804] = 234123, -- Coif of Elemental Fury
+        [21809] = 234116, -- Fury of the Forgotten Swarm
+        [21810] = 234117, -- Treads of the Wandering Nomad
+        [22220] = 234085, -- Plans: Black Grasp of the Destroyer
+        
+        [21392] = 233442, -- Sickle of Unyielding Strength
+        [21395] = 233426, -- Blade of Eternal Justice
+        [21398] = 233435, -- Hammer of the Gathering Storm
+        [21401] = 233421, -- Scythe of the Unseen Path
+        [21404] = 233433, -- Dagger of Veiled Shadows
+        [21407] = 233417, -- Mace of Unending Life
+        [21410] = 233429, -- Gavel of Infinite Wisdom
+        [21413] = 233423, -- Blade of Vaulted Secrets
+        [21416] = 233439, -- Kris of Unspoken Names
+        [21452] = 234115, -- Staff of the Ruins
+        [21459] = 234104, -- Crossbow of Imminent Doom
+        [21466] = 234097, -- Stinger of Ayamiss
+        [21478] = 234096, -- Bow of Taut Sinew
+        [21492] = 234067, -- Manslayer of the Qiraji
+        [21498] = 234061, -- Qiraji Sacrificial Dagger
+        [21715] = 234112, -- Sand Polished Hammer
+        [21800] = 234121, -- Silithid Husked Launcher
+        [21801] = 234119, -- Antenna of Invigoration
+        [21802] = 234122, -- The Lost Kris of Zedd
+        [21806] = 234118, -- Gavel of Qiraji Authority
+        
+        
+        -- AQ40
+        [20928] = 233370, -- Qiraji Bindings of Command
+        [20932] = 233369, -- Qiraji Bindings of Dominance
+        [21232] = 235046, -- Imperial Qiraji Armaments
+        [21237] = 235045, -- Imperial Qiraji Regalia
+        [21269] = 234807, -- Blessed Qiraji Bulwark
+        [21329] = 233375, -- Conqueror's Crown
+        [21330] = 233376, -- Conqueror's Spaulders
+        [21331] = 233373, -- Conqueror's Breastplate
+        [21332] = 233374, -- Conqueror's Legguards
+        [21333] = 233372, -- Conqueror's Greaves
+        [21334] = 233380, -- Doomcaller's Robes
+        [21335] = 233379, -- Doomcaller's Mantle
+        [21336] = 233378, -- Doomcaller's Trousers
+        [21337] = 233381, -- Doomcaller's Circlet
+        [21338] = 233377, -- Doomcaller's Footwraps
+        [21343] = 233402, -- Enigma Robes
+        [21344] = 233405, -- Enigma Boots
+        [21345] = 233403, -- Enigma Shoulderpads
+        [21346] = 233406, -- Enigma Leggings
+        [21347] = 233404, -- Enigma Circlet
+        [21348] = 233393, -- Tiara of the Oracle
+        [21349] = 233392, -- Footwraps of the Oracle
+        [21350] = 233394, -- Mantle of the Oracle
+        [21351] = 233395, -- Vestments of the Oracle
+        [21352] = 233396, -- Trousers of the Oracle
+        [21353] = 233412, -- Genesis Helm
+        [21354] = 233413, -- Genesis Shoulderpads
+        [21355] = 233414, -- Genesis Boots
+        [21356] = 233416, -- Genesis Trousers
+        [21357] = 233415, -- Genesis Vest
+        [21359] = 233391, -- Deathdealer's Boots
+        [21360] = 233388, -- Deathdealer's Helm
+        [21361] = 233387, -- Deathdealer's Spaulders
+        [21362] = 233390, -- Deathdealer's Leggings
+        [21364] = 233389, -- Deathdealer's Vest
+        [21365] = 233407, -- Striker's Footguards
+        [21366] = 233410, -- Striker's Diadem
+        [21367] = 233409, -- Striker's Pauldrons
+        [21368] = 233408, -- Striker's Leggings
+        [21370] = 233411, -- Striker's Hauberk
+        [21372] = 233385, -- Stormcaller's Diadem
+        [21373] = 233384, -- Stormcaller's Footguards
+        [21374] = 233386, -- Stormcaller's Hauberk
+        [21375] = 233382, -- Stormcaller's Leggings
+        [21376] = 233383, -- Stormcaller's Pauldrons
+        [21387] = 233398, -- Avenger's Crown
+        [21388] = 233399, -- Avenger's Greaves
+        [21389] = 233397, -- Avenger's Breastplate
+        [21390] = 233400, -- Avenger's Legguards
+        [21391] = 233401, -- Avenger's Pauldrons
+        [21579] = 233639, -- Vanquished Tentacle of C'Thun
+        [21581] = 233637, -- Gauntlets of Annihilation
+        [21582] = 233632, -- Grasp of the Old God
+        [21583] = 233641, -- Cloak of Clarity
+        [21585] = 233631, -- Dark Storm Gauntlets
+        [21586] = 233635, -- Belt of Never-ending Agony
+        [21596] = 233638, -- Ring of the Godslayer
+        [21597] = 233616, -- Royal Scepter of Vek'lor
+        [21598] = 233614, -- Royal Qiraji Belt
+        [21599] = 233613, -- Vek'lor's Gloves of Devastation
+        [21600] = 233611, -- Boots of Epiphany
+        [21601] = 233615, -- Ring of Emperor Vek'lor
+        [21602] = 233612, -- Qiraji Execution Bracers
+        [21604] = 233617, -- Bracelets of Royal Redemption
+        [21605] = 233618, -- Gloves of the Hidden Temple
+        [21606] = 233623, -- Belt of the Fallen Emperor
+        [21607] = 233622, -- Grasp of the Fallen Emperor
+        [21608] = 233620, -- Amulet of Vek'nilash
+        [21609] = 233619, -- Regenerating Belt of Vek'nilash
+        [21610] = 233629, -- Wormscale Blocker
+        [21611] = 233625, -- Burrower Bracers
+        [21615] = 233624, -- Don Rigoberto's Lost Hat
+        [21617] = 233608, -- Wasphide Gauntlets
+        [21618] = 233610, -- Hive Defiler Wristguards
+        [21619] = 233607, -- Gloves of the Messiah
+        [21620] = 233609, -- Ring of the Martyr
+        [21621] = 233606, -- Cloak of the Golden Hive
+        [21623] = 233603, -- Gauntlets of the Righteous Champion
+        [21624] = 233604, -- Gauntlets of Kalimdor
+        [21625] = 233601, -- Scarab Brooch
+        [21626] = 233598, -- Slime-coated Leggings
+        [21627] = 233588, -- Cloak of Untold Secrets
+        [21639] = 233593, -- Pauldrons of the Unrelenting
+        [21645] = 233590, -- Hive Tunneler's Boots
+        [21647] = 233589, -- Fetish of the Sand Reaver
+        [21648] = 233573, -- Recomposed Boots
+        [21651] = 233595, -- Scaled Sand Reaver Leggings
+        [21652] = 233591, -- Silithid Carapace Chestguard
+        [21663] = 233594, -- Robes of the Guardian Saint
+        [21664] = 233587, -- Barbed Choker
+        [21665] = 233592, -- Mantle of Wicked Revenge
+        [21666] = 233581, -- Sartura's Might
+        [21667] = 233583, -- Legplates of Blazing Light
+        [21668] = 233584, -- Scaled Leggings of Qiraji Fury
+        [21669] = 233578, -- Creeping Vine Helm
+        [21670] = 233580, -- Badge of the Swarmguard
+        [21671] = 233575, -- Robes of the Battleguard
+        [21672] = 233579, -- Gloves of Enforcement
+        [21674] = 233582, -- Gauntlets of Steadfast Determination
+        [21675] = 233577, -- Thick Qirajihide Belt
+        [21676] = 233574, -- Leggings of the Festering Swarm
+        [21677] = 233600, -- Ring of the Qiraji Fury
+        [21678] = 233572, -- Necklace of Purity
+        [21680] = 233568, -- Vest of Swift Execution
+        [21681] = 233569, -- Ring of the Devoured
+        [21682] = 233564, -- Bile-Covered Gauntlets
+        [21683] = 233567, -- Mantle of the Desert Crusade
+        [21684] = 233566, -- Mantle of the Desert's Fury
+        [21685] = 233570, -- Petrified Scarab
+        [21686] = 233563, -- Mantle of Phrenic Power
+        [21687] = 233565, -- Ukko's Ring of Darkness
+        [21688] = 233561, -- Boots of the Fallen Hero
+        [21689] = 233559, -- Gloves of Ebru
+        [21690] = 233562, -- Angelista's Charm
+        [21691] = 233560, -- Ooze-ridden Gauntlets
+        [21692] = 233523, -- Triad Girdle
+        [21693] = 233522, -- Guise of the Devourer
+        [21694] = 233521, -- Ternary Mantle
+        [21695] = 233524, -- Angelista's Touch
+        [21696] = 233520, -- Robes of the Triumvirate
+        [21697] = 233519, -- Cape of the Trinity
+        [21698] = 233505, -- Leggings of Immersion
+        [21699] = 233496, -- Barrage Shoulders
+        [21700] = 233503, -- Pendant of the Qiraji Guardian
+        [21701] = 233504, -- Cloak of Concentrated Hatred
+        [21702] = 233502, -- Amulet of Foul Warding
+        [21704] = 233517, -- Boots of the Redeemed Prophecy
+        [21705] = 233518, -- Boots of the Fallen Prophet
+        [21706] = 233514, -- Boots of the Unwavering Will
+        [21707] = 233507, -- Ring of Swarming Thought
+        [21708] = 233506, -- Beetle Scaled Wristguards
+        [21709] = 234803, -- Ring of the Fallen God
+        [21710] = 234802, -- Cloak of the Fallen God
+        [21712] = 234801, -- Amulet of the Fallen God
+        [21814] = 233516, -- Breastplate of Annihilation
+        [21836] = 233648, -- Ritssyn's Ring of Chaos
+        [21838] = 233644, -- Garb of Royal Ascension
+        [21888] = 233645, -- Gloves of the Immortal
+        [21889] = 233646, -- Gloves of the Redeemed Prophecy
+        [21891] = 233649, -- Shard of the Fallen Star
+        [22222] = 235039, -- Plans: Thick Obsidian Breastplate
+        [22396] = 233597, -- Totem of Life
+        [22399] = 233602, -- Idol of Health
+        [22730] = 233633, -- Eyestalk Waist Cord
+        [22731] = 233630, -- Cloak of the Devoured
+        [22732] = 233642, -- Mark of C'Thun
+        [23558] = 233628, -- The Burrower's Shell
+        [23570] = 233627, -- Jom Gabbar
+        [22402] = 233596, -- Libram of Grace | Libram of Purification
+        
+        [21218] = 235513, -- Blue Qiraji Resonating Crystal | Flawless Blue Qiraji Resonating Crystal
+        [21324] = 235511, -- Yellow Qiraji Resonating Crystal | Flawless Yellow Qiraji Resonating Crystal
+        [21323] = 235512, -- Green Qiraji Resonating Crystal | Flawless Green Qiraji Resonating Crystal
+        [21321] = 235514, -- Red Qiraji Resonating Crystal | Flawless Red Qiraji Resonating Crystal
+        
+        [21126] = 233634, -- Death's Sting
+        [21128] = 233509, -- Staff of the Qiraji Prophets
+        [21134] = 233640, -- Dark Edge of Insanity
+        [21242] = 234804, -- Blessed Qiraji War Axe
+        [21244] = 234806, -- Blessed Qiraji Pugio
+        [21268] = 234810, -- Blessed Qiraji War Hammer
+        [21272] = 234805, -- Blessed Qiraji Musket
+        [21273] = 234808, -- Blessed Qiraji Acolyte Staff
+        [21275] = 234809, -- Blessed Qiraji Augur Staff
+        [21603] = 233571, -- Wand of Qiraji Nobility
+        [21616] = 233605, -- Huhuran's Stinger
+        [21622] = 233599, -- Sharpened Silithid Femur
+        [21650] = 233585, -- Ancient Qiraji Ripper
+        [21673] = 233576, -- Silithid Claw
+        [21679] = 233621, -- Kalimdor's Revenge
+        [21703] = 233515, -- Hammer of Ji'zhi
+        [21837] = 233643, -- Anubisath Warhammer
+        [21839] = 233636, -- Scepter of the False Prophet
+        [21856] = 233647, -- Neretzek, The Blood Drinker
+        [23557] = 233626, -- Larvae of the Great Worm
+        [21635] = 233586, -- Barb of the Sand Reaver | Jaw of the Sand Reaver
     };
     
     local IntendedItems = LootReserve.Data.IntendedItems;
@@ -12311,40 +13171,55 @@ local tokenMap = {
     [19720] = {19842, 19849, 19839, 231334, 231349, 231318},
     
     
+    -- Nightmare Grove
+    [235049] = {234155},
+    
+    
     -- AQ20
     
     -- Head of Ossirian the Unscarred
-    [21220] = {21504, 21507, 21505, 21506},
+    [21220] = {21504, 21507, 21505, 21506, 234811, 234812, 234813, 234814},
     -- Qiraji Martial Drape
-    [20885] = {21394, 21406, 21412, 21415},
+    [20885] = {21394, 21406, 21412, 21415, 233441, 233432, 233430, 233424},
     -- Qiraji Regal Drape
-    [20889] = {21397, 21403, 21400, 21418, 21409},
+    [20889] = {21397, 21403, 21400, 21418, 21409, 233427, 233420, 233436, 233438, 233418},
     -- Qiraji Ceremonial Ring
-    [20888] = {21402, 21405, 21411, 21417},
+    [20888] = {21402, 21405, 21411, 21417, 233422, 233434, 233431, 233440},
     -- Qiraji Magisterial Ring
-    [20884] = {21393, 21396, 21399, 21414, 21408},
+    [20884] = {21393, 21396, 21399, 21414, 21408, 233443, 233428, 233437, 233425, 233419},
     -- Qiraji Ornate Hilt
-    [20890] = {21410, 21413, 21416, 21407},
+    [20890] = {21410, 21413, 21416, 21407, 233429, 233423, 233439, 233417},
     -- Qiraji Spiked Hilt
-    [20886] = {21392, 21395, 21401, 21404, 21398},
+    [20886] = {21392, 21395, 21401, 21404, 21398, 233442, 233426, 233421, 233433, 233435},
+        
+    -- Void-Touched weapons (AQ20)
+    [233442] = {235005}, -- Sickle of Unyielding Strength
+    [233426] = {235011}, -- Blade of Eternal Justice
+    [233435] = {235009}, -- Hammer of the Gathering Storm
+    [233421] = {235007}, -- Scythe of the Unseen Path
+    [233433] = {235006}, -- Dagger of Veiled Shadows
+    [233417] = {235012}, -- Mace of Unending Life
+    [233429] = {235010}, -- Gavel of Infinite Wisdom
+    [233423] = {235013}, -- Blade of Vaulted Secrets
+    [233439] = {235008}, -- Kris of Unspoken Names
+    [234115] = {234995}, -- Staff of the Ruins
+    [234104] = {234993}, -- Crossbow of Imminent Doom
+    [234097] = {234992}, -- Stinger of Ayamiss
+    [234096] = {234991}, -- Bow of Taut Sinew
+    [234067] = {234990}, -- Manslayer of the Qiraji
+    [234061] = {234989}, -- Qiraji Sacrificial Dagger
+    [234112] = {234994}, -- Sand Polished Hammer
+    [234121] = {234997}, -- Silithid Husked Launcher
+    [234119] = {235282}, -- Antenna of Invigoration
+    [234122] = {234998}, -- The Lost Kris of Zedd
+    [234118] = {234996}, -- Gavel of Qiraji Authority
     
     
     -- AQ40
     
     -- Eye of C'Thun
-    [21221] = {21712, 21710, 21709},
-    -- Carapace of the Old God
-    [20929] = {21331, 21389, 21370, 21364, 21374},
-    -- Husk of the Old God
-    [20933] = {21351, 21343, 21334, 21357},
-    -- Ouro's Intact Hide
-    [20927] = {21332, 21362, 21352, 21346},
-    -- Skin of the Great Sandworm
-    [20931] = {21390, 21368, 21375, 21336, 21356},
-    -- Vek'lor's Diadem
-    [20930] = {21387, 21366, 21360, 21372, 21353},
-    -- Vek'nilash's Circlet
-    [20926] = {21329, 21348, 21347, 21337},
+    [21221] = {21712, 21710, 21709, 234801, 234802, 234803},
+    
     -- Imperial Qiraji Armaments
     [21232] = {21242, 21244, 21272, 21269},
     -- Imperial Qiraji Regalia
@@ -12353,6 +13228,65 @@ local tokenMap = {
     [20928] = {21330, 21333, 21367, 21365, 21361, 21359, 21350, 21349},
     -- Qiraji Bindings of Dominance
     [20932] = {21391, 21388, 21376, 21373, 21345, 21344, 21335, 21338, 21354, 21355},
+    -- Vek'lor's Diadem
+    [20930] = {21387, 21366, 21360, 21372, 21353, 233398, 233410, 233388, 233385, 233412},
+    -- Vek'nilash's Circlet
+    [20926] = {21329, 21348, 21347, 21337, 233375, 233393, 233404, 233381},
+    -- Ouro's Intact Hide
+    [20927] = {21332, 21362, 21352, 21346},
+    -- Skin of the Great Sandworm
+    [20931] = {21390, 21368, 21375, 21336, 21356},
+    -- Carapace of the Old God
+    [20929] = {21331, 21389, 21370, 21364, 21374},
+    -- Husk of the Old God
+    [20933] = {21351, 21343, 21334, 21357},
+    
+    -- Imperial Qiraji Armaments (SoD)
+    [235046] = {234804, 234806, 234805, 234807},
+    -- Imperial Qiraji Regalia (SoD)
+    [235045] = {234810, 234808, 234809},
+    -- Qiraji Bindings of Command (SoD)
+    [233370] = {233409, 233407, 233403, 233405, 233376, 233372},
+    -- Qiraji Bindings of Dominance (SoD)
+    [233369] = {233413, 233414, 233401, 233399, 233383, 233384},
+    -- Qiraji Bindings of Sovereignty (SoD)
+    [233371] = {233394, 233392, 233387, 233391, 233379, 233377},
+    -- Intact Entrails (SoD)
+    [233368] = {233390, 233396, 233378},
+    -- Intact Viscera (SoD)
+    [233365] = {233400, 233382, 233416},
+    -- Intact Peritoneum (SoD)
+    [233367] = {233374, 233408, 233406},
+    
+    -- Skin of the Old God (SoD)
+    [233364] = {233389, 233395, 233380},
+    -- Husk of the Old God (SoD)
+    [233362] = {233397, 233386, 233415},
+    -- Carapace of the Old God (SoD)
+    [233363] = {233373, 233411, 233402},
+    
+    -- Void-Touched weapons (AQ40)
+    [233634] = {234984}, -- Death's Sting
+    [233509] = {234974}, -- Staff of the Qiraji Prophets
+    [233640] = {234985}, -- Dark Edge of Insanity
+    [234804] = {235003}, -- Blessed Qiraji War Axe
+    [234806] = {235002}, -- Blessed Qiraji Pugio
+    [234810] = {234999}, -- Blessed Qiraji War Hammer
+    [234805] = {235004}, -- Blessed Qiraji Musket
+    [234808] = {235001}, -- Blessed Qiraji Acolyte Staff
+    [234809] = {235000}, -- Blessed Qiraji Augur Staff
+    [233571] = {234976}, -- Wand of Qiraji Nobility
+    [233605] = {234980}, -- Huhuran's Stinger
+    [233599] = {234979}, -- Sharpened Silithid Femur
+    [233585] = {234650}, -- Ancient Qiraji Ripper
+    [233576] = {234977}, -- Silithid Claw
+    [233621] = {234981}, -- Kalimdor's Revenge
+    [233515] = {234975}, -- Hammer of Ji'zhi
+    [233643] = {234986}, -- Anubisath Warhammer
+    [233636] = {235014}, -- Scepter of the False Prophet
+    [233647] = {234987}, -- Neretzek, The Blood Drinker
+    [233626] = {234983}, -- Larvae of the Great Worm
+    [233586] = {234978}, -- Jaw of the Sand Reaver
     
     
     -- Naxx 40
