@@ -1025,8 +1025,9 @@ LootReserve.Data =
                     {
                         232557, 232563, 232556, 0,
                         232552, 0,
-                        232565, 232564, 232558, 232555, 232561, 232567, 0,
-                        232559, 232551, 232550, 232566, 232562, 0,
+                        232565, 232564, 232558, 232577, 232555, 232561, 232567, 0,
+                        232559, 232551, 232550, 232566, 232576, 232562, 0,
+                        232606, 232607, 232608, 0,
                     },
                 },
                 { Separator = true },
@@ -13953,6 +13954,12 @@ local heroicMirrors = {
     [232555] = 230837, -- Crul'shorukh, Edge of Chaos
     [232550] = 230818, -- Ashkandi, Greatsword of the Brotherhood
     [232561] = 230276, -- Claw of the Black Drake
+    [232576] = 232357, -- Draconic Avenger
+    [232577] = 230845, -- Doom's Edge
+    [232606] = 230801, -- Ashjre'thul, Crossbow of Smiting
+    [232607] = 230253, -- Heartstriker
+    [232608] = 230726, -- Dragonbreath Hand Cannon
+    
     
     -- Bloodied
     [231856] = 231293, -- Ancient Hakkari Manslayer
