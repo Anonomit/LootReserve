@@ -1425,7 +1425,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Emeriss",
+                    Name = "Emeriss (Duskwood)",
                     IndentType = 1,
                     Loot =
                     {
@@ -1435,7 +1435,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Lethon",
+                    Name = "Lethon (Feralas)",
                     IndentType = 1,
                     Loot =
                     {
@@ -1443,7 +1443,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Taerar",
+                    Name = "Taerar (Ashenvale)",
                     IndentType = 1,
                     Loot =
                     {
@@ -1453,7 +1453,7 @@ LootReserve.Data =
                     },
                 },
                 {
-                    Name = "Ysondre",
+                    Name = "Ysondre (The Hinterlands)",
                     IndentType = 1,
                     Loot =
                     {
@@ -1482,6 +1482,15 @@ LootReserve.Data =
             Expansion = 0,
             Children =
             Squish{
+                {
+                    Name = "Unknown Boss",
+                    Loot =
+                    {
+                        234123, 234120, 0,
+                        234122, 234119, 234121, 0,
+                    },
+                },
+                { Separator = true },
                 {
                     Name = "Kurinnaxx",
                     Loot =
@@ -1548,6 +1557,7 @@ LootReserve.Data =
                     Loot =
                     {
                         234614, 0,
+                        235513, 235511, 235512, 235514, 233352, 233351, 233353, 233356, 233357, 0,
                     },
                 },
                 {
@@ -1576,12 +1586,17 @@ LootReserve.Data =
                     Name = "Trash",
                     Loot =
                     {
-                        234123, 234120, 21805, 0,
-                        234122, 234119, 234121, 0,
+                        21805, 0,
+                        22203, 22202, 0,
+                    },
+                },
+                {
+                    Name = "Scarabs",
+                    Loot =
+                    {
                         20873, 20869, 20866, 20870, 20868, 20871, 20867, 20872, 0,
                         20864, 20861, 20863, 20862, 20859, 20865, 20860, 20858, 0,
                         21761, 21156, 0,
-                        22203, 22202, 0,
                     },
                 },
                 {
@@ -1606,7 +1621,51 @@ LootReserve.Data =
                     IndentType = 1,
                     Loot =
                     {
-                        20727, 20729, 20728, 20730, 20731, 20734, 20736, 0,
+                        233997, 0,
+                        20727, 20729, 20728, 233998, 233999, 20730, 20731, 20726, 0,
+                        235526, 235528, 0,
+                        20735, 20734, 20736, 0,
+                        234269, 234267, 234270, 234268, 0,
+                        235139, 234277, 235140, 235141, 0,
+                        235136, 235138, 234276, 235137, 0,
+                        235135, 234275, 235134, 235133, 0,
+                    },
+                },
+                {
+                    Name = "Alchemy",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234253, 234252, 234256, 234255, 0,
+                    },
+                },
+                {
+                    Name = "Engineering",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234264, 0,
+                        234435, 235530, 0,
+                        234265, 0,
+                    },
+                },
+                {
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234250, 234251, 234249, 234244, 0,
+                        234240, 234241, 234242, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234235, 0,
+                        234236, 0,
+                        234237, 234238, 234239, 0,
                     },
                 },
                 {
@@ -1615,6 +1674,8 @@ LootReserve.Data =
                     Loot =
                     {
                         234085, 0,
+                        234429, 234227, 234224, 234226, 234225, 234223, 234228, 0,
+                        234220, 234221, 234222, 0,
                     },
                 },
                 { Separator = true },
@@ -1653,10 +1714,20 @@ LootReserve.Data =
             Children =
             Squish{
                 {
+                    Name = "Unknown Boss",
+                    Loot =
+                    {
+                        233645, 235047, 0,
+                        233648, 0,
+                        233647, 233643, 0,
+                    },
+                },
+                { Separator = true },
+                {
                     Name = "The Prophet Skeram",
                     Loot =
                     {
-                        233505, 233506, 233518, 233496, 233517, 233516, 233514, 0,
+                        233644, 233505, 233506, 233518, 233496, 233517, 233516, 233514, 0,
                         233507, 233502, 233504, 233503, 0,
                         233515, 233509, 0,
                         235045, 235046, 0,
@@ -1666,37 +1737,10 @@ LootReserve.Data =
                     Name = "Bug Trio",
                     Loot =
                     {
-                        233520, 233521, 233522, 233523, 0,
-                        233519, 233524, 0,
-                        235045, 235046, 0,
-                    },
-                },
-                {
-                    Name = "Vem Killed Last",
-                    IndentType = 1,
-                    Loot =
-                    {
-                        233559, 233560, 233561, 0,
-                        233562, 0,
-                    },
-                },
-                {
-                    Name = "Yauj Killed Last",
-                    IndentType = 1,
-                    Loot =
-                    {
-                        233563, 233564, 233566, 233567, 0,
-                        233565, 0,
-                    },
-                },
-                {
-                    Name = "Kri Killed Last",
-                    IndentType = 1,
-                    Loot =
-                    {
-                        233568, 0,
-                        233569, 233570, 0,
+                        233563, 233520, 233521, 233559, 233564, 233568, 233522, 233566, 233567, 233561, 233523, 233560, 0,
+                        233519, 233562, 233569, 233524, 233565, 233570, 0,
                         233571, 0,
+                        235045, 235046, 0,
                     },
                 },
                 {
@@ -1704,7 +1748,7 @@ LootReserve.Data =
                     Loot =
                     {
                         233574, 233573, 233575, 233578, 233579, 233577, 233584, 233583, 233582, 0,
-                        233572, 233580, 0,
+                        233572, 233580, 233649, 0,
                         233581, 233576, 0,
                         235045, 235046, 0,
                     },
@@ -1713,7 +1757,7 @@ LootReserve.Data =
                     Name = "Fankriss the Unyielding",
                     Loot =
                     {
-                        233594, 233592, 233590, 233595, 233591, 233593, 0,
+                        233594, 233592, 233590, 233595, 233646, 233591, 233593, 0,
                         233589, 233587, 233588, 0,
                         233585, 233586, 233597, 233596, 0,
                         235045, 235046, 0,
@@ -1745,7 +1789,7 @@ LootReserve.Data =
                     Name = "Twin Emperors",
                     Loot =
                     {
-                        20926, 20930, 0,
+                        233368, 233365, 233367, 0,
                         233611, 233617, 233619, 233612, 233618, 233622, 233613, 233623, 233614, 0,
                         233620, 233615, 0,
                         233616, 233621, 0,
@@ -1780,7 +1824,7 @@ LootReserve.Data =
                     Loot =
                     {
                         234614, 0,
-                        233352, 233351, 233353, 233356, 233357, 0,
+                        235513, 235511, 235512, 235514, 233352, 233351, 233353, 233356, 233357, 0,
                     },
                 },
                 {
@@ -1800,10 +1844,7 @@ LootReserve.Data =
                     Name = "Trash",
                     Loot =
                     {
-                        233644, 233645, 233646, 0,
-                        233648, 233649, 0,
-                        233647, 233643, 0,
-                        235513, 235511, 235512, 235514, 0,
+                        21218, 21324, 21323, 21321, 0,
                         22203, 22202, 0,
                     },
                 },
@@ -1823,7 +1864,51 @@ LootReserve.Data =
                     IndentType = 1,
                     Loot =
                     {
-                        20727, 20729, 20728, 20730, 20731, 20734, 20736, 20735, 20726, 0,
+                        233997, 0,
+                        20727, 20729, 20728, 233998, 233999, 20730, 20731, 20726, 0,
+                        235526, 235528, 0,
+                        20735, 20734, 20736, 0,
+                        234269, 234267, 234270, 234268, 0,
+                        235139, 234277, 235140, 235141, 0,
+                        235136, 235138, 234276, 235137, 0,
+                        235135, 234275, 235134, 235133, 0,
+                    },
+                },
+                {
+                    Name = "Alchemy",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234253, 234252, 234256, 234255, 0,
+                    },
+                },
+                {
+                    Name = "Engineering",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234264, 0,
+                        234435, 235530, 0,
+                        234265, 0,
+                    },
+                },
+                {
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234250, 234251, 234249, 234244, 0,
+                        234240, 234241, 234242, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        234235, 0,
+                        234236, 0,
+                        234237, 234238, 234239, 0,
                     },
                 },
                 {
@@ -1832,6 +1917,8 @@ LootReserve.Data =
                     Loot =
                     {
                         235039, 0,
+                        234429, 234227, 234224, 234226, 234225, 234223, 234228, 0,
+                        234220, 234221, 234222, 0,
                     },
                 },
                 { Separator = true },
@@ -12194,8 +12281,19 @@ if LootReserve:GetCurrentExpansion() == 0 then
         ApplySingleFactionRestriction(233517, "Alliance");
         ApplySingleFactionRestriction(233518, "Horde");
         
-        -- AQ40 trash paladin gloves
+        -- AQ40 gloves
         ApplySingleFactionRestriction(233646, "Alliance");
+        ApplySingleFactionRestriction(235047, "Horde");
+        
+        -- AQ recipes
+        ApplySingleFactionRestriction(235135, "Alliance");
+        ApplySingleFactionRestriction(234275, "Alliance");
+        ApplySingleFactionRestriction(235134, "Alliance");
+        ApplySingleFactionRestriction(235133, "Alliance");
+        ApplySingleFactionRestriction(235136, "Horde");
+        ApplySingleFactionRestriction(235138, "Horde");
+        ApplySingleFactionRestriction(234276, "Horde");
+        ApplySingleFactionRestriction(235137, "Horde");
     end
     
     
@@ -12954,11 +13052,6 @@ do
         [23570] = 233627, -- Jom Gabbar
         [22402] = 233596, -- Libram of Grace | Libram of Purification
         
-        [21218] = 235513, -- Blue Qiraji Resonating Crystal | Flawless Blue Qiraji Resonating Crystal
-        [21324] = 235511, -- Yellow Qiraji Resonating Crystal | Flawless Yellow Qiraji Resonating Crystal
-        [21323] = 235512, -- Green Qiraji Resonating Crystal | Flawless Green Qiraji Resonating Crystal
-        [21321] = 235514, -- Red Qiraji Resonating Crystal | Flawless Red Qiraji Resonating Crystal
-        
         [21126] = 233634, -- Death's Sting
         [21128] = 233509, -- Staff of the Qiraji Prophets
         [21134] = 233640, -- Dark Edge of Insanity
@@ -13271,9 +13364,9 @@ local tokenMap = {
     -- Qiraji Bindings of Dominance
     [20932] = {21391, 21388, 21376, 21373, 21345, 21344, 21335, 21338, 21354, 21355},
     -- Vek'lor's Diadem
-    [20930] = {21387, 21366, 21360, 21372, 21353, 233398, 233410, 233388, 233385, 233412},
+    [20930] = {21387, 21366, 21360, 21372, 21353},
     -- Vek'nilash's Circlet
-    [20926] = {21329, 21348, 21347, 21337, 233375, 233393, 233404, 233381},
+    [20926] = {21329, 21348, 21347, 21337},
     -- Ouro's Intact Hide
     [20927] = {21332, 21362, 21352, 21346},
     -- Skin of the Great Sandworm
@@ -13294,12 +13387,11 @@ local tokenMap = {
     -- Qiraji Bindings of Sovereignty (SoD)
     [233371] = {233394, 233392, 233387, 233391, 233379, 233377},
     -- Intact Entrails (SoD)
-    [233368] = {233390, 233396, 233378},
+    [233368] = {233390, 233396, 233378, 233388, 233393, 233381},
     -- Intact Viscera (SoD)
-    [233365] = {233400, 233382, 233416},
+    [233365] = {233400, 233382, 233416, 233398, 233385, 233412},
     -- Intact Peritoneum (SoD)
-    [233367] = {233374, 233408, 233406},
-    
+    [233367] = {233374, 233408, 233406, 233375, 233410, 233404},
     -- Skin of the Old God (SoD)
     [233364] = {233389, 233395, 233380},
     -- Husk of the Old God (SoD)
