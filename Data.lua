@@ -23,6 +23,7 @@ Changing it demands a new required addon version
 Classic:
     1.0: Initial
     1.5: AQ40 server attunement quest items added to raid loot
+    1.6: Naxx opened, Base of Atiesh added to C'Thun loot
 
 TBC:
     2.0: Prepatch
@@ -55,7 +56,7 @@ if LootReserve:GetCurrentExpansion() == 0 then
     elseif LootReserve.SeasonID == Enum.SeasonID.Fresh or LootReserve.SeasonID == Enum.SeasonID.FreshHardcore then
         EXPANSION_PHASE = 1.0; -- Fresh
     else
-        EXPANSION_PHASE = 1.5; -- Classic Era
+        EXPANSION_PHASE = 1.6; -- Classic Era
     end
 else
     EXPANSION_PHASE = 4.1; -- Classic
@@ -1810,13 +1811,13 @@ LootReserve.Data =
                 {
                     Name = "C'Thun",
                     Loot =
-                    {
+                    ConcatenateIf({
                         233364, 233362, 233363, 0,
                         21221, 0,
                         233633, 233631, 233632, 233635, 233637, 0,
                         233630, 233641, 233638, 233639, 233642, 0,
                         233636, 233634, 233640, 0,
-                    },
+                    }, EXPANSION_PHASE >= 1.6, {22734, 0,}),
                 },
                 { Separator = true },
                 {
@@ -2786,13 +2787,13 @@ LootReserve.Data =
                 {
                     Name = "C'Thun",
                     Loot =
-                    {
+                    ConcatenateIf({
                         20933, 20929, 0,
                         21221, 0,
                         22730, 21585, 21582, 21586, 21581, 0,
                         22731, 21583, 21596, 21579, 22732, 0,
                         21839, 21126, 21134, 0,
-                    },
+                    }, EXPANSION_PHASE >= 1.6, {22734, 0,}),
                 },
                 { Separator = true },
                 {
