@@ -10898,7 +10898,8 @@ LootReserve.Data =
         [19802] = 8183,
         
         -- Nightmare Engulfed Object
-        [235049] = 8446,
+        [20644]  = 8446,
+        [235049] = 86679,
         
         -- Head of Ossirian the Unscarred
         [21220] = 8791,
