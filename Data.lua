@@ -1587,7 +1587,6 @@ LootReserve.Data =
                     Name = "Trash",
                     Loot =
                     {
-                        21805, 0,
                         22203, 22202, 0,
                     },
                 },
