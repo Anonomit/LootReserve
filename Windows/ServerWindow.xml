@@ -757,13 +757,18 @@
 								if not range then
 									return self:SetState(UnitIsVisible(unit) and "Follow" or "Travel", true, false);
 								end
-							
-								if not LootReserve:CanUseCoords() then
-									return self:SetState(format("%s: %s", UnitIsVisible(unit) and "Follow" or "Travel", distText), true, false);
-								end
 								
 								if not UnitInPhase(unit) then
 									return self:SetState(format("%s: %s", "Phased", distText), false, false);
+								end
+								
+								if not LootReserve:CanUseCoords() then
+									if min &lt; 28 and UnitIsVisible(unit) then
+										return self:SetState(format("%s: %s", "Follow", distText), true, false);
+									else
+										return self:SetState(format("%s: %s", "Approach", distText), false, false);
+									end
+									
 								end
 								
 								if not UnitIsVisible(unit) and range &lt;= 9 then
