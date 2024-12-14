@@ -12311,14 +12311,23 @@ if LootReserve:GetCurrentExpansion() == 0 then
         ApplySingleFactionRestriction(233386, "Horde");
         ApplySingleFactionRestriction(233382, "Horde");
         ApplySingleFactionRestriction(233384, "Horde");
-        
-        -- AQ40 boots
-        ApplySingleFactionRestriction(233517, "Alliance");
-        ApplySingleFactionRestriction(233518, "Horde");
+        ApplySingleFactionRestriction(233695, "Horde");
+        ApplySingleFactionRestriction(233697, "Horde");
+        ApplySingleFactionRestriction(233694, "Horde");
+        ApplySingleFactionRestriction(233698, "Horde");
+        ApplySingleFactionRestriction(233696, "Horde");
         
         -- AQ40 gloves
         ApplySingleFactionRestriction(233646, "Alliance");
         ApplySingleFactionRestriction(235047, "Horde");
+        
+        -- AQ40 legs
+        ApplySingleFactionRestriction(233583, "Alliance");
+        ApplySingleFactionRestriction(233584, "Horde");
+        
+        -- AQ40 boots
+        ApplySingleFactionRestriction(233517, "Alliance");
+        ApplySingleFactionRestriction(233518, "Horde");
         
         -- AQ recipes
         ApplySingleFactionRestriction(235135, "Alliance");
@@ -12435,12 +12444,17 @@ if LootReserve:GetCurrentExpansion() == 0 then
     ApplySingleFactionRestriction(21375, "Horde");
     ApplySingleFactionRestriction(21373, "Horde");
     
+    -- AQ40 gloves
+    ApplySingleFactionRestriction(21889, "Alliance");
+    ApplySingleFactionRestriction(21890, "Horde");
+        
+    -- AQ40 legs
+    ApplySingleFactionRestriction(21667, "Alliance");
+    ApplySingleFactionRestriction(15516, "Horde");
+    
     -- AQ40 boots
     ApplySingleFactionRestriction(21704, "Alliance");
     ApplySingleFactionRestriction(21705, "Horde");
-    
-    -- AQ40 trash paladin gloves
-    ApplySingleFactionRestriction(21889, "Alliance");
     
     -- Naxx40 set items
     ApplySingleFactionRestriction(22428, "Alliance");
