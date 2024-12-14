@@ -15088,6 +15088,21 @@ end
 
 -- ItemLevelOverrides
 do
+    local Enum_ClassID = {
+        WARRIOR     = 1,
+        PALADIN     = 2,
+        HUNTER      = 3,
+        ROGUE       = 4,
+        PRIEST      = 5,
+        DEATHKNIGHT = 6,
+        SHAMAN      = 7,
+        MAGE        = 8,
+        WARLOCK     = 9,
+        MONK        = 10,
+        DRUID       = 11,
+        DEMONHUNTER = 12,
+        EVOKER      = 13,
+    };
     local _, MY_CLASS = UnitClassBase("player");
     local function TableMax(t)
         local key, val = next(t);
@@ -15098,8 +15113,8 @@ do
         until not val
         return max;
     end
-    local function GetItemLevelByClass(classLevels)
-        return classLevels[MY_CLASS] or TableMax(classLevels);
+    local function GetItemLevelByClass(classLevels, default)
+        return classLevels[MY_CLASS] or default or TableMax(classLevels);
     end
     
     for ids, ilvl in pairs({
@@ -15135,46 +15150,70 @@ do
         
         [{19002, 19003}] = 83, -- Head of Nefarian
         
-        [{19721}] = 61, -- Primal Hakkari Shawl
-        [{19724}] = GetItemLevelByClass{
-            [3] = 68,
-            [4] = 65,
-            [5] = 68,
-        }, -- Primal Hakkari Aegis
-        [{19723}] = 65, -- Primal Hakkari Kossack
-        [{19722}] = 65, -- Primal Hakkari Tabard
-        [{19717}] = 61, -- Primal Hakkari Armsplint
-        [{19716}] = 61, -- Primal Hakkari Bindings
-        [{19718}] = 61, -- Primal Hakkari Stanchion
-        [{19719}] = 61, -- Primal Hakkari Girdle
-        [{19720}] = 61, -- Primal Hakkari Sash
+        [{19721}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Shawl
+        [{19724}] = ShortCircuit(IS_SOD, 68, GetItemLevelByClass({
+            [Enum_ClassID.HUNTER] = 68,
+            [Enum_ClassID.ROGUE]  = 65,
+            [Enum_ClassID.PRIEST] = 68,
+        })), -- Primal Hakkari Aegis
+        [{19723}] = ShortCircuit(IS_SOD, 68, 65), -- Primal Hakkari Kossack
+        [{19722}] = ShortCircuit(IS_SOD, 68, 65), -- Primal Hakkari Tabard
+        [{19717}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Armsplint
+        [{19716}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Bindings
+        [{19718}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Stanchion
+        [{19719}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Girdle
+        [{19720}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Sash
         
         [{19939, 19940, 19941, 19942, 19819, 19820, 19818, 19814, 19821, 19816, 19817, 19813, 19815}] = 65, -- ZG Trinkets
         
         [{19802}] = 68, -- Heart of Hakkar
         
-        [{20888}] = 65, -- Qiraji Ceremonial Ring
-        [{20884}] = 65, -- Qiraji Magisterial Ring
-        [{20885}] = 67, -- Qiraji Martial Drape
-        [{20889}] = 67, -- Qiraji Regal Drape
-        [{20890}] = 70, -- Qiraji Ornate Hilt
-        [{20886}] = 70, -- Qiraji Spiked Hilt
+        [{20644}]  = 72, -- Nightmare Engulfed Object
+        [{235049}] = 75, -- Nightmare Engulfed Object (SoD)
         
-        [{20220}] = 70, -- Head of Ossirian the Unscarred
+        [{20888}] = ShortCircuit(IS_SOD, 74, 65), -- Qiraji Ceremonial Ring
+        [{20884}] = ShortCircuit(IS_SOD, 74, 65), -- Qiraji Magisterial Ring
+        [{20885}] = ShortCircuit(IS_SOD, 76, 67), -- Qiraji Martial Drape
+        [{20889}] = ShortCircuit(IS_SOD, 76, 67), -- Qiraji Regal Drape
+        [{20890}] = ShortCircuit(IS_SOD, 79, 70), -- Qiraji Ornate Hilt
+        [{20886}] = ShortCircuit(IS_SOD, 79, 70), -- Qiraji Spiked Hilt
         
-        [{21237}] = 79, -- Imperial Qiraji Regalia
-        [{21232}] = 79, -- Imperial Qiraji Armaments
-        [{20928}] = GetItemLevelByClass{
-            [1] = 78,
-            [3] = 81,
-            [4] = 78,
-            [5] = 78,
-        }, -- Qiraji Bindings of Command
+        [{20220}]  = 70, -- Head of Ossirian the Unscarred
+        [{235048}] = 77, -- Head of Ossirian the Unscarred (SoD)
+        
+        [{21237, 21232}] = 79, -- Imperial Qiraji Regalia, Imperial Qiraji Armaments
+        [{20928}] = GetItemLevelByClass({
+            [Enum_ClassID.WARRIOR] = 78,
+            [Enum_ClassID.HUNTER]  = 81,
+            [Enum_ClassID.ROGUE]   = 78,
+            [Enum_ClassID.PRIEST]  = 78,
+        }, 78), -- Qiraji Bindings of Command
         [{20932}] = 78, -- Qiraji Bindings of Dominance
         
         [{20930, 20926}] = 81, -- Vek'lor's Diadem, Vek'nilash's Circlet
         [{20927, 20931}] = 81, -- Ouro's Intact Hide, Skin of the Great Sandworm
         [{20929, 20933}] = 88, -- Carapace of the Old God, Husk of the Old God
+        
+        
+        
+        [{235046}] = 79, -- Imperial Qiraji Armaments (SoD)
+        [{235045}] = 79, -- Imperial Qiraji Regalia (SoD)
+        
+        [{233371}] = 78, -- Qiraji Bindings of Sovereignty (SoD)
+        [{233369}] = 78, -- Qiraji Bindings of Dominance (SoD)
+        [{233370}] = GetItemLevelByClass({
+            [Enum_ClassID.WARRIOR] = 78,
+            [Enum_ClassID.HUNTER]  = 81,
+            [Enum_ClassID.MAGE]    = 78,
+        }, 78), -- Qiraji Bindings of Command (SoD),
+        
+        [{233368}] = 81, -- Intact Entrails (SoD)
+        [{233365}] = 81, -- Intact Viscera (SoD)
+        [{233367}] = 81, -- Intact Peritoneum (SoD)
+        
+        [{233364}] = 88, -- Skin of the Old God (SoD)
+        [{233362}] = 88, -- Husk of the Old God (SoD)
+        [{233363}] = 88, -- Carapace of the Old God (SoD)
         
         [{21221}] = 88, -- Eye of C'Thun
         
