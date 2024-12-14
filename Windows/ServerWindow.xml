@@ -660,8 +660,8 @@
 						self.DMBLocate = function(self, unit)
 							local _, playerClass = LootReserve:UnitClass("player");
 							local _, targetClass = LootReserve:UnitClass(unit);
-							local color1 = RAID_CLASS_COLORS[playerClass];
-							local color2 = RAID_CLASS_COLORS[targetClass];
+							local color1 = LootReserve:GetClassColor(playerClass);
+							local color2 = LootReserve:GetClassColor(targetClass);
 							
 							if self.Locator.active then
 								self.Locator.m1:Free(true);

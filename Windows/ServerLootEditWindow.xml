@@ -30,7 +30,7 @@
 										for i = 1, LootReserve:GetNumClasses() do
 											local name, file, id = LootReserve:GetClassInfo(i);
 											if id and LootReserve.ItemConditions:TestClassMask(conditions.ClassMask, id) then
-												text = text .. (#text > 0 and ", " or "") .. format("|c%s%s|r", RAID_CLASS_COLORS[file].colorStr, name);
+												text = text .. (#text > 0 and ", " or "") .. format("|c%s%s|r", LootReserve:GetClassColor(file).colorStr, name);
 											end
 										end
 										self:SetText(text);
@@ -67,7 +67,7 @@
 										index = index + 1;
 										table.insert(menu, index,
 										{
-											text = format("|c%s%s|r", RAID_CLASS_COLORS[file].colorStr, name),
+											text = format("|c%s%s|r", LootReserve:GetClassColor(file).colorStr, name),
 											checked = conditions and LootReserve.ItemConditions:TestClassMask(conditions.ClassMask, id) or false,
 											arg1 = id,
 											func = function(_, id, _, checked)

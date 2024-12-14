@@ -648,13 +648,32 @@ function LootReserve:UnitSex(player)
     end);
 end
 
+function LootReserve:GetClassColor(classFilename)
+    if self:GetCurrentExpansion() == 0 then
+        if CUSTOM_CLASS_COLORS then
+            return CUSTOM_CLASS_COLORS[classFilename]; -- Support for WeWantBlueShamans
+        else
+            local color = RAID_CLASS_COLORS[classFilename];
+            if classFilename == "SHAMAN" then
+                local r, g, b = 0, 0.44, 0.87;
+
+                color = CreateColor(r, g, b)
+                color.colorStr = color:GenerateHexColor()
+            end
+            return color;
+        end
+    else
+        return RAID_CLASS_COLORS[classFilename];
+    end
+end
+
 local function GetPlayerClassColor(player, dim, class)
     local className, classFilename, classId = LootReserve:UnitClass(player);
     if class then
         className, classFilename, classId = LootReserve:GetClassInfo(class);
     end
     if classFilename then
-        local colors = RAID_CLASS_COLORS[classFilename];
+        local colors = LootReserve:GetClassColor(classFilename);
         if colors then
             if dim then
                 local r, g, b, a = colors:GetRGBA();
