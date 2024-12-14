@@ -763,7 +763,6 @@ LootReserve.Data =
                 { Separator = true },
                 {
                     Name = "Tokens",
-                    IndentType = 1,
                     Loot =
                     {
                         227532, 227537, 227535, 227531, 227533, 227530, 227534, 227536, 0,
@@ -1009,7 +1008,6 @@ LootReserve.Data =
                 { Separator = true },
                 {
                     Name = "Tokens",
-                    IndentType = 1,
                     Loot =
                     {
                         231711, 231709, 231714, 231707, 231712, 231710, 231713, 0,
