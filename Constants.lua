@@ -184,6 +184,7 @@ LootReserve.Constants.ItemLevelInvTypeWhitelist = setmetatable({
     INVTYPE_BODY   = false,
 }, { __index = function() return true end });
 LootReserve.Constants.Colors = {
+    SizeDeprecated = "bbbbbb",
     Size10Tiny     = "98fcc5",
     -- Size10         = "b1fc99",
     Size10         = "ffff00",

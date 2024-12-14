@@ -2866,7 +2866,7 @@ LootReserve.Data =
             Name = "Naxxramas",
             ButtonName = "[40] Naxxramas",
             NameShort = "Naxx 40",
-            Color = LootReserve.Constants.Colors.Size40,
+            Color = ShortCircuit(IS_SOD, LootReserve.Constants.Colors.SizeDeprecated, LootReserve.Constants.Colors.Size40),
             Expansion = 0,
             Children =
             Squish{
