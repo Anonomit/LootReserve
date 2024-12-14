@@ -1918,14 +1918,37 @@ LootReserve.Data =
                     IndentType = 2,
                     Loot =
                     {
+                        -- Warlock
                         233381, 233379, 233380, 233378, 233377, 0,
+                        233669, 233671, 233670, 233672, 233673, 0,
+                        -- Mage
                         233404, 233403, 233402, 233406, 233405, 0,
+                        233676, 233677, 233678, 233674, 233675, 0,
+                        -- Priest
                         233393, 233394, 233395, 233396, 233392, 0,
+                        233682, 233681, 233680, 233679, 233683, 0,
+                        -- Druid
+                        233718, 233717, 233715, 233714, 233716, 0,
+                        233709, 233713, 233711, 233710, 233712, 0,
+                        233723, 233722, 233720, 233719, 233721, 0,
                         233412, 233413, 233415, 233416, 233414, 0,
+                        -- Rogue
                         233388, 233387, 233389, 233390, 233391, 0,
+                        233661, 233663, 233659, 233662, 233660, 0,
+                        -- Hunter
+                        233666, 233668, 233664, 233667, 233665, 0,
                         233410, 233409, 233411, 233408, 233407, 0,
+                        -- Shaman
+                        233705, 233707, 233704, 233708, 233706, 0,
+                        233700, 233702, 233699, 233703, 233701, 0,
                         233385, 233383, 233386, 233382, 233384, 0,
+                        233695, 233697, 233694, 233698, 233696, 0,
+                        -- Paladin
                         233398, 233401, 233397, 233400, 233399, 0,
+                        233687, 233684, 233688, 233685, 233686, 0,
+                        233692, 233689, 233693, 233690, 233691, 0,
+                        -- Warrior
+                        233653, 233658, 233651, 233654, 233652, 0,
                         233375, 233376, 233373, 233374, 233372, 0,
                     },
                 },
@@ -12262,6 +12285,26 @@ if LootReserve:GetCurrentExpansion() == 0 then
         ApplySingleFactionRestriction(233397, "Alliance");
         ApplySingleFactionRestriction(233400, "Alliance");
         ApplySingleFactionRestriction(233399, "Alliance");
+        ApplySingleFactionRestriction(233687, "Alliance");
+        ApplySingleFactionRestriction(233684, "Alliance");
+        ApplySingleFactionRestriction(233688, "Alliance");
+        ApplySingleFactionRestriction(233685, "Alliance");
+        ApplySingleFactionRestriction(233686, "Alliance");
+        ApplySingleFactionRestriction(233692, "Alliance");
+        ApplySingleFactionRestriction(233689, "Alliance");
+        ApplySingleFactionRestriction(233693, "Alliance");
+        ApplySingleFactionRestriction(233690, "Alliance");
+        ApplySingleFactionRestriction(233691, "Alliance");
+        ApplySingleFactionRestriction(233705, "Horde");
+        ApplySingleFactionRestriction(233707, "Horde");
+        ApplySingleFactionRestriction(233704, "Horde");
+        ApplySingleFactionRestriction(233708, "Horde");
+        ApplySingleFactionRestriction(233706, "Horde");
+        ApplySingleFactionRestriction(233700, "Horde");
+        ApplySingleFactionRestriction(233702, "Horde");
+        ApplySingleFactionRestriction(233699, "Horde");
+        ApplySingleFactionRestriction(233703, "Horde");
+        ApplySingleFactionRestriction(233701, "Horde");
         ApplySingleFactionRestriction(233385, "Horde");
         ApplySingleFactionRestriction(233383, "Horde");
         ApplySingleFactionRestriction(233386, "Horde");
@@ -12913,11 +12956,11 @@ do
         [21345] = 233403, -- Enigma Shoulderpads
         [21346] = 233406, -- Enigma Leggings
         [21347] = 233404, -- Enigma Circlet
-        [21348] = 233393, -- Tiara of the Oracle
-        [21349] = 233392, -- Footwraps of the Oracle
-        [21350] = 233394, -- Mantle of the Oracle
-        [21351] = 233395, -- Vestments of the Oracle
-        [21352] = 233396, -- Trousers of the Oracle
+        [21348] = 233682, -- Tiara of the Oracle | Crown of the Oracle
+        [21349] = 233683, -- Footwraps of the Oracle | Slippers of the Oracle
+        [21350] = 233681, -- Mantle of the Oracle | Shoulderpads of the Oracle
+        [21351] = 233680, -- Vestments of the Oracle | Robes of the Oracle
+        [21352] = 233679, -- Trousers of the Oracle | Leggings of the Oracle
         [21353] = 233412, -- Genesis Helm
         [21354] = 233413, -- Genesis Shoulderpads
         [21355] = 233414, -- Genesis Boots
@@ -12933,11 +12976,11 @@ do
         [21367] = 233409, -- Striker's Pauldrons
         [21368] = 233408, -- Striker's Leggings
         [21370] = 233411, -- Striker's Hauberk
-        [21372] = 233385, -- Stormcaller's Diadem
-        [21373] = 233384, -- Stormcaller's Footguards
-        [21374] = 233386, -- Stormcaller's Hauberk
-        [21375] = 233382, -- Stormcaller's Leggings
-        [21376] = 233383, -- Stormcaller's Pauldrons
+        [21372] = 233705, -- Stormcaller's Diadem | Stormcaller's Headdress
+        [21373] = 233706, -- Stormcaller's Footguards | Stormcaller's Greaves
+        [21374] = 233704, -- Stormcaller's Hauberk | Stormcaller's Embrace
+        [21375] = 233708, -- Stormcaller's Leggings | Stormcaller's Mail Leggings
+        [21376] = 233707, -- Stormcaller's Pauldrons | Stormcaller's Epaulets
         [21387] = 233398, -- Avenger's Crown
         [21388] = 233399, -- Avenger's Greaves
         [21389] = 233397, -- Avenger's Breastplate
@@ -13371,24 +13414,27 @@ local tokenMap = {
     [235046] = {234804, 234806, 234805, 234807, 235004, 235002, 235003},
     -- Imperial Qiraji Regalia (SoD)
     [235045] = {234810, 234808, 234809, 235001, 235000, 234999},
-    -- Qiraji Bindings of Command (SoD)
-    [233370] = {233409, 233407, 233403, 233405, 233376, 233372},
-    -- Qiraji Bindings of Dominance (SoD)
-    [233369] = {233413, 233414, 233401, 233399, 233383, 233384},
+    
     -- Qiraji Bindings of Sovereignty (SoD)
-    [233371] = {233394, 233392, 233387, 233391, 233379, 233377},
+    [233371] = {233387, 233663, 233394, 233681, 233379, 233671, 233391, 233660, 233392, 233683, 233377, 233673},
+    -- Qiraji Bindings of Dominance (SoD)
+    [233369] = {233401, 233684, 233689, 233707, 233702, 233383, 233697, 233717, 233713, 233722, 233413, 233399, 233686, 233691, 233706, 233701, 233384, 233696, 233716, 233712, 233721, 233414},
+    -- Qiraji Bindings of Command (SoD)
+    [233370] = {233658, 233376, 233668, 233409, 233403, 233677, 233652, 233372, 233665, 233407, 233405, 233675},
+    
     -- Intact Entrails (SoD)
-    [233368] = {233390, 233396, 233378, 233388, 233393, 233381},
+    [233368] = {233388, 233661, 233393, 233682, 233381, 233669, 233390, 233662, 233396, 233679, 233378, 233672},
     -- Intact Viscera (SoD)
-    [233365] = {233400, 233382, 233416, 233398, 233385, 233412},
+    [233365] = {233398, 233687, 233692, 233705, 233700, 233385, 233695, 233718, 233709, 233723, 233412, 233400, 233685, 233690, 233708, 233703, 233382, 233698, 233714, 233710, 233719, 233416},
     -- Intact Peritoneum (SoD)
-    [233367] = {233374, 233408, 233406, 233375, 233410, 233404},
+    [233367] = {233653, 233375, 233666, 233410, 233404, 233676, 233654, 233374, 233667, 233408, 233406, 233674},
+    
     -- Skin of the Old God (SoD)
-    [233364] = {233389, 233395, 233380},
+    [233364] = {233389, 233659, 233395, 233680, 233380, 233670},
     -- Husk of the Old God (SoD)
-    [233362] = {233397, 233386, 233415},
+    [233362] = {233397, 233688, 233693, 233704, 233699, 233386, 233694, 233715, 233711, 233720, 233415},
     -- Carapace of the Old God (SoD)
-    [233363] = {233373, 233411, 233402},
+    [233363] = {233651, 233373, 233664, 233411, 233402, 233678},
     
     -- Void-Touched weapons (AQ40)
     [233634] = {234984}, -- Death's Sting
