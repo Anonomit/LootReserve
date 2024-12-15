@@ -10964,6 +10964,16 @@ LootReserve.Data =
         [22637]  = true, -- Primal Hakkari Idol
         [231512] = true, -- Primal Hakkari Idol (Season of Discovery)
         
+        -- AQ40
+        [20928] = true, -- Qiraji Bindings of Command
+        [20932] = true, -- Qiraji Bindings of Dominance
+        [233371] = true, -- Qiraji Bindings of Sovereignty (SoD)
+        [233369] = true, -- Qiraji Bindings of Dominance (SoD)
+        [233370] = true, -- Qiraji Bindings of Command (SoD)
+        [233368] = true, -- Intact Entrails (SoD)
+        [233365] = true, -- Intact Viscera (SoD)
+        [233367] = true, -- Intact Peritoneum (SoD)
+        
         -- ZA
         [33865] = true, -- Amani Hex Stick
         
@@ -12959,8 +12969,8 @@ do
         
         
         -- AQ40
-        [20928] = 233370, -- Qiraji Bindings of Command
-        [20932] = 233369, -- Qiraji Bindings of Dominance
+        -- [20928] = 233370, -- Qiraji Bindings of Command
+        -- [20932] = 233369, -- Qiraji Bindings of Dominance
         [21232] = 235046, -- Imperial Qiraji Armaments
         [21237] = 235045, -- Imperial Qiraji Regalia
         [21269] = 234807, -- Blessed Qiraji Bulwark
