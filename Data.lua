@@ -2811,7 +2811,7 @@ LootReserve.Data =
                     Name = "Trash",
                     Loot =
                     {
-                        21838, 21888, 21889, 0,
+                        21838, 21888, 21890, 21889, 0,
                         21836, 21891, 0,
                         21856, 21837, 0,
                         21218, 21324, 21323, 21321, 0,
@@ -13088,6 +13088,7 @@ do
         [21838] = 233644, -- Garb of Royal Ascension
         [21888] = 233645, -- Gloves of the Immortal
         [21889] = 233646, -- Gloves of the Redeemed Prophecy
+        [21890] = 235047, -- Gloves of the Fallen Prophet
         [21891] = 233649, -- Shard of the Fallen Star
         [22222] = 235039, -- Plans: Thick Obsidian Breastplate
         [22396] = 233597, -- Totem of Life
