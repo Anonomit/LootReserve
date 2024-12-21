@@ -1,10 +1,12 @@
 LootReserve = LootReserve or { };
 LootReserve.ItemSearch =
 {
-    BatchCap        = 100, -- max number of items to query in between UI updates
-    BatchFrames     = 10, -- UI updates should happen in about this many frames (plus the delay of ITEM_DATA_LOAD_RESULT)
-    DefaultSpeed    = 1,
-    ZoomSpeed       = 250, -- used when every single item must be cached
+    BatchCap            = 100, -- max number of items to query in between UI updates
+    BatchFrames         = 10, -- UI updates should happen in about this many frames (plus the delay of ITEM_DATA_LOAD_RESULT)
+    DefaultSpeed        = 1,
+    ZoomSpeed           = 250, -- used when every single item must be cached
+    PendingChatRequests = {},
+    ChatLinksMax        = 10,
 };
 
 
@@ -30,7 +32,9 @@ local function AddToCacheList(cacheList, memory, key)
 end
 
 
-
+function LootReserve.ItemSearch:IsLoaded()
+    return self.FullCache and self.FullCache:IsComplete()
+end
 
 function LootReserve.ItemSearch:Load()
     if self.FullCache then return end
@@ -84,5 +88,96 @@ function LootReserve.ItemSearch:Load()
     
     wipe(IDList)
     
-    self.FullCache = LootReserve.ItemCache:Cache(itemsToCache):SetSpeed(self.DefaultSpeed);
+    self.FullCache = LootReserve.ItemCache:OnCache(itemsToCache, function() LootReserve.ItemSearch:RunPendingChatRequests() end):SetSpeed(self.DefaultSpeed);
+end
+
+
+function LootReserve.ItemSearch:RunPendingChatRequests()
+    local requests = self.PendingChatRequests;
+    self.PendingChatRequests = { };
+    for _, request in ipairs(requests) do
+        LootReserve.ItemSearch:FindItemByName(request);
+    end
+end
+
+local function GetMatchRank(itemName, command, searchText)
+    itemName = string.lower(itemName);
+    command = string.lower(command);
+    if itemName == command then
+        return 1;
+    elseif string.find(itemName, command, 1, false) then
+        return 2;
+    else
+        return 3;
+    end
+end
+
+function LootReserve.ItemSearch:FindItemByName(command)
+    local searchText = LootReserve.ItemCache:FormatSearchText(command);
+    if #searchText == 0 then
+        LootReserve:PrintMessage("Enter a full or partial item name to search.");
+        return;
+    elseif #searchText < 3 then
+        LootReserve:PrintMessage("Search text '%s' is too short.", command);
+        return;
+    end
+    
+    self:Load();
+    if not self:IsLoaded() then
+        LootReserve:PrintMessage("Loading item database...");
+        if not ItemCache then
+            LootReserve:PrintMessage("(Install/Update ItemCache to remember the item database between sessions)");
+        end
+        self.FullCache:SetSpeed(self.ZoomSpeed);
+        tinsert(self.PendingChatRequests, command);
+        return;
+    end
+    
+    local items = LootReserve.ItemCache:Filter(function(item) return item:Matches(searchText); end);
+    table.sort(items, function(a, b)
+        local matchQuality1 = GetMatchRank(a:GetName(), command, searchText);
+        local matchQuality2 = GetMatchRank(b:GetName(), command, searchText);
+        if matchQuality1 == matchQuality2 then
+            if a:GetName() == b:GetName() then
+                return a:GetID() < b:GetID();
+            else
+                return a:GetName() < b:GetName();
+            end
+        else
+            return matchQuality1 < matchQuality2;
+        end
+    end);
+    if #items == 0 then
+        LootReserve:PrintMessage("No items found containing '%s'", command);
+    else
+        LootReserve:PrintMessage("Found %d |4item:items; containing '%s'", #items, command);
+        for i, item in ipairs(items) do
+            if i > self.ChatLinksMax and #items > self.ChatLinksMax + 1 then
+                LootReserve:PrintMessage("Not showing %d additional items.", #items - self.ChatLinksMax);
+                break;
+            end
+            print(format("  %s  (ID: %d)", item:GetLink(), item:GetID()));
+        end
+    end
+end
+
+do
+    local next = 1;
+    if not SLASH_LINK1 then
+        _G["SLASH_LOOTRESERVE_LINK"..next] = "/link";
+        next = next + 1;
+    end
+    if not SLASH_FIND1 then
+        _G["SLASH_LOOTRESERVE_LINK"..next] = "/find";
+        next = next + 1;
+    end
+    if not SLASH_GETITEM1 then
+        _G["SLASH_LOOTRESERVE_LINK"..next] = "/getitem";
+        next = next + 1;
+    end
+    if next > 1 then
+        function SlashCmdList.LOOTRESERVE_LINK(command)
+            return LootReserve.ItemSearch:FindItemByName(command);
+        end
+    end
 end

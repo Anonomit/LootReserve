@@ -560,7 +560,7 @@
 							});
 						elseif not itemID and #text >= 3 then
 							LootReserve.ItemSearch:Load();
-							if LootReserve.ItemSearch.FullCache:IsComplete() then
+							if LootReserve.ItemSearch:IsLoaded() then
 								local results = LootReserve.ItemCache:Filter(function(item) return item:Matches(text) end);
 								for i, item in ipairs(results) do
 									if i > 10 then
