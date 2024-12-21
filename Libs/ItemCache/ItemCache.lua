@@ -26,7 +26,6 @@ local format             = format
 local strsplit           = strsplit
 local wipe               = wipe
 local GetMouseFocus      = GetMouseFocus
-local DoesItemExistByID  = C_Item.DoesItemExistByID
 local GetItemInfo        = GetItemInfo -- removes the need to bypass own hook
 local GetItemInfoInstant = GetItemInfoInstant
 local UnitExists         = UnitExists
@@ -42,6 +41,16 @@ local tblremove = table.remove
 
 local mathFloor = math.floor
 local mathHuge  = math.huge
+
+
+-- https://github.com/Stanzilla/WoWUIBugs/issues/449
+-- Can use C_Item.GetItemIconByID to instantly retrieve the icon, but it causes a request for item info
+local DoesItemExistByID = C_Item.DoesItemExistByID
+-- if DoesItemExistByID(1) then
+--   DoesItemExistByID = function(itemID)
+--     return C_Item.GetItemIconByID(itemID) ~= 134400 -- question icon
+--   end
+-- end
 
 
 local function MakeLookupTable(t, val, keepOrigVals)
@@ -103,8 +112,8 @@ do
   expansionsHelper.isEra     = expansionsHelper.expansionLevel == expansionsHelper.expansions.era
   
   local season = ((C_Seasons or {}).GetActiveSeason or nop)() or 0
-  expansionsHelper.isSoM = season == Enum.SeasonID.SeasonOfMastery
-  expansionsHelper.isSoD = season == Enum.SeasonID.SeasonOfDiscovery
+  expansionsHelper.isSoM = C_Seasons and season == Enum.SeasonID.SeasonOfMastery   or false
+  expansionsHelper.isSoD = C_Seasons and season == Enum.SeasonID.SeasonOfDiscovery or false
 end
 
 local MY_CLASS = select(2, UnitClassBase"player")
@@ -747,6 +756,7 @@ end
 
 function ItemDB:InitMouseoverHook()
   self.mouseoverHook = true
+  if expansionsHelper.isRetail then return end
   GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
     if not self.mouseoverHook then return end
     
