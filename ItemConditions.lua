@@ -371,6 +371,9 @@ function LootReserve.ItemConditions:TestServer(itemID)
         if conditions.Hidden then
             return false;
         end
+        if conditions.BossHidden then
+            return false;
+        end
         if conditions.Faction and not self:TestFaction(conditions.Faction) then
             return false;
         end
