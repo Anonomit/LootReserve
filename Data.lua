@@ -44,7 +44,7 @@ Cata:
     4.0: ZG and ZA removed
     4.1: Bastion of Twilight, Blackwing Descent, Throne of Four Winds, Baradin Hold (only Argaloth)
     4.2: Firelands, Occu'thar added to Baradin Hold
-    4.?: Alizabal added to Baradin Hold
+    4.3: Dragon Soul, Alizabal added to Baradin Hold
 --]]
 
 
@@ -59,7 +59,7 @@ if LootReserve:GetCurrentExpansion() == 0 then
         EXPANSION_PHASE = 1.6; -- Classic Era
     end
 else
-    EXPANSION_PHASE = 4.1; -- Classic
+    EXPANSION_PHASE = 4.2; -- Classic
 end
 
 local hidden = { Hidden = true };
@@ -10575,7 +10575,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Alizabal",
                     Loot =
                     {
@@ -10586,7 +10586,7 @@ LootReserve.Data =
                         73538, 73534, 73537, 0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Druid",
                     IndentType = 1,
                     Loot =
@@ -10617,7 +10617,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Death Knight",
                     IndentType = 1,
                     Loot =
@@ -10641,7 +10641,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Hunter",
                     IndentType = 1,
                     Loot =
@@ -10665,7 +10665,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Mage",
                     IndentType = 1,
                     Loot =
@@ -10689,7 +10689,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Paladin",
                     IndentType = 1,
                     Loot =
@@ -10720,7 +10720,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Priest",
                     IndentType = 1,
                     Loot =
@@ -10747,7 +10747,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Rogue",
                     IndentType = 1,
                     Loot =
@@ -10771,7 +10771,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Shaman",
                     IndentType = 1,
                     Loot =
@@ -10801,7 +10801,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Warlock",
                     IndentType = 1,
                     Loot =
@@ -10825,7 +10825,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(false, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Warrior",
                     IndentType = 1,
                     Loot =
