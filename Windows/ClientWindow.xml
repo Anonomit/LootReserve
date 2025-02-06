@@ -344,7 +344,7 @@
 		</Anchors>
 		<Layers>
 			<Layer>
-				<FontString inherits="GameFontDisable" text="No items available" setAllPoints="true">
+				<FontString inherits="GameFontDisable" text="No reservable items" setAllPoints="true">
 					<Anchors>
 						<Anchor point="TOPLEFT" />
 						<Anchor point="BOTTOMRIGHT" />
