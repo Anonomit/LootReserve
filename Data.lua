@@ -12807,10 +12807,15 @@ if LootReserve:GetCurrentExpansion() == 0 then
     ApplySingleFactionRestriction(23066, "Alliance");
     ApplySingleFactionRestriction(23065, "Horde");
     
+    -- Naxx40 librams/totems
+    ApplySingleFactionRestriction(23006, "Alliance");
+    ApplySingleFactionRestriction(23005, "Horde");
+    
     -- Naxx40 trash drops
     ApplySingleFactionRestriction(23666, "Alliance");
     ApplySingleFactionRestriction(23667, "Alliance");
     ApplySingleFactionRestriction(23668, "Alliance");
+    ApplySingleFactionRestriction(23663, "Horde");
     ApplySingleFactionRestriction(23664, "Horde");
     ApplySingleFactionRestriction(23665, "Horde");
 end
