@@ -89,7 +89,7 @@ local function ConcatenateIf(t1, bool, t2)
     return t1;
 end
 
-local function ShortCircuit(expression, trueVal, falseVal)
+local function Ternary(expression, trueVal, falseVal)
     if expression then
         return trueVal
     else
@@ -124,7 +124,7 @@ LootReserve.Data =
         
         -- Season of Discovery
         
-        [910] = ShortCircuit(IS_SOD, {
+        [910] = Ternary(IS_SOD, {
             Name = "Blackfathom Deeps",
             ButtonName = "[10] Blackfathom Deeps",
             NameShort = "BFD",
@@ -220,7 +220,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [920] = ShortCircuit(IS_SOD, {
+        [920] = Ternary(IS_SOD, {
             Name = "Gnomeregan",
             ButtonName = "[10] Gnomeregan",
             NameShort = "Gnomer",
@@ -323,7 +323,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [925] = ShortCircuit(IS_SOD, {
+        [925] = Ternary(IS_SOD, {
             Name = "Temple of Atal'Hakkar",
             ButtonName = "[20] Temple of Atal'Hakkar",
             NameShort = "ST",
@@ -457,7 +457,7 @@ LootReserve.Data =
             },
         }),
         
-        [930] = ShortCircuit(IS_SOD, {
+        [930] = Ternary(IS_SOD, {
             Name = "Storm Cliffs",
             ButtonName = "[20] Storm Cliffs",
             NameShort = "Azuregos",
@@ -478,7 +478,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [935] = ShortCircuit(IS_SOD, {
+        [935] = Ternary(IS_SOD, {
             Name = "The Tainted Scar",
             ButtonName = "[20] The Tainted Scar",
             NameShort = "Kazzak",
@@ -499,7 +499,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [936] = ShortCircuit(IS_SOD, {
+        [936] = Ternary(IS_SOD, {
             Name = "The Crystal Vale",
             ButtonName = "[20] The Crystal Vale",
             NameShort = "Thunderaan",
@@ -554,7 +554,7 @@ LootReserve.Data =
             },
         }),
         
-        [938] = ShortCircuit(IS_SOD, {
+        [938] = Ternary(IS_SOD, {
             Name = "Onyxia",
             ButtonName = "[20] Onyxia",
             NameShort = "Ony",
@@ -635,7 +635,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [940] = ShortCircuit(IS_SOD, {
+        [940] = Ternary(IS_SOD, {
             Name = "Molten Core",
             ButtonName = "[20] Molten Core",
             NameShort = "MC",
@@ -891,7 +891,7 @@ LootReserve.Data =
             },
         }),
         
-        [942] = ShortCircuit(IS_SOD, {
+        [942] = Ternary(IS_SOD, {
             Name = "Blackwing Lair",
             ButtonName = "[20] Blackwing Lair",
             NameShort = "BWL",
@@ -1127,7 +1127,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [944] = ShortCircuit(IS_SOD, {
+        [944] = Ternary(IS_SOD, {
             Name = "Zul'Gurub",
             ButtonName = "[10] Zul'Gurub",
             NameShort = "ZG",
@@ -1336,7 +1336,7 @@ LootReserve.Data =
             },
         }),
         
-        -- [946] = ShortCircuit(IS_SOD, {
+        -- [946] = Ternary(IS_SOD, {
         --     Name = "Nightmare Grove",
         --     ButtonName = "[20] Nightmare Grove",
         --     NameShort = "Drakes",
@@ -1404,7 +1404,7 @@ LootReserve.Data =
         --         },
         --     },
         -- }),
-        [946] = ShortCircuit(IS_SOD, {
+        [946] = Ternary(IS_SOD, {
             Name = "Nightmare Grove",
             ButtonName = "[20] Nightmare Grove",
             NameShort = "Dragons",
@@ -1473,7 +1473,7 @@ LootReserve.Data =
             },
         }),
         
-        [950] = ShortCircuit(IS_SOD, {
+        [950] = Ternary(IS_SOD, {
             Name = "Ruins of Ahn'Qiraj",
             ButtonName = "[10] Ruins of Ahn'Qiraj",
             NameShort = "AQ10",
@@ -1696,7 +1696,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [952] = ShortCircuit(IS_SOD, {
+        [952] = Ternary(IS_SOD, {
             Name = "Temple of Ahn'Qiraj",
             ButtonName = "[20] Temple of Ahn'Qiraj",
             NameShort = "AQ40",
@@ -1961,11 +1961,11 @@ LootReserve.Data =
         
         -- Classic
         
-        [1020] = ShortCircuit(not IS_SOD, {
+        [1020] = Ternary(not IS_SOD, {
             Sort = 1005,
             Name = "Onyxia",
             ButtonName = "[40] Onyxia",
-            NameShort = ShortCircuit(EXPANSION_PHASE >= 3.3, "Ony 40", "Ony"),
+            NameShort = Ternary(EXPANSION_PHASE >= 3.3, "Ony 40", "Ony"),
             Color = LootReserve.Constants.Colors.Size40Tiny,
             Expansion = 0,
             Children =
@@ -1994,7 +1994,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [1010] = ShortCircuit(not IS_SOD, {
+        [1010] = Ternary(not IS_SOD, {
             Name = "Molten Core",
             ButtonName = "[40] Molten Core",
             NameShort = "MC",
@@ -2205,7 +2205,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [1030] = ShortCircuit(not IS_SOD, {
+        [1030] = Ternary(not IS_SOD, {
             Name = "Blackwing Lair",
             ButtonName = "[40] Blackwing Lair",
             NameShort = "BWL",
@@ -2290,16 +2290,16 @@ LootReserve.Data =
                     Name = "Nefarian",
                     Loot =
                     ConcatenateIf(Squish({
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16914),
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16929),
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16921),
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16908),
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16900),
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16939),
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16947),
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16955),
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16963),
-                        ShortCircuit(EXPANSION_PHASE >= 3.0,     0),
+                        Ternary(EXPANSION_PHASE >= 3.0, 16914),
+                        Ternary(EXPANSION_PHASE >= 3.0, 16929),
+                        Ternary(EXPANSION_PHASE >= 3.0, 16921),
+                        Ternary(EXPANSION_PHASE >= 3.0, 16908),
+                        Ternary(EXPANSION_PHASE >= 3.0, 16900),
+                        Ternary(EXPANSION_PHASE >= 3.0, 16939),
+                        Ternary(EXPANSION_PHASE >= 3.0, 16947),
+                        Ternary(EXPANSION_PHASE >= 3.0, 16955),
+                        Ternary(EXPANSION_PHASE >= 3.0, 16963),
+                        Ternary(EXPANSION_PHASE >= 3.0,     0),
                         16916, 16931, 16923, 16905, 16897, 16942, 16950, 16958, 16966, 0,
                         19003, 19002, 0,
                         19375, 19381, 19380, 0,
@@ -2325,15 +2325,15 @@ LootReserve.Data =
                     IndentType = 2,
                     Loot =
                     Squish{
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16929), 16932, 16931, 16934, 16928, 16933, 16927, 0,
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16914), 16917, 16916, 16918, 16913, 16818, 16912, 0,
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16921), 16924, 16923, 16926, 16920, 16925, 16919, 0,
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16908), 16832, 16905, 16911, 16907, 16910, 16906, 0,
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16900), 16902, 16897, 16904, 16899, 16903, 16898, 0,
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16939), 16937, 16942, 16935, 16940, 16936, 16941, 0,
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16947), 16945, 16950, 16943, 16948, 16944, 16949, 0,
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16963), 16961, 16966, 16959, 16964, 16960, 16965, 0,
-                        ShortCircuit(EXPANSION_PHASE >= 3.0, 16955), 16953, 16958, 16951, 16956, 16952, 16957, 0,
+                        Ternary(EXPANSION_PHASE >= 3.0, 16929), 16932, 16931, 16934, 16928, 16933, 16927, 0,
+                        Ternary(EXPANSION_PHASE >= 3.0, 16914), 16917, 16916, 16918, 16913, 16818, 16912, 0,
+                        Ternary(EXPANSION_PHASE >= 3.0, 16921), 16924, 16923, 16926, 16920, 16925, 16919, 0,
+                        Ternary(EXPANSION_PHASE >= 3.0, 16908), 16832, 16905, 16911, 16907, 16910, 16906, 0,
+                        Ternary(EXPANSION_PHASE >= 3.0, 16900), 16902, 16897, 16904, 16899, 16903, 16898, 0,
+                        Ternary(EXPANSION_PHASE >= 3.0, 16939), 16937, 16942, 16935, 16940, 16936, 16941, 0,
+                        Ternary(EXPANSION_PHASE >= 3.0, 16947), 16945, 16950, 16943, 16948, 16944, 16949, 0,
+                        Ternary(EXPANSION_PHASE >= 3.0, 16963), 16961, 16966, 16959, 16964, 16960, 16965, 0,
+                        Ternary(EXPANSION_PHASE >= 3.0, 16955), 16953, 16958, 16951, 16956, 16952, 16957, 0,
                     },
                 },
                 {
@@ -2346,7 +2346,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [1040] = ShortCircuit(EXPANSION_PHASE < 4.0 and not IS_SOD, {
+        [1040] = Ternary(EXPANSION_PHASE < 4.0 and not IS_SOD, {
             Name = "Zul'Gurub",
             ButtonName = "[20] Zul'Gurub",
             NameShort = "ZG",
@@ -2529,7 +2529,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [1050] = ShortCircuit(not IS_SOD, {
+        [1050] = Ternary(not IS_SOD, {
             Name = "Ruins of Ahn'Qiraj",
             ButtonName = "[20] Ruins of Ahn'Qiraj",
             NameShort = "AQ20",
@@ -2677,7 +2677,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [1060] = ShortCircuit(not IS_SOD, {
+        [1060] = Ternary(not IS_SOD, {
             Name = "Temple of Ahn'Qiraj",
             ButtonName = "[40] Temple of Ahn'Qiraj",
             NameShort = "AQ40",
@@ -2876,11 +2876,11 @@ LootReserve.Data =
                 },
             },
         }),
-        [1070] = ShortCircuit(EXPANSION_PHASE < 3.0, {
+        [1070] = Ternary(not IS_SOD and EXPANSION_PHASE < 3.0, {
             Name = "Naxxramas",
             ButtonName = "[40] Naxxramas",
             NameShort = "Naxx 40",
-            Color = ShortCircuit(IS_SOD, LootReserve.Constants.Colors.SizeDeprecated, LootReserve.Constants.Colors.Size40),
+            Color = Ternary(IS_SOD, LootReserve.Constants.Colors.SizeDeprecated, LootReserve.Constants.Colors.Size40),
             Expansion = 0,
             Children =
             Squish{
@@ -3320,7 +3320,7 @@ LootReserve.Data =
                         29068, 29067, 0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE >= 2.2, {
+                Ternary(EXPANSION_PHASE >= 2.2, {
                     Name = "Season 1 Pieces",
                     IndentType = 2,
                     Loot =
@@ -3399,7 +3399,7 @@ LootReserve.Data =
                         29070, 29069, 0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE >= 2.2, {
+                Ternary(EXPANSION_PHASE >= 2.2, {
                     Name = "Season 1 Pieces",
                     IndentType = 2,
                     Loot =
@@ -3463,7 +3463,7 @@ LootReserve.Data =
                         29062, 29071, 29066, 0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE >= 2.2, {
+                Ternary(EXPANSION_PHASE >= 2.2, {
                     Name = "Season 1 Pieces",
                     IndentType = 2,
                     Loot =
@@ -3621,7 +3621,7 @@ LootReserve.Data =
                         30125, 30124, 30126, 0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE >= 2.3, {
+                Ternary(EXPANSION_PHASE >= 2.3, {
                     Name = "Season 2 Pieces",
                     IndentType = 2,
                     Loot =
@@ -3757,7 +3757,7 @@ LootReserve.Data =
                         30127, 30123, 0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE >= 2.3, {
+                Ternary(EXPANSION_PHASE >= 2.3, {
                     Name = "Season 2 Pieces",
                     IndentType = 2,
                     Loot =
@@ -3913,7 +3913,7 @@ LootReserve.Data =
                         30987, 30985, 0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE >= 2.5, {
+                Ternary(EXPANSION_PHASE >= 2.5, {
                     Name = "Season 3 Pieces",
                     IndentType = 2,
                     Loot =
@@ -4093,7 +4093,7 @@ LootReserve.Data =
                         30998, 30991, 30995, 0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE >= 2.5, {
+                Ternary(EXPANSION_PHASE >= 2.5, {
                     Name = "Season 3 Pieces",
                     IndentType = 2,
                     Loot =
@@ -4119,7 +4119,7 @@ LootReserve.Data =
                 }),
             },
         },
-        [2080] = ShortCircuit(EXPANSION_PHASE < 4.0, {
+        [2080] = Ternary(EXPANSION_PHASE < 4.0, {
             Name = "Zul'Aman",
             ButtonName = "[10] Zul'Aman",
             NameShort = "ZA",
@@ -4212,7 +4212,7 @@ LootReserve.Data =
                         33497, 33498, 33496, 33500, 33499, 0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE < 3.0, {
+                Ternary(EXPANSION_PHASE < 3.0, {
                     Name = " - Fourth Prisoner Saved",
                     Loot =
                     {
@@ -4395,7 +4395,7 @@ LootReserve.Data =
         -- Wrath of the Lich King
         
         -- Naxxramas
-        [3010] = ShortCircuit(EXPANSION_PHASE <= 3.1, {
+        [3010] = Ternary(EXPANSION_PHASE <= 3.1, {
             Name = "Naxxramas 10",
             ButtonName = "[10] Naxxramas",
             NameShort = "Naxx 10",
@@ -4592,10 +4592,10 @@ LootReserve.Data =
             },
         }),
         [3011] = {
-            Name = ShortCircuit(EXPANSION_PHASE <= 3.1, "Naxxramas 25", "Naxxramas"),
-            ButtonName = ShortCircuit(EXPANSION_PHASE <= 3.1, "[25] Naxxramas", "Naxxramas"),
-            NameShort = ShortCircuit(EXPANSION_PHASE <= 3.1, "Naxx 25", "Naxx"),
-            Color = ShortCircuit(EXPANSION_PHASE <= 3.1, LootReserve.Constants.Colors.Size25, LootReserve.Constants.Colors.Size10or25),
+            Name = Ternary(EXPANSION_PHASE <= 3.1, "Naxxramas 25", "Naxxramas"),
+            ButtonName = Ternary(EXPANSION_PHASE <= 3.1, "[25] Naxxramas", "Naxxramas"),
+            NameShort = Ternary(EXPANSION_PHASE <= 3.1, "Naxx 25", "Naxx"),
+            Color = Ternary(EXPANSION_PHASE <= 3.1, LootReserve.Constants.Colors.Size25, LootReserve.Constants.Colors.Size10or25),
             Expansion = 2,
             Children =
             Squish{
@@ -4791,7 +4791,7 @@ LootReserve.Data =
         },
         
         -- Eye of Eternity
-        [3020] = ShortCircuit(EXPANSION_PHASE <= 3.1, {
+        [3020] = Ternary(EXPANSION_PHASE <= 3.1, {
             Name = "Eye of Eternity 10",
             ButtonName = "[10] Eye of Eternity",
             NameShort = "EoE 10",
@@ -4812,10 +4812,10 @@ LootReserve.Data =
             },
         }),
         [3021] = {
-            Name = ShortCircuit(EXPANSION_PHASE <= 3.1, "Eye of Eternity 25", "Eye of Eternity"),
-            ButtonName = ShortCircuit(EXPANSION_PHASE <= 3.1, "[25] Eye of Eternity", "Eye of Eternity"),
-            NameShort = ShortCircuit(EXPANSION_PHASE <= 3.1, "EoE 25", "EoE"),
-            Color = ShortCircuit(EXPANSION_PHASE <= 3.1, LootReserve.Constants.Colors.Size25Tiny, LootReserve.Constants.Colors.Size10or25Tiny),
+            Name = Ternary(EXPANSION_PHASE <= 3.1, "Eye of Eternity 25", "Eye of Eternity"),
+            ButtonName = Ternary(EXPANSION_PHASE <= 3.1, "[25] Eye of Eternity", "Eye of Eternity"),
+            NameShort = Ternary(EXPANSION_PHASE <= 3.1, "EoE 25", "EoE"),
+            Color = Ternary(EXPANSION_PHASE <= 3.1, LootReserve.Constants.Colors.Size25Tiny, LootReserve.Constants.Colors.Size10or25Tiny),
             Expansion = 2,
             Children =
             Squish{
@@ -4832,7 +4832,7 @@ LootReserve.Data =
         },
         
         -- The Obsidian Sanctum
-        [3030] = ShortCircuit(EXPANSION_PHASE <= 3.1, {
+        [3030] = Ternary(EXPANSION_PHASE <= 3.1, {
             Name = "The Obsidian Sanctum 10",
             ButtonName = "[10] The Obsidian Sanctum",
             NameShort = "OS 10",
@@ -4897,7 +4897,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [3029] = ShortCircuit(EXPANSION_PHASE > 3.1, {
+        [3029] = Ternary(EXPANSION_PHASE > 3.1, {
             Name = "The Obsidian Sanctum 10",
             ButtonName = "[10] The Obsidian Sanctum",
             NameShort = "OS 10",
@@ -5027,7 +5027,7 @@ LootReserve.Data =
         },
         
         -- Ulduar
-        [3040] = ShortCircuit(EXPANSION_PHASE <= 3.2, {
+        [3040] = Ternary(EXPANSION_PHASE <= 3.2, {
             Name = "Ulduar 10",
             ButtonName = "[10] Ulduar",
             NameShort = "Uld 10",
@@ -5345,7 +5345,7 @@ LootReserve.Data =
                 },
             },
         }),
-        [3039] = ShortCircuit(EXPANSION_PHASE > 3.2, {
+        [3039] = Ternary(EXPANSION_PHASE > 3.2, {
             Name = "Ulduar 10",
             ButtonName = "[10] Ulduar",
             NameShort = "Uld 10",
@@ -8186,9 +8186,9 @@ LootReserve.Data =
                         40782, 40802, 40842, 0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE >= 3.2, { Separator = true }),
-                ShortCircuit(EXPANSION_PHASE >= 3.2, { Name = "Emalon the Storm Watcher", Header = true }),
-                ShortCircuit(EXPANSION_PHASE >= 3.2, {
+                Ternary(EXPANSION_PHASE >= 3.2, { Separator = true }),
+                Ternary(EXPANSION_PHASE >= 3.2, { Name = "Emalon the Storm Watcher", Header = true }),
+                Ternary(EXPANSION_PHASE >= 3.2, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -8214,7 +8214,7 @@ LootReserve.Data =
                         45383, 45384, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.2, {
+                Ternary(EXPANSION_PHASE >= 3.2, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -8237,8 +8237,8 @@ LootReserve.Data =
                         40805, 40846, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.3, { Separator = true }),
-                ShortCircuit(EXPANSION_PHASE >= 3.3, {
+                Ternary(EXPANSION_PHASE >= 3.3, { Separator = true }),
+                Ternary(EXPANSION_PHASE >= 3.3, {
                     Name = "Koralon the Flame Watcher",
                     Loot =
                     {
@@ -8257,7 +8257,7 @@ LootReserve.Data =
                         42116, 42117, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.3, {
+                Ternary(EXPANSION_PHASE >= 3.3, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -8305,7 +8305,7 @@ LootReserve.Data =
                         48653, 48655, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.3, {
+                Ternary(EXPANSION_PHASE >= 3.3, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -8328,8 +8328,8 @@ LootReserve.Data =
                         40808, 40849, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.4, { Separator = true }),
-                ShortCircuit(EXPANSION_PHASE >= 3.4, {
+                Ternary(EXPANSION_PHASE >= 3.4, { Separator = true }),
+                Ternary(EXPANSION_PHASE >= 3.4, {
                     Name = "Toravon the Ice Watcher",
                     Loot =
                     {
@@ -8348,7 +8348,7 @@ LootReserve.Data =
                         42118, 42119, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.4, {
+                Ternary(EXPANSION_PHASE >= 3.4, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -8374,7 +8374,7 @@ LootReserve.Data =
                         50863, 50861, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.4, {
+                Ternary(EXPANSION_PHASE >= 3.4, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -8457,9 +8457,9 @@ LootReserve.Data =
                         40785, 40805, 40846, 0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE >= 3.2, { Separator = true }),
-                ShortCircuit(EXPANSION_PHASE >= 3.2, { Name = "Emalon the Storm Watcher", Header = true }),
-                ShortCircuit(EXPANSION_PHASE >= 3.2, {
+                Ternary(EXPANSION_PHASE >= 3.2, { Separator = true }),
+                Ternary(EXPANSION_PHASE >= 3.2, { Name = "Emalon the Storm Watcher", Header = true }),
+                Ternary(EXPANSION_PHASE >= 3.2, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -8476,7 +8476,7 @@ LootReserve.Data =
                         46174, 46176, 46179, 46181, 46155, 46153, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.2, {
+                Ternary(EXPANSION_PHASE >= 3.2, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -8499,8 +8499,8 @@ LootReserve.Data =
                         40808, 40849, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.3, { Separator = true }),
-                ShortCircuit(EXPANSION_PHASE >= 3.3, {
+                Ternary(EXPANSION_PHASE >= 3.3, { Separator = true }),
+                Ternary(EXPANSION_PHASE >= 3.3, {
                     Name = "Koralon the Flame Watcher",
                     Loot =
                     {
@@ -8518,7 +8518,7 @@ LootReserve.Data =
                         42118, 42119, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.3, {
+                Ternary(EXPANSION_PHASE >= 3.3, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -8566,7 +8566,7 @@ LootReserve.Data =
                         48658, 48660, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.3, {
+                Ternary(EXPANSION_PHASE >= 3.3, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -8589,8 +8589,8 @@ LootReserve.Data =
                         40812, 40852, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.4, { Separator = true }),
-                ShortCircuit(EXPANSION_PHASE >= 3.4, {
+                Ternary(EXPANSION_PHASE >= 3.4, { Separator = true }),
+                Ternary(EXPANSION_PHASE >= 3.4, {
                     Name = "Toravon the Ice Watcher",
                     Loot =
                     {
@@ -8608,7 +8608,7 @@ LootReserve.Data =
                         51336, 51358, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.4, {
+                Ternary(EXPANSION_PHASE >= 3.4, {
                     Name = "PvE Sets",
                     IndentType = 1,
                     Loot =
@@ -8634,7 +8634,7 @@ LootReserve.Data =
                         51172, 51171, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 3.4, {
+                Ternary(EXPANSION_PHASE >= 3.4, {
                     Name = "PvP Sets",
                     IndentType = 1,
                     Loot =
@@ -10300,7 +10300,7 @@ LootReserve.Data =
                         0,
                     },
                 },
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Occu'thar",
                     Loot =
                     {
@@ -10311,7 +10311,7 @@ LootReserve.Data =
                         70393, 70394, 70395, 0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Druid",
                     IndentType = 1,
                     Loot =
@@ -10342,7 +10342,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Death Knight",
                     IndentType = 1,
                     Loot =
@@ -10366,7 +10366,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Hunter",
                     IndentType = 1,
                     Loot =
@@ -10390,7 +10390,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Mage",
                     IndentType = 1,
                     Loot =
@@ -10414,7 +10414,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Paladin",
                     IndentType = 1,
                     Loot =
@@ -10445,7 +10445,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Priest",
                     IndentType = 1,
                     Loot =
@@ -10472,7 +10472,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Rogue",
                     IndentType = 1,
                     Loot =
@@ -10496,7 +10496,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Shaman",
                     IndentType = 1,
                     Loot =
@@ -10527,7 +10527,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Warlock",
                     IndentType = 1,
                     Loot =
@@ -10551,7 +10551,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.2, {
                     Name = "Warrior",
                     IndentType = 1,
                     Loot =
@@ -10575,7 +10575,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Alizabal",
                     Loot =
                     {
@@ -10586,7 +10586,7 @@ LootReserve.Data =
                         73538, 73534, 73537, 0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Druid",
                     IndentType = 1,
                     Loot =
@@ -10617,7 +10617,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Death Knight",
                     IndentType = 1,
                     Loot =
@@ -10641,7 +10641,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Hunter",
                     IndentType = 1,
                     Loot =
@@ -10665,7 +10665,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Mage",
                     IndentType = 1,
                     Loot =
@@ -10689,7 +10689,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Paladin",
                     IndentType = 1,
                     Loot =
@@ -10720,7 +10720,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Priest",
                     IndentType = 1,
                     Loot =
@@ -10747,7 +10747,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Rogue",
                     IndentType = 1,
                     Loot =
@@ -10771,7 +10771,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Shaman",
                     IndentType = 1,
                     Loot =
@@ -10801,7 +10801,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Warlock",
                     IndentType = 1,
                     Loot =
@@ -10825,7 +10825,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                ShortCircuit(false, {
+                Ternary(false, {
                     Name = "Warrior",
                     IndentType = 1,
                     Loot =
@@ -15163,19 +15163,19 @@ do
         
         [{19002, 19003}] = 83, -- Head of Nefarian
         
-        [{19721}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Shawl
-        [{19724}] = ShortCircuit(IS_SOD, 68, GetItemLevelByClass({
+        [{19721}] = Ternary(IS_SOD, 65, 61), -- Primal Hakkari Shawl
+        [{19724}] = Ternary(IS_SOD, 68, GetItemLevelByClass({
             [Enum_ClassID.HUNTER] = 68,
             [Enum_ClassID.ROGUE]  = 65,
             [Enum_ClassID.PRIEST] = 68,
         })), -- Primal Hakkari Aegis
-        [{19723}] = ShortCircuit(IS_SOD, 68, 65), -- Primal Hakkari Kossack
-        [{19722}] = ShortCircuit(IS_SOD, 68, 65), -- Primal Hakkari Tabard
-        [{19717}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Armsplint
-        [{19716}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Bindings
-        [{19718}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Stanchion
-        [{19719}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Girdle
-        [{19720}] = ShortCircuit(IS_SOD, 65, 61), -- Primal Hakkari Sash
+        [{19723}] = Ternary(IS_SOD, 68, 65), -- Primal Hakkari Kossack
+        [{19722}] = Ternary(IS_SOD, 68, 65), -- Primal Hakkari Tabard
+        [{19717}] = Ternary(IS_SOD, 65, 61), -- Primal Hakkari Armsplint
+        [{19716}] = Ternary(IS_SOD, 65, 61), -- Primal Hakkari Bindings
+        [{19718}] = Ternary(IS_SOD, 65, 61), -- Primal Hakkari Stanchion
+        [{19719}] = Ternary(IS_SOD, 65, 61), -- Primal Hakkari Girdle
+        [{19720}] = Ternary(IS_SOD, 65, 61), -- Primal Hakkari Sash
         
         [{19939, 19940, 19941, 19942, 19819, 19820, 19818, 19814, 19821, 19816, 19817, 19813, 19815}] = 65, -- ZG Trinkets
         
@@ -15184,12 +15184,12 @@ do
         [{20644}]  = 72, -- Nightmare Engulfed Object
         [{235049}] = 75, -- Nightmare Engulfed Object (SoD)
         
-        [{20888}] = ShortCircuit(IS_SOD, 74, 65), -- Qiraji Ceremonial Ring
-        [{20884}] = ShortCircuit(IS_SOD, 74, 65), -- Qiraji Magisterial Ring
-        [{20885}] = ShortCircuit(IS_SOD, 76, 67), -- Qiraji Martial Drape
-        [{20889}] = ShortCircuit(IS_SOD, 76, 67), -- Qiraji Regal Drape
-        [{20890}] = ShortCircuit(IS_SOD, 79, 70), -- Qiraji Ornate Hilt
-        [{20886}] = ShortCircuit(IS_SOD, 79, 70), -- Qiraji Spiked Hilt
+        [{20888}] = Ternary(IS_SOD, 74, 65), -- Qiraji Ceremonial Ring
+        [{20884}] = Ternary(IS_SOD, 74, 65), -- Qiraji Magisterial Ring
+        [{20885}] = Ternary(IS_SOD, 76, 67), -- Qiraji Martial Drape
+        [{20889}] = Ternary(IS_SOD, 76, 67), -- Qiraji Regal Drape
+        [{20890}] = Ternary(IS_SOD, 79, 70), -- Qiraji Ornate Hilt
+        [{20886}] = Ternary(IS_SOD, 79, 70), -- Qiraji Spiked Hilt
         
         [{20220}]  = 70, -- Head of Ossirian the Unscarred
         [{235048}] = 77, -- Head of Ossirian the Unscarred (SoD)
