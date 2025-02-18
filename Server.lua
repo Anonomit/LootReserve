@@ -3127,11 +3127,11 @@ function LootReserve.Server:RecordDisenchant(item, disenchanter, handleRecentLoo
 end
 
 function LootReserve.Server:GetDisenchanter()
-    local names = { };
-    LootReserve:ForEachRaider(function(name) names[name] = true end);
+    local valid = { };
+    LootReserve:ForEachRaider(function(name, _, _, _, _, _, _, online) if name and online then valid[name] = true end end);
     if self.Settings.RollDisenchant then
         for _, name in ipairs(self.Settings.RollDisenchanters) do
-            if names[name] then
+            if valid[name] then
                 return name;
             end
         end
