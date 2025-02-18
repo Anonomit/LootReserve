@@ -11525,38 +11525,30 @@ end
 
 -- Faction Restricted Items
 do
-    
     -- SoD items
     if IS_SOD then
         -- Blackfathom Deeps
-        
-        -- Perfect Blackfathom Pearl
-        ApplyFactionRestriction(209693, 211452);
+        ApplyFactionRestriction(209693, 211452); -- Perfect Blackfathom Pearl
         
         
         -- Gnomeregan
-        
-        -- Thermaplugg's Engineering Notes
-        ApplyFactionRestriction(217350, 217351);
+        ApplyFactionRestriction(217350, 217351); -- Thermaplugg's Engineering Notes
         
         
         -- Sunken Temple
+        ApplyFactionRestriction(221346, 221363); -- Scapula of the Fallen Avatar
         
-        -- Scapula of the Fallen Avatar
-        ApplyFactionRestriction(221346, 221363);
+        
+        -- Naxxramas
+        ApplyFactionRestriction(236299, 237577); -- Claymore of Unholy Might | Totem of Unholy Might
     end
     
     
-    -- Head of Onyxia
-    ApplyFactionRestriction(18423, 18422);
+    ApplyFactionRestriction(18423, 18422); -- Head of Onyxia
     
-    -- Head of Nefarian
-    ApplyFactionRestriction(19003, 19002);
+    ApplyFactionRestriction(19003, 19002); -- Head of Nefarian
     
-    
-    -- Magtheridon's Head
-    ApplyFactionRestriction(32385, 32386);
-    
+    ApplyFactionRestriction(32385, 32386); -- Magtheridon's Head
     
     
     -- ToC Set Pieces
@@ -12300,6 +12292,9 @@ if LootReserve:GetCurrentExpansion() == 0 then
         
         
         -- Molten Core
+        ApplySingleFactionRestriction(228254, "Alliance"); -- Magma Tempered Boots
+        ApplySingleFactionRestriction(228142, "Horde");    -- Earth and Fire
+        
         
         -- T1
         ApplySingleFactionRestriction(226592, "Alliance");
@@ -12668,7 +12663,8 @@ if LootReserve:GetCurrentExpansion() == 0 then
         ApplySingleFactionRestriction(236167, "Horde");
     end
     
-    
+    -- MC items
+    ApplySingleFactionRestriction(18824, "Alliance");
     
     -- T1
     ApplySingleFactionRestriction(16853, "Alliance");
