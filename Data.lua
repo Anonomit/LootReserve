@@ -59,7 +59,7 @@ if LootReserve:GetCurrentExpansion() == 0 then
         EXPANSION_PHASE = 1.6; -- Classic Era
     end
 else
-    EXPANSION_PHASE = 4.2; -- Classic
+    EXPANSION_PHASE = 4.3; -- Classic
 end
 
 local hidden = { Hidden = true };
@@ -10250,6 +10250,473 @@ LootReserve.Data =
             },
         },
         
+        -- Dragon Soul
+        [4050] = {
+            Name = "Dragon Soul",
+            NameShort = "DS",
+            Color = LootReserve.Constants.Colors.Size10or25,
+            Expansion = 3,
+            Children =
+            Squish{
+                { Name = "Morchok", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        77267, 77263, 77261, 77271, 77266, 77269, 77265, 77270, 77268, 0,
+                        77262, 0,
+                        77214, 77212, 77213, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78366, 78365, 78372, 78368, 78370, 78362, 78361, 78373, 78367, 0,
+                        78364, 0,
+                        78363, 78371, 78369, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        77267, 78366, 77263, 78365, 77261, 78372, 77271, 78368, 77266, 78370, 77269, 78362, 77265, 78361, 77270, 78373, 77268, 78367, 0,
+                        77262, 78364, 0,
+                        77214, 78363, 77212, 78371, 77213, 78369, 0,
+                    },
+                },
+                { Name = "Warlord Zon'ozz", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78183, 78178, 78173, 0,
+                        77255, 77260, 77257, 77259, 77258, 0,
+                        77204, 0,
+                        77216, 77215, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78853, 78854, 78855, 0,
+                        78391, 78388, 78393, 78389, 78390, 0,
+                        77989, 0,
+                        78392, 78387, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78183, 78178, 78173, 0, 78853, 78854, 78855, 0,
+                        77255, 78391, 77260, 78388, 77257, 78393, 77259, 78389, 77258, 78390, 0,
+                        77204, 77989, 0,
+                        77216, 78392, 77215, 78387, 0,
+                    },
+                },
+                { Name = "Yor'sahj the Unsleeping", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78181, 78176, 78171, 0,
+                        77254, 77252, 77253, 0,
+                        77219, 77218, 77217, 0,
+                        77203, 77206, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78856, 78857, 78858, 0,
+                        78402, 78405, 78406, 0,
+                        78404, 78401, 78403, 0,
+                        77991, 77990, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78181, 78176, 78171, 0, 78856, 78857, 78858, 0,
+                        77254, 78402, 77252, 78405, 77253, 78406, 0,
+                        77219, 78404, 77218, 78401, 77217, 78403, 0,
+                        77203, 77991, 77206, 77990, 0,
+                    },
+                },
+                { Name = "Hagara the Stormbinder", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78180, 78175, 78170, 0,
+                        77249, 77248, 77251, 77250, 0,
+                        78012, 78011, 0,
+                        77221, 77220, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78859, 78860, 78861, 0,
+                        78417, 78420, 78415, 78416, 0,
+                        78419, 78413, 0,
+                        78418, 78414, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78180, 78175, 78170, 0, 78859, 78860, 78861, 0,
+                        77249, 78417, 77248, 78420, 77251, 78415, 77250, 78416, 0,
+                        78012, 78419, 78011, 78413, 0,
+                        77221, 78418, 77220, 78414, 0,
+                    },
+                },
+                { Name = "Ultraxion", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78184, 78179, 78174, 0,
+                        77243, 77242, 77247, 77244, 77246, 0,
+                        78013, 77205, 0,
+                        77245, 77223, 0,
+                        78919, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78847, 78848, 78849, 0,
+                        78434, 78435, 78430, 78436, 78431, 0,
+                        78432, 77992, 0,
+                        78433, 78429, 0,
+                        78919, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78184, 78179, 78174, 0, 78847, 78848, 78849, 0,
+                        77243, 78434, 77242, 78435, 77247, 78430, 77244, 78436, 77246, 78431, 0,
+                        78013, 78432, 77205, 77992, 0,
+                        77245, 78433, 77223, 78429, 0,
+                        78919, 0,
+                    },
+                },
+                { Name = "Warmaster Blackhorn", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78182, 78177, 78172, 0,
+                        77240, 77234, 77239, 77241, 0,
+                        77202, 0,
+                        77224, 77225, 77226, 77227, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78850, 78851, 78852, 0,
+                        78446, 78449, 78452, 78447, 0,
+                        77993, 0,
+                        78445, 78451, 78448, 78450, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78182, 78177, 78172, 0, 78850, 78851, 78852, 0,
+                        77240, 78446, 77234, 78449, 77239, 78452, 77241, 78447, 0,
+                        77202, 77993, 0,
+                        77224, 78445, 77225, 78451, 77226, 78448, 77227, 78450, 0,
+                    },
+                },
+                { Name = "Spine of Deathwing", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78357, 77238, 77237, 77235, 77236, 0,
+                        77198, 77199, 77197, 77200, 77201, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78461, 78462, 78463, 78464, 78465, 0,
+                        77995, 77996, 77994, 77997, 77998, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78357, 78461, 77238, 78462, 77237, 78463, 77235, 78464, 77236, 78465, 0,
+                        77198, 77995, 77199, 77996, 77197, 77994, 77200, 77997, 77201, 77998, 0,
+                    },
+                },
+                { Name = "Madness of Deathwing", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        77195, 77190, 77196, 0,
+                        77189, 77188, 77194, 77193, 77191, 0,
+                        78359, 0,
+                        77067, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78475, 78477, 78476, 0,
+                        78474, 78472, 78473, 78479, 78478, 0,
+                        78471, 0,
+                        77069, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        77195, 78475, 77190, 78477, 77196, 78476, 0,
+                        77189, 78474, 77188, 78472, 77194, 78473, 77193, 78479, 77191, 78478, 0,
+                        78359, 78471, 0,
+                        77067, 77069, 0,
+                    },
+                },
+                { Separator = true },
+                { Name = "Shared", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        77228, 77229, 77231, 77230, 77232, 0,
+                        77208, 77209, 77207, 77210, 77211, 0,
+                        77952, 0,
+                        71998, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        78490, 78491, 78489, 78492, 78493, 0,
+                        78000, 78001, 77999, 78002, 78003, 0,
+                        77952, 0,
+                        71998, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        77228, 78490, 77229, 78491, 77231, 78489, 77230, 78492, 77232, 78493, 0,
+                        77208, 78000, 77209, 78001, 77207, 77999, 77210, 78002, 77211, 78003, 0,
+                        77952, 0,
+                        71998, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Trash",
+                    Loot =
+                    {
+                        78879, 78884, 78882, 78886, 78885, 78887, 78888, 78889, 0,
+                        77938, 77192, 78878, 0,
+                    },
+                },
+                { Separator = true },
+                { Name = "Recipes", Header = true },
+                {
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        72002, 72004, 72003, 72000, 0,
+                    },
+                },
+                {
+                    Name = "Leatherworking",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        72008, 71999, 72010, 72006, 0,
+                        72005, 72009, 72011, 72007, 0,
+                    },
+                },
+                {
+                    Name = "Blacksmithing",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        72014, 72001, 72015, 72012, 72013, 72016, 0,
+                    },
+                },
+                { Separator = true },
+                { Name = "Tier 13 Pieces", Header = true },
+                {
+                    Name = "Normal",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        -- Warlock
+                        76342, 76339, 76340, 76343, 76341, 0,
+                        -- Mage
+                        76213, 76216, 76215, 76212, 76214, 0,
+                        -- Priest
+                        76347, 76344, 76345, 76348, 76346, 0,
+                        76358, 76361, 76360, 76357, 76359, 0,
+                        -- Druid
+                        77019, 77022, 77021, 77018, 77020, 0,
+                        76750, 76753, 76752, 76749, 76751, 0,
+                        77015, 77017, 77013, 77014, 77016, 0,
+                        -- Rogue
+                        77025, 77027, 77023, 77024, 77026, 0,
+                        -- Hunter
+                        77030, 77032, 77028, 77029, 77031, 0,
+                        -- Shaman
+                        77037, 77035, 77039, 77038, 77036, 0,
+                        76758, 76760, 76756, 76757, 76759, 0,
+                        77042, 77044, 77040, 77041, 77043, 0,
+                        -- Paladin
+                        76767, 76769, 76765, 76766, 76768, 0,
+                        76876, 76878, 76874, 76875, 76877, 0,
+                        77005, 77007, 77003, 77004, 77006, 0,
+                        -- Warrior
+                        76983, 76987, 76984, 76985, 76986, 0,
+                        76990, 76992, 76988, 76989, 76991, 0,
+                        -- Death Knight
+                        76976, 76978, 76974, 76975, 76977, 0,
+                        77010, 77012, 77008, 77009, 77011, 0,
+                    },
+                },
+                {
+                    Name = "Heroic",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        -- Warlock
+                        78702, 78749, 78730, 78681, 78721, 0,
+                        -- Mage
+                        78701, 78748, 78729, 78671, 78720, 0,
+                        -- Priest
+                        78703, 78750, 78731, 78682, 78722, 0,
+                        78700, 78747, 78728, 78683, 78719, 0,
+                        -- Druid
+                        78696, 78744, 78662, 78676, 78714, 0,
+                        78690, 78740, 78660, 78680, 78710, 0,
+                        78694, 78743, 78665, 78684, 78713, 0,
+                        -- Rogue
+                        78699, 78738, 78664, 78679, 78708, 0,
+                        -- Hunter
+                        78698, 78737, 78661, 78674, 78709, 0,
+                        -- Shaman
+                        78685, 78741, 78723, 78666, 78711, 0,
+                        78691, 78739, 78725, 78672, 78718, 0,
+                        78686, 78733, 78724, 78667, 78704, 0,
+                        -- Paladin
+                        78692, 78746, 78726, 78673, 78717, 0,
+                        78693, 78742, 78727, 78675, 78712, 0,
+                        78695, 78745, 78732, 78677, 78715, 0,
+                        -- Warrior
+                        78688, 78735, 78657, 78668, 78706, 0,
+                        78689, 78734, 78658, 78669, 78705, 0,
+                        -- Death Knight
+                        78687, 78736, 78659, 78670, 78707, 0,
+                        78697, 78751, 78663, 78678, 78716, 0,
+                    },
+                },
+                {
+                    Name = "Combined",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        -- Warlock
+                        76342, 78702, 76339, 78749, 76340, 78730, 76343, 78681, 76341, 78721, 0,
+                        -- Mage
+                        76213, 78701, 76216, 78748, 76215, 78729, 76212, 78671, 76214, 78720, 0,
+                        -- Priest
+                        76347, 78703, 76344, 78750, 76345, 78731, 76348, 78682, 76346, 78722, 0,
+                        76358, 78700, 76361, 78747, 76360, 78728, 76357, 78683, 76359, 78719, 0,
+                        -- Druid
+                        77019, 78696, 77022, 78744, 77021, 78662, 77018, 78676, 77020, 78714, 0,
+                        76750, 78690, 76753, 78740, 76752, 78660, 76749, 78680, 76751, 78710, 0,
+                        77015, 78694, 77017, 78743, 77013, 78665, 77014, 78684, 77016, 78713, 0,
+                        -- Rogue
+                        77025, 78699, 77027, 78738, 77023, 78664, 77024, 78679, 77026, 78708, 0,
+                        -- Hunter
+                        77030, 78698, 77032, 78737, 77028, 78661, 77029, 78674, 77031, 78709, 0,
+                        -- Shaman
+                        77037, 78685, 77035, 78741, 77039, 78723, 77038, 78666, 77036, 78711, 0,
+                        76758, 78691, 76760, 78739, 76756, 78725, 76757, 78672, 76759, 78718, 0,
+                        77042, 78686, 77044, 78733, 77040, 78724, 77041, 78667, 77043, 78704, 0,
+                        -- Paladin
+                        76767, 78692, 76769, 78746, 76765, 78726, 76766, 78673, 76768, 78717, 0,
+                        76876, 78693, 76878, 78742, 76874, 78727, 76875, 78675, 76877, 78712, 0,
+                        77005, 78695, 77007, 78745, 77003, 78732, 77004, 78677, 77006, 78715, 0,
+                        -- Warrior
+                        76983, 78688, 76987, 78735, 76984, 78657, 76985, 78668, 76986, 78706, 0,
+                        76990, 78689, 76992, 78734, 76988, 78658, 76989, 78669, 76991, 78705, 0,
+                        -- Death Knight
+                        76976, 78687, 76978, 78736, 76974, 78659, 76975, 78670, 76977, 78707, 0,
+                        77010, 78697, 77012, 78751, 77008, 78663, 77009, 78678, 77011, 78716, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        77947, 77948, 0, 77949, 77950, 0,
+                    },
+                },
+            },
+        },
+        
         -- Baradin Hold
         [4510] = {
             Name = "Baradin Hold",
@@ -11480,31 +11947,24 @@ do
     -- HideItem(33931);
     -- HideItem(33933);
     
-    -- Thoridal
-    HideItem(34334);
+    HideItem(34334); -- Thoridal
     
+    HideItem(45038); -- Fragment of Val'anyr
     
-    
-    -- Fragment of Val'anyr
-    HideItem(45038);
-    
-    -- Crusader Orb
-    HideItem(47556);
+    HideItem(47556); -- Crusader Orb
     
     -- Ashen Sack of Gems
     -- HideItem(49294);
     
-    -- Primordial Saronite
-    HideItem(49908);
+    HideItem(49908); -- Primordial Saronite
+    HideItem(50274); -- Shadowfrost Shard
+    HideItem(52019); -- Precious's Ribbon
     
-    -- Shadowfrost Shard
-    HideItem(50274);
+    HideItem(69237); -- Living Ember
+    HideItem(71141); -- Eternal Ember
     
-    -- Precious's Ribbon
-    HideItem(52019);
-    
-    HideItem(69237);
-    HideItem(71141);
+    HideItem(71998); -- Essence of Destruction
+    HideItem(77952); -- Elementium Gem Cluster
 end
 
 
@@ -14478,18 +14938,18 @@ local tokenMap = {
     
     -- T11
     
-    -- Crown of the Forlorn Conqueror (+Helm of the Forlorn Conqueror)
+    -- Crown of the Forlorn Conqueror | Helm of the Forlorn Conqueror
     [65001] = {60249, 60256, 60258, 60359, 60346, 60356, 65260, 65235, 65230, 65221, 65216, 65226},
-    -- Crown of the Forlorn Protector (+Helm of the Forlorn Protector)
+    -- Crown of the Forlorn Protector | Helm of the Forlorn Protector
     [65000] = {60315, 60308, 60320, 60303, 60325, 60328, 65256, 65246, 65251, 65206, 65266, 65271},
-    -- Crown of the Forlorn Vanquisher (+Helm of the Forlorn Vanquisher)
+    -- Crown of the Forlorn Vanquisher | Helm of the Forlorn Vanquisher
     [65002] = {60243, 60282, 60277, 60286, 60299, 60341, 60351, 65210, 65200, 65195, 65190, 65241, 65181, 65186},
     
-    -- Shoulders of the Forlorn Conqueror (+Mantle of the Forlorn Conqueror)
+    -- Shoulders of the Forlorn Conqueror | Mantle of the Forlorn Conqueror
     [65088] = {60252, 60253, 60262, 60362, 60348, 60358, 65263, 65238, 65233, 65223, 65218, 65228},
-    -- Shoulders of the Forlorn Protector (+Mantle of the Forlorn Protector)
+    -- Shoulders of the Forlorn Protector | Mantle of the Forlorn Protector
     [65087] = {60317, 60322, 60311, 60306, 60327, 60331, 65258, 65248, 65253, 65208, 65268, 65273},
-    -- Shoulders of the Forlorn Vanquisher (+Mantle of the Forlorn Vanquisher)
+    -- Shoulders of the Forlorn Vanquisher | Mantle of the Forlorn Vanquisher
     [65089] = {60246, 60284, 60279, 60289, 60302, 60343, 60353, 65213, 65203, 65198, 65193, 65243, 65183, 65188},
     
     -- Chest of the Forlorn Conqueror
@@ -14551,11 +15011,58 @@ local tokenMap = {
     -- Leggings of the Fiery Vanquisher
     [71671] = {71509, 71498, 71493, 71489, 71540, 71479, 71484},
     
+    
+    -- Firelands
+    
     -- Firestone upgrades
     [71617] = {
         71641, 71561, 71563, 71564, 69113, 69109, 71559, 71560, 71557, 71562, 71558,
         71579, 71575, 71590, 71587, 71577, 71567, 71580, 71568, 71593, 71592,
     },
+    
+    
+    -- T13
+    
+    -- Crown of the Corrupted Conqueror
+    [78850] = {76767, 78692, 76876, 78693, 77005, 78695, 76347, 78703, 76358, 78700, 76342, 78702},
+    -- Crown of the Corrupted Vanquisher
+    [78851] = {76983, 78688, 76990, 78689, 77030, 78698, 77037, 78685, 76758, 78691, 77042, 78686},
+    -- Crown of the Corrupted Protector
+    [78852] = {77025, 78699, 76976, 78687, 77010, 78697, 76213, 78701, 77019, 78696, 76750, 78690, 77015, 78694},
+    
+    -- Shoulders of the Corrupted Conqueror
+    [78859] = {76769, 78746, 76878, 78742, 77007, 78745, 76344, 78750, 76361, 78747, 76339, 78749},
+    -- Shoulders of the Corrupted Vanquisher
+    [78860] = {76987, 78735, 76992, 78734, 77032, 78737, 77035, 78741, 76760, 78739, 77044, 78733},
+    -- Shoulders of the Corrupted Protector
+    [78861] = {77027, 78738, 76978, 78736, 77012, 78751, 76216, 78748, 77022, 78744, 76753, 78740, 77017, 78743},
+    
+    -- Chest of the Corrupted Conqueror
+    [78847] = {76765, 78726, 76874, 78727, 77003, 78732, 76345, 78731, 76360, 78728, 76340, 78730},
+    -- Chest of the Corrupted Vanquisher
+    [78848] = {76984, 78657, 76988, 78658, 77028, 78661, 77039, 78723, 76756, 78725, 77040, 78724},
+    -- Chest of the Corrupted Protector
+    [78849] = {77023, 78664, 76974, 78659, 77008, 78663, 76215, 78729, 77021, 78662, 76752, 78660, 77013, 78665},
+    
+    -- Gauntlets of the Corrupted Conqueror
+    [78853] = {76766, 78673, 76875, 78675, 77004, 78677, 76348, 78682, 76357, 78683, 76343, 78681},
+    -- Gauntlets of the Corrupted Vanquisher
+    [78854] = {76985, 78668, 76989, 78669, 77029, 78674, 77038, 78666, 76757, 78672, 77041, 78667},
+    -- Gauntlets of the Corrupted Protector
+    [78855] = {77024, 78679, 76975, 78670, 77009, 78678, 76212, 78671, 77018, 78676, 76749, 78680, 77014, 78684},
+    
+    -- Leggings of the Corrupted Conqueror
+    [78856] = {76768, 78717, 76877, 78712, 77006, 78715, 76346, 78722, 76359, 78719, 76341, 78721},
+    -- Leggings of the Corrupted Vanquisher
+    [78857] = {76986, 78706, 76991, 78705, 77031, 78709, 77036, 78711, 76759, 78718, 77043, 78704},
+    -- Leggings of the Corrupted Protector
+    [78858] = {77026, 78708, 76977, 78707, 77011, 78716, 76214, 78720, 77020, 78714, 76751, 78710, 77016, 78713},
+    
+    
+    -- Dragon Soul
+    
+    -- Fangs of the Father
+    [77952] = {77947, 77948, 77949, 77950},
 };
 
 for token, rewards in pairs(tokenMap) do
@@ -15546,6 +16053,110 @@ local heroicMirrors = {
     [71787] = 71786, -- Entrail Disgorger
     [71782] = 71783, -- Shatterskull Bonecrusher
     [71780] = 71781, -- Zoid's Firelit Greatsword
+    
+    -- T13 tokens
+    [78183] = 78853, -- Gauntlets of the Corrupted Conqueror
+    [78178] = 78854, -- Gauntlets of the Corrupted Protector
+    [78173] = 78855, -- Gauntlets of the Corrupted Vanquisher
+    [78181] = 78856, -- Leggings of the Corrupted Conqueror
+    [78176] = 78857, -- Leggings of the Corrupted Protector
+    [78171] = 78858, -- Leggings of the Corrupted Vanquisher
+    [78180] = 78859, -- Shoulders of the Corrupted Conqueror
+    [78175] = 78860, -- Shoulders of the Corrupted Protector
+    [78170] = 78861, -- Shoulders of the Corrupted Vanquisher
+    [78184] = 78847, -- Chest of the Corrupted Conqueror
+    [78179] = 78848, -- Chest of the Corrupted Protector
+    [78174] = 78849, -- Chest of the Corrupted Vanquisher
+    [78182] = 78850, -- Crown of the Corrupted Conqueror
+    [78177] = 78851, -- Crown of the Corrupted Protector
+    [78172] = 78852, -- Crown of the Corrupted Vanquisher
+    
+    -- Dragon Soul
+    [77267] = 78366, -- Mosswrought Shoulderguards
+    [77263] = 78365, -- Robe of Glowing Stone
+    [77261] = 78372, -- Mycosynth Wristguards
+    [77271] = 78368, -- Underdweller's Spaulders
+    [77266] = 78370, -- Girdle of Shattered Stone
+    [77269] = 78362, -- Sporebeard Gauntlets
+    [77265] = 78361, -- Pillarfoot Greaves
+    [77270] = 78373, -- Rockhide Bracers
+    [77268] = 78367, -- Brackenshell Shoulderplates
+    [77262] = 78364, -- Petrified Fungal Heart
+    [77214] = 78363, -- Vagaries of Time
+    [77212] = 78371, -- Hand of Morchok
+    [77213] = 78369, -- Razor Saronite Chip
+    [77255] = 78391, -- Cord of the Slain Champion
+    [77260] = 78388, -- Belt of Flayed Skin
+    [77257] = 78393, -- Grotesquely Writhing Bracers
+    [77259] = 78389, -- Treads of Crushed Flesh
+    [77258] = 78390, -- Graveheart Bracers
+    [77204] = 77989, -- Seal of the Seven Signs
+    [77216] = 78392, -- Finger of Zon'ozz
+    [77215] = 78387, -- Horrifying Horn Arbalest
+    [77254] = 78402, -- Interrogator's Bloody Footpads
+    [77252] = 78405, -- Mindstrainer Treads
+    [77253] = 78406, -- Heartblood Wristplates
+    [77219] = 78404, -- Scalpel of Unrelenting Agony
+    [77218] = 78401, -- Spire of Coagulated Globules
+    [77217] = 78403, -- Experimental Specimen Slicer
+    [77203] = 77991, -- Insignia of the Corrupted Mind
+    [77206] = 77990, -- Soulshifter Vortex
+    [77249] = 78417, -- Bracers of the Banished
+    [77248] = 78420, -- Girdle of the Grotesque
+    [77251] = 78415, -- Treads of Dormant Dreams
+    [77250] = 78416, -- Runescriven Demon Collar
+    [78012] = 78419, -- Ring of the Riven
+    [78011] = 78413, -- Signet of Grasping Mouths
+    [77221] = 78418, -- Lightning Rod
+    [77220] = 78414, -- Electrowing Dagger
+    [77243] = 78434, -- Treads of Sordid Screams
+    [77242] = 78435, -- Imperfect Specimens 27 and 28
+    [77247] = 78430, -- Bracers of Looming Darkness
+    [77244] = 78436, -- Dragonfracture Belt
+    [77246] = 78431, -- Stillheart Warboots
+    [78013] = 78432, -- Curled Twilight Claw
+    [77205] = 77992, -- Creche of the Final Dragon
+    [77245] = 78433, -- Ledger of Revolting Rituals
+    [77223] = 78429, -- Morningstar of Heroic Will
+    [77240] = 78446, -- Shadow Wing Armbands
+    [77234] = 78449, -- Janglespur Jackboots
+    [77239] = 78452, -- Goriona's Collar
+    [77241] = 78447, -- Belt of the Beloved Companion
+    [77202] = 77993, -- Starcatcher Compass
+    [77224] = 78445, -- Ataraxis, Cudgel of the Warmaster
+    [77225] = 78451, -- Visage of the Destroyer
+    [77226] = 78448, -- Blackhorn's Mighty Bulwark
+    [77227] = 78450, -- Timepiece of the Bronze Flight
+    [78357] = 78461, -- Gloves of Liquid Smoke
+    [77238] = 78462, -- Molten Blood Footpads
+    [77237] = 78463, -- Belt of Shattered Elementium
+    [77235] = 78464, -- Gauntlets of the Golden Thorn
+    [77236] = 78465, -- Backbreaker Spaulders
+    [77198] = 77995, -- Will of Unbinding
+    [77199] = 77996, -- Heart of Unliving
+    [77197] = 77994, -- Wrath of Unchaining
+    [77200] = 77997, -- Eye of Unmaking
+    [77201] = 77998, -- Resolve of Undying
+    [77195] = 78475, -- Rathrak, the Poisonous Mind
+    [77190] = 78477, -- Ti'tahk, the Steps of Time
+    [77196] = 78476, -- Maw of the Dragonlord
+    [77189] = 78474, -- Blade of the Unmaker
+    [77188] = 78472, -- No'Kaled, the Elements of Death
+    [77194] = 78473, -- Kiril, Fury of Beasts
+    [77193] = 78479, -- Souldrinker
+    [77191] = 78478, -- Gurthalak, Voice of the Deeps
+    [78359] = 78471, -- Vishanka, Jaws of the Earth
+    [77067] = 77069, -- Reins of the Blazing Drake | Life-Binder's Handmaiden
+    [77228] = 78490, -- Infinite Loop
+    [77229] = 78491, -- Signet of Suturing
+    [77231] = 78489, -- Seal of Primordial Shadow
+    [77230] = 78492, -- Breathstealer Band
+    [77232] = 78493, -- Hardheart Ring
+    [77208] = 78000, -- Cunning of the Cruel
+    [77209] = 78001, -- Windward Heart
+    [77207] = 77999, -- Vial of Shadows
+    [77210] = 78002, -- Bone-Link Fetish
+    [77211] = 78003, -- Indomitable Pride
 };
 
 for normal, heroic in pairs(heroicMirrors) do
@@ -15751,6 +16362,10 @@ do
         [{71677, 71684, 71670, 71680, 71687, 71673, 71679, 71686, 71672, 71676, 71683, 71669, 71678, 71685, 71671}] = 391, -- T12 H
         
         [{71617}] = 391, -- Firestone
+        
+        [{78182, 78177, 78172, 78180, 78175, 78170, 78184, 78179, 78174, 78183, 78178, 78173, 78181, 78176, 78171}] = 397, -- T13 N
+        [{78850, 78851, 78852, 78859, 78860, 78861, 78847, 78848, 78849, 78853, 78854, 78855, 78856, 78857, 78858}] = 410, -- T13 H
+        
     }) do
         for _, id in ipairs(ids) do
             LootReserve.Data.ItemLevelOverrides[id] = ilvl
