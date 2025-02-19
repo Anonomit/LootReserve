@@ -11559,6 +11559,9 @@ LootReserve.Data =
     ItemConditions = { },
     
     RecentLootBlacklist = {
+        [226404] = true, -- Tarnished Undermine Real
+        [21229]  = true, -- Qiraji Lord's Insignia
+        [21230]  = true, -- Ancient Qiraji Artifact
         [29434]  = true, -- Badge of Justice (when it was an item in TBC)
         [202269] = true, -- Bounty Satchel (Titan Rune Dungeon: Alpha)
         [208157] = true, -- Bounty Satchel (Titan Rune Dungeon: Beta)
