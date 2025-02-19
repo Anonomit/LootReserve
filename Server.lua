@@ -1407,7 +1407,7 @@ function LootReserve.Server:PrepareSession()
         
         local prefixString     = "^([!¡]+)"
         local reservesStrings  = {"^([!¡]*)reserve[sdr](.*)"};
-        local myResStrings     = {"^([!¡]*)myreserve[sd]", "^([!¡]*)myreserve", "^([!¡]*)myres"};
+        local myResStrings     = {"^([!¡]*)myreserve[sd]?", "^([!¡]*)myres"};
         local optStrings       = {"^([!¡]*)opt%s*(in)", "^([!¡]*)opt%s*(out)"};
         local cancelStrings    = {"^([!¡]*)cancelreserve(.*)", "^([!¡]*)cancelres(.*)", "^([!¡]*)cancel(.*)", "^([!¡]*)unreserve(.*)", "^([!¡]*)unres(.*)", "^([!¡]*)rescancel(.*)", "^([!¡]*)reservecancel(.*)", "^([!¡]*)remove(.*)"};
         local reserveStrings   = {"^([!¡]*)reserve(.*)", "^([!¡]*)res(.*)"};
@@ -1499,18 +1499,18 @@ function LootReserve.Server:PrepareSession()
                 end
             end
             
-            if not command and not text:match(failString) and not (LootReserve:IsMe(sender) and self.SentMessages[LootReserve:FixText(origText)]) and isWhisper then
-                for _, pattern in ipairs(linkResString) do
-                    local args = text:match(pattern);
-                    if args then
-                        command = "reserve";
-                        text = args;
-                        greedy  = true;
-                        reqLink = true;
-                        break;
-                    end
-                end
-            end
+            -- if not command and not text:match(failString) and not (LootReserve:IsMe(sender) and self.SentMessages[LootReserve:FixText(origText)]) and isWhisper then
+            --     for _, pattern in ipairs(linkResString) do
+            --         local args = text:match(pattern);
+            --         if args then
+            --             command = "reserve";
+            --             text = args;
+            --             greedy  = true;
+            --             reqLink = true;
+            --             break;
+            --         end
+            --     end
+            -- end
             
             if not command then return; end
 
