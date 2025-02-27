@@ -2,8 +2,8 @@
 ## Interface-Cata:    40402
 ## Interface-Classic: 11506
 
-## Version: 2025-02-19
-## X-Min-Allowed-Version-Classic: 2025-02-19
+## Version: 2025-02-26
+## X-Min-Allowed-Version-Classic: 2025-02-26
 ## X-Min-Allowed-Version-Fresh:   2025-02-19
 ## X-Min-Allowed-Version-Era:     2025-02-19
 ## X-Min-Allowed-Version-SoD:     2025-02-19
