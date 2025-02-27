@@ -10538,7 +10538,7 @@ LootReserve.Data =
                         78475, 78477, 78476, 0,
                         78474, 78472, 78473, 78479, 78478, 0,
                         78471, 0,
-                        77069, 0,
+                        77067, 77069, 0,
                     },
                 },
                 {
@@ -16177,7 +16177,6 @@ local heroicMirrors = {
     [77193] = 78479, -- Souldrinker
     [77191] = 78478, -- Gurthalak, Voice of the Deeps
     [78359] = 78471, -- Vishanka, Jaws of the Earth
-    [77067] = 77069, -- Reins of the Blazing Drake | Life-Binder's Handmaiden
     [77228] = 78490, -- Infinite Loop
     [77229] = 78491, -- Signet of Suturing
     [77231] = 78489, -- Seal of Primordial Shadow
