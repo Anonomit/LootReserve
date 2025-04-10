@@ -1,12 +1,12 @@
 ## Interface:         40402
 ## Interface-Cata:    40402
-## Interface-Classic: 11506
+## Interface-Classic: 11507
 
-## Version: 2025-03-06
+## Version: 2025-04-10
 ## X-Min-Allowed-Version-Classic: 2025-02-26
 ## X-Min-Allowed-Version-Fresh:   2025-02-19
 ## X-Min-Allowed-Version-Era:     2025-02-19
-## X-Min-Allowed-Version-SoD:     2025-03-06
+## X-Min-Allowed-Version-SoD:     2025-04-10
 
 ## X-Curse-Project-ID: 390790
 ## X-Wago-ID: WL6JpyGv
