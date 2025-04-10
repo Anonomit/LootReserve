@@ -12129,9 +12129,8 @@ LootReserve.Data =
         Rewards       = { },
         HeroicMirrors = { },
     },
+    -- Items that the player may want to win multiple times
     NonUniqueWinnings = {
-        -- Items that the player may want to win multiple times
-        
         -- Sunken Temple
         [220636] = true, -- Atal'ai Blood Icon
         [220637] = true, -- Atal'ai Ritual Token
@@ -12145,8 +12144,8 @@ LootReserve.Data =
         [231512] = true, -- Primal Hakkari Idol (Season of Discovery)
         
         -- AQ40
-        [20928] = true, -- Qiraji Bindings of Command
-        [20932] = true, -- Qiraji Bindings of Dominance
+        [20928]  = true, -- Qiraji Bindings of Command
+        [20932]  = true, -- Qiraji Bindings of Dominance
         [233371] = true, -- Qiraji Bindings of Sovereignty (SoD)
         [233369] = true, -- Qiraji Bindings of Dominance (SoD)
         [233370] = true, -- Qiraji Bindings of Command (SoD)
