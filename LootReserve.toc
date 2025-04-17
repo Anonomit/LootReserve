@@ -2,11 +2,11 @@
 ## Interface-Cata:    40402
 ## Interface-Classic: 11507
 
-## Version: 2025-04-10
+## Version: 2025-04-17
 ## X-Min-Allowed-Version-Classic: 2025-02-26
 ## X-Min-Allowed-Version-Fresh:   2025-02-19
 ## X-Min-Allowed-Version-Era:     2025-02-19
-## X-Min-Allowed-Version-SoD:     2025-04-10
+## X-Min-Allowed-Version-SoD:     2025-04-17
 
 ## X-Curse-Project-ID: 390790
 ## X-Wago-ID: WL6JpyGv
