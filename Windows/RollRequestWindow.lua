@@ -1,6 +1,6 @@
 local LibCustomGlow = LibStub("LibCustomGlow-1.0");
 
-local function RollRequested(self, sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered, example)
+local function RollRequested(self, sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered, autoRoll, example)
     local frame = LootReserveRollRequestWindow;
     
     if item:GetID() == 0 and self.RollRequest and self.RollRequest.Example then
@@ -19,19 +19,25 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
 
     local _, myCount = LootReserve:GetReservesData(players, LootReserve:Me());
     
-    if LootReserve.Client.Settings.RollRequestAutoRollReserved and not custom and (myCount or 0) > 0 then
-        LootReserve:PrintMessage("Automatically rolling on reserved item: %s%s", item:GetLink(), (myCount or 1) > 1 and ("x" .. myCount) or "");
-        if not LootReserve.Client.Settings.RollRequestAutoRollNotified then
-            LootReserve:PrintError("Automatic rolling on reserved items can be disabled in Reserve window settings.");
-            LootReserve.Client.Settings.RollRequestAutoRollNotified = true;
-        end
-        for i = 1, myCount or 1 do
-            RandomRoll(1, 100);
-        end
-        return;
-    end
-    
     if not example then
+        print(LootReserve.Client.Settings.RollRequestAutoRollReserved, autoRoll)
+        if LootReserve.Client.Settings.RollRequestAutoRollReserved == LootReserve.Constants.ReservesAutoRoll.Always then
+            autoRoll = true;
+        elseif LootReserve.Client.Settings.RollRequestAutoRollReserved == LootReserve.Constants.ReservesAutoRoll.Never then
+            autoRoll = false;
+        end
+        if autoRoll and not custom and (myCount or 0) > 0 then
+            LootReserve:PrintMessage("Automatically rolling on reserved item: %s%s", item:GetLink(), (myCount or 1) > 1 and ("x" .. myCount) or "");
+            if not LootReserve.Client.Settings.RollRequestAutoRollNotified then
+                LootReserve:PrintError("Automatic rolling on reserved items can be disabled in Reserve window settings. (/reserve)");
+                LootReserve.Client.Settings.RollRequestAutoRollNotified = true;
+            end
+            for i = 1, myCount or 1 do
+                RandomRoll(1, 100);
+            end
+            return;
+        end
+        
         if not self.Settings.RollRequestShow then return; end
         if not LootReserve:Contains(players, LootReserve:Me()) then return; end
         if custom and not self.Settings.RollRequestShowUnusable and (not LootReserve.ItemConditions:IsItemUsableByMe(item:GetID()) and (not self.Settings.RollRequestShowUnusableBoE or item:IsBindOnPickup())) then return; end

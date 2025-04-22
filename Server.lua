@@ -55,6 +55,7 @@ LootReserve.Server =
         RollHistoryHideEmpty            = true,
         RollHistoryHideNotOwed          = false,
         RollMasterLoot                  = true,
+        PreferClientsAutoRollReserved   = true,
         AcceptAllRollFormats            = false,
         AcceptRollsAfterTimerEnded      = true,
         AllowMultipleRollsOnReserves    = true,

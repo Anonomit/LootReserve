@@ -100,6 +100,11 @@ LootReserve.Constants.RollType = {
     Passed    = -1,
     Deleted   = -2,
 };
+LootReserve.Constants.ReservesAutoRoll = {
+    Never  = 0,
+    Host   = 1,
+    Always = 2,
+};
 LootReserve.Constants.LoadState = {
     NotStarted  = 0,
     Started     = 1,
@@ -469,10 +474,10 @@ end)();
     setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
     Constants[output] =
     {
-        [OK]                       = "",
-        [NotInRaid]                = "You are not in the raid",
-        [NoSession]                = "Loot reserves aren't active",
-        [NotMember]                = "You are not participating in loot reserves",
+        [OK]        = "",
+        [NotInRaid] = "You are not in the raid",
+        [NoSession] = "Loot reserves aren't active",
+        [NotMember] = "You are not participating in loot reserves",
     };
 end)();
 
@@ -481,8 +486,8 @@ end)();
     setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
     Constants[output] =
     {
-        [NoSession]         = "Loot reserves aren't active",
-        [NotMember]         = "You are not participating in loot reserves",
+        [NoSession] = "Loot reserves aren't active",
+        [NotMember] = "You are not participating in loot reserves",
     };
 end)();
 
@@ -527,6 +532,17 @@ end)();
     {
         [Reserve]  = "Reserve",
         [RaidRoll] = "Raid-Roll",
+    };
+end)();
+
+(function()
+    local input, output = LootReserve.Constants.ReservesAutoRoll, "ReservesAutoRollText";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
+        [Never]  = "Never",
+        [Host]   = "Use host's preference",
+        [Always] = "Always",
     };
 end)();
 

@@ -38,9 +38,9 @@ local Opcodes =
 local LAST_UNCOMPRESSED_OPCODE = Opcodes.Hello;
 local MAX_UNCOMPRESSED_SIZE = 20;
 
-local COMM_DEBUG_SHOW_MESSAGES = nil;
-local COMM_DEBUG_CANCEL_BYPASS = nil;
-local COMM_FORCE_COMPATIBLE    = nil;
+local COMM_DEBUG_SHOW_MESSAGES;
+local COMM_DEBUG_CANCEL_BYPASS;
+local COMM_FORCE_COMPATIBLE;
 --@debug@
     COMM_DEBUG_SHOW_MESSAGES = false;
     COMM_DEBUG_CANCEL_BYPASS = false;
@@ -77,11 +77,17 @@ local function SendCommMessage(prefix, channel, target, opcode, ...)
                 break;
             end
         end
-        LootReserve:debug("Sending", format("(%s)", prefix), channel, target, opKey or opcode, ...);
+        local params = { };
+        for i = 1, select("#", ...) do
+            local param = select(i, ...)
+            params[i] = format("|cffffd706%s:|r\"%s\"", type(param), tostring(param))
+        end
+        LootReserve:debug("Sending", format("(%s)", prefix), channel, target, opKey or opcode, table.concat(params, ", "));
     end
     
     local message = "";
-    for _, part in ipairs({ ... }) do
+    for i = 1, select("#", ...) do
+        local part = select(i, ...)
         if type(part) == "boolean" then
             message = message .. tostring(part and 1 or 0) .. "|";
         else
@@ -180,7 +186,12 @@ function LootReserve.Comm:StartListening()
                             break;
                         end
                     end
-                    LootReserve:debug(format("Received (%s)", prefix), channel, sender, opKey or opcode, strsplit("|", message));
+                    local params = { };
+                    for i, param in ipairs({strsplit("|", message)}) do
+                        params[i] = format("\"%s\"", tostring(param))
+                    end
+                    -- print(type(strsplit("|", message)), #strsplit("|", message), strsplit("|", message))
+                    LootReserve:debug(format("Received (%s)", prefix), channel, sender, opKey or opcode, table.concat(params, ", "));
                 end
                 if COMM_DEBUG_CANCEL_BYPASS or not LootReserve:IsMe(sender) then
                     handler(sender, strsplit("|", message));
@@ -851,20 +862,21 @@ end
 
 -- RequestRoll
 function LootReserve.Comm:BroadcastRequestRoll(item, players, custom, duration, maxDuration, phases, tiered)
-    LootReserve.Comm:SendRequestRoll(nil, item, players, custom, duration, maxDuration, phases or { }, tiered);
+    LootReserve.Comm:SendRequestRoll(nil, item, players, custom, duration, maxDuration, phases or { }, tiered, LootReserve.Server.Settings.PreferClientsAutoRollReserved);
 end
-function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duration, maxDuration, phases, tiered)
+function LootReserve.Comm:SendRequestRoll(target, item, players, custom, duration, maxDuration, phases, tiered, autoRoll)
     LootReserve.Comm:Send(target, Opcodes.RequestRoll,
         format("%d,%d", item:GetID(), item:GetSuffix() or 0),
         strjoin(",", unpack(players)),
         custom == true,
         format("%.2f", duration or 0),
         maxDuration or 0,
-        tiered and strjoin(",", unpack(phases or { })) or (phases or { })[1],
+        tiered and strjoin(",", unpack(phases or { })) or (phases or { })[1] or "",
         LootReserve.Server.Settings.AcceptRollsAfterTimerEnded,
-        tiered);
+        tiered,
+        LootReserve.Server.Settings.PreferClientsAutoRollReserved);
 end
-LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered)
+LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered, autoRoll)
     local id, suffix = strsplit(",", item);
     item = LootReserve.ItemCache:Item(tonumber(id), tonumber(suffix));
     custom = tonumber(custom) == 1;
@@ -873,6 +885,7 @@ LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players,
     phases = phases and #phases > 0 and phases or "";
     acceptRollsAfterTimerEnded = tonumber(acceptRollsAfterTimerEnded) == 1;
     tiered = tonumber(tiered) == 1;
+    autoRoll = tonumber(autoRoll) == 1 or tonumber(autoRoll) == nil; -- in case host is out of date
     
     
     if LootReserve.Client.SessionServer == sender or custom then
@@ -886,7 +899,7 @@ LootReserve.Comm.Handlers[Opcodes.RequestRoll] = function(sender, item, players,
         else
             phases = { };
         end
-        LootReserve.Client:RollRequested(sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered);
+        LootReserve.Client:RollRequested(sender, item, players, custom, duration, maxDuration, phases, acceptRollsAfterTimerEnded, tiered, autoRoll);
     end
 end
 

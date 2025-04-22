@@ -28,7 +28,7 @@ LootReserve.Client =
         RollRequestShowUnusable     = false,
         RollRequestShowUnusableBoE  = false,
         RollRequestGlowOnlyReserved = true,
-        RollRequestAutoRollReserved = true,
+        RollRequestAutoRollReserved = LootReserve.Constants.ReservesAutoRoll.Host,
         RollRequestAutoCloseTiered  = false,
         RollRequestAutoRollNotified = false,
         RollRequestWinnerReaction   = true,
@@ -185,6 +185,15 @@ function LootReserve.Client:Load()
     -- 2023-06-20: Reset auto roll notification
     if versionSave < "2023-06-20" then
         self.Settings.RollRequestAutoRollNotified = false;
+    end
+    
+    -- 2025-04-22: Update auto roll setting
+    if versionSave < "2025-04-22" then
+        if self.Settings.RollRequestAutoRollNotified then
+            self.Settings.RollRequestAutoRollReserved = self.Settings.RollRequestAutoRollReserved and LootReserve.Constants.ReservesAutoRoll.Always or LootReserve.Constants.ReservesAutoRoll.Never;
+        else
+            self.Settings.RollRequestAutoRollReserved = LootReserve.Constants.ReservesAutoRoll.Host;
+        end
     end
     
     LootReserveGlobalSave.Client.Version = LootReserve.Version;

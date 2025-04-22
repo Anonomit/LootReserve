@@ -400,6 +400,58 @@
 			<Button inherits="LootReserveSettingsButtonTemplate">
 				<Scripts>
 					<OnClick>
+						local function GetSettingContainerAndKey(setting)
+							if type(setting) == "table" then
+								local container = LootReserve.Client.Settings;
+								for i, key in ipairs(setting) do
+									if i == #setting then
+										return container, key;
+									else
+										container = container[key];
+									end
+								end
+							else
+								return LootReserve.Client.Settings, setting;
+							end
+						end
+						local function GetValue(setting)
+							local container, key = GetSettingContainerAndKey(setting);
+							return container[key];
+						end
+						local function SetValue(setting, value)
+							local container, key = GetSettingContainerAndKey(setting);
+							container[key] = value;
+							return value;
+						end
+						
+						local function MakeMenuItem(text, setting, tooltip, checked, func)
+							return
+							{
+								text = text,
+								arg1 = setting,
+								func = func,
+								checked = checked,
+								tooltipText = tooltip,
+								DisableIf = function(self, condition) self.disabled = condition; return self; end,
+							};
+						end
+						local function MakeMenuRadio(text, setting, value, tooltip, callback)
+							return MakeMenuItem(text, setting, tooltip,
+								function(info)
+									return GetValue(setting) == value;
+								end,
+								function(info)
+									value = SetValue(setting, value);
+									if callback then
+										callback(value);
+									end
+								end);
+						end
+						
+						local function RefreshReservesAutoRoll()
+							LootReserve:ReopenMenu(self, "#autoRoll");
+						end
+						
 						local cooldown = math.max(0, (LootReserve.Client.ServerSearchTimeoutTime or 0) - time());
 						local menu =
 						{
@@ -411,9 +463,15 @@
 							{ text = "Show For Unusable Items", checked = LootReserve.Client.Settings.RollRequestShowUnusable, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShowUnusable = checked; end },
 							{ text = "Consider BoE Items Usable", checked = LootReserve.Client.Settings.RollRequestShowUnusableBoE, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestShowUnusableBoE = checked; end },
 							-- { text = "Glow Only For Reserved Items", checked = LootReserve.Client.Settings.RollRequestGlowOnlyReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestGlowOnlyReserved = checked; end },
-							{ text = "Auto Roll On Reserved Items", checked = LootReserve.Client.Settings.RollRequestAutoRollReserved, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestAutoRollReserved = checked; end },
 							{ text = "Always Close Popup After Rolling", checked = LootReserve.Client.Settings.RollRequestAutoCloseTiered, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestAutoCloseTiered = checked; end },
-							{ text = "Open Example Popup", func = function() if LootReserve.Client.RollRequest then return; end LootReserve.Client:RollRequested(LootReserve:Me(), LootReserve.ItemCache:Item(18582), { LootReserve:Me() }, true, 30, 30, {"Test Spec"}, false, false, true); end, disabled = LootReserve.Client.RollRequest and true or false },
+							
+							{ text = format("Auto Roll On Reserved Items: |cFF00FF00%s|r", LootReserve.Constants.ReservesAutoRollText[LootReserve.Client.Settings.RollRequestAutoRollReserved] or "???"), arg1 = "#autoRoll", menuList = {
+								MakeMenuRadio(LootReserve.Constants.ReservesAutoRollText[LootReserve.Constants.ReservesAutoRoll.Never],  "RollRequestAutoRollReserved", LootReserve.Constants.ReservesAutoRoll.Never,  "Never auto roll on reserved items.",                   RefreshReservesAutoRoll),
+								MakeMenuRadio(LootReserve.Constants.ReservesAutoRollText[LootReserve.Constants.ReservesAutoRoll.Host],   "RollRequestAutoRollReserved", LootReserve.Constants.ReservesAutoRoll.Host,   "Auto roll on reserved items only if host prefers it.", RefreshReservesAutoRoll),
+								MakeMenuRadio(LootReserve.Constants.ReservesAutoRollText[LootReserve.Constants.ReservesAutoRoll.Always], "RollRequestAutoRollReserved", LootReserve.Constants.ReservesAutoRoll.Always, "Always auto roll on reserved items.",                  RefreshReservesAutoRoll),
+							} },
+							
+							{ text = "Open Example Popup", func = function() if LootReserve.Client.RollRequest then return; end LootReserve.Client:RollRequested(LootReserve:Me(), LootReserve.ItemCache:Item(18582), { LootReserve:Me() }, true, 30, 30, {"Test Spec"}, false, false, false, true); end, disabled = LootReserve.Client.RollRequest and true or false },
 							LootReserve:MakeMenuSeparator(),
 							{ text = "Roll Reactions", isTitle = true },
 							{ text = "React When Winning", tooltipText = "Enable to make your character cheer or congratulate you when you win an item.|n|nOnly you can hear the reaction.", checked = LootReserve.Client.Settings.RollRequestWinnerReaction, func = function(_, _, _, checked) LootReserve.Client.Settings.RollRequestWinnerReaction = checked; end },
