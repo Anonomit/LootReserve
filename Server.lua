@@ -1943,8 +1943,8 @@ function LootReserve.Server:StartSession()
         local member = self.CurrentSession.Members[player] or
         {
             Class         = importedMember.Class,
-            ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
-            ReservesDelta = 0,
+            ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer + importedMember.ReservesDelta,
+            ReservesDelta = importedMember.ReservesDelta,
             ReservedItems = { },
             RollBonus     = setmetatable({ }, { __index = function() return 0 end }),
             Locked        = nil,
