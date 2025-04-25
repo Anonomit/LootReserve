@@ -59,6 +59,9 @@ LootReserve.Client =
     SelectedCategory = nil,
     
     RollOnLoot = nil,
+    
+    sortBySourceIndexMemo = { },
+    sortBySourceFromMemo  = { },
 };
 
 
@@ -426,6 +429,9 @@ function LootReserve.Client:ResetSession(refresh)
     self.Multireserve      = 1;
     self.PendingItems      = { };
     self.PendingOpts       = nil;
+    
+    wipe(self.sortBySourceIndexMemo);
+    wipe(self.sortBySourceFromMemo);
     
     for _, timer in pairs(self.PendingTimers) do
         timer:Cancel();
