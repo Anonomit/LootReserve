@@ -2408,6 +2408,7 @@ LootReserve.Data =
                         241167, 241165, 241154, 241164, 241185, 241079, 241162, 241158, 0,
                         241038, 241069, 0,
                         240849, 240924, 0,
+                        241212, 0,
                         239216, 0,
                     },
                 },
@@ -2429,7 +2430,7 @@ LootReserve.Data =
                         239712, 239708, 239758, 239117, 0,
                         241153, 241175, 241075, 241174, 241080, 0,
                         241070, 0,
-                        240998, 241003, 241008, 240853, 240854, 240919, 0,
+                        240998, 241003, 241008, 240853, 240854, 240919, 241015, 0,
                         237302, 0,
                     },
                 },
@@ -2438,8 +2439,9 @@ LootReserve.Data =
                     Loot =
                     {
                         239721, 239709, 239757, 239117, 0,
+                        241078, 241156, 241160, 241161, 0,
                         241072, 241031, 241037, 0,
-                        242436, 241004, 240844, 240923, 240842, 0,
+                        242436, 241004, 241012, 240844, 240923, 240842, 0,
                     },
                 },
                 {
@@ -2450,10 +2452,10 @@ LootReserve.Data =
                         239215, 0,
                         242366, 0,
                         241172, 0,
-                        241039, 241029, 0,
-                        241001, 240851, 240921, 240920, 0,
+                        241039, 241032, 241029, 241024, 0,
+                        241001, 241006, 241021, 240852, 240851, 240921, 240920, 240841, 0,
                         239695, 0,
-                        239216, 0,
+                        --[[239696, ]]239216, 0,
                     },
                 },
                 { Separator = true },
@@ -2461,28 +2463,9 @@ LootReserve.Data =
                     Name = "Trash",
                     Loot =
                     {
+                        242425, 242426, 242428, 242430, 242431, 242433, 0,
                         241241, 0,
                         238945, 0,
-                    },
-                },
-                { Separator = true },
-                {
-                    Name = "Unknown",
-                    Loot =
-                    {
-                        241078, 241156, 241160, 241161, 0,
-                        241024, 241032, 0,
-                        241012, 241021, 241006, 240852, 240841, 241015, 0,
-                    },
-                },
-                {
-                    Name = "Questionable",
-                    IndentType = 1,
-                    Loot =
-                    {
-                        240195, 0,
-                        241121, 241123, 0,
-                        241212, 0,
                     },
                 },
                 { Separator = true },
@@ -12078,6 +12061,12 @@ LootReserve.Data =
         
         -- Ruined Lightforged Blade
         [239196] = 89445,
+        
+        -- Hilt of the Ashbringer
+        [239696] = 89300,
+        
+        -- Charred Emblem
+        [239215] = 89444,
             
         -- Magtheridon's Head
         [32385] = 11002,
@@ -12259,12 +12248,17 @@ do
         -- Caladboulder
         HideItem(238945);
         
-        -- Lucky Doubloon
-        HideItem(241241);
-        
         -- Corrupted Ashbringer
         HideItem(239196);
         HideItem(239216);
+        
+        -- Putress' Diary Pages
+        HideItem(242425);
+        HideItem(242426);
+        HideItem(242428);
+        HideItem(242430);
+        HideItem(242431);
+        HideItem(242433);
     end
     
     -- Scepter of the Shifting Sands quest items
@@ -13596,6 +13590,12 @@ if LootReserve:GetCurrentExpansion() == 0 then
         -- Scarlet Enclave weapons
         ApplySingleFactionRestriction(240920, "Alliance");
         ApplySingleFactionRestriction(240921, "Horde");
+        
+        -- Scarlet Enclave shaman/paladin gear
+        ApplySingleFactionRestriction(241182, "Alliance")
+        ApplySingleFactionRestriction(241161, "Alliance")
+        ApplySingleFactionRestriction(241181, "Horde")
+        ApplySingleFactionRestriction(241160, "Horde")
         
         -- Scarlet Enclave set items
         ApplySingleFactionRestriction(240040, "Alliance")
@@ -15041,6 +15041,9 @@ local tokenMap = {
     
     -- Strings of Fate
     [242365] = {240837},
+    
+    -- Putress' Diary
+    [242436] = {242435, 242434, 242432, 242429, 242427, 241020},
     
     -- Charred Emblem
     [239215] = {242315, 242314, 242317, 242316},
@@ -16735,26 +16738,6 @@ local heroicMirrors = {
     [77207] = 77999, -- Vial of Shadows
     [77210] = 78002, -- Bone-Link Fetish
     [77211] = 78003, -- Indomitable Pride
-    
-    
-    -- Scarlet Enclave guesses
-    
-    -- Putress' Diary
-    [242435] = 242436,
-    [242434] = 242436,
-    [242432] = 242436,
-    [242429] = 242436,
-    [242427] = 242436,
-    [241020] = 242436,
-    [242425] = 242436,
-    [242426] = 242436,
-    [242428] = 242436,
-    [242430] = 242436,
-    [242431] = 242436,
-    [242433] = 242436,
-    
-    -- Reborn Dagger
-    [241123] = 241121,
 };
 
 for normal, heroic in pairs(heroicMirrors) do
