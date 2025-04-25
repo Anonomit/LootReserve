@@ -190,8 +190,8 @@ function LootReserve.Client:Load()
         self.Settings.RollRequestAutoRollNotified = false;
     end
     
-    -- 2025-04-22: Update auto roll setting
-    if versionSave < "2025-04-22" then
+    -- 2025-04-25: Update auto roll setting
+    if versionSave < "2025-04-25" then
         if self.Settings.RollRequestAutoRollNotified then
             self.Settings.RollRequestAutoRollReserved = self.Settings.RollRequestAutoRollReserved and LootReserve.Constants.ReservesAutoRoll.Always or LootReserve.Constants.ReservesAutoRoll.Never;
         else
