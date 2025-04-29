@@ -243,13 +243,18 @@ function LootReserve.Client:UpdateLootList()
         return false;
     end
     
-    local function getSortingSourceHelper(item)
-        local customIndex = 0;
+    local getSortingSourceHelper = coroutine.create(function(item)
+        local searchID = LootReserve.ItemCache(item):GetID();
         for itemID, conditions in pairs(self.ItemConditions) do
             if conditions.Custom then
-                customIndex = customIndex + 1;
-                if itemID == item:GetID() then
-                    return customIndex;
+                local loot = LootReserve.ItemCache(itemID);
+                if not self.sortBySourceIndexMemo[loot] then
+                    self.sortBySourceIndexMemo[loot] = searchID;
+                    self.sortBySourceFromMemo[loot]  = "Custom Item";
+                end
+                if itemID == searchID then
+                    item = LootReserve.ItemCache(coroutine.yield());
+                    searchID = LootReserve.ItemCache(item):GetID();
                 end
             end
         end
@@ -262,21 +267,31 @@ function LootReserve.Client:UpdateLootList()
                     end
                     if child.Loot then
                         for lootIndex, loot in ipairs(child.Loot) do
-                            if LootReserve.ItemCache(loot):GetID() == item:GetID() then
-                                return (10^8)*(category.Sort or id) + (10^4)*childIndex + lootIndex, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name);
+                            if loot ~= 0 then
+                                local loot = LootReserve.ItemCache(loot);
+                                if not self.sortBySourceIndexMemo[loot] then
+                                    self.sortBySourceIndexMemo[loot] = (10^8)*(category.Sort or id) + (10^4)*childIndex + lootIndex;
+                                    local categoryName = self.SessionServer and category.NameShort or category.Name;
+                                    self.sortBySourceFromMemo[loot]  = child.IndentType == 1 and format("%s > %s > %s", categoryName, parentCategoryName, child.Name) or format("%s > %s", categoryName, child.Name);
+                                end
+                                if loot:GetID() == searchID then
+                                    item = LootReserve.ItemCache(coroutine.yield());
+                                    searchID = LootReserve.ItemCache(item):GetID();
+                                end
                             end
                         end
                     end
                 end
             end
         end
-        return 10^12;
-    end
+    end);
     local function getSortingSource(item)
         if not self.sortBySourceIndexMemo[item] then
-            self.sortBySourceIndexMemo[item], self.sortBySourceFromMemo[item] = getSortingSourceHelper(item);
+            if coroutine.status(getSortingSourceHelper) ~= "dead" then
+                coroutine.resume(getSortingSourceHelper, item);
+            end
         end
-        return self.sortBySourceIndexMemo[item];
+        return self.sortBySourceIndexMemo[item] or item:GetID();
     end
     
     local function sortBySource(_, _, aItemID, bItemID)
@@ -285,7 +300,12 @@ function LootReserve.Client:UpdateLootList()
     
     local function OrderedSource(itemIDs)
         for itemID in pairs(itemIDs) do
-            getSortingSource(LootReserve.ItemCache:Item(itemID)); -- find the source even there's only one item in the list
+            local item = LootReserve.ItemCache(itemID);
+            if not self.sortBySourceIndexMemo[item] then
+                if coroutine.status(getSortingSourceHelper) ~= "dead" then
+                    coroutine.resume(getSortingSourceHelper, item); -- find the source even there's only one item in the list
+                end
+            end
         end
         return LootReserve:Ordered(itemIDs, sortBySource)
     end
@@ -404,7 +424,8 @@ function LootReserve.Client:UpdateLootList()
                                 local match = false;
                                 if item:IsCached() then
                                     if matchesFilter(item, self.ItemReserves[itemID], filter, category.Name, child.Name) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
-                                        createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
+                                        local categoryName = self.SessionServer and category.NameShort or category.Name;
+                                        createFrame(item, child.IndentType == 1 and format("%s > %s > %s", categoryName, parentCategoryName, child.Name) or format("%s > %s", categoryName, child.Name));
                                         alreadyFoundItems[item] = true;
                                         match = true;
                                     end
@@ -416,7 +437,8 @@ function LootReserve.Client:UpdateLootList()
                                         local reward = LootReserve.ItemCache:Item(rewardID);
                                         if reward:IsCached() then
                                             if item:IsCached() and matchesFilter(reward, self.ItemReserves[rewardID], filter, category.Name, child.Name) and LootReserve.ItemConditions:IsItemVisibleOnClient(itemID) then
-                                                createFrame(item, child.IndentType == 1 and format("%s > %s > %s", category.NameShort, parentCategoryName, child.Name) or format("%s > %s", category.NameShort, child.Name));
+                                                local categoryName = self.SessionServer and category.NameShort or category.Name;
+                                                createFrame(item, child.IndentType == 1 and format("%s > %s > %s", categoryName, parentCategoryName, child.Name) or format("%s > %s", categoryName, child.Name));
                                                 alreadyFoundItems[item] = true;
                                                 break;
                                             end

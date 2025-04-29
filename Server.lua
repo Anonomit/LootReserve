@@ -115,6 +115,8 @@ LootReserve.Server =
     PendingReservesListUpdate = nil,
     
     PendingRecentLootAttemptsWipe = nil,
+    
+    sortBySourceIndexMemo = { },
 };
 
 StaticPopupDialogs["LOOTRESERVE_CONFIRM_FORCED_CANCEL_RESERVE"] =
@@ -1974,6 +1976,8 @@ function LootReserve.Server:StartSession()
     end
     table.wipe(self.NewSessionSettings.ImportedMembers);
     table.wipe(self.CurrentSession.Settings.ImportedMembers);
+    
+    wipe(self.sortBySourceIndexMemo);
 
     LootReserve.Comm:BroadcastVersion();
     LootReserve.Comm:BroadcastSessionInfo(true);
@@ -2098,6 +2102,8 @@ function LootReserve.Server:ResetSession()
 
     self.CurrentSession = nil;
     self.SaveProfile.CurrentSession = self.CurrentSession;
+    
+    wipe(self.sortBySourceIndexMemo);
 
     self:UpdateReserveList();
     self:UpdateRollListButtons();

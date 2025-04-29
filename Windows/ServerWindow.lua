@@ -273,42 +273,50 @@ function LootReserve.Server:UpdateReserveList(lockdown)
         end
         return name:upper();
     end
-    local function getSortingSourceHelper(item)
-        if LootReserve:IsLootingItem(item) then
-            return 0;
-        end
-        local customIndex = 0;
+    local getSortingSourceHelper = coroutine.create(function(item)
+        local searchID = LootReserve.ItemCache(item):GetID();
         for itemID, conditions in pairs(self.CurrentSession.ItemConditions) do
             if conditions.Custom then
-                customIndex = customIndex + 1;
-                if itemID == item then
-                    return customIndex;
+                local loot = LootReserve.ItemCache(itemID);
+                if not self.sortBySourceIndexMemo[loot] then
+                    self.sortBySourceIndexMemo[loot] = searchID;
+                end
+                if itemID == searchID then
+                    item = LootReserve.ItemCache(coroutine.yield());
+                    searchID = LootReserve.ItemCache(item):GetID();
                 end
             end
         end
-        local item = LootReserve.ItemCache(item);
         for id, category in LootReserve:OrderedMemo(LootReserve.Data.Categories, LootReserve.Data.CategorySorter) do
             if category.Children and (not self.CurrentSession or LootReserve:Contains(self.CurrentSession.Settings.LootCategories, id)) and LootReserve.Data:IsCategoryVisible(category) then
                 for childIndex, child in ipairs(category.Children) do
                     if child.Loot then
                         for lootIndex, loot in ipairs(child.Loot) do
-                            if LootReserve.ItemCache(loot) == item then
-                                return (10^8)*childIndex + (10^6)*lootIndex + id;
+                            if loot ~= 0 then
+                                local loot = LootReserve.ItemCache(loot);
+                                if not self.sortBySourceIndexMemo[loot] then
+                                    self.sortBySourceIndexMemo[loot] = (10^8)*(category.Sort or id) + (10^4)*childIndex + lootIndex;
+                                    local categoryName = self.SessionServer and category.NameShort or category.Name;
+                                end
+                                if loot:GetID() == searchID then
+                                    item = LootReserve.ItemCache(coroutine.yield());
+                                    searchID = LootReserve.ItemCache(item):GetID();
+                                end
                             end
                         end
                     end
                 end
             end
         end
-        return 100000000;
-    end
-    local sourceMemo = { };
+    end);
     local function getSortingSource(reserve)
-        local item = reserve.Item;
-        if not sourceMemo[item] then
-            sourceMemo[item] = getSortingSourceHelper(item);
+        local item = LootReserve.ItemCache(reserve.Item);
+        if not self.sortBySourceIndexMemo[item] then
+            if coroutine.status(getSortingSourceHelper) ~= "dead" then
+                coroutine.resume(getSortingSourceHelper, item);
+            end
         end
-        return sourceMemo[item];
+        return self.sortBySourceIndexMemo[item] or item:GetID();
     end
     local function getSortingLooter(reserve)
         if LootReserve:IsLootingItem(reserve.Item) then
