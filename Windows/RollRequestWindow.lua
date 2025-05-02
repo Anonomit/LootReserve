@@ -20,7 +20,6 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     local _, myCount = LootReserve:GetReservesData(players, LootReserve:Me());
     
     if not example then
-        print(LootReserve.Client.Settings.RollRequestAutoRollReserved, autoRoll)
         if LootReserve.Client.Settings.RollRequestAutoRollReserved == LootReserve.Constants.ReservesAutoRoll.Always then
             autoRoll = true;
         elseif LootReserve.Client.Settings.RollRequestAutoRollReserved == LootReserve.Constants.ReservesAutoRoll.Never then

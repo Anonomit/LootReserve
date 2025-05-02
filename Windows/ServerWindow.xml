@@ -1024,11 +1024,10 @@
 										disabled = not condition,
 										func = function(info)
 											local frame = self:GetParent():GetParent();
-											if not frame.Roll then LootReserve:debug("test") return; end
+											if not frame.Roll then return; end
 											local recipient = UnitIsPlayer("target") and UnitIsConnected("target") and UnitNameUnmodified("target");
 											if info.arg1 == "WHISPER" and not recipient then
 												LootReserve:PrintError("Target is not a valid player to whisper.");
-												LootReserve:debug("test2")
 												return;
 											end
 
