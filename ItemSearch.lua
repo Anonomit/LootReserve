@@ -156,7 +156,11 @@ function LootReserve.ItemSearch:FindItemByName(command)
                 LootReserve:PrintMessage("Not showing %d additional items.", #items - self.ChatLinksMax);
                 break;
             end
-            print(format("  %s  (ID: %d)", item:GetLink(), item:GetID()));
+            if item:Exists() then
+                LootReserve:PrintMessage("  %s  (ID: %d)", item:GetLink(), item:GetID());
+            else
+                LootReserve:PrintMessage("  [Unknown item]  (ID: %d)", item:GetID());
+            end
         end
     end
 end
