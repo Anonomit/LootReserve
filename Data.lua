@@ -12009,6 +12009,7 @@ LootReserve.Data =
     },
     
     -- Items which start a quest that can only be completed one time
+    -- It's okay if the item doesn't technically start the quest, as long as the quest can only be started AFTER looting the item
     QuestStarters = {
         -- Perfect Blackfathom Pearl
         [209693] = 78916,
@@ -12061,6 +12062,8 @@ LootReserve.Data =
         
         -- Wing of Balnazzar (Season of Discovery)
         [242365] = 90625,
+        -- Mature Light Dragon Sinew (Season of Discovery)
+        [242364] = 90627,
         
         -- Ruined Lightforged Blade
         [239196] = 89445,

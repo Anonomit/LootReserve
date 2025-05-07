@@ -156,23 +156,23 @@ local function IsItemUsable(itemID, playerClass, isMe)
         numOwned = GetItemCount(itemID, true) - LootReserve:GetTradeableItemCount(itemID);
     end
     
-    -- If item starts a quest, make sure the quest is not completed and I do not already own the item
-    -- If item requires a quest to loot, make sure the quest is not completed, I am on it, and I do not already own the item
+    -- If item starts a quest, fail if I already own the item or if the quest is already completed. Don't return true from this - it may stil be unusable if the quest is class-specific
+    -- If item requires a quest to loot, make sure the quest is started and not completed, and I do not already own the item
     if isMe then
         local questStartID = LootReserve.Data:GetQuestStarter(itemID);
         local questDropID  = LootReserve.Data:GetQuestDropRequirement(itemID);
         if questStartID or questDropID then
+            if numOwned > 0 then
+                return false;
+            end
             if questStartID and C_QuestLog.IsQuestFlaggedCompleted(questStartID) then
                 return false;
             end
             if questDropID and C_QuestLog.IsQuestFlaggedCompleted(questDropID) then
                 return false;
             end
-            if numOwned > 0 then
-                return false;
-            end
         end
-        if questDropID then
+        if questDropID then -- Don't consider quest starters here since owning the item is a better indicator
             local found = false;
             local collapsedHeaders = { };
             local i = 1;
