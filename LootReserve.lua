@@ -1132,12 +1132,8 @@ function LootReserve:GetItemDescription(itemID, noTokenRedirect)
         itemText = itemText .. itemType;
     end
     
-    if bindType == Enum.ItemBind.OnAcquire then
-        -- itemText = itemText .. "  (BoP)";
-    elseif bindType == Enum.ItemBind.OnEquip then
-        itemText = itemText .. "  (BoE)";
-    elseif itemText == Enum.ItemBind.OnUse then
-        itemText = itemText .. "  (BoU)";
+    if bindType ~= Enum.ItemBind.OnAcquire then
+        itemText = "|TInterface\\MINIMAP\\TRACKING\\Auctioneer:0|t " .. itemText;
     end
     
     return itemText;
