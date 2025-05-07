@@ -11994,6 +11994,7 @@ LootReserve.Data =
         },
     },
     ItemConditions = { },
+    ItemUsableOverride = { },
     
     RecentLootBlacklist = {
         [226404] = true, -- Tarnished Undermine Real
@@ -12160,12 +12161,11 @@ local function HideItem(itemID)
     end
 end
 
-local function ApplyClassRestriction(itemID, classMask)
-    if LootReserve.Data.ItemConditions[itemID] then
-        LootReserve.Data.ItemConditions[itemID] = LootReserve:Deepcopy(LootReserve.Data.ItemConditions[itemID]);
-        LootReserve.Data.ItemConditions[itemID]["ClassMask"] = classMask;
-    else
-        LootReserve.Data.ItemConditions[itemID] = { ClassMask = classMask };
+local function ApplyClassRestriction(itemID, ...)
+    local t = { };
+    LootReserve.Data.ItemUsableOverride[itemID] = t;
+    for i, class in ipairs({...}) do
+        t[class] = true;
     end
 end
 
@@ -12435,15 +12435,17 @@ end
 -- Class Restricted Items
 do
     if IS_SOD then
-        ApplyClassRestriction(227728, 1091); -- Eye of Sulfuras
+        ApplyClassRestriction(227728, "WARRIOR", "PALADIN", "SHAMAN", "DRUID"); -- Eye of Sulfuras
+        
+        ApplyClassRestriction(244460, "WARRIOR", "PALADIN"); -- Caladbolg (Sword)
+        ApplyClassRestriction(244460, "SHAMAN", "DRUID");    -- Caladbolg (Mace)
     end
     
     -- Hand of Rag items
-    ApplyClassRestriction(17204, 1091);
-    ApplyClassRestriction(17203, 1091);
+    ApplyClassRestriction(17204, "WARRIOR", "PALADIN", "SHAMAN", "DRUID");
+    ApplyClassRestriction(17203, "WARRIOR", "PALADIN", "SHAMAN", "DRUID");
     
-    -- Shadowfrost Shards should have a class mask since they cannot be traded
-    ApplyClassRestriction(50274, 35);
+    ApplyClassRestriction(50274, "WARRIOR", "PALADIN",  "DEATHKNIGHT");
 end
 
 

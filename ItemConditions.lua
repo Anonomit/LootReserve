@@ -197,6 +197,13 @@ local function IsItemUsable(itemID, playerClass, isMe)
         end
     end
     
+    do
+        local usableClasses = LootReserve.Data.ItemUsableOverride[itemID];
+        if usableClasses and not usableClasses[playerClass] then
+            return false;
+        end
+    end
+    
     if not item:Cache():IsCached() then
         return item:IsUsableBy(playerClass), true;
     end
