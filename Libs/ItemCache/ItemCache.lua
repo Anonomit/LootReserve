@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 14
+local MAJOR, MINOR = ADDON_NAME, 15
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -25,7 +25,7 @@ local tonumber     = tonumber
 local format             = format
 local strsplit           = strsplit
 local wipe               = wipe
-local GetMouseFocus      = GetMouseFocus
+local GetMouseFoci       = GetMouseFoci
 local GetItemInfo        = GetItemInfo -- removes the need to bypass own hook
 local GetItemInfoInstant = GetItemInfoInstant
 local UnitExists         = UnitExists
@@ -150,23 +150,23 @@ do
   local subArmor    = Enum.ItemArmorSubclass
   local usableTypes = MakeLookupTable({weapon, armor}, function() return {} end)
   
-  usableTypes[weapon][subWeapon.Unarmed]  = MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR} -- Fist Weapons
-  usableTypes[weapon][subWeapon.Axe1H]    = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Axe2H]    = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Bows]     = MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Guns]     = MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Mace1H]   = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.PALADIN, ID.PRIEST,  ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Mace2H]   = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Polearm]  = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.HUNTER,  ID.PALADIN, ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Sword1H]  = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.MAGE,    ID.PALADIN, ID.ROGUE,   ID.WARLOCK, ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Sword2H]  = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Staff]    = MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.MAGE,    ID.PRIEST,  ID.SHAMAN,  ID.WARLOCK, ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Dagger]   = MakeLookupTable{ID.DRUID,       ID.HUNTER,  ID.MAGE,    ID.PRIEST,  ID.ROGUE,   ID.SHAMAN,  ID.WARLOCK, ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Crossbow] = MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
-  usableTypes[weapon][subWeapon.Wand]     = MakeLookupTable{ID.MAGE,        ID.PRIEST,  ID.WARLOCK}
-  usableTypes[weapon][subWeapon.Thrown]   = MakeLookupTable{ID.HUNTER,      ID.ROGUE,   ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Unarmed]  = MakeLookupTable{ID.DRUID,       ID.HUNTER, ID.MONK,    ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR} -- Fist Weapons
+  usableTypes[weapon][subWeapon.Axe1H]    = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER, ID.MONK,    ID.PALADIN, ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Axe2H]    = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER, ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Bows]     = MakeLookupTable{ID.HUNTER,      ID.ROGUE,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Guns]     = MakeLookupTable{ID.HUNTER,      ID.ROGUE,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Mace1H]   = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,  ID.MONK,    ID.PALADIN, ID.PRIEST,  ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Mace2H]   = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,  ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Polearm]  = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,  ID.HUNTER,  ID.MONK,    ID.PALADIN, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Sword1H]  = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER, ID.MAGE,    ID.MONK,    ID.PALADIN, ID.ROGUE,   ID.WARLOCK, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Sword2H]  = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER, ID.PALADIN, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Staff]    = MakeLookupTable{ID.DRUID,       ID.HUNTER, ID.MAGE,    ID.MONK,    ID.PRIEST,  ID.SHAMAN,  ID.WARLOCK, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Dagger]   = MakeLookupTable{ID.DRUID,       ID.HUNTER, ID.MAGE,    ID.PRIEST,  ID.ROGUE,   ID.SHAMAN,  ID.WARLOCK, ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Crossbow] = MakeLookupTable{ID.HUNTER,      ID.ROGUE,  ID.WARRIOR}
+  usableTypes[weapon][subWeapon.Wand]     = MakeLookupTable{ID.MAGE,        ID.PRIEST, ID.WARLOCK}
+  usableTypes[weapon][subWeapon.Thrown]   = MakeLookupTable{ID.HUNTER,      ID.ROGUE,  ID.WARRIOR}
   
-  usableTypes[armor][subArmor.Leather]    = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.HUNTER,  ID.PALADIN, ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
+  usableTypes[armor][subArmor.Leather]    = MakeLookupTable{ID.DEATHKNIGHT, ID.DRUID,   ID.HUNTER,  ID.MONK, ID.PALADIN, ID.ROGUE,   ID.SHAMAN,  ID.WARRIOR}
   usableTypes[armor][subArmor.Mail]       = MakeLookupTable{ID.DEATHKNIGHT, ID.HUNTER,  ID.PALADIN, ID.SHAMAN,  ID.WARRIOR}
   usableTypes[armor][subArmor.Plate]      = MakeLookupTable{ID.DEATHKNIGHT, ID.PALADIN, ID.WARRIOR}
   usableTypes[armor][subArmor.Shield]     = MakeLookupTable{ID.PALADIN,     ID.SHAMAN,  ID.WARRIOR}
@@ -771,7 +771,7 @@ function ItemDB:InitMouseoverHook()
         item:Cache()
       end
     elseif TradeSkillFrame and TradeSkillFrame:IsVisible() then
-      if GetMouseFocus():GetName() == "TradeSkillSkillIcon" then
+      if GetMouseFoci()[1]:GetName() == "TradeSkillSkillIcon" then
         local id, suffix, uniqueID = InterpretItem(GetTradeSkillItemLink(TradeSkillFrame.selectedSkill))
         if id then
           local item = self:Get(id, suffix, uniqueID)
@@ -781,7 +781,7 @@ function ItemDB:InitMouseoverHook()
         end
       else
         for i = 1, 8 do
-          if GetMouseFocus():GetName() == "TradeSkillReagent"..i then
+          if GetMouseFoci()[1]:GetName() == "TradeSkillReagent"..i then
             local id, suffix, uniqueID = InterpretItem(GetTradeSkillReagentItemLink(TradeSkillFrame.selectedSkill, i))
             if id then
               local item = self:Get(id, suffix, uniqueID)
