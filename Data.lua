@@ -8720,6 +8720,15 @@ LootReserve.Data =
                         51173, 51266, 51170, 51269, 51174, 51265, 51172, 51267, 51171, 51268, 0,
                     },
                 },
+                { Separator = true },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        49623, 0,
+                    },
+                },
             },
         },
         
@@ -12126,6 +12135,8 @@ LootReserve.Data =
         [233365] = true, -- Intact Viscera (SoD)
         [233367] = true, -- Intact Peritoneum (SoD)
         
+        [239117] = true, -- Crusader's Chalice (SoD)
+        
         -- ZA
         [33865] = true, -- Amani Hex Stick
         
@@ -14758,7 +14769,7 @@ local tokenMap = {
     [231721] = {231037, 231029, 231041, 231049, 231247, 231231, 231255, 231239, 232253, 232261, 232189, 232197, 232085, 232093, 232101, 232109, }, -- Primeval Boots (Season of Discovery)
     [231730] = {231196, 231180, 231189, 231061, 231070, 231220, 231204, 231228, 231212, 232157, 232149, 232165, 232117, 232125, 232205, 232213, 232221, 232229, }, -- Ancient Boots (Season of Discovery)
     
-    -- class quest gear
+    -- Class quest gear
     [231722] = {229910},                 -- Depleted Staff of Chaos
     [230904] = {229971, 229972, 229909}, -- Scroll: SEENECS FO RIEF
     [229906] = {231509},                 -- Tarnished Bronze Scale
@@ -15475,6 +15486,8 @@ local tokenMap = {
     
     
     -- ICC 10/25
+    
+    [50274] = {49623},
     
     -- Conqueror's Mark of Sanctification (Normal)
     [52027] = {
