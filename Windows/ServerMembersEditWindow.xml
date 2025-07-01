@@ -57,6 +57,30 @@
 						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.WonRolls" />
 					</Anchors>
 				</FontString>
+				<FontString parentKey="Plus" inherits="GameFontNormal" justifyH="CENTER" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.Plus" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Plus" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="PlusDecrement" inherits="GameFontNormal" justifyH="CENTER" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.PlusDecrement" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.PlusDecrement" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="PlusIncrement" inherits="GameFontNormal" justifyH="CENTER" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.PlusIncrement" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.PlusIncrement" />
+					</Anchors>
+				</FontString>
 				<FontString parentKey="Locked" inherits="GameFontNormal" justifyH="CENTER" text="">
 					<Anchors>
 						<Anchor point="TOP" />
@@ -194,6 +218,42 @@
 					<OnLeave function="GameTooltip_Hide" />
 				</Scripts>
 			</Button>
+			<Button parentKey="ButtonPlusDecrement">
+				<Size x="23" y="22"/>
+				<Anchors>
+					<Anchor point="CENTER" relativeKey="$parent.PlusDecrement" relativePoint="CENTER" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if self:IsEnabled() then
+							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+							LootReserve.Server:IncrementPlus(self:GetParent().Player, -1 * (IsShiftKeyDown() and 10 or 1));
+						end
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Down"/>
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-PrevPage-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+			</Button>
+			<Button parentKey="ButtonPlusIncrement">
+				<Size x="23" y="22"/>
+				<Anchors>
+					<Anchor point="CENTER" relativeKey="$parent.PlusIncrement" relativePoint="CENTER" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if self:IsEnabled() then
+							PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
+							LootReserve.Server:IncrementPlus(self:GetParent().Player, IsShiftKeyDown() and 10 or 1);
+						end
+					</OnClick>
+				</Scripts>
+				<NormalTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Up"/>
+				<PushedTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Down"/>
+				<DisabledTexture file="Interface\Buttons\UI-SpellbookIcon-NextPage-Disabled"/>
+				<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD"/>
+			</Button>
 			<CheckButton parentKey="CheckButtonLocked" inherits="LootReserveCheckBoxTemplate">
 				<Anchors>
 					<Anchor point="CENTER" relativeKey="$parent.Locked" relativePoint="CENTER" />
@@ -272,7 +332,7 @@
 		</Scripts>
 	</Frame>
 	<Frame name="LootReserveServerMembersEditWindow" parent="UIParent" inherits="BasicFrameTemplateWithInset" toplevel="true" movable="true" resizable="true" enableMouse="true" clampedToScreen="true" hidden="true">
-		<Size x="650" y="250" />
+		<Size x="750" y="250" />
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
@@ -299,16 +359,34 @@
 								<Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" />
 							</Anchors>
 						</FontString>
+						<FontString parentKey="Plus" inherits="GameFontNormal" justifyH="CENTER" text="+1">
+							<Size x="25" />
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.WonRolls" relativePoint="RIGHT" x="30" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="PlusDecrement" inherits="GameFontNormal" justifyH="CENTER" text="">
+							<Size x="25" />
+							<Anchors>
+								<Anchor point="RIGHT" relativeKey="$parent.Plus" relativePoint="LEFT" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="PlusIncrement" inherits="GameFontNormal" justifyH="CENTER" text="">
+							<Size x="25" />
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.Plus" relativePoint="RIGHT" />
+							</Anchors>
+						</FontString>
 						<FontString parentKey="Locked" inherits="GameFontNormal" justifyH="CENTER" text="">
 							<Size x="32" />
 							<Anchors>
-								<Anchor point="LEFT" relativeKey="$parent.WonRolls" relativePoint="RIGHT" />
+								<Anchor point="LEFT" relativeKey="$parent.PlusIncrement" relativePoint="RIGHT" x="10" />
 							</Anchors>
 						</FontString>
 						<FontString parentKey="Count" inherits="GameFontNormal" justifyH="CENTER" text="">
 							<Size x="40" />
 							<Anchors>
-								<Anchor point="LEFT" relativeKey="$parent.WonRolls" relativePoint="RIGHT" x="60" />
+								<Anchor point="LEFT" relativeKey="$parent.Locked" relativePoint="RIGHT" x="25" />
 							</Anchors>
 						</FontString>
 						<FontString parentKey="DeltaDecrement" inherits="GameFontNormal" justifyH="CENTER" text="">

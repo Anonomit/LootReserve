@@ -40,6 +40,7 @@ LootReserve.Server =
         Phases                          = LootReserve:Deepcopy(LootReserve.Constants.DefaultPhases),
         RollUsePhases                   = false,
         RollPhases                      = LootReserve:Deepcopy(LootReserve.Constants.DefaultRollPhases),
+        RollUsePlus                     = false,
         RollAdvanceOnExpire             = true,
         RollLimitDuration               = false,
         RollDuration                    = 30,
@@ -1260,7 +1261,7 @@ function LootReserve.Server:UpdateGroupMembers()
         -- Remove member info for players who left with no reserves
         local leavers = { };
         for player, member in pairs(self.CurrentSession.Members) do
-            if not LootReserve:UnitInGroup(player) and #member.ReservedItems == 0 and member.ReservesDelta == 0 and not member.WonRolls then
+            if not LootReserve:UnitInGroup(player) and #member.ReservedItems == 0 and member.ReservesDelta == 0 and not member.WonRolls and member.Plus == 0 then
                 table.insert(leavers, player);
 
                 -- for i = #member.ReservedItems, 1, -1 do
@@ -1288,6 +1289,7 @@ function LootReserve.Server:UpdateGroupMembers()
                     Locked        = nil,
                     OptedOut      = nil,
                     RollBonus     = setmetatable({ }, { __index = function() return 0 end }),
+                    Plus          = 0,
                 };
                 self.MembersEdit:UpdateMembersList();
             end
@@ -1933,6 +1935,7 @@ function LootReserve.Server:StartSession()
             ReservesDelta = 0,
             ReservedItems = { },
             RollBonus     = setmetatable({ }, { __index = function() return 0 end }),
+            Plus          = 0,
             Locked        = nil,
             OptedOut      = nil,
         };
@@ -1949,6 +1952,7 @@ function LootReserve.Server:StartSession()
             ReservesDelta = importedMember.ReservesDelta,
             ReservedItems = { },
             RollBonus     = setmetatable({ }, { __index = function() return 0 end }),
+            Plus          = importedMember.Plus or 0,
             Locked        = nil,
             OptedOut      = nil,
         };
@@ -2110,6 +2114,31 @@ function LootReserve.Server:ResetSession()
     self.MembersEdit:UpdateMembersList();
 
     self:SessionReset();
+    return true;
+end
+
+function LootReserve.Server:IncrementPlus(player, amount)
+    local function Failure(result, ...)
+        LootReserve:ShowError(LootReserve.Constants.PlusResultText[result]);
+        return false;
+    end
+
+    if not self.CurrentSession then
+        return Failure(LootReserve.Constants.PlusResult.NoSession);
+    end
+
+    local member = self.CurrentSession.Members[player];
+    if not member then
+        return Failure(LootReserve.Constants.PlusResult.NotMember);
+    end
+    
+    if amount == 0 then return; end
+    amount = amount or 1;
+    
+    member.Plus = member.Plus + amount;
+    
+    self:UpdateRollList();
+    self.MembersEdit:UpdateMembersList();
     return true;
 end
 
@@ -2780,30 +2809,24 @@ end
 
 function LootReserve.Server:GetWinningRollAndPlayers(Roll)
     if Roll then
-        local highestRoll = LootReserve.Constants.RollType.NotRolled;
+        local highestRoll = {LootReserve.Constants.RollType.NotRolled, 0};
         local highestPlayers = { };
         local losers = { };
-        for player, roll in self:GetOrderedPlayerRolls(Roll.Players) do
-            if highestRoll <= roll and roll > LootReserve.Constants.RollType.NotRolled then
-                if highestRoll ~= roll then
-                    highestRoll = roll;
-                    for _, player in ipairs(highestPlayers) do
-                        table.insert(losers, player);
-                    end
-                    table.wipe(highestPlayers);
-                end
-                if not LootReserve:Contains(highestPlayers, player) then
-                    table.insert(highestPlayers, player);
-                end
+        for player, roll, rollIndex, plus, rollOrder in self:GetOrderedPlayerRolls(Roll.Players) do
+            if rollOrder == 1 then
+                highestRoll = {roll, plus};
+            end
+            if roll == highestRoll[1] and plus == highestRoll[2] then
+                table.insert(highestPlayers, player);
             elseif roll > LootReserve.Constants.RollType.NotRolled then
                 table.insert(losers, player);
             end
         end
-        if highestRoll > LootReserve.Constants.RollType.NotRolled then
+        if highestRoll[1] > LootReserve.Constants.RollType.NotRolled then
             for _, winner in ipairs(highestPlayers) do
                 LootReserve:TableRemove(losers, winner);
             end
-            return highestRoll, highestPlayers, losers;
+            return highestRoll[1], highestPlayers, losers, highestRoll[2];
         end
     end
 end
@@ -2875,10 +2898,10 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent, noLose
     if self:IsRolling(item) then
         local masterLoot = nil;
         local roll, winners, losers = self:GetWinningRollAndPlayers(self.RequestedRoll);
+        local max = 100;
         if roll and winners then
             local raidroll = self.RequestedRoll.RaidRoll;
             local phases = LootReserve:Deepcopy(self.RequestedRoll.Phases);
-            local max = 100;
             if self.RequestedRoll.Tiered then
                 roll, max = self:ConvertFromTieredRoll(roll);
             end
@@ -2944,7 +2967,10 @@ function LootReserve.Server:FinishRollRequest(item, soleReserver, silent, noLose
             end
         end
 
-        self:CancelRollRequest(item, winners);
+        local Roll = self:CancelRollRequest(item, winners);
+        if Roll then
+            self:CreditPlus(Roll, winners, roll, max);
+        end
         if masterLoot then
             masterLoot();
         end
@@ -3085,20 +3111,35 @@ function LootReserve.Server:CancelRollRequest(item, winners, noHistory, advancin
         end
         self:UpdateReserveListRolls();
         self:UpdateRollList();
+        
+        return RequestedRoll;
     end
 end
 
-function LootReserve.Server:RecordRollHistory(roll, winner)
+function LootReserve.Server:RecordRollHistory(Roll, winner)
     if winner then
-        roll.Winners = { winner };
+        Roll.Winners = { winner };
     end
-    local historicalEntry = LootReserve:Deepcopy(roll);
+    local historicalEntry = LootReserve:Deepcopy(Roll);
     historicalEntry.Item = LootReserve.ItemCache:Item(historicalEntry.Item);
     historicalEntry.Duration    = nil;
     historicalEntry.MaxDuration = nil;
     if winner and (LootReserve:IsLootingItem(historicalEntry.Item) or not (LootReserve:IsMe(winner) and LootReserve:GetTradeableItemCount(historicalEntry.Item) > 0)) then
         historicalEntry.Owed = true;
         table.insert(self.OwedRolls, historicalEntry);
+    end
+    if self.CurrentSession and self.Settings.RollUsePlus and Roll.Custom then -- todo: check if this actual roll should use plus or not
+        local Plus = { };
+        for player, roll, rollIndex, plus, rollOrder in self:GetOrderedPlayerRolls(Roll.Players) do
+            local max = 100;
+            if Roll.Tiered then
+                roll, max = self:ConvertFromTieredRoll(roll);
+            end
+            if max == 100 and plus and plus ~= 0 then
+                Plus[player] = plus;
+            end
+        end
+        historicalEntry.Plus = Plus;
     end
     table.insert(self.RollHistory, historicalEntry);
     if #self.RollHistory > self.Settings.RollHistoryKeepLimit then
@@ -3112,6 +3153,14 @@ function LootReserve.Server:RecordRollHistory(roll, winner)
         end
         for i = #self.RollHistory, self.Settings.RollHistoryKeepLimit + 1, -1 do
             self.RollHistory[i] = nil;
+        end
+    end
+end
+
+function LootReserve.Server:CreditPlus(Roll, winners, roll, max)
+    if self.CurrentSession and self.Settings.RollUsePlus and max == 100 and Roll.Custom then -- todo: check if this actual roll should use plus or not
+        for _, winner in ipairs(winners) do
+            self:IncrementPlus(winner);
         end
     end
 end
@@ -3889,15 +3938,30 @@ function LootReserve.Server:DeleteRoll(player, rollNumber, item)
     self:TryFinishRoll();
 end
 
-function LootReserve.Server:GetOrderedPlayerRolls(roll)
+function LootReserve.Server:GetOrderedPlayerRolls(roll, plus)
+    local GetPlus = function() return 0 end;
+    if plus then
+        GetPlus = function(player)
+            return plus[player] or 0;
+        end;
+    elseif self.CurrentSession and LootReserve.Server.Settings.RollUsePlus then
+        GetPlus = function(player)
+            local member = self.CurrentSession.Members[player];
+            return member and member.Plus or 0;
+        end;
+    end
+    
     local playerRolls = { };
     for player, rolls in pairs(roll) do
         for i, roll in ipairs(rolls) do
-            table.insert(playerRolls, { Player = player, RollNumber = i, Roll = roll });
+            table.insert(playerRolls, { Player = player, RollNumber = i, Roll = roll, Plus = GetPlus(player) });
         end
     end
     table.sort(playerRolls, function(aData, bData)
-        if aData.Roll ~= bData.Roll then
+        local aDenom, bDenom = select(2, self:ConvertFromTieredRoll(aData.Roll)), select(2, self:ConvertFromTieredRoll(bData.Roll));
+        if aDenom == 100 and bDenom == 100 and aData.Plus ~= bData.Plus then
+            return aData.Plus < bData.Plus;
+        elseif aData.Roll ~= bData.Roll then
             return aData.Roll > bData.Roll;
         elseif aData.Player ~= bData.Player then
             return aData.Player < bData.Player;
@@ -3910,7 +3974,7 @@ function LootReserve.Server:GetOrderedPlayerRolls(roll)
     return function()
         i = i + 1;
         if playerRolls[i] then
-            return playerRolls[i].Player, playerRolls[i].Roll, playerRolls[i].RollNumber;
+            return playerRolls[i].Player, playerRolls[i].Roll, playerRolls[i].RollNumber, playerRolls[i].Plus, i;
         else
             return;
         end

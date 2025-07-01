@@ -19,12 +19,9 @@ function LootReserve.Server:UpdateReserveListRolls(lockdown)
 
             local highest = LootReserve.Constants.RollType.NotRolled;
             if frame.Roll then
-                for player, rolls in pairs(frame.Roll.Players) do
-                    for _, roll in ipairs(rolls) do
-                        if highest < roll then
-                            highest = roll;
-                        end
-                    end
+                for player, roll, rollIndex, plus in LootReserve.Server:GetOrderedPlayerRolls(frame.Roll.Players) do
+                    highest = roll;
+                    break;
                 end
             end
 
@@ -412,14 +409,11 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
             frame.ReservesFrame.ReportReserves:SetShown(false);
             frame.RequestRollButton.CancelIcon:SetShown(frame.Roll and not frame.Historical and self:IsRolling(frame.Item));
 
-            local highest = LootReserve.Constants.RollType.NotRolled;
+            local highest = {LootReserve.Constants.RollType.NotRolled, nil};
             if frame.Roll then
-                for player, rolls in pairs(frame.Roll.Players) do
-                    for _, roll in ipairs(rolls) do
-                        if highest < roll then
-                            highest = roll;
-                        end
-                    end
+                for player, roll, rollIndex, plus in LootReserve.Server:GetOrderedPlayerRolls(frame.Roll.Players, frame.Roll.Historical and (frame.Roll.Plus or { }) or nil) do
+                    highest = {roll, plus};
+                    break;
                 end
             end
 
@@ -431,10 +425,25 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
                         local rolled = roll > LootReserve.Constants.RollType.NotRolled;
                         local passed = roll == LootReserve.Constants.RollType.Passed;
                         local deleted = roll == LootReserve.Constants.RollType.Deleted;
+                        local usePlus;
+                        local plus;
+                        if frame.Historical then
+                            usePlus = frame.Roll.Plus and true or false;
+                            plus = usePlus and frame.Roll.Plus[button.Player] or 0;
+                        else
+                            usePlus = self.Settings.RollUsePlus; -- todo: this should only be true when RollUsePlus global setting is enabled and the rolled item is one that should use +1
+                            plus = usePlus and self.CurrentSession and (self.CurrentSession.Members[button.Player] or { }).Plus or 0;
+                        end
                         local rollText = tostring(roll);
                         if rolled and frame.Roll.Tiered then
                             local roll, max = self:ConvertFromTieredRoll(roll);
                             rollText = format("%d/%d", roll, max);
+                            if max == 100 then
+                                rollText = format("%d", roll);
+                                if usePlus and plus ~= 0 then
+                                    rollText = format("%d%s%s%d", roll, plus == 0 and "" or " ", plus > 0 and "+" or "", plus);
+                                end
+                            end
                         end
                         local winner;
                         if frame.Roll.Winners then
@@ -443,7 +452,7 @@ function LootReserve.Server:UpdateRollListRolls(lockdown)
                                 alreadyHighlighted[button.Player] = true;
                             end
                         elseif not frame.Historical then
-                            winner = rolled and highest > LootReserve.Constants.RollType.NotRolled and roll == highest;
+                            winner = rolled and highest[1] > LootReserve.Constants.RollType.NotRolled and roll == highest[1] and (select(2, self:ConvertFromTieredRoll(roll)) ~= 100 or plus == highest[2]);
                         end
 
                         local color = winner and GREEN_FONT_COLOR or passed and GRAY_FONT_COLOR or deleted and RED_FONT_COLOR or HIGHLIGHT_FONT_COLOR;
@@ -638,10 +647,10 @@ function LootReserve.Server:UpdateRollList(lockdown)
             local last = 0;
             frame.ReservesFrame.Players = frame.ReservesFrame.Players or { };
 
-            local highest = LootReserve.Constants.RollType.NotRolled;
-            for player, roll, rollIndex in LootReserve.Server:GetOrderedPlayerRolls(roll.Players) do
-                if highest < roll then
-                    highest = roll;
+            local highest = {LootReserve.Constants.RollType.NotRolled, nil};
+            for player, roll, rollIndex, plus in LootReserve.Server:GetOrderedPlayerRolls(roll.Players, historical and (roll.Plus or { }) or nil) do
+                if rollOrder == 1 then
+                    highest = {roll, plus};
                 end
                 last = last + 1;
                 if last > #frame.ReservesFrame.Players then
@@ -676,7 +685,7 @@ function LootReserve.Server:UpdateRollList(lockdown)
 
             local phase = roll.Phases and roll.Phases[1];
             if roll.Tiered then
-                local rollNumber, max = self:ConvertFromTieredRoll(highest);
+                local rollNumber, max = self:ConvertFromTieredRoll(highest[1]);
                 phase = roll.Phases and roll.Phases[101-max];
             end
             frame.ReservesFrame.HeaderPlayer:SetText(roll.RaidRoll and "Raid-rolled to" or roll.Disenchant and "Disenchanted" or roll.Custom and format("Rolled%s by", phase and format(" for |cFF00FF00%s|r", phase or "") or "") or "Reserved by");

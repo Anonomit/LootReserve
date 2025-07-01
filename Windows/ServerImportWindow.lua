@@ -300,8 +300,10 @@ function LootReserve.Server.Import:InputOptionsUpdated()
                             break;
                         end
                     end
-                elseif header:find("delta") or header:find("plus") or header:find("reserves?%s*bonus") or header:find("bonus%s*reserves?") or header:find("extra%s*reserves?") then
+                elseif header:find("delta") or header:find("reserves?%s*bonus") or header:find("bonus%s*reserves?") or header:find("extra%s*reserves?") then
                     self.Columns[i] = "Extra Reserves"
+                elseif header:find("plus") or header:find("^%+$") or header:find("%+1") then
+                    self.Columns[i] = "Plus"
                 elseif header:find("class") then
                     self.Columns[i] = "Class";
                 elseif header:find("roll%s*bonus") then
@@ -335,7 +337,7 @@ function LootReserve.Server.Import:InputOptionsUpdated()
             table.insert(list.Columns, frame);
             
             frame.field   = "Columns";
-            frame.values  = "|cFF808080Unused|r=Unused$Player$Item$Count$Class$Extra Reserves$Roll Bonus$Do Not Reserve";
+            frame.values  = "|cFF808080Unused|r=Unused$Player$Item$Count$Class$Extra Reserves$Plus$Roll Bonus$Do Not Reserve";
             frame.width   = 75;
             frame.justify = "LEFT";
             
@@ -401,6 +403,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
         for _, row in ipairs(self.Rows) do
             row.Count = nil;
             row.Delta = nil;
+            row.Plus  = nil;
             row.Class = nil;
             row.Bonus = nil;
             row.Ignore = nil;
@@ -417,6 +420,13 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         row.Delta = ParseNumber(row[i]);
                     else
                         return "Only one column can be marked as \"Extra Reserves\"";
+                    end
+                end
+                if column == "Plus" and row[i] then
+                    if not row.Plus then
+                        row.Plus = ParseNumber(row[i]);
+                    else
+                        return "Only one column can be marked as \"Plus\"";
                     end
                 end
                 if column == "Class" and row[i] then
@@ -534,6 +544,7 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                     if row.Bonus and row.Bonus ~= 0 then
                         member.RollBonus[itemID] = row.Bonus;
                     end
+                    member.Plus = member.Plus or row.Plus;
                     itemReserveCount[itemID] = (itemReserveCount[itemID] or 0) + 1;
                     itemReserveCountByPlayer[player] = itemReserveCountByPlayer[player] or { };
                     itemReserveCountByPlayer[player][itemID] = (itemReserveCountByPlayer[player][itemID] or 0) + 1;
@@ -680,6 +691,7 @@ function LootReserve.Server.Import:Import()
                         ReservesDelta = 0,
                         ReservedItems = { },
                         RollBonus     = member.RollBonus,
+                        Plus          = member.Plus or 0,
                         Locked        = nil,
                         OptedOut      = nil,
                     };
@@ -693,6 +705,7 @@ function LootReserve.Server.Import:Import()
                     ReservesDelta = 0,
                     ReservedItems = { },
                     RollBonus     = member.RollBonus,
+                    Plus          = member.Plus or 0,
                     Locked        = nil,
                     OptedOut      = nil,
                 };

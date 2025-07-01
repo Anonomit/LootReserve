@@ -46,6 +46,10 @@ LootReserve.Constants.OptResult = {
     NoSession         = 2,
     NotMember         = 4,
 };
+LootReserve.Constants.PlusResult = {
+    NoSession         = 2,
+    NotMember         = 4,
+};
 LootReserve.Constants.ReserveDeltaResult = {
     NoSession         = 2,
     NotMember         = 4,
@@ -476,6 +480,16 @@ end)();
     {
         [OK]        = "",
         [NotInRaid] = "You are not in the raid",
+        [NoSession] = "Loot reserves aren't active",
+        [NotMember] = "You are not participating in loot reserves",
+    };
+end)();
+
+(function()
+    local input, output = LootReserve.Constants.PlusResult, "PlusResultText";
+    setfenv(1, setmetatable({ Constants = LootReserve.Constants }, { __index = function(t, k) return input[k] end }));
+    Constants[output] =
+    {
         [NoSession] = "Loot reserves aren't active",
         [NotMember] = "You are not participating in loot reserves",
     };

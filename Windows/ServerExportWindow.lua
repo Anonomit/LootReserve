@@ -1,6 +1,6 @@
 
-LootReserve.Server.Export.reservesExportHeaderText    = "Player,Class,ExtraReserves,RollBonus,Item,Count";
-LootReserve.Server.Export.reservesExportFormatPattern = "\n%s,%s,%d,%d,%d,%d";
+LootReserve.Server.Export.reservesExportHeaderText    = "Player,Class,Plus,ExtraReserves,RollBonus,Item,Count";
+LootReserve.Server.Export.reservesExportFormatPattern = "\n%s,%s,%d,%d,%d,%d,%d";
 LootReserve.Server.Export.rollsExportHeaderText       = "Time,Item ID,Item Name,Winner,Reserved,Raid Rolled,Disenchanted,Reason";
 LootReserve.Server.Export.rollsExportFormatPattern    = "\n%d,%d,%s,%s,%d,%d,%d,%s";
 
@@ -15,7 +15,7 @@ function LootReserve.Server.Export:UpdateReservesExportText()
                 counts[itemID] = (counts[itemID] or 0) + 1;
             end
             for itemID, count in pairs(counts) do
-                text = text .. format(self.reservesExportFormatPattern, player, member.Class and select(2, LootReserve:GetClassInfo(member.Class)) or "", member.ReservesDelta, member.RollBonus[itemID], itemID, count);
+                text = text .. format(self.reservesExportFormatPattern, player, member.Class and select(2, LootReserve:GetClassInfo(member.Class)) or "", member.Plus, member.ReservesDelta, member.RollBonus[itemID], itemID, count);
             end
         end
         text = self.reservesExportHeaderText .. text;

@@ -4,7 +4,7 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
     if not self.Window:IsShown() then return; end
 
     self.Window.Header.Name:SetWidth(LootReserve:IsCrossRealm() and 300 or 200);
-    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 650 or 550, 150);
+    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 750 or 650, 150);
 
     local list = self.Window.Scroll.Container;
     list.Frames = list.Frames or { };
@@ -66,12 +66,18 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
             frame.CheckButtonLocked:SetAlpha(LootReserve.Server.CurrentSession.Settings.Lock and 1 or 0.25);
             frame.ButtonDeltaIncrement:SetShown(LootReserve.Server.CurrentSession.Settings.MaxReservesPerPlayer + member.ReservesDelta < LootReserve.Constants.MAX_MULTIRESERVES);
             frame.ButtonDeltaDecrement:SetShown(LootReserve.Server.CurrentSession.Settings.MaxReservesPerPlayer + member.ReservesDelta > 0);
+            frame.ButtonPlusIncrement:Show();
+            frame.ButtonPlusDecrement:Show();
         else
             frame.CheckButtonLocked:Hide();
             frame.ButtonDeltaIncrement:Hide();
             frame.ButtonDeltaDecrement:Hide();
+            frame.ButtonPlusIncrement:Hide();
+            frame.ButtonPlusDecrement:Hide();
         end
-
+        
+        frame.Plus:SetText(format("|cFF%s%s%s", member.Plus == 0 and "808080" or member.Plus > 0 and "FF8000" or member.Plus < 0 and "00FF00", member.Plus >= 1 and "+" or "", member.Plus));
+        
         local maxCount = (LootReserve.Server.CurrentSession and LootReserve.Server.CurrentSession.Settings.MaxReservesPerPlayer or LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer) + member.ReservesDelta;
         local count = member.ReservesLeft and (maxCount - member.ReservesLeft) or #member.ReservedItems;
         frame.Count:SetText(format("|cFF%s%d/%d|r", (count >= maxCount or member.OptedOut) and "00FF00" or count > 0 and "FFD200" or "FF0000", count, maxCount));
@@ -173,6 +179,6 @@ function LootReserve.Server.MembersEdit:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetText("LootReserve Host - Players");
-    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 650 or 550, 150);
+    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 750 or 650, 150);
     self:UpdateMembersList();
 end
