@@ -501,8 +501,8 @@ function LootReserve:GetClassInfo(classID)
     end
 end
 
-function LootReserve:Player(player)
-    if not self:IsCrossRealm() then
+function LootReserve:Player(player, forceShowRealm)
+    if not self:IsCrossRealm() and not forceShowRealm then
         return Ambiguate(player, "short");
     end
 
@@ -524,8 +524,8 @@ function LootReserve:Player(player)
     return name .. "-" .. realm;
 end
 
-function LootReserve:Me()
-    return self:Player(UnitNameUnmodified("player"));
+function LootReserve:Me(forceShowRealm)
+    return self:Player(UnitNameUnmodified("player"), forceShowRealm);
 end
 
 function LootReserve:IsMe(player)

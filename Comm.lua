@@ -118,7 +118,7 @@ local function SendCommMessage(prefix, channel, target, opcode, ...)
                 message = message and LibDeflate:DecompressDeflate(message);
             end
         end
-        C_Timer.After(0, function() LootReserve.Comm.Handlers[opcode](LootReserve:Me(), strsplit("|", message)); end);
+        C_Timer.After(0, function() LootReserve.Comm.Handlers[opcode](LootReserve:Me(true), strsplit("|", message)); end);
     end
 
     message = opcode .. "|" .. message;
@@ -176,7 +176,7 @@ function LootReserve.Comm:StartListening()
                     end
                 end
                 
-                sender = LootReserve:Player(sender);
+                sender = LootReserve:Player(sender, true);
                 
                 if COMM_DEBUG_SHOW_MESSAGES then
                     local opKey;
@@ -218,7 +218,7 @@ function LootReserve.Comm:Broadcast(opcode, ...)
     if IsInGroup() then
         self:SendCommMessage(IsInRaid() and "RAID" or "PARTY", nil, opcode, ...);
     else
-        self:SendCommMessage("WHISPER", LootReserve:Me(), opcode, ...);
+        self:SendCommMessage("WHISPER", LootReserve:Me(true), opcode, ...);
     end
 end
 function LootReserve.Comm:Whisper(target, opcode, ...)
@@ -244,7 +244,7 @@ function LootReserve.Comm:BroadcastCompatible(opcode, ...)
     if IsInGroup() then
         self:SendCommMessageCompatible(IsInRaid() and "RAID" or "PARTY", nil, opcode, ...);
     else
-        self:SendCommMessageCompatible("WHISPER", LootReserve:Me(), opcode, ...);
+        self:SendCommMessageCompatible("WHISPER", LootReserve:Me(true), opcode, ...);
     end
 end
 function LootReserve.Comm:WhisperCompatible(target, opcode, ...)
@@ -345,7 +345,7 @@ function LootReserve.Comm:SendSessionInfo(target, starting)
     local session = LootReserve.Server.CurrentSession;
     if not session then return; end
 
-    target = target and LootReserve:Player(target);
+    target = target and LootReserve:Player(target, true);
     local realTarget = target
     if target and LootReserve:IsMe(target) and LootReserve.Client.Masquerade then
         realTarget = target
@@ -467,7 +467,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
         for _, infoStr in ipairs(membersInfo) do
             local player, info = strsplit("=", infoStr, 2);
             table.insert(refPlayers, player);
-            if LootReserve:IsSamePlayer(LootReserve.Client.Masquerade or LootReserve:Me(), player) then
+            if LootReserve:IsSamePlayer(LootReserve.Client.Masquerade or LootReserve:Me(true), player) then
                 local remainingReserves, maxReserves = strsplit(",", info);
                 LootReserve.Client.RemainingReserves = tonumber(remainingReserves) or 0;
                 LootReserve.Client.MaxReserves = tonumber(maxReserves) or 0;
@@ -481,7 +481,7 @@ LootReserve.Comm.Handlers[Opcodes.SessionInfo] = function(sender, starting, star
         for _, infoStr in ipairs(optInfo) do
             local player, info = strsplit("=", infoStr, 2);
             table.insert(refPlayers, player);
-            if LootReserve:IsSamePlayer(LootReserve.Client.Masquerade or LootReserve:Me(), player) then
+            if LootReserve:IsSamePlayer(LootReserve.Client.Masquerade or LootReserve:Me(true), player) then
                 local optOut = strsplit(",", info);
                 LootReserve.Client.OptedOut = optOut == "1" or nil;
             end
@@ -551,7 +551,7 @@ function LootReserve.Comm:SendOptInfo(target, out)
     local session = LootReserve.Server.CurrentSession;
     if not session then return; end
 
-    target = target and LootReserve:Player(target);
+    target = target and LootReserve:Player(target, true);
     if target and not session.Members[target] then return; end
 
     LootReserve.Comm:Send(target, Opcodes.OptInfo, out == true);
@@ -764,8 +764,8 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, player
         end
 
         local previousReserves = LootReserve.Client.ItemReserves[itemID];
-        local _, myOldReserves, oldReservers, oldRolls = LootReserve:GetReservesData(previousReserves or { }, LootReserve:Me());
-        local _, myNewReserves, newReservers, newRolls = LootReserve:GetReservesData(players, LootReserve:Me());
+        local _, myOldReserves, oldReservers, oldRolls = LootReserve:GetReservesData(previousReserves or { }, LootReserve:Me(true));
+        local _, myNewReserves, newReservers, newRolls = LootReserve:GetReservesData(players, LootReserve:Me(true));
         local isUpdate = oldRolls ~= newRolls;
 
         LootReserve.Client.ItemReserves[itemID] = players;
@@ -786,7 +786,7 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, player
         if wasReserver and isReserver and myOldReserves == myNewReserves and oldRolls ~= newRolls then
             PlaySound(oldRolls < newRolls and SOUNDKIT.ALARM_CLOCK_WARNING_3 or SOUNDKIT.ALARM_CLOCK_WARNING_2);
             LootReserve.ItemCache:Item(itemID):OnCache(function(item)
-                LootReserve:PrintMessage(LootReserve:GetReservesStringColored(false, players, LootReserve:Me(), isUpdate, item:GetLink()));
+                LootReserve:PrintMessage(LootReserve:GetReservesStringColored(false, players, LootReserve:Me(true), isUpdate, item:GetLink()));
             end);
         end
     end
@@ -961,14 +961,14 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
         else
             losers = { };
         end
-        if LootReserve:Contains(winners, LootReserve:Me()) then
+        if LootReserve:Contains(winners, LootReserve:Me(true)) then
             if LootReserve.Client:IsFavorite(item:GetID()) then
                 StaticPopup_Show("LOOTRESERVE_PROMPT_REMOVE_FAVORITE", item:GetLink(), nil, {item = item});
             end
             if LootReserve.Client.Settings.RollRequestWinnerReaction then
                 item:OnCache(function()
-                    local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
-                    if LootReserve:UnitIsGilneanForm(LootReserve:Me()) then
+                    local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me(true))), LootReserve:UnitSex(LootReserve:Me(true));
+                    if LootReserve:UnitIsGilneanForm(LootReserve:Me(true)) then
                         race = LootReserve.Constants.Races.Gilnean;
                     end
                     local soundTable = custom and LootReserve.Constants.Sounds.Congratulate or LootReserve.Constants.Sounds.Cheer;
@@ -986,10 +986,10 @@ LootReserve.Comm.Handlers[Opcodes.SendWinner] = function(sender, item, winners, 
                 end);
             end
         end
-        if LootReserve.Client.Settings.RollRequestLoserReaction and LootReserve:Contains(losers, LootReserve:Me()) then
+        if LootReserve.Client.Settings.RollRequestLoserReaction and LootReserve:Contains(losers, LootReserve:Me(true)) then
             item:OnCache(function()
-                local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me())), LootReserve:UnitSex(LootReserve:Me());
-                if LootReserve:UnitIsGilneanForm(LootReserve:Me()) then
+                local race, sex = select(3, LootReserve:UnitRace(LootReserve:Me(true))), LootReserve:UnitSex(LootReserve:Me(true));
+                if LootReserve:UnitIsGilneanForm(LootReserve:Me(true)) then
                     race = LootReserve.Constants.Races.Gilnean;
                 end
                 local soundTable = LootReserve.Constants.Sounds.Cry;
