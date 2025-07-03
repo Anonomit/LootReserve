@@ -3,11 +3,11 @@
 ## Interface-Cata:    40402
 ## Interface-Classic: 11507
 
-## Version: 2025-07-02
-## X-Min-Allowed-Version-Classic: 2025-07-02
-## X-Min-Allowed-Version-Fresh:   2025-07-02
-## X-Min-Allowed-Version-Era:     2025-07-02
-## X-Min-Allowed-Version-SoD:     2025-07-02
+## Version: 2025-07-03
+## X-Min-Allowed-Version-Classic: 2025-07-03
+## X-Min-Allowed-Version-Fresh:   2025-07-03
+## X-Min-Allowed-Version-Era:     2025-07-03
+## X-Min-Allowed-Version-SoD:     2025-07-03
 
 ## X-Curse-Project-ID: 390790
 ## X-Wago-ID: WL6JpyGv
