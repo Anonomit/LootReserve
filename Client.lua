@@ -372,6 +372,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
             if self.SessionServer and not LootReserve:IsMe(self.SessionServer) then
                 local name, link = tooltip:GetItem();
                 if not link then return; end
+                if strmatch(link, "item::") then return; end
                 
                 -- Check if it's already been added
                 local frame, text;

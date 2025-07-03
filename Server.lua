@@ -1361,6 +1361,7 @@ function LootReserve.Server:PrepareSession()
             if self.CurrentSession then
                 local name, link = tooltip:GetItem();
                 if not link then return; end
+                if strmatch(link, "item::") then return; end
                 
                 -- Check if it's already been added
                 local frame, text;
