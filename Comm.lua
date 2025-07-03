@@ -123,7 +123,7 @@ local function SendCommMessage(prefix, channel, target, opcode, ...)
 
     message = opcode .. "|" .. message;
 
-    LootReserve:SendCommMessage(prefix, message, channel, target, "ALERT");
+    LootReserve:SendCommMessage(prefix, message, channel, LootReserve:Player(target, true), "ALERT");
 
     return message;
 end

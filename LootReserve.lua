@@ -443,6 +443,9 @@ function LootReserve:SendChatMessage(text, channel, target, skipOnlineCheck)
     if channel == "PARTY" and not IsInGroup() then
         channel, target = "WHISPER", LootReserve:Me();
     end
+    if target then
+        target = LootReserve:Player(target, true);
+    end
     if target and not LootReserve:IsPlayerOnline(target) and not skipOnlineCheck then return; end
     local function Send(text)
         if #text > 0 then
