@@ -3,11 +3,11 @@
 ## Interface-Cata:    40402
 ## Interface-Classic: 11507
 
-## Version: 2025-07-03a
-## X-Min-Allowed-Version-Classic: 2025-07-03a
-## X-Min-Allowed-Version-Fresh:   2025-07-03a
-## X-Min-Allowed-Version-Era:     2025-07-03a
-## X-Min-Allowed-Version-SoD:     2025-07-03a
+## Version: 2025-07-21
+## X-Min-Allowed-Version-Classic: 2025-07-21
+## X-Min-Allowed-Version-Fresh:   2025-07-21
+## X-Min-Allowed-Version-Era:     2025-07-21
+## X-Min-Allowed-Version-SoD:     2025-07-21
 
 ## X-Curse-Project-ID: 390790
 ## X-Wago-ID: WL6JpyGv
@@ -19,8 +19,8 @@
 ## SavedVariables: LootReserveGlobalSave
 ## SavedVariablesPerCharacter: LootReserveCharacterSave
 
-## OptionalDeps: Ace3, ItemCache
-## X-Embeds: Ace3, ItemCache
+## OptionalDeps: Ace3, ItemCache, LibUIDropDownMenu
+## X-Embeds: Ace3, ItemCache, LibUIDropDownMenu
 
 
 addon.xml
