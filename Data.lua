@@ -23,7 +23,6 @@ Changing it demands a new required addon version
 Classic:
     1.0: Initial
     1.5: AQ40 server attunement quest items added to raid loot
-    1.6: Naxx opened, Base of Atiesh added to C'Thun loot
 
 TBC:
     2.0: Prepatch
@@ -56,11 +55,11 @@ local IS_SOD = LootReserve.SeasonID == Enum.SeasonID.SeasonOfDiscovery
 local EXPANSION_PHASE
 if LootReserve:GetCurrentExpansion() == 0 then
     if IS_SOD then
-        EXPANSION_PHASE = 1.6; -- Season of Discovery
+        EXPANSION_PHASE = 1.5; -- Season of Discovery
     elseif LootReserve.SeasonID == Enum.SeasonID.Fresh or LootReserve.SeasonID == Enum.SeasonID.FreshHardcore then
-        EXPANSION_PHASE = 1.0; -- Anniversary
+        EXPANSION_PHASE = 1.5; -- Anniversary
     else
-        EXPANSION_PHASE = 1.6; -- Classic Era
+        EXPANSION_PHASE = 1.5; -- Classic Era
     end
 else
     EXPANSION_PHASE = 5.1; -- Classic
@@ -1935,13 +1934,13 @@ LootReserve.Data =
                 {
                     Name = "C'Thun",
                     Loot =
-                    ConcatenateIf({
+                    {
                         233364, 233363, 233362, 0,
                         21221, 0,
                         233633, 233631, 233632, 233635, 233637, 0,
                         233630, 233641, 233638, 233639, 233642, 0,
                         233636, 233634, 233640, 0,
-                    }, EXPANSION_PHASE >= 1.6, {22734, 0,}),
+                    },
                 },
                 { Separator = true },
                 {
@@ -3407,13 +3406,13 @@ LootReserve.Data =
                 {
                     Name = "C'Thun",
                     Loot =
-                    ConcatenateIf({
+                    {
                         20933, 20929, 0,
                         21221, 0,
                         22730, 21585, 21582, 21586, 21581, 0,
                         22731, 21583, 21596, 21579, 22732, 0,
                         21839, 21126, 21134, 0,
-                    }, EXPANSION_PHASE >= 1.6, {22734, 0,}),
+                    },
                 },
                 { Separator = true },
                 {
@@ -12937,6 +12936,7 @@ LootReserve.Data =
         [21230]  = true, -- Ancient Qiraji Artifact
         [236397] = true, -- Remnants of Valor
         [22733]  = true, -- Staff Head of Atiesh
+        [22734]  = true, -- Base of Atiesh
         [242465] = true, -- Jostled Chalice Fragment
         [29434]  = true, -- Badge of Justice (when it was an item in TBC)
         [202269] = true, -- Bounty Satchel (Titan Rune Dungeon: Alpha)
@@ -18127,7 +18127,7 @@ do
         
         [{21221}] = 88, -- Eye of C'Thun
         
-        [{22726, 22727, 22724, 22733}] = 90, -- Atiesh
+        [{22726, 22727, 22724, 22733, 22734}] = 90, -- Atiesh
         
         [{22367, 22360, 22353, 236241, 236236, 236249}] = 88, -- T3 Heads
         [{22368, 22361, 22354, 236240, 236237, 236254}] = 86, -- T3 Shoulders
