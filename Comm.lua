@@ -768,7 +768,7 @@ LootReserve.Comm.Handlers[Opcodes.ReserveInfo] = function(sender, itemID, player
         local _, myNewReserves, newReservers, newRolls = LootReserve:GetReservesData(players, LootReserve:Me());
         local isUpdate = oldRolls ~= newRolls;
 
-        LootReserve.Client.ItemReserves[itemID] = players;
+        LootReserve.Client.ItemReserves[itemID] = #players > 0 and players or nil;
 
         if LootReserve.Client.SelectedCategory and LootReserve.Client.SelectedCategory.Reserves then
             LootReserve.Client:UpdateLootList();
