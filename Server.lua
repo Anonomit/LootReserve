@@ -1946,19 +1946,18 @@ function LootReserve.Server:StartSession()
 
     -- Import reserves
     for player, importedMember in pairs(self.CurrentSession.Settings.ImportedMembers) do
-        local member = self.CurrentSession.Members[player] or
-        {
-            Class         = importedMember.Class,
+        local member = {
+            Class         = select(3, LootReserve:UnitClass(player)) or importedMember.Class,
             ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer + importedMember.ReservesDelta,
             ReservesDelta = importedMember.ReservesDelta,
             ReservedItems = { },
-            RollBonus     = setmetatable({ }, { __index = function() return 0 end }),
+            RollBonus     = importedMember.RollBonus,
             Plus          = importedMember.Plus or 0,
             Locked        = nil,
             OptedOut      = nil,
         };
-        member.RollBonus = importedMember.RollBonus;
         self.CurrentSession.Members[player] = member;
+        
         for _, itemID in ipairs(importedMember.ReservedItems) do
             itemID = LootReserve.Data:GetToken(itemID) or itemID;
             if self.ReservableIDs[itemID] and member.ReservesLeft > 0 then
