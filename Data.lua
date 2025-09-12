@@ -12011,7 +12011,7 @@ LootReserve.Data =
         -- Mogu'shan Vaults
         [5010] = {
             Name = "Mogu'shan Vaults",
-            NameShort = "Vaults",
+            NameShort = "MSV",
             Color = LootReserve.Constants.Colors.Size10or25,
             Expansion = 4,
             Children =
