@@ -2877,7 +2877,7 @@
 							<Anchor point="BOTTOM" relativeKey="$parent.ButtonStartSession" relativePoint="TOP" y="10" />
 						</Anchors>
 					</StatusBar>
-					<Frame parentKey="AddonUsers" hidden="true" enableMouse="true" frameLevel="1001">
+					<Frame parentKey="AddonUsers" hidden="false" enableMouse="true" frameLevel="1001">
 						<Size x="30" y="12" />
 						<Anchors>
 							<Anchor point="BOTTOMRIGHT" x="-2" y="2" />

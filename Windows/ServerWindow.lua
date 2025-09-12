@@ -1095,7 +1095,6 @@ function LootReserve.Server:UpdateAddonUsers()
         end
     end
     self.Window.PanelSession.AddonUsers.Text:SetText(format("%d/%d", count, LootReserve:GetNumGroupMembers()));
-    self.Window.PanelSession.AddonUsers:SetShown(LootReserve:GetNumGroupMembers() > 1);
 end
 
 function LootReserve.Server:LoadNewSessionSettings()
