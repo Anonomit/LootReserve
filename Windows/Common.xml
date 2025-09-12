@@ -195,7 +195,7 @@
 						<Anchor point="TOPRIGHT" />
 					</Anchors>
 				</FontString>
-				<FontString parentKey="Misc" inherits="GameFontNormalGraySmall" justifyH="LEFT" wordwrap="false" mixin="AutoScalingFontStringMixin">
+				<FontString parentKey="Misc" inherits="GameFontNormalSmall2" justifyH="LEFT" wordwrap="false" mixin="AutoScalingFontStringMixin">
 					<Size y="12" />
 					<KeyValues>
 						<KeyValue key="minLineHeight" value="8" type="number"/>

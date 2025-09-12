@@ -1989,7 +1989,7 @@
 								<Anchor point="TOPRIGHT" />
 							</Anchors>
 						</FontString>
-						<FontString parentKey="Misc" inherits="GameFontNormalGraySmall" justifyH="LEFT" wordwrap="false" mixin="AutoScalingFontStringMixin">
+						<FontString parentKey="Misc" inherits="GameFontNormalSmall2" justifyH="LEFT" wordwrap="false" mixin="AutoScalingFontStringMixin">
 							<KeyValues>
 								<KeyValue key="minLineHeight" value="8" type="number"/>
 							</KeyValues>
@@ -2884,7 +2884,7 @@
 						</Anchors>
 						<Layers>
 							<Layer>
-								<FontString parentKey="Text" inherits="GameFontNormalGraySmall">
+								<FontString parentKey="Text" inherits="GameFontNormalSmall2">
 									<Anchors>
 										<Anchor point="RIGHT" />
 									</Anchors>
