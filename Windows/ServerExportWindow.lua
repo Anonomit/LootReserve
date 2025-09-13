@@ -14,6 +14,9 @@ function LootReserve.Server.Export:UpdateReservesExportText()
             for i, itemID in ipairs(member.ReservedItems) do
                 counts[itemID] = (counts[itemID] or 0) + 1;
             end
+            if next(counts) == nil then
+                text = text .. format(self.reservesExportFormatPattern, player, member.Class and select(2, LootReserve:GetClassInfo(member.Class)) or "", member.Plus, member.ReservesDelta, 0, 0, 0);
+            end
             for itemID, count in pairs(counts) do
                 text = text .. format(self.reservesExportFormatPattern, player, member.Class and select(2, LootReserve:GetClassInfo(member.Class)) or "", member.Plus, member.ReservesDelta, member.RollBonus[itemID], itemID, count);
             end

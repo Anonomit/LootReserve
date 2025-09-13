@@ -118,7 +118,7 @@ end
 function LootReserve.Server.Import:UpdateReservesList()
     if not self.Window:IsShown() then return; end
 
-    self.Window.Header.Name:SetWidth(LootReserve:IsCrossRealm() and 300 or 200);
+    self.Window.Header.Name:SetWidth(LootReserve:IsCrossRealm() and 300 or 150);
 
     local list = self.Window.Scroll.Container;
     list.Frames = list.Frames or { };
@@ -157,7 +157,17 @@ function LootReserve.Server.Import:UpdateReservesList()
 
         frame.Alt:SetShown(list.LastIndex % 2 == 0);
         frame.Name:SetText(format("%s%s", LootReserve:ColoredPlayer(player, member.Class), LootReserve:IsPlayerOnline(player) == nil and format("|cFF808080 (%s)|r", member.NameMatchResult or "not in raid") or LootReserve:IsPlayerOnline(player) == false and "|cFF808080 (offline)|r" or ""));
-
+        if member.Plus ~= 0 then
+            frame.Plus:SetText(format("%s%s", member.Plus > 0 and "+" or "", member.Plus));
+        else
+            frame.Plus:SetText("");
+        end
+        if member.ReservesDelta ~= 0 then
+            frame.Delta:SetText(format("%s%s", member.ReservesDelta > 0 and "|cFF00FF00" or "|cFFFF0000", LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer + member.ReservesDelta));
+        else
+            frame.Delta:SetText(LootReserve.Server.NewSessionSettings.MaxReservesPerPlayer);
+        end
+        
         local missing = { };
         local last = 0;
         frame.ReservesFrame.Items = frame.ReservesFrame.Items or { };
@@ -395,8 +405,8 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
 
     self.Members = { };
     local function Parse()
-        if #playerColumns == 0 or #itemColumns == 0 then
-            return "Enter CSV text above and mark at least one|ncolumn as \"Player\" and \"Item\"";
+        if #playerColumns == 0 then
+            return "Enter CSV text above and mark at least one|ncolumn as \"Player\"";
         end
 
         for _, row in ipairs(self.Rows) do
@@ -532,26 +542,29 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         InvalidReasons  = { },
                         ReservesDelta   = nil,
                         Class           = nil,
+                        Plus            = nil,
                     };
                 end
                 local member = self.Members[player];
+                
                 if nameMatchResult and not member.NameMatchResult then
                     member.NameMatchResult = nameMatchResult;
                 end
+                member.ReservesDelta = member.ReservesDelta or row.Delta;
+                local class = select(3, UnitClass(player)) or row.Class;
+                member.Class = member.Class or class;
+                local className = member.Class and select(2, LootReserve:GetClassInfo(member.Class));
+                member.Plus = member.Plus or row.Plus;
+                
                 for i = 1, (row.Count or 1) * itemCount * playerCount do
                     table.insert(member.ReservedItems, itemID);
                     if row.Bonus and row.Bonus ~= 0 then
                         member.RollBonus[itemID] = row.Bonus;
                     end
-                    member.Plus = member.Plus or row.Plus;
                     itemReserveCount[itemID] = (itemReserveCount[itemID] or 0) + 1;
                     itemReserveCountByPlayer[player] = itemReserveCountByPlayer[player] or { };
                     itemReserveCountByPlayer[player][itemID] = (itemReserveCountByPlayer[player][itemID] or 0) + 1;
-                    member.ReservesDelta = member.ReservesDelta or row.Delta;
                     local conditions = LootReserve.Server:GetNewSessionItemConditions()[itemID];
-                    local class = select(3, UnitClass(player)) or row.Class;
-                    member.Class = member.Class or class;
-                    local className = class and select(2, LootReserve:GetClassInfo(class));
                     if itemID == 0 then
                         member.InvalidReasons[#member.ReservedItems] = "Item with the name \"" .. itemName .. "\" was not be found|nor it can't be reserved due to session settings.";
                     elseif not (LootReserve.Data:IsItemInCategories(itemID, LootReserve.Server.NewSessionSettings.LootCategories) or conditions and conditions.Custom) or not LootReserve.ItemConditions:TestServer(itemID) then
@@ -659,6 +672,9 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                                 ParseRow(player, nameMatchResult, itemID, itemData.Name, row, itemData.Count, playerCount);
                             end
                         end
+                        if not self.Members[player] then
+                            ParseRow(player, nameMatchResult, nil, nil, row, 0, playerCount);
+                        end
                     end
                 end
             end
@@ -682,33 +698,22 @@ function LootReserve.Server.Import:Import()
     if self.Members and next(self.Members) then
         table.wipe(LootReserve.Server.NewSessionSettings.ImportedMembers);
         for player, member in pairs(self.Members) do
-            for i, itemID in ipairs(member.ReservedItems) do
-                if not member.InvalidReasons[i] then
-                    LootReserve.Server.NewSessionSettings.ImportedMembers[player] = LootReserve.Server.NewSessionSettings.ImportedMembers[player] or {
-                        Class         = member.Class,
-                        ReservesLeft  = nil,
-                        ReservesDelta = 0,
-                        ReservedItems = { },
-                        RollBonus     = member.RollBonus,
-                        Plus          = member.Plus or 0,
-                        Locked        = nil,
-                        OptedOut      = nil,
-                    };
-                    table.insert(LootReserve.Server.NewSessionSettings.ImportedMembers[player].ReservedItems, itemID);
-                end
-            end
-            if member.ReservesDelta then
+            if #member.ReservedItems > 0 or member.ReservesDelta ~= 0 or member.Plus ~= 0 then
                 LootReserve.Server.NewSessionSettings.ImportedMembers[player] = LootReserve.Server.NewSessionSettings.ImportedMembers[player] or {
                     Class         = member.Class,
                     ReservesLeft  = nil,
-                    ReservesDelta = 0,
+                    ReservesDelta = member.ReservesDelta,
                     ReservedItems = { },
                     RollBonus     = member.RollBonus,
                     Plus          = member.Plus or 0,
                     Locked        = nil,
                     OptedOut      = nil,
                 };
-                LootReserve.Server.NewSessionSettings.ImportedMembers[player].ReservesDelta = member.ReservesDelta
+            end
+            for i, itemID in ipairs(member.ReservedItems) do
+                if not member.InvalidReasons[i] then
+                    table.insert(LootReserve.Server.NewSessionSettings.ImportedMembers[player].ReservedItems, itemID);
+                end
             end
         end
     end
@@ -726,5 +731,5 @@ function LootReserve.Server.Import:OnWindowLoad(window)
 end
 
 function LootReserve.Server.Import:OnWindowShow(window)
-    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 500 or 400, 460);
+    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 550 or 400, 460);
 end

@@ -53,6 +53,22 @@
 						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Name" />
 					</Anchors>
 				</FontString>
+				<FontString parentKey="Plus" inherits="GameFontNormal" justifyH="LEFT" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.Plus" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Plus" />
+					</Anchors>
+				</FontString>
+				<FontString parentKey="Delta" inherits="GameFontNormal" justifyH="LEFT" text="">
+					<Anchors>
+						<Anchor point="TOP" />
+						<Anchor point="BOTTOM" />
+						<Anchor point="LEFT" relativeKey="$parent.$parent.$parent.$parent.Header.Delta" />
+						<Anchor point="RIGHT" relativeKey="$parent.$parent.$parent.$parent.Header.Delta" />
+					</Anchors>
+				</FontString>
 				<FontString parentKey="Reserves" inherits="GameFontNormal" justifyH="LEFT" text="">
 					<Anchors>
 						<Anchor point="TOP" />
@@ -84,7 +100,7 @@
 		</Scripts>
 	</Frame>
 	<Frame name="LootReserveServerImportWindow" parent="UIParent" inherits="BasicFrameTemplateWithInset" toplevel="true" movable="true" resizable="true" enableMouse="true" clampedToScreen="true" hidden="true">
-		<Size x="490" y="550" />
+		<Size x="550" y="550" />
 		<Anchors>
 			<Anchor point="CENTER" />
 		</Anchors>
@@ -309,14 +325,26 @@
 				<Layers>
 					<Layer level="OVERLAY">
 						<FontString parentKey="Name" inherits="GameFontNormal" justifyH="LEFT" text="Player">
-							<Size x="200" />
+							<Size x="150" />
 							<Anchors>
 								<Anchor point="LEFT" x="5" />
 							</Anchors>
 						</FontString>
-						<FontString parentKey="Reserves" inherits="GameFontNormal" justifyH="LEFT" text="Reserves">
+						<FontString parentKey="Plus" inherits="GameFontNormal" justifyH="LEFT" text="Plus">
+							<Size x="40" />
 							<Anchors>
 								<Anchor point="LEFT" relativeKey="$parent.Name" relativePoint="RIGHT" x="5" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="Delta" inherits="GameFontNormal" justifyH="LEFT" text="Limit">
+							<Size x="40" />
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.Plus" relativePoint="RIGHT" x="5" />
+							</Anchors>
+						</FontString>
+						<FontString parentKey="Reserves" inherits="GameFontNormal" justifyH="LEFT" text="Items">
+							<Anchors>
+								<Anchor point="LEFT" relativeKey="$parent.Delta" relativePoint="RIGHT" x="5" />
 								<Anchor point="RIGHT" x="-16" />
 							</Anchors>
 						</FontString>
