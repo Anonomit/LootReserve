@@ -574,6 +574,7 @@
 				LootReserve.Server.MembersEdit:OnWindowLoad(self);
 			</OnLoad>
 			<OnShow>
+				LootReserve.Server.MembersEdit:OnWindowShow(self);
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
 				LootReserve.Server.MembersEdit:UpdateMembersList();
 			</OnShow>

@@ -113,11 +113,7 @@ local function RollRequested(self, sender, item, players, custom, duration, maxD
     local durationHeight = frame.DurationFrame:IsShown() and 20 or 0;
     frame.DurationFrame:SetHeight(math.max(durationHeight, 0.00001));
 
-    frame:SetHeight(90 + durationHeight);
     LootReserve:SetResizeBounds(frame, 364, 90 + durationHeight, 1000, 90 + durationHeight);
-    if frame:GetWidth() < 364 then
-        frame:SetWidth(364)
-    end
 
     frame:Show();
     

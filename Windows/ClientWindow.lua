@@ -762,7 +762,6 @@ function LootReserve.Client:OnWindowLoad(window)
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetPoint("TOP", self.Window, "TOP", 0, -4);
     self.Window.TitleText:SetText("LootReserve");
-    LootReserve:SetResizeBounds(self.Window, 550, 250);
     self:UpdateCategories();
     self:UpdateReserveStatus();
     LootReserve:RegisterUpdate(function(elapsed)
@@ -797,4 +796,8 @@ function LootReserve.Client:OnWindowLoad(window)
             self.Window.RemainingTextGlow:SetVertexColor(r, g, b, 0.15 + r * 0.25);
         end
     end);
+end
+
+function LootReserve.Client:OnWindowShow(window)
+    LootReserve:SetResizeBounds(self.Window, 550, 250);
 end

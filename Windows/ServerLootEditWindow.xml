@@ -729,6 +729,7 @@
 				LootReserve.Server.LootEdit:OnWindowLoad(self);
 			</OnLoad>
 			<OnShow>
+				LootReserve.Server.LootEdit:OnWindowShow(self);
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
 				LootReserve.Server.LootEdit:UpdateCategories(true);
 				LootReserve.Server.LootEdit:UpdateLootList();

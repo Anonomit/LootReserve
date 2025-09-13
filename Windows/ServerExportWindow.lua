@@ -124,5 +124,8 @@ function LootReserve.Server.Export:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetText("LootReserve Host - Export");
-    LootReserve:SetResizeBounds(self.Window, 300, 130);
+end
+
+function LootReserve.Server.Export:OnWindowShow(window)
+    LootReserve:SetResizeBounds(self.Window, 400, 150);
 end

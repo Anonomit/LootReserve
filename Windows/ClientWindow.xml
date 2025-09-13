@@ -679,6 +679,7 @@
 				end
 			</OnLoad>
 			<OnShow>
+				LootReserve.Client:OnWindowShow(self);
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
 				if not self.openedOnce then
 					self.openedOnce = true;

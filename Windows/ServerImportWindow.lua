@@ -119,7 +119,6 @@ function LootReserve.Server.Import:UpdateReservesList()
     if not self.Window:IsShown() then return; end
 
     self.Window.Header.Name:SetWidth(LootReserve:IsCrossRealm() and 300 or 200);
-    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 490 or 390, 440);
 
     local list = self.Window.Scroll.Container;
     list.Frames = list.Frames or { };
@@ -722,7 +721,10 @@ function LootReserve.Server.Import:OnWindowLoad(window)
     self.Window = window;
     self.Window.TopLeftCorner:SetSize(32, 32); -- Blizzard UI bug?
     self.Window.TitleText:SetText("LootReserve Host - Import");
-    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 490 or 390, 460);
     self.Window.InputOptions.Input.MatchPlayerNames:SetChecked(self.MatchPlayerNames);
     self:InputUpdated();
+end
+
+function LootReserve.Server.Import:OnWindowShow(window)
+    LootReserve:SetResizeBounds(self.Window, LootReserve:IsCrossRealm() and 500 or 400, 460);
 end

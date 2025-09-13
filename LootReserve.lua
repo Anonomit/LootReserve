@@ -306,6 +306,12 @@ function LootReserve:SetResizeBounds(frame, minWidth, minHeight, maxWidth, maxHe
             frame:SetMaxResize(maxWidth, maxHeight);
         end
     end
+    local curWidth, curHeight = frame:GetSize();
+    local newWidth = math.max(minWidth or curWidth, math.min(curWidth, maxWidth or curWidth));
+    local newHeight = math.max(minHeight or curHeight, math.min(curHeight, maxHeight or curHeight));
+    if curWidth ~= newWidth or curHeight ~= newHeight then
+        frame:SetSize(newWidth, newHeight);
+    end
 end
 
 function LootReserve:GetContainerItemInfo(bag, slot)

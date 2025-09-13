@@ -3141,6 +3141,7 @@
 				LootReserve.Server:OnWindowLoad(self);
 			</OnLoad>
 			<OnShow>
+				LootReserve.Server:OnWindowShow(self);
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
 				LootReserve.Server:LoadNewSessionSettings();
 				LootReserve.Server:UpdateReserveList();

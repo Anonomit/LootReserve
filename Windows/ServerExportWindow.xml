@@ -85,6 +85,7 @@
 				LootReserve.Server.Export:OnWindowLoad(self);
 			</OnLoad>
 			<OnShow>
+				LootReserve.Server.Export:OnWindowShow(self);
 				PlaySound(SOUNDKIT.IG_CHARACTER_INFO_OPEN);
 			</OnShow>
 			<OnHide>
