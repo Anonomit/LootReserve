@@ -2383,6 +2383,7 @@
 								MakeMenuRadio(LootReserve.Server.Settings.ChatAnnounceWinToGuild and format("%s%s|r", ITEM_QUALITY_COLORS[1].hex, ITEM_QUALITY1_DESC) or ITEM_QUALITY1_DESC, "ChatAnnounceWinToGuildThreshold", 1, nil, RefreshWinToGuildThreshold):DisableIf(not LootReserve.Server.Settings.ChatAnnounceWinToGuild),
 								MakeMenuRadio(LootReserve.Server.Settings.ChatAnnounceWinToGuild and format("%s%s|r", ITEM_QUALITY_COLORS[0].hex, ITEM_QUALITY0_DESC) or ITEM_QUALITY0_DESC, "ChatAnnounceWinToGuildThreshold", 0, nil, RefreshWinToGuildThreshold):DisableIf(not LootReserve.Server.Settings.ChatAnnounceWinToGuild),
 							} },
+							MakeMenuToggle("Enable !reserve command", "ChatReserveAllowed",  "Allow players to reserve items through chat by invoking the  |cFFFFFFFF!reserve|r command.|n|n|cFFFF2020Warning|r: Disabling this option will prevent players from modifying their reserves unless they have an up to date version of |cFF00FF00LootReserve|r installed."),
 							MakeMenuToggle("Enable !reserves command", "ChatReservesList",  "Allow players to request currently made reserves to be whispered back to them when they invoke the  |cFFFFFFFF!reserves|r or |cFFFFFFFF!myreserves|r commands.|n|n|cFFFF2020Warning|r: Can result in slow chat messages.|n|nReduce chat lag by limiting the number of reserves that |cFFFFFFFF!reserves|r can send at once. The |cFFFFFFFF!myreserves|r command will always send all of the player's reserves."),
 							{ text = format("Limit !reserves response: |cFF00FF00%s|r", LootReserve.Constants.ChatReservesListLimitText[LootReserve.Server.Settings.ChatReservesListLimit] or LootReserve.Server.Settings.ChatReservesListLimit), arg1 = "#chatReservesLimit", menuList = {
 								MakeMenuRadio("1",  "ChatReservesListLimit", 1,  nil, RefreshChatReservesLimit),
@@ -2749,11 +2750,7 @@
 									LootReserve.Server.CurrentSession.Settings.Blind = self:GetChecked();
 									LootReserve.Comm:BroadcastSessionInfo();
 									if LootReserve.Server.CurrentSession.Settings.ChatFallback then
-										if LootReserve.Server.Settings.ChatReservesListLimit > 0 then
-											LootReserve:SendChatMessage(LootReserve.Server.CurrentSession.Settings.Blind and "Blind reserves enabled. You can no longer see what other players have reserved" or "Blind reserves disabled. To see what other players reserved, whisper me: !reserves [ItemLinkOrName]", LootReserve.Server:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionBlindToggle));
-										else
-											LootReserve:SendChatMessage(LootReserve.Server.CurrentSession.Settings.Blind and "Blind reserves enabled. You can no longer see what other players have reserved" or "Blind reserves disabled. To see what other players reserved, whisper me: !reserves", LootReserve.Server:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionBlindToggle));
-										end
+										LootReserve:SendChatMessage(LootReserve.Server.CurrentSession.Settings.Blind and "Blind reserves enabled. You can no longer see what other players have reserved." or "Blind reserves disabled. You may now see what other players have reserved.", LootReserve.Server:GetChatChannel(LootReserve.Constants.ChatAnnouncement.SessionBlindToggle));
 									end
 								end
 							</OnClick>
