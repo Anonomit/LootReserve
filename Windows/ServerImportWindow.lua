@@ -540,9 +540,9 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                         ReservedItems   = { },
                         RollBonus       = setmetatable({ }, { __index = function() return 0 end }),
                         InvalidReasons  = { },
-                        ReservesDelta   = nil,
+                        ReservesDelta   = 0,
                         Class           = nil,
-                        Plus            = nil,
+                        Plus            = 0,
                     };
                 end
                 local member = self.Members[player];
