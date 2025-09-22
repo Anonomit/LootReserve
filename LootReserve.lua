@@ -510,11 +510,7 @@ function LootReserve:GetClassInfo(classID)
     end
 end
 
-function LootReserve:Player(player)
-    if not self:IsCrossRealm() then
-        return Ambiguate(player, "short");
-    end
-
+local function GetRealmFromPlayer(player)
     local name, realm = strsplit("-", player);
     if not realm then
         realm = GetNormalizedRealmName();
@@ -526,9 +522,23 @@ function LootReserve:Player(player)
             end
             if not realm then
                 -- ¯\_(ツ)_/¯
-                return name;
+                return nil;
             end
         end
+    end
+    return realm;
+end
+
+function LootReserve:Player(player)
+    if not self:IsCrossRealm() then
+        return Ambiguate(player, "short");
+    end
+
+    local name, realm = strsplit("-", player);
+    local realm = GetRealmFromPlayer(player);
+    
+    if not realm then
+        return name;
     end
     return name .. "-" .. realm;
 end
@@ -695,6 +705,27 @@ local function GetPlayerClassColor(player, dim, class)
     return dim and "FF404040" or "FF808080";
 end
 
+local function GetRealmColor(player, dim, class)
+    local color = CreateColor(0.7, 0.7, 0.7, 1);
+    local r, g, b, a = color:GetRGBA();
+    return format("FF%02X%02X%02X", r * 255, g * 255, b * 255);
+    
+    -- local myRealm = GetRealmFromPlayer(LootReserve:Me());
+    -- local playerRealm = GetRealmFromPlayer(player);
+    
+    -- if playerRealm then
+    --     local color = myRealm == playerRealm and CreateColor(1, 1, 0, 1) or CreateColor(1, 0.5, 0, 1);
+    --     local r, g, b, a = color:GetRGBA();
+    --     if dim then
+    --         return format("FF%02X%02X%02X", r * 128, g * 128, b * 128);
+    --     else
+    --         return format("FF%02X%02X%02X", r * 255, g * 255, b * 255);
+    --     end
+    -- else
+    --     return GetPlayerClassColor(player, dim, class);
+    -- end
+end
+
 local function GetRaidUnitID(player)
     for i = 1, MAX_RAID_MEMBERS do
         local unit = UnitNameUnmodified("raid" .. i);
@@ -733,7 +764,7 @@ end
 
 function LootReserve:ColoredPlayer(player, class)
     local name, realm = strsplit("-", player);
-    return realm and format("|c%s%s|r|c%s-%s|r", GetPlayerClassColor(player, false, class), name, GetPlayerClassColor(player, true, class), realm)
+    return realm and format("|c%s%s|r|c%s-%s|r", GetPlayerClassColor(player, false, class), name, GetRealmColor(player, false, class), realm)
                   or format("|c%s%s|r",          GetPlayerClassColor(player, false, class), player);
 end
 
