@@ -485,7 +485,7 @@ function LootReserve:SendChatMessage(text, channel, target, skipOnlineCheck)
 end
 
 function LootReserve:IsCrossRealm()
-    return self:GetCurrentExpansion() == 0 and not LootReserve.SeasonID;
+    return self:GetCurrentExpansion() ~= 0 or not LootReserve.SeasonID;
     -- This doesn't really work, because even in non-connected realms UnitFullName ends up returning your realm name,
     -- and we can't use UnitName either, because that one NEVER returns a realm for "player". WTB good API, 5g.
     --[[
