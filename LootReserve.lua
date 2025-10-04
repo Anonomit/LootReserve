@@ -355,11 +355,11 @@ function LootReserve:PickupContainerItem(bag, slot)
     end
 end
 
-function LootReserve:GetLootMethod()
+function LootReserve:IsLootMethodMasterLooter()
     if C_PartyInfo and C_PartyInfo.GetLootMethod then
-        return C_PartyInfo.GetLootMethod();
+        return C_PartyInfo.GetLootMethod() == Enum.LootMethod.Masterlooter;
     else
-        return GetLootMethod();
+        return GetLootMethod() == "master";
     end
 end
 

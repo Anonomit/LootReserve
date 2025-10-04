@@ -1600,7 +1600,7 @@
 						};
 
 						local warning = (function()
-							if not IsMasterLooter() or LootReserve:GetLootMethod() ~= "master" then
+							if not IsMasterLooter() or LootReserve:IsLootMethodMasterLooter() then
 								return "Not master looter";
 							end
 							if not LootReserve:IsLootingItem(item) then
