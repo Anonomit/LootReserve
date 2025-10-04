@@ -471,7 +471,8 @@ function LootReserve:SendChatMessage(text, channel, target, skipOnlineCheck)
             if ChatThrottleLib then
                 ChatThrottleLib:SendChatMessage("NORMAL", self.Comm.Prefix, text, channel, nil, target);
             else
-                SendChatMessage(text, channel, nil, target);
+                local Send = C_ChatInfo and C_ChatInfo.SendChatMessage or SendChatMessage;
+                Send(text, channel, nil, target);
             end
         end
     end
