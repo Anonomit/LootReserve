@@ -355,6 +355,14 @@ function LootReserve:PickupContainerItem(bag, slot)
     end
 end
 
+function LootReserve:GetLootMethod()
+    if C_PartyInfo and C_PartyInfo.GetLootMethod then
+        return C_PartyInfo.GetLootMethod();
+    else
+        return GetLootMethod();
+    end
+end
+
 function LootReserve:OpenMenu(menu, menuContainer, anchor)
     if L_UIDROPDOWNMENU_OPEN_MENU == menuContainer then
         CloseMenus();
