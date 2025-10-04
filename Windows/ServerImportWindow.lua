@@ -550,11 +550,11 @@ function LootReserve.Server.Import:SessionSettingsUpdated()
                 if nameMatchResult and not member.NameMatchResult then
                     member.NameMatchResult = nameMatchResult;
                 end
-                member.ReservesDelta = member.ReservesDelta or row.Delta;
+                member.ReservesDelta = row.Delta or member.ReservesDelta or row.Delta;
                 local class = select(3, UnitClass(player)) or row.Class;
                 member.Class = member.Class or class;
                 local className = member.Class and select(2, LootReserve:GetClassInfo(member.Class));
-                member.Plus = member.Plus or row.Plus;
+                member.Plus = row.Plus or member.Plus;
                 
                 for i = 1, (row.Count or 1) * itemCount * playerCount do
                     table.insert(member.ReservedItems, itemID);
