@@ -4032,7 +4032,7 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
     --     return;
     -- end
 
-    if not IsMasterLooter() or LootReserve:IsLootMethodMasterLooter() then
+    if not IsMasterLooter() or not LootReserve:IsLootMethodMasterLooter() then
         -- LootReserve:ShowError("Failed to masterloot %s to %s: not master looter", link, LootReserve:ColoredPlayer(player));
         return;
     end
