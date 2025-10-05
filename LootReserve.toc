@@ -3,7 +3,7 @@
 ## Interface-Cata:    40402
 ## Interface-Classic: 11507
 
-## Version: 2025-10-04a
+## Version: 2025-10-05
 ## X-Min-Allowed-Version-Classic: 2025-09-23
 ## X-Min-Allowed-Version-Fresh:   2025-09-23
 ## X-Min-Allowed-Version-Era:     2025-09-23
