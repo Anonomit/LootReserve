@@ -41,15 +41,15 @@ function LootReserve.ItemSearch:Load()
     local expansion = LootReserve:GetCurrentExpansion();
     
     local itemsToCache = { };
-    if expansion >= 5 then
+    if expansion >= 4 then
         itemsToCache = IDList.mop;
-    elseif expansion >= 4 then
-        itemsToCache = IDList.cata;
     elseif expansion >= 3 then
-        itemsToCache = IDList.wrath;
+        itemsToCache = IDList.cata;
     elseif expansion >= 2 then
-        itemsToCache = IDList.tbc;
+        itemsToCache = IDList.wrath;
     elseif expansion >= 1 then
+        itemsToCache = IDList.tbc;
+    elseif expansion >= 0 then
         itemsToCache = IDList.vanilla;
     end
     
