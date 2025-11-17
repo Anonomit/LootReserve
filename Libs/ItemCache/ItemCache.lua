@@ -4,7 +4,7 @@ local ADDON_NAME = "ItemCache"
 local HOST_ADDON_NAME, Data = ...
 local IsStandalone = ADDON_NAME == HOST_ADDON_NAME
 
-local MAJOR, MINOR = ADDON_NAME, 15
+local MAJOR, MINOR = ADDON_NAME, 16
 local ItemCache, oldMinor = LibStub:NewLibrary(MAJOR, MINOR)
 if not ItemCache and not IsStandalone then
   return
@@ -51,6 +51,287 @@ local DoesItemExistByID = C_Item.DoesItemExistByID
 --     return C_Item.GetItemIconByID(itemID) ~= 134400 -- question icon
 --   end
 -- end
+
+
+
+
+--[[
+
+Item definition
+{
+  [1]  = id,
+  [2]  = suffix,
+  [3]  = uniqueID,
+  [4]  = info,
+  [5]  = dne,
+  [6]  = searchName,
+  [7]  = unique,
+  [8]  = startsQuest,
+  [9]  = skillRequired,
+  [10] = skillLevelRequired,
+  [11] = classesAllowed,
+}
+
+]]
+
+
+
+-- Copy in AceSerializer code so that no dependencies are required for core functionality
+local AceSerializer
+do
+  local success, lib = pcall(function() return LibStub"AceSerializer-3.0" end)
+  if success then
+    AceSerializer = lib
+  else
+    
+    -- Lua APIs
+    local strbyte, strchar, gsub, gmatch, format = string.byte, string.char, string.gsub, string.gmatch, string.format
+    local assert, error, pcall = assert, error, pcall
+    local type, tostring, tonumber = type, tostring, tonumber
+    local pairs, select, frexp = pairs, select, math.frexp
+    local tconcat = table.concat
+    
+    -- quick copies of string representations of wonky numbers
+    local inf = math.huge
+    
+    local serNaN  -- can't do this in 4.3, see ace3 ticket 268
+    local serInf, serInfMac = "1.#INF", "inf"
+    local serNegInf, serNegInfMac = "-1.#INF", "-inf"
+    
+
+    -- Serialization functions
+    
+    local function SerializeStringHelper(ch)  -- Used by SerializeValue for strings
+      -- We use \126 ("~") as an escape character for all nonprints plus a few more
+      local n = strbyte(ch)
+      if n==30 then           -- v3 / ticket 115: catch a nonprint that ends up being "~^" when encoded... DOH
+        return "\126\122"
+      elseif n<=32 then       -- nonprint + space
+        return "\126"..strchar(n+64)
+      elseif n==94 then   -- value separator
+        return "\126\125"
+      elseif n==126 then    -- our own escape character
+        return "\126\124"
+      elseif n==127 then    -- nonprint (DEL)
+        return "\126\123"
+      else
+        assert(false) -- can't be reached if caller uses a sane regex
+      end
+    end
+    
+    local function SerializeValue(v, res, nres)
+      -- We use "^" as a value separator, followed by one byte for type indicator
+      local t=type(v)
+      
+      if t=="string" then   -- ^S = string (escaped to remove nonprints, "^"s, etc)
+        res[nres+1] = "^S"
+        res[nres+2] = gsub(v,"[%c \94\126\127]", SerializeStringHelper)
+        nres=nres+2
+        
+      elseif t=="number" then -- ^N = number (just tostring()ed) or ^F (float components)
+        local str = tostring(v)
+        if tonumber(str)==v  --[[not in 4.3 or str==serNaN]] then
+          -- translates just fine, transmit as-is
+          res[nres+1] = "^N"
+          res[nres+2] = str
+          nres=nres+2
+        elseif v == inf or v == -inf then
+          res[nres+1] = "^N"
+          res[nres+2] = v == inf and serInf or serNegInf
+          nres=nres+2
+        else
+          local m,e = frexp(v)
+          res[nres+1] = "^F"
+          res[nres+2] = format("%.0f",m*2^53) -- force mantissa to become integer (it's originally 0.5--0.9999)
+          res[nres+3] = "^f"
+          res[nres+4] = tostring(e-53)  -- adjust exponent to counteract mantissa manipulation
+          nres=nres+4
+        end
+        
+      elseif t=="table" then  -- ^T...^t = table (list of key,value pairs)
+        nres=nres+1
+        res[nres] = "^T"
+        for key,value in pairs(v) do
+          nres = SerializeValue(key, res, nres)
+          nres = SerializeValue(value, res, nres)
+        end
+        nres=nres+1
+        res[nres] = "^t"
+        
+      elseif t=="boolean" then  -- ^B = true, ^b = false
+        nres=nres+1
+        if v then
+          res[nres] = "^B"  -- true
+        else
+          res[nres] = "^b"  -- false
+        end
+        
+      elseif t=="nil" then    -- ^Z = nil (zero, "N" was taken :P)
+        nres=nres+1
+        res[nres] = "^Z"
+        
+      else
+        error(MAJOR..": Cannot serialize a value of type '"..t.."'")  -- can't produce error on right level, this is wildly recursive
+      end
+      
+      return nres
+    end
+    
+    
+    
+    local serializeTbl = { "^1" } -- "^1" = Hi, I'm data serialized by AceSerializer protocol rev 1
+    
+    --- Serialize the data passed into the function.
+    -- Takes a list of values (strings, numbers, booleans, nils, tables)
+    -- and returns it in serialized form (a string).\\
+    -- May throw errors on invalid data types.
+    -- @param ... List of values to serialize
+    -- @return The data in its serialized form (string)
+    function AceSerializer:Serialize(...)
+      local nres = 1
+      
+      for i=1,select("#", ...) do
+        local v = select(i, ...)
+        nres = SerializeValue(v, serializeTbl, nres)
+      end
+      
+      serializeTbl[nres+1] = "^^" -- "^^" = End of serialized data
+      
+      return tconcat(serializeTbl, "", 1, nres+1)
+    end
+    
+    -- Deserialization functions
+    local function DeserializeStringHelper(escape)
+      if escape<"~\122" then
+        return strchar(strbyte(escape,2,2)-64)
+      elseif escape=="~\122" then -- v3 / ticket 115: special case encode since 30+64=94 ("^") - OOPS.
+        return "\030"
+      elseif escape=="~\123" then
+        return "\127"
+      elseif escape=="~\124" then
+        return "\126"
+      elseif escape=="~\125" then
+        return "\94"
+      end
+      error("DeserializeStringHelper got called for '"..escape.."'?!?")  -- can't be reached unless regex is screwed up
+    end
+    
+    local function DeserializeNumberHelper(number)
+      --[[ not in 4.3 if number == serNaN then
+        return 0/0
+      else]]if number == serNegInf or number == serNegInfMac then
+        return -inf
+      elseif number == serInf or number == serInfMac then
+        return inf
+      else
+        return tonumber(number)
+      end
+    end
+    
+    -- DeserializeValue: worker function for :Deserialize()
+    -- It works in two modes:
+    --   Main (top-level) mode: Deserialize a list of values and return them all
+    --   Recursive (table) mode: Deserialize only a single value (_may_ of course be another table with lots of subvalues in it)
+    --
+    -- The function _always_ works recursively due to having to build a list of values to return
+    --
+    -- Callers are expected to pcall(DeserializeValue) to trap errors
+    
+    local function DeserializeValue(iter,single,ctl,data)
+      
+      if not single then
+        ctl,data = iter()
+      end
+      
+      if not ctl then
+        error("Supplied data misses AceSerializer terminator ('^^')")
+      end
+      
+      if ctl=="^^" then
+        -- ignore extraneous data
+        return
+      end
+      
+      local res
+      
+      if ctl=="^S" then
+        res = gsub(data, "~.", DeserializeStringHelper)
+      elseif ctl=="^N" then
+        res = DeserializeNumberHelper(data)
+        if not res then
+          error("Invalid serialized number: '"..tostring(data).."'")
+        end
+      elseif ctl=="^F" then     -- ^F<mantissa>^f<exponent>
+        local ctl2,e = iter()
+        if ctl2~="^f" then
+          error("Invalid serialized floating-point number, expected '^f', not '"..tostring(ctl2).."'")
+        end
+        local m=tonumber(data)
+        e=tonumber(e)
+        if not (m and e) then
+          error("Invalid serialized floating-point number, expected mantissa and exponent, got '"..tostring(m).."' and '"..tostring(e).."'")
+        end
+        res = m*(2^e)
+      elseif ctl=="^B" then -- yeah yeah ignore data portion
+        res = true
+      elseif ctl=="^b" then   -- yeah yeah ignore data portion
+        res = false
+      elseif ctl=="^Z" then -- yeah yeah ignore data portion
+        res = nil
+      elseif ctl=="^T" then
+        -- ignore ^T's data, future extensibility?
+        res = {}
+        local k,v
+        while true do
+          ctl,data = iter()
+          if ctl=="^t" then break end -- ignore ^t's data
+          k = DeserializeValue(iter,true,ctl,data)
+          if k==nil then
+            error("Invalid AceSerializer table format (no table end marker)")
+          end
+          ctl,data = iter()
+          v = DeserializeValue(iter,true,ctl,data)
+          if v==nil then
+            error("Invalid AceSerializer table format (no table end marker)")
+          end
+          res[k]=v
+        end
+      else
+        error("Invalid AceSerializer control code '"..ctl.."'")
+      end
+      
+      if not single then
+        return res,DeserializeValue(iter)
+      else
+        return res
+      end
+    end
+    
+    --- Deserializes the data into its original values.
+    -- Accepts serialized data, ignoring all control characters and whitespace.
+    -- @param str The serialized data (from :Serialize)
+    -- @return true followed by a list of values, OR false followed by an error message
+    function AceSerializer:Deserialize(str)
+      str = gsub(str, "[%c ]", "")  -- ignore all control characters; nice for embedding in email and stuff
+      
+      local iter = gmatch(str, "(^.)([^^]*)") -- Any ^x followed by string of non-^
+      local ctl,data = iter()
+      if not ctl or ctl~="^1" then
+        -- we purposefully ignore the data portion of the start code, it can be used as an extension mechanism
+        return false, "Supplied data is not AceSerializer data (rev 1)"
+      end
+      
+      return pcall(DeserializeValue, iter)
+    end
+  end
+end
+
+
+
+
+
+
+
 
 
 local function MakeLookupTable(t, val, keepOrigVals)
@@ -403,7 +684,7 @@ function ItemCache:DoesItemExistByID(id)
     for suffix, itemPrivate in pairs(storage[id]) do
       if suffix ~= 0 then
         return true
-      elseif itemPrivate.dne then
+      elseif itemPrivate[5] then
         return false
       end
     end
@@ -434,7 +715,7 @@ local function MakeItem(id, suffix, uniqueID)
   if storage[id] and storage[id][suffix or 0] then
     item = storage[id][suffix or 0]
   else
-    item = {id = id, suffix = suffix, uniqueID = uniqueID}
+    item = {id, suffix, uniqueID}
   end
   setPrivate(facade, item)
   setPrivate(item, _G.Item:CreateFromItemID(id))
@@ -447,7 +728,7 @@ end
 
 local function InterpretItem(arg, suffix, uniqueID)
   if IsItem(arg) then
-    return arg:GetID(), arg:GetSuffix()
+    return arg:GetID(), arg:GetSuffix(), arg:GetUniqueID()
   end
   local argType = type(arg)
   if argType == "table" then
@@ -710,14 +991,14 @@ function ItemDB:InitItemInfoListener()
           item:Cache()
           
         else
-            private(item).dne = true
+            private(item)[5] = true
             ItemDB:Store(item)
           if not self.loadAttempts[id] then
             self.loadAttempts[id] = 0
           end
           self.loadAttempts[id] = self.loadAttempts[id] + 1
           if self.loadAttempts[id] >= self.MAX_LOAD_ATTEMPTS then
-            private(item).dne = true
+            private(item)[5] = true
           else
             item:Load()
           end
@@ -868,7 +1149,7 @@ function ItemDB:Init()
   for id, items in pairs(storage) do
     if type(id) == "number" then
       for suffix, item in pairs(items) do
-        self:Get(id, suffix, item.uniqueID)
+        self:Get(id, suffix, item[3])
       end
     end
   end
@@ -953,21 +1234,21 @@ end
 
 
 function Item:GetID()
-  return private(self).id
+  return private(self)[1]
 end
 Item.GetId = Item.GetID
 function Item:GetSuffix()
-  return private(self).suffix
+  return private(self)[2]
 end
 function Item:HasSuffix()
-  return private(self).suffix ~= nil
+  return private(self)[2] ~= nil
 end
 function Item:GetUniqueID()
-  return private(self).uniqueID
+  return private(self)[3]
 end
 Item.GetUniqueId = Item.GetUniqueID
 function Item:HasUniqueID()
-  return private(self).uniqueID ~= nil
+  return private(self)[3] ~= nil
 end
 Item.HasUniqueId = Item.HasUniqueID
 function Item:GetIDSuffix()
@@ -995,7 +1276,7 @@ function Item:Load()
 end
 
 function Item:IsCached()
-  return private(self).info ~= nil
+  return private(self)[4] ~= nil
 end
 function Item:Cache()
   if not self:IsCached() then
@@ -1006,20 +1287,20 @@ end
 
 function Item:GetInfo()
   if self:Exists() then
-    if not private(self).info then
+    if not private(self)[4] then
       if not self:IsLoaded() then
         self:Load()
         return
       end
       local info = ItemDB:GetItemInfoPacked(self:GetString())
-      private(self).dne = nil
+      private(self)[5] = nil
       
       -- strip character level and insert uniqueID
       info[2] = strgsub(info[2], "(item:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*):([^:]*):([^:]*:)", "%1:" .. (self:GetUniqueID() or "") .. "::")
       
-      private(self).info = info
+      private(self)[4] = AceSerializer:Serialize(info)
       -- local name, link, quality, level, minLevel, itemType, itemSubType, maxStackSize, equipLoc, texture, sellPrice, classID, subclassID, bindType = unpack(info)
-      private(self).searchName = ItemCache:FormatSearchText(info[1])
+      private(self)[6] = ItemCache:FormatSearchText(info[1])
       
       ItemDB.tooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE")
       ItemDB.tooltipScanner:SetHyperlink("item:" .. self:GetID())
@@ -1027,16 +1308,16 @@ function Item:GetInfo()
         local line = _G[ItemDB.tooltipScanner:GetName() .. "TextLeft" .. i]
         if line and line:GetText() then
           if strmatch(line:GetText(), ItemDB.tooltipScanner.Unique) then
-            private(self).unique = true
+            private(self)[7] = true
             
           elseif strmatch(line:GetText(), ItemDB.tooltipScanner.StartsQuest) then
-            private(self).startsQuest = true
+            private(self)[8] = true
             
           else
             local skill, level = strmatch(line:GetText(), ItemDB.tooltipScanner.SkillRequired)
             if skill then
-              private(self).skillRequired      = skill
-              private(self).skillLevelRequired = tonumber(level)
+              private(self)[9]  = skill
+              private(self)[10] = tonumber(level)
             else
               local classesAllowedText = strmatch(line:GetText(), ItemDB.tooltipScanner.ClassesAllowed)
               if classesAllowedText then
@@ -1048,7 +1329,7 @@ function Item:GetInfo()
                     end
                   end
                 end
-                private(self).classesAllowed = classesAllowed
+                private(self)[11] = classesAllowed
               end
             end
           end
@@ -1059,10 +1340,13 @@ function Item:GetInfo()
       ItemDB:RunLoadCallbacks(self)
     end
   end
-  local info = private(self).info
+  local info = private(self)[4]
   if info then
-    -- add character level
-    return info[1], strgsub(info[2], "(item:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*)([^:]*)(:.*)", "%1" .. UnitLevel"player" .. "%3"), select(3, unpack(info))
+    local success, info = AceSerializer:Deserialize(info)
+    if success then
+      -- add character level
+      return info[1], strgsub(info[2], "(item:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*:[^:]*)([^:]*)(:.*)", "%1" .. UnitLevel"player" .. "%3"), select(3, unpack(info))
+    end
   end
   return nil
 end
@@ -1085,7 +1369,7 @@ function Item:IsUsableBy(classOrUnit)
   if not classID and UnitExists(classOrUnit) then
     classID = select(2, UnitClassBase(classOrUnit))
   end
-  local classesAllowed = private(self).classesAllowed
+  local classesAllowed = private(self)[11]
   if classesAllowed then
     return classesAllowed[classID] or false
   end
@@ -1096,7 +1380,7 @@ function Item:IsUsable(classOrUnit)
 end
 function Item:GetSkillRequired()
   if not self:IsCached() then return nil end
-  local skill, level = private(self).skillRequired, private(self).skillLevelRequired
+  local skill, level = private(self)[9], private(self)[10]
   if not skill then
     skill = false
   end
@@ -1132,14 +1416,14 @@ function Item:RequiresArchaeology(...)    return self:RequiresSkill(PROFESSIONS_
 
 function Item:IsUnique()
   if not self:IsCached() then return nil end
-  return private(self).unique or false
+  return private(self)[7] or false
 end
 function Item:StartsQuest()
   if not self:IsCached() then return nil end
-  return private(self).startsQuest or false
+  return private(self)[8] or false
 end
 function Item:GetSearchName()
-  return private(self).searchName
+  return private(self)[6]
 end
 
 function Item:Matches(text)
@@ -1147,7 +1431,7 @@ function Item:Matches(text)
   if id then
     return self:GetID() == id
   end
-  local searchName = private(self).searchName
+  local searchName = private(self)[6]
   if searchName then
     return strfind(searchName, text)
   end
