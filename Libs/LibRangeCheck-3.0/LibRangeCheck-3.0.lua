@@ -73,6 +73,7 @@ local setmetatable = setmetatable
 local BOOKTYPE_SPELL = BOOKTYPE_SPELL or Enum.SpellBookSpellBank.Player
 local GetSpellBookItemName = GetSpellBookItemName or C_SpellBook.GetSpellBookItemName
 local C_Item = C_Item
+local IsEventValid = C_EventUtils.IsEventValid
 local UnitCanAttack = UnitCanAttack
 local UnitCanAssist = UnitCanAssist
 local UnitExists = UnitExists
@@ -4702,25 +4703,29 @@ end
 
 -- << load-time initialization
 
+local function RegisterEventIfValid(frame, event)
+  if IsEventValid(event) then
+    frame:RegisterEvent(event)
+  end
+end
+
 function lib:activate()
   if not self.frame then
     local frame = CreateFrame("Frame")
     self.frame = frame
 
-    frame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
-    frame:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
-    if not (isMidnight or isTBC) then
-      frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
-    end
-    frame:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
-    frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
-    frame:RegisterEvent("SPELLS_CHANGED")
+    RegisterEventIfValid(frame, "GET_ITEM_INFO_RECEIVED")
+    RegisterEventIfValid(frame, "ACTIONBAR_SLOT_CHANGED")
+    RegisterEventIfValid(frame, "LEARNED_SPELL_IN_TAB")
+    RegisterEventIfValid(frame, "LEARNED_SPELL_IN_SKILL_LINE")
+    RegisterEventIfValid(frame, "CHARACTER_POINTS_CHANGED")
+    RegisterEventIfValid(frame, "SPELLS_CHANGED")
 
     if isEra or isCata then
-      frame:RegisterEvent("CVAR_UPDATE")
+      RegisterEventIfValid(frame, "CVAR_UPDATE")
     end
 
-    frame:RegisterEvent("PLAYER_TALENT_UPDATE")
+    RegisterEventIfValid(frame, "PLAYER_TALENT_UPDATE")
 
     local _, playerClass = UnitClass("player")
     if playerClass == "MAGE" or playerClass == "SHAMAN" then
