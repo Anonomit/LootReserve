@@ -37,7 +37,7 @@ jobs:
       - name: Package and release
         uses: BigWigsMods/packager@v2
         with:
-          args: -S -n "{package-name}-{project-version}" -m .pkgmeta-current
+          args: -n "{package-name}-{project-version}" -m .pkgmeta-current
   
   
   # "release" is a job, you can name it anything you want
@@ -64,4 +64,4 @@ jobs:
       - name: Package and release
         uses: BigWigsMods/packager@v2
         with:
-          args: -S -n "{package-name}-{project-version}" -m .pkgmeta-full
+          args: -n "{package-name}-{project-version}" -m .pkgmeta-full
