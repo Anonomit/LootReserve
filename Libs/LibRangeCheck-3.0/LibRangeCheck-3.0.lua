@@ -48,9 +48,13 @@ if not lib then
   return
 end
 
+local interfaceVersion = select(4, GetBuildInfo())
+
 local isRetail = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 local isEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local isTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC
 local isCata = WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC
+local isMidnight = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE and interfaceVersion >= 120000
 
 local InCombatLockdownRestriction = function(unit) return InCombatLockdown() and not UnitCanAttack("player", unit) end
 
@@ -211,6 +215,7 @@ tinsert(ResSpells.DRUID, 50769) -- Revive (40 yards, level 14)
 tinsert(ResSpells.DRUID, 20484) -- Rebirth (40 yards, level 29)
 
 -- Hunters
+tinsert(HarmSpells.HUNTER, 466930) -- Black Arrow (40 yards)
 tinsert(HarmSpells.HUNTER, 75) -- Auto Shot (40 yards)
 
 if not isRetail then
@@ -372,6 +377,7 @@ end
 tinsert(PetSpells.WARLOCK, 755) -- Health Funnel (45 yards)
 
 -- Items
+
 local FriendItems
 if isEra then
   FriendItems = {
@@ -4147,8 +4153,9 @@ local function getCachedRange(unit, noItems, maxCacheAge)
 
   -- compose cache key out of unit guid and noItems
   local guid = UnitGUID(unit)
-  local cacheKey = guid .. (noItems and "-1" or "-0")
-  local cacheItem = rangeCache[cacheKey]
+  -- unfortunately, caching on GUID is not possible due to secrets, using unit instead
+  local cacheKey = (isMidnight and issecretvalue(guid) and unit or guid) .. (noItems and "-1" or "-0")
+  local cacheItem = rangeCache[cacheKey] or nil
 
   local currentTime = GetTime()
 
@@ -4555,6 +4562,9 @@ end
 function lib:LEARNED_SPELL_IN_TAB()
   self:scheduleInit()
 end
+function lib:LEARNED_SPELL_IN_SKILL_LINE()
+  self:scheduleInit()
+end
 
 function lib:CHARACTER_POINTS_CHANGED()
   self:scheduleInit()
@@ -4699,7 +4709,10 @@ function lib:activate()
 
     frame:RegisterEvent("GET_ITEM_INFO_RECEIVED")
     frame:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
-    frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    if not (isMidnight or isTBC) then
+      frame:RegisterEvent("LEARNED_SPELL_IN_TAB")
+    end
+    frame:RegisterEvent("LEARNED_SPELL_IN_SKILL_LINE")
     frame:RegisterEvent("CHARACTER_POINTS_CHANGED")
     frame:RegisterEvent("SPELLS_CHANGED")
 
