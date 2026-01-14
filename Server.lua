@@ -1251,8 +1251,12 @@ function LootReserve.Server:PrepareGuildTracking()
             end
         end
     end);
-
-    GuildRoster();
+    
+    if C_GuildInfo and C_GuildInfo.GuildRoster then
+        C_GuildInfo.GuildRoster();
+    else
+        GuildRoster();
+    end
 end
 
 function LootReserve.Server:UpdateGroupMembers()

@@ -25,8 +25,8 @@ Classic:
     1.5: AQ40 server attunement quest items added to raid loot
 
 TBC:
-    2.0: Prepatch
-    2.1: Initial
+    2.0: Prepatch: no changes
+    2.1: Kharazan: no changes
     2.2: S1 arena gear available from tokens
     2.3: S2 arena gear available from tokens
     2.5: S3 arena gear available from tokens
@@ -52,18 +52,24 @@ MoP:
 --]]
 
 
+local CLASSIC_PHASE             = 5.3;
+local ANNIVERSARY_PHASE         = 2.2;
+local CLASSIC_ERA_PHASE         = 1.5;
+local SEASON_OF_DISCOVERY_PHASE = 1.5;
+
+local EXPANSION_PHASE = 1.0
 local IS_SOD = LootReserve.SeasonID == Enum.SeasonID.SeasonOfDiscovery
-local EXPANSION_PHASE
-if LootReserve:GetCurrentExpansion() == 0 then
-    if IS_SOD then
-        EXPANSION_PHASE = 1.5; -- Season of Discovery
-    elseif LootReserve.SeasonID == Enum.SeasonID.Fresh or LootReserve.SeasonID == Enum.SeasonID.FreshHardcore then
-        EXPANSION_PHASE = 1.5; -- Anniversary
-    else
-        EXPANSION_PHASE = 1.5; -- Classic Era
-    end
+
+if IS_SOD then
+    EXPANSION_PHASE = SEASON_OF_DISCOVERY_PHASE;
+elseif LootReserve.SeasonID == Enum.SeasonID.Fresh then
+    EXPANSION_PHASE = ANNIVERSARY_PHASE;
 else
-    EXPANSION_PHASE = 5.3; -- Classic
+    if LootReserve:GetCurrentExpansion() == 0 then
+        EXPANSION_PHASE = CLASSIC_ERA_PHASE;
+    else
+        EXPANSION_PHASE = CLASSIC_PHASE;
+    end
 end
 
 local hidden = { Hidden = true };

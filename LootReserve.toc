@@ -1,6 +1,7 @@
 ## Interface:         50503
 ## Interface-Mists    50503
 ## Interface-Cata:    40402
+## Interface-TBC:     20505
 ## Interface-Classic: 11508
 
 ## Version: 2025-11-18
@@ -12,8 +13,21 @@
 ## X-Curse-Project-ID: 390790
 ## X-Wago-ID: WL6JpyGv
 
+## Category: Loot
+## Category-deDE: Beute
+## Category-esES: Botín
+## Category-esMX: Botín
+## Category-frFR: Butin
+## Category-itIT: Bottino
+## Category-koKR: 전리품
+## Category-ptBR: Saque
+## Category-ruRU: Добыча
+## Category-zhCN: 战利品
+## Category-zhTW: 戰利品
+
 ## Title: LootReserve
 ## Notes: Soft reserves management addon
+## IconTexture: Interface\AddOns\LootReserve\Assets\Textures\Icon
 ## Author: Anonomit (Damagus-Benediction, Damage-CrusaderStrikeUS)|nOriginal addon by Tagar-NethergardeKeep
 
 ## SavedVariables: LootReserveGlobalSave

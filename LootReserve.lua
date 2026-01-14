@@ -90,21 +90,29 @@ function LootReserve:GetCurrentExpansion()
     return tonumber(expansion) - 1;
 end
 
-LootReserve.Version = GetAddOnMetadata(addon, "Version");
+function LootReserve:GetAddOnMetadata(...)
+    if C_AddOns and C_AddOns.GetAddOnMetadata then
+        return C_AddOns.GetAddOnMetadata(...);
+    else
+        return GetAddOnMetadata(...);
+    end
+end
+
+LootReserve.Version = LootReserve:GetAddOnMetadata(addon, "Version");
 LootReserve.SeasonID = C_Seasons.GetActiveSeason();
 if LootReserve.SeasonID then
     if LootReserve.SeasonID == Enum.SeasonID.SeasonOfDiscovery then
-        LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version-SoD");
+        LootReserve.MinAllowedVersion = LootReserve:GetAddOnMetadata(addon, "X-Min-Allowed-Version-SoD");
     elseif LootReserve.SeasonID == Enum.SeasonID.Fresh or Enum.SeasonID.FreshHardcore then
-        LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version-Fresh");
+        LootReserve.MinAllowedVersion = LootReserve:GetAddOnMetadata(addon, "X-Min-Allowed-Version-Fresh");
     else
-        LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version-Era");
+        LootReserve.MinAllowedVersion = LootReserve:GetAddOnMetadata(addon, "X-Min-Allowed-Version-Era");
     end
 else
     if LootReserve:GetCurrentExpansion() == 0 then
-        LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version-Era");
+        LootReserve.MinAllowedVersion = LootReserve:GetAddOnMetadata(addon, "X-Min-Allowed-Version-Era");
     else
-        LootReserve.MinAllowedVersion = GetAddOnMetadata(addon, "X-Min-Allowed-Version-Classic");
+        LootReserve.MinAllowedVersion = LootReserve:GetAddOnMetadata(addon, "X-Min-Allowed-Version-Classic");
     end
 end
 LootReserve.LatestKnownVersion = LootReserve.Version;
