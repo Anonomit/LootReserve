@@ -62,7 +62,7 @@ local IS_SOD = LootReserve.SeasonID == Enum.SeasonID.SeasonOfDiscovery
 
 if IS_SOD then
     EXPANSION_PHASE = SEASON_OF_DISCOVERY_PHASE;
-elseif LootReserve.SeasonID == Enum.SeasonID.Fresh then
+elseif LootReserve.SeasonID == Enum.SeasonID.Fresh or LootReserve.SeasonID == 125 then
     EXPANSION_PHASE = ANNIVERSARY_PHASE;
 else
     if LootReserve:GetCurrentExpansion() == 0 then
