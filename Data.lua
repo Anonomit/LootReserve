@@ -3642,11 +3642,13 @@ LootReserve.Data =
                 {
                     Name = "Sapphiron",
                     Loot =
-                    {
+                    ConcatenateIf(Squish({
                         23549, 23548, 23545, 23547, 0,
+                        Ternary(EXPANSION_PHASE >= 2.0, 23072),
+                        Ternary(EXPANSION_PHASE >= 2.0, 0),
                         23050, 23046, 23047, 23045, 23041, 23040, 0,
                         23049, 23048, 23043, 23242, 0,
-                    },
+                    })),
                 },
                 {
                     Name = "Kel'Thuzad",
