@@ -905,7 +905,7 @@ end
 
 local function CacheBagSlot(self, bag, slot, i)
     local containerInfo = LootReserve:GetContainerItemInfo(bag, slot);
-    if containerInfo then
+    if containerInfo and strfind(containerInfo.hyperlink, "^[^:]-item:") then -- only cache items (not battlepets)
         if i then
             table.insert(self.BagCache, i, {bag = bag, slot = slot, item = self.ItemCache:Item(containerInfo.hyperlink), quantity = containerInfo.stackCount, locked = containerInfo.isLocked, tradeTime = self:GetSoulboundTradeableDuration(bag, slot)});
         else

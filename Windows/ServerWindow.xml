@@ -1794,7 +1794,7 @@
 												table.insert(bagMenus, bagMenu);
 												for slot = 1, slots do
 													local containerInfo = LootReserve:GetContainerItemInfo(bag, slot);
-													if containerInfo and (not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot)) then
+													if containerInfo and strfind(containerInfo.hyperlink, "^[^:]-item:") and (not C_Item.IsBound(ItemLocation:CreateFromBagAndSlot(bag, slot)) or LootReserve:IsItemSoulboundTradeable(bag, slot)) then
 														table.insert(bagMenu, MakeItem(containerInfo.stackCount, LootReserve.ItemCache:Item(containerInfo.hyperlink), containerInfo.iconFileID));
 													end
 												end
@@ -1808,7 +1808,7 @@
 											table.insert(bagMenus, bagMenu);
 											for slot = 1, 32 do
 												local containerInfo = LootReserve:GetContainerItemInfo(bag, slot);
-												if containerInfo and LootReserve:IsTradeableItem(bag, slot) then
+												if containerInfo and strfind(containerInfo.hyperlink, "^[^:]-item:") and LootReserve:IsTradeableItem(bag, slot) then
 													table.insert(bagMenu, MakeItem(containerInfo.stackCount, LootReserve.ItemCache:Item(containerInfo.hyperlink), containerInfo.iconFileID));
 												end
 											end
@@ -2042,6 +2042,10 @@
 				
 				self.SetItem = function(self, item)
 					if item then
+						if strfind(item, "^[^:]-battlepet:") then
+							LootReserve:PrintError("Cannot roll caged battlepets.")
+							return;
+						end
 						item = LootReserve.ItemCache:Item(item);
 						self.Item = item;
 
@@ -2057,10 +2061,10 @@
 							return;
 						end
 
-            local token;
-            if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
-                token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
-            end
+						local token;
+						if not LootReserve.Server.ReservableIDs[item:GetID()] and LootReserve.Server.ReservableRewardIDs[item:GetID()] then
+						    token = LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID())) or LootReserve.ItemCache:Item(LootReserve.Data:GetToken(item:GetID()));
+						end
 						local reservers = 0;
 						if LootReserve.Server.CurrentSession then
 							if LootReserve.Server.CurrentSession.ItemReserves[token and token:GetID() or item:GetID()] then

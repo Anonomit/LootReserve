@@ -741,6 +741,15 @@ function LootReserve.Server:Load()
         LootReserve.Server.NewSessionSettings.LootCategory = nil;
     end
     
+    -- 2024-03-09: Purge LootReserve.Server.RecentLoot of any non-item hyperlinks
+    if versionSave < "2024-03-09" then
+        for i = #self.RecentLoot, 1, -1 do
+            if not string.find(self.RecentLoot[i], "^[^:]-item:") then
+                table.remove(self.RecentLoot, i)
+            end
+        end
+    end
+    
     -- Create RollBonus metatables
     if self.CurrentSession then
         for _, member in pairs(self.CurrentSession.Members) do
@@ -1112,6 +1121,9 @@ function LootReserve.Server:PrepareLootTracking()
                     end
                 end
             end
+        end
+        if not strfind(itemLink, "^[^:]-item:") then
+            return;
         end
         looter = LootReserve:Player(looter);
         if IsMasterLooter() then
