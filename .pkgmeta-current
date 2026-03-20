@@ -1,9 +1,11 @@
 ignore:
   - LICENCE
 
+enable-toc-creation: yes
+
 manual-changelog:
-    filename: CHANGELOG.html
-    markup-type: html
+  filename: CHANGELOG.html
+  markup-type: html
 
 optional-dependencies:
   - ace3

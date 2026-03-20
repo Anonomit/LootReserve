@@ -1,5 +1,5 @@
 ## Interface:         50503
-## Interface-Mists    50503
+## Interface-Mists:   50503
 ## Interface-Cata:    40402
 ## Interface-TBC:     20505
 ## Interface-Classic: 11508
