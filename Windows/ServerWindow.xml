@@ -1881,7 +1881,7 @@
 												local itemID = GetLootSlotInfo(i);
 												if itemID then
 													local itemLink = GetLootSlotLink(i);
-													if itemLink and itemLink:find("item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
+													if itemLink and itemLink:find("^[^:]-item:%d") then -- GetLootSlotLink() sometimes returns "|Hitem:::::::::70:::::::::[]"
 														local item = LootReserve.ItemCache:Item(itemLink);
 														if not LootReserve.Server.Settings.RecentLootBlacklist[item:GetID()] and not LootReserve.Data.RecentLootBlacklist[item:GetID()] then
 															if currentLootOffset == 0 then
@@ -2042,7 +2042,7 @@
 				
 				self.SetItem = function(self, item)
 					if item then
-						if strfind(item, "^[^:]-battlepet:") then
+						if type(item) == "string" and strfind(item, "^[^:]-battlepet:") then
 							LootReserve:PrintError("Cannot roll caged battlepets.")
 							return;
 						end
