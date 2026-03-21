@@ -4,7 +4,7 @@
 ## Interface-TBC:     20505
 ## Interface-Classic: 11508
 
-## Version: 2026-03-19
+## Version: 2026-03-20
 ## X-Min-Allowed-Version-Classic: 2026-01-14a
 ## X-Min-Allowed-Version-Fresh:   2026-03-19
 ## X-Min-Allowed-Version-Era:     2025-09-23
