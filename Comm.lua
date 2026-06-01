@@ -547,6 +547,8 @@ LootReserve.Comm.Handlers[Opcodes.SessionReset] = function(sender)
         LootReserve.Client:UpdateLootList();
     end
 end
+
+-- OptInfo
 function LootReserve.Comm:SendOptInfo(target, out)
     local session = LootReserve.Server.CurrentSession;
     if not session then return; end
