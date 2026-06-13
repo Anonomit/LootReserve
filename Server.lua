@@ -1294,12 +1294,12 @@ function LootReserve.Server:UpdateGroupMembers()
         end
 
         -- Add member info for players who joined
-        LootReserve:ForEachRaider(function(name, _, _, _, _, _, _, _, _, _, _, _, index)
+        LootReserve:ForEachRaider(function(name, _, _, _, _, classFilename, _, _, _, _, _, _, index)
             if not self.CurrentSession.Members[name] then
                 changed = true;
                 self.CurrentSession.Members[name] =
                 {
-                    Class         = select(3, LootReserve:UnitClass(index)),
+                    Class         = LootReserve.Constants.ClassFilenameToClassID[classFilename],
                     ReservesLeft  = self.CurrentSession.Settings.MaxReservesPerPlayer,
                     ReservesDelta = 0,
                     ReservedItems = { },
@@ -1312,7 +1312,7 @@ function LootReserve.Server:UpdateGroupMembers()
             end
             -- Add class info to players who are missing it
             if not self.CurrentSession.Members[name].Class then
-                self.CurrentSession.Members[name].Class = select(3, LootReserve:UnitClass(index));
+                self.CurrentSession.Members[name].Class = LootReserve.Constants.ClassFilenameToClassID[classFilename];
             end
         end);
     end
