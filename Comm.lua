@@ -216,7 +216,7 @@ function LootReserve.Comm:Broadcast(opcode, ...)
     if not LootReserve.Enabled then return; end
 
     if IsInGroup() then
-        self:SendCommMessage(IsInRaid() and "RAID" or "PARTY", nil, opcode, ...);
+        self:SendCommMessage(IsInGroup(LE_PARTY_CATEGORY_INSTANCE) and "INSTANCE_CHAT" or IsInRaid() and "RAID" or "PARTY", nil, opcode, ...);
     else
         self:SendCommMessage("WHISPER", LootReserve:Me(), opcode, ...);
     end
@@ -242,7 +242,7 @@ end
 
 function LootReserve.Comm:BroadcastCompatible(opcode, ...)
     if IsInGroup() then
-        self:SendCommMessageCompatible(IsInRaid() and "RAID" or "PARTY", nil, opcode, ...);
+        self:SendCommMessageCompatible(IsInGroup(LE_PARTY_CATEGORY_INSTANCE) and "INSTANCE_CHAT" or IsInRaid() and "RAID" or "PARTY", nil, opcode, ...);
     else
         self:SendCommMessageCompatible("WHISPER", LootReserve:Me(), opcode, ...);
     end

@@ -403,7 +403,9 @@ function LootReserve.Server:CanBeServer()
 end
 
 function LootReserve.Server:GetChatChannel(announcement)
-    if IsInRaid() then
+    if IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+        return announcement and self.Settings.ChatAsRaidWarning[announcement] and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) and "RAID_WARNING" or "INSTANCE_CHAT";
+    elseif IsInRaid() then
         return announcement and self.Settings.ChatAsRaidWarning[announcement] and (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) and "RAID_WARNING" or "RAID";
     elseif IsInGroup() then
         return "PARTY";

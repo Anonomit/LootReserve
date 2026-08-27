@@ -459,6 +459,9 @@ function LootReserve:SendChatMessage(text, channel, target, skipOnlineCheck)
     if channel == "RAID_WARNING" and not (UnitIsGroupLeader("player") or UnitIsGroupAssistant("player")) then
         channel = "RAID";
     end
+    if channel == "RAID" and IsInGroup(LE_PARTY_CATEGORY_INSTANCE) then
+        channel = "INSTANCE_CHAT";
+    end
     if channel == "RAID" and not IsInRaid() then
         channel = "PARTY";
     end
