@@ -39,8 +39,9 @@ Wrath:
 Cata:
     4.0: ZG and ZA removed
     4.1: Bastion of Twilight, Blackwing Descent, Throne of Four Winds, Baradin Hold (only Argaloth)
-    4.2: Firelands, Occu'thar added to Baradin Hold
-    4.3: Dragon Soul, Alizabal added to Baradin Hold
+    4.2: World Boss loot upgrades
+    4.3: Firelands, Occu'thar added to Baradin Hold
+    4.4: Dragon Soul, Alizabal added to Baradin Hold
 
 MoP:
     5.0: Prepatch: no changes
@@ -2574,8 +2575,99 @@ LootReserve.Data =
         
         -- Classic
         
+        [1005] = Ternary(not IS_SOD, {
+            Name = "World Bosses",
+            ButtonName = "[40] World Bosses",
+            NameShort = "Wboss",
+            Color = LootReserve.Constants.Colors.Size40Tiny,
+            Expansion = 0,
+            Children =
+            Squish{
+                {
+                    Name = "Azuregos",
+                    Loot =
+                    {
+                        18545, 19131, 19132, 18547, 0,
+                        18208, 18541, 0,
+                        19130, 17070, 18202, 18542, 0,
+                        18704, 0,
+                        11938, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Lord Kazzak",
+                    Loot =
+                    {
+                        19133, 19135, 19134, 18544, 18546, 0,
+                        18543, 17111, 18204, 0,
+                        17113, 17112, 0,
+                        18665, 0,
+                        11938, 0,
+                    },
+                },
+                { Separator = true },
+                { Name = "Dragons of Nightmare", Header = true },
+                {
+                    Name = "Emeriss",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        20644, 0,
+                        20618, 20623, 20615, 20621, 20617, 20616, 20619, 0,
+                        20622, 20624, 20579, 0,
+                        20582, 20581, 20580, 20599, 0,
+                        11938, 0,
+                    },
+                },
+                {
+                    Name = "Lethon",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        20644, 0,
+                        20618, 20625, 20626, 20628, 20627, 20615, 20617, 20630, 20616, 20619, 0,
+                        20579, 0,
+                        20582, 20581, 20580, 0,
+                        11938, 0,
+                    },
+                },
+                {
+                    Name = "Taerar",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        20644, 0,
+                        20618, 20631, 20634, 20633, 20615, 20617, 20616, 20619, 0,
+                        20632, 20579, 0,
+                        20582, 20581, 20580, 20577, 0,
+                        11938, 0,
+                    },
+                },
+                {
+                    Name = "Ysondre",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        20644, 0,
+                        20618, 20635, 20615, 20638, 20617, 20639, 20637, 20616, 20619, 0,
+                        20636, 20579, 0,
+                        20582, 20581, 20580, 20578, 0,
+                        11938, 0,
+                    },
+                },
+                {
+                    Name = "Quest Rewards",
+                    IndentType = 2,
+                    Loot =
+                    {
+                        20600, 0,
+                    },
+                },
+            },
+        }),
         [1020] = Ternary(not IS_SOD, {
-            Sort = 1005,
+            Sort = 1009,
             Name = "Onyxia",
             ButtonName = "[40] Onyxia",
             NameShort = Ternary(EXPANSION_PHASE >= 3.3, "Ony 40", "Ony"),
@@ -3772,6 +3864,35 @@ LootReserve.Data =
         
         -- The Burning Crusade
         
+        [2005] = {
+            Name = "World Bosses",
+            ButtonName = "[40] World Bosses",
+            NameShort = "Wboss",
+            Color = LootReserve.Constants.Colors.Size40Tiny,
+            Expansion = 1,
+            Children =
+            Squish{
+                {
+                    Name = "Doomwalker",
+                    Loot =
+                    {
+                        30725, 30727, 30730, 30728, 30731, 0,
+                        30726, 30729, 0,
+                        30723, 30724, 30722, 0,
+                    },
+                },
+                { Separator = true },
+                {
+                    Name = "Doom Lord Kazzak",
+                    Loot =
+                    {
+                        30734, 30737, 30739, 30740, 30741, 0,
+                        30735, 30736, 30738, 0,
+                        30732, 30733, 0,
+                    },
+                },
+            },
+        },
         [2010] = {
             Name = "Karazhan",
             ButtonName = "[10] Karazhan",
@@ -9357,6 +9478,92 @@ LootReserve.Data =
         
         -- Cataclysm
         
+        -- World Bosses
+        [4005] = {
+            Name = "World Bosses",
+            ButtonName = "[40] World Bosses",
+            NameShort = "Wboss",
+            Color = LootReserve.Constants.Colors.Size10or25Tiny,
+            Expansion = 3,
+            Children =
+            Squish{
+                {
+                    Name = "Shared",
+                    Loot =
+                    {
+                        67147, 67133, 67146, 67132, 67135, 67148, 67150, 67141, 67143, 67144, 0,
+                        67130, 67129, 67131, 67137, 67136, 67134, 67138, 67139, 67140, 67142, 0,
+                        67149, 67145, 0,
+                    },
+                },
+                {
+                    Name = "Akma’hat",
+                    IndentType = 1,
+                    Loot =
+                    Ternary(EXPANSION_PHASE < 4.2, {67240, 0,}, {69877, 0,}),
+                },
+                {
+                    Name = "Garr",
+                    IndentType = 1,
+                    Loot =
+                    Ternary(EXPANSION_PHASE < 4.2, {67235, 0,}, {69842, 0,}),
+                },
+                {
+                    Name = "Julak-Doom",
+                    IndentType = 1,
+                    Loot =
+                    Ternary(EXPANSION_PHASE < 4.2, {67246, 0,}, {69844, 0,}),
+                },
+                {
+                    Name = "Mobus",
+                    IndentType = 1,
+                    Loot =
+                    Ternary(EXPANSION_PHASE < 4.2, {67153, 0,}, {69843, 0,}),
+                },
+                {
+                    Name = "Xariona",
+                    IndentType = 1,
+                    Loot =
+                    Ternary(EXPANSION_PHASE < 4.2, {67239, 0,}, {69876, 0,}),
+                },
+                {
+                    Name = "Poseidus",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        67151, 0,
+                    },
+                },
+                { Name = "Recipes", Header = true },
+                {
+                    Name = "Tailoring",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        67541, 0,
+                    },
+                },
+                {
+                    Name = "Enchanting",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        68789, 68787, 68788, 0,
+                    },
+                },
+                {
+                    Name = "Jewelcrafting",
+                    IndentType = 1,
+                    Loot =
+                    {
+                        68783, 68781, 68782, 0,
+                        52496, 52494, 52495, 0,
+                        71965, 0,
+                    },
+                },
+            },
+        },
+        
         -- Blackwing Descent
         [4010] = {
             Name = "Blackwing Descent",
@@ -11461,7 +11668,7 @@ LootReserve.Data =
                         0,
                     },
                 },
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Occu'thar",
                     Loot =
                     {
@@ -11472,7 +11679,7 @@ LootReserve.Data =
                         70393, 70394, 70395, 0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Druid",
                     IndentType = 1,
                     Loot =
@@ -11503,7 +11710,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Death Knight",
                     IndentType = 1,
                     Loot =
@@ -11527,7 +11734,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Hunter",
                     IndentType = 1,
                     Loot =
@@ -11551,7 +11758,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Mage",
                     IndentType = 1,
                     Loot =
@@ -11575,7 +11782,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Paladin",
                     IndentType = 1,
                     Loot =
@@ -11606,7 +11813,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Priest",
                     IndentType = 1,
                     Loot =
@@ -11633,7 +11840,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Rogue",
                     IndentType = 1,
                     Loot =
@@ -11657,7 +11864,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Shaman",
                     IndentType = 1,
                     Loot =
@@ -11688,7 +11895,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Warlock",
                     IndentType = 1,
                     Loot =
@@ -11712,7 +11919,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.2, {
+                Ternary(EXPANSION_PHASE >= 4.3, {
                     Name = "Warrior",
                     IndentType = 1,
                     Loot =
@@ -11736,7 +11943,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Alizabal",
                     Loot =
                     {
@@ -11747,7 +11954,7 @@ LootReserve.Data =
                         73538, 73534, 73537, 0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Druid",
                     IndentType = 1,
                     Loot =
@@ -11778,7 +11985,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Death Knight",
                     IndentType = 1,
                     Loot =
@@ -11802,7 +12009,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Hunter",
                     IndentType = 1,
                     Loot =
@@ -11826,7 +12033,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Mage",
                     IndentType = 1,
                     Loot =
@@ -11850,7 +12057,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Paladin",
                     IndentType = 1,
                     Loot =
@@ -11881,7 +12088,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Priest",
                     IndentType = 1,
                     Loot =
@@ -11908,7 +12115,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Rogue",
                     IndentType = 1,
                     Loot =
@@ -11932,7 +12139,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Shaman",
                     IndentType = 1,
                     Loot =
@@ -11962,7 +12169,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Warlock",
                     IndentType = 1,
                     Loot =
@@ -11986,7 +12193,7 @@ LootReserve.Data =
                         0,
                     },
                 }),
-                Ternary(EXPANSION_PHASE >= 4.3, {
+                Ternary(EXPANSION_PHASE >= 4.4, {
                     Name = "Warrior",
                     IndentType = 1,
                     Loot =
@@ -14186,12 +14393,18 @@ LootReserve.Data =
         [221346] = 82081,
         [221363] = 82083,
         
-        -- Ancient Petrified Leaf
-        [18703] = 7632,
+        -- Mature Blue Dragon Sinew
+        -- [18704] = 7634, -- tradeable
+        
+        -- Nightmare Engulfed Object
+        [20644] = 8446,
         
         -- Head of Onyxia
         [18422] = 7495,
         [18423] = 7490,
+        
+        -- Ancient Petrified Leaf
+        [18703] = 7632,
         
         -- BWL class gear (Season of Discovery)
         [231722] = 85112,
@@ -16871,12 +17084,19 @@ local tokenMap = {
     [18703] = {18714, 18713, 18715, 228334, 228332},
     
     
+    -- World Bosses
+    
+    -- Can't add mature blue dragon sinew because its reward is used by a token in MC
+    -- Nightmare Engulfed Object
+    [20644] = {20600},
+    
+    
     -- Ony
     
-    -- Can't add mature black dragon sinew because it's a token reward in MC
+    -- Can't add mature black dragon sinew because its reward is used by a token in MC
     -- Head of Onyxia
-    [18423]  = UnitFactionGroup("player") == "Alliance" and {18404, 18403, 18406, 228685, 228687, 228686} or nil,
-    [18422]  = UnitFactionGroup("player") == "Horde"    and {18404, 18403, 18406, 228685, 228687, 228686} or nil,
+    [18423] = UnitFactionGroup("player") == "Alliance" and {18404, 18403, 18406, 228685, 228687, 228686} or nil,
+    [18422] = UnitFactionGroup("player") == "Horde"    and {18404, 18403, 18406, 228685, 228687, 228686} or nil,
     
     
     -- Ony/BWL
