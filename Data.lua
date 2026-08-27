@@ -53,11 +53,11 @@ MoP:
 -- Loot tables depend on this setting
 -- Changing it demands a new required addon version in the TOC file
 local CLASSIC_PHASE             = 5.5;
-local ANNIVERSARY_PHASE         = 2.2;
+local ANNIVERSARY_PHASE         = 2.3;
 local CLASSIC_ERA_PHASE         = 1.5;
 local SEASON_OF_DISCOVERY_PHASE = 1.5;
 
-local EXPANSION_PHASE = 1.0
+local EXPANSION_PHASE
 local IS_SOD = LootReserve.SeasonID == Enum.SeasonID.SeasonOfDiscovery
 
 if IS_SOD then
@@ -71,6 +71,7 @@ else
         EXPANSION_PHASE = CLASSIC_PHASE;
     end
 end
+assert(EXPANSION_PHASE, "Expansion/phase is unknown")
 
 local hidden = { Hidden = true };
 
