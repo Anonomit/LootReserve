@@ -2,9 +2,9 @@
 ## Interface-Mists:   50504
 ## Interface-Cata:    40402
 ## Interface-TBC:     20506
-## Interface-Classic: 11508
+## Interface-Classic: 11509
 
-## Version: 2026-08-27
+## Version: 2026-09-04
 ## X-Min-Allowed-Version-Classic: 2026-08-27
 ## X-Min-Allowed-Version-Fresh:   2026-08-27
 ## X-Min-Allowed-Version-Era:     2026-08-27
