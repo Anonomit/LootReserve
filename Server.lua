@@ -499,7 +499,7 @@ local function GetSavedItemConditions(categories)
             end
         end
         conditions.BossHidden = bossHidden;
-        if not next(conditions) then
+        if not next(conditions) and not (LootReserve.Data.ItemConditions[itemID] and LootReserve.Data.ItemConditions[itemID].Hidden) then
             container[itemID] = nil;
         end
     end
