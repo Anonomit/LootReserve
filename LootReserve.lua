@@ -99,7 +99,7 @@ function LootReserve:GetAddOnMetadata(...)
 end
 
 LootReserve.Version = LootReserve:GetAddOnMetadata(addon, "Version");
-LootReserve.SeasonID = C_Seasons.GetActiveSeason();
+LootReserve.SeasonID = C_Seasons and C_Seasons.GetActiveSeason and C_Seasons.GetActiveSeason() or nil;
 if LootReserve.SeasonID then
     if LootReserve.SeasonID == Enum.SeasonID.SeasonOfDiscovery then
         LootReserve.MinAllowedVersion = LootReserve:GetAddOnMetadata(addon, "X-Min-Allowed-Version-SoD");
@@ -276,6 +276,14 @@ function LootReserve:RegisterEvent(...)
         LootReserve.EventFrame:SetScript("OnEvent", function(self, event, ...)
             local handlers = self.RegisteredEvents[event];
             if handlers then
+                -- Clients with secret values (e.g. WoW: Forever): chat text/sender may be secret in instances,
+                -- and comparing or matching them throws. Skip such messages for every CHAT_MSG_* handler.
+                if issecretvalue and event:sub(1, 9) == "CHAT_MSG_" then
+                    local text, sender = ...;
+                    if issecretvalue(text) or issecretvalue(sender) then
+                        return;
+                    end
+                end
                 for _, handler in ipairs(handlers) do
                     handler(...);
                 end
@@ -294,7 +302,8 @@ function LootReserve:RegisterEvent(...)
     for i = 1, params - 1 do
         local event = select(i, ...);
         if type(event) == "string" then
-            LootReserve.EventFrame:RegisterEvent(event);
+            -- pcall: registering an event this client doesn't know throws, which would abort loading
+            pcall(LootReserve.EventFrame.RegisterEvent, LootReserve.EventFrame, event);
             LootReserve.EventFrame.RegisteredEvents[event] = LootReserve.EventFrame.RegisteredEvents[event] or { };
             table.insert(LootReserve.EventFrame.RegisteredEvents[event], handler);
         else
@@ -1132,6 +1141,76 @@ function LootReserve:PutItemInTrade(bag, slot)
         end
     end
     return false;
+end
+
+-- Call handler(tooltip) whenever one of the item tooltips shows an item
+function LootReserve:HookItemTooltips(handler)
+    local tooltips = { "GameTooltip", "ItemRefTooltip", "ItemRefShoppingTooltip1", "ItemRefShoppingTooltip2", "ShoppingTooltip1", "ShoppingTooltip2" };
+    if GameTooltip:HasScript("OnTooltipSetItem") then
+        for _, name in ipairs(tooltips) do
+            local tooltip = _G[name];
+            if tooltip then
+                tooltip:HookScript("OnTooltipSetItem", handler);
+            end
+        end
+    elseif TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall and Enum.TooltipDataType then
+        -- Mainline-style tooltips (e.g. WoW: Forever) have no OnTooltipSetItem script
+        local hooked = { };
+        for _, name in ipairs(tooltips) do
+            if _G[name] then
+                hooked[_G[name]] = true;
+            end
+        end
+        TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip)
+            if hooked[tooltip] then
+                handler(tooltip);
+            end
+        end);
+    end
+end
+
+-- Hand an item from my bags to a nearby unit via the trade window
+function LootReserve:GiveItemToUnit(unit, item, bag, slot)
+    local dropItemOnUnit = DropItemOnUnit or C_Item and C_Item.DropItemOnUnit;
+    if dropItemOnUnit then
+        self:PickupContainerItem(bag, slot);
+        dropItemOnUnit(unit);
+        C_Timer.After(1, function() ClearCursor(); end);
+        return;
+    end
+
+    -- Clients without any DropItemOnUnit: open the trade, then insert the item once the trade window shows
+    if not self.PendingTradeInsertRegistered then
+        self.PendingTradeInsertRegistered = true;
+        self:RegisterEvent("TRADE_SHOW", function()
+            local pending = self.PendingTradeInsert;
+            self.PendingTradeInsert = nil;
+            if not pending or GetTime() > pending.Timeout then return; end
+            C_Timer.After(0.1, function()
+                if not TradeFrame:IsShown() or not UnitIsUnit("npc", pending.Unit) then return; end
+                if self:IsItemBeingTraded(pending.Item) then return; end
+                local bag, slot = self:GetBagSlot(pending.Item, true);
+                if bag and slot then
+                    self:PutItemInTrade(bag, slot);
+                end
+            end);
+        end);
+    end
+    ClearCursor();
+    self.PendingTradeInsert =
+    {
+        Unit    = unit,
+        Item    = item,
+        Timeout = GetTime() + 10,
+    };
+    InitiateTrade(unit);
+end
+
+function LootReserve:UnitInPhase(unit)
+    if UnitInPhase then
+        return UnitInPhase(unit);
+    end
+    return not UnitPhaseReason(unit);
 end
 
 function LootReserve:GetItemDescription(itemID, noTokenRedirect)

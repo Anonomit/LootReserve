@@ -396,12 +396,7 @@ function LootReserve.Client:StartSession(server, starting, startTime, acceptingR
                 end
             end
         end
-        GameTooltip             : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
-        ItemRefTooltip          : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
-        ItemRefShoppingTooltip1 : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
-        ItemRefShoppingTooltip2 : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
-        ShoppingTooltip1        : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
-        ShoppingTooltip2        : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
+        LootReserve:HookItemTooltips(OnTooltipSetHyperlink);
     end
 
     if starting then

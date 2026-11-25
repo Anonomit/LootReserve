@@ -56,7 +56,7 @@ function LootReserve.Server.MembersEdit:UpdateMembersList()
                 end
             end
         end
-        frame.WonRolls:SetText(format("|c%s%d|r", wonMaxQuality > 0 and select(4, GetItemQualityColor(wonMaxQuality)) or "FF404040", won and #won or 0));
+        frame.WonRolls:SetText(format("|c%s%d|r", wonMaxQuality > 0 and select(4, (GetItemQualityColor or C_Item.GetItemQualityColor)(wonMaxQuality)) or "FF404040", won and #won or 0));
 
         if LootReserve.Server.CurrentSession then
             frame.CheckButtonLocked:Show();

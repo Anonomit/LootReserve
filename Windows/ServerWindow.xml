@@ -13,19 +13,20 @@
 					</Anchors>
 					<TexCoords left="0" right="0.15625" top="0" bottom="1" />
 				</Texture>
+				<Texture parentKey="RightDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
+					<Size x="20" y="32" />
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="0" y="5" />
+					</Anchors>
+					<TexCoords left="0.84375" right="1" top="0" bottom="1" />
+				</Texture>
 				<Texture parentKey="MiddleDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
 					<Size x="88" y="32" />
 					<Anchors>
 						<Anchor point="LEFT" relativeKey="$parent.LeftDisabled" relativePoint="RIGHT" />
+						<Anchor point="RIGHT" relativeKey="$parent.RightDisabled" relativePoint="LEFT" />
 					</Anchors>
 					<TexCoords left="0.15625" right="0.84375" top="0" bottom="1" />
-				</Texture>
-				<Texture parentKey="RightDisabled" file="Interface\PaperDollInfoFrame\UI-Character-ActiveTab">
-					<Size x="20" y="32" />
-					<Anchors>
-						<Anchor point="LEFT" relativeKey="$parent.MiddleDisabled" relativePoint="RIGHT" />
-					</Anchors>
-					<TexCoords left="0.84375" right="1" top="0" bottom="1" />
 				</Texture>
 				<Texture parentKey="Left" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
 					<Size x="20" y="32" />
@@ -34,24 +35,29 @@
 					</Anchors>
 					<TexCoords left="0" right="0.15625" top="0" bottom="1" />
 				</Texture>
+				<Texture parentKey="Right" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+					<Size x="20" y="32" />
+					<Anchors>
+						<Anchor point="TOPRIGHT" x="0" y="1" />
+					</Anchors>
+					<TexCoords left="0.84375" right="1" top="0" bottom="1" />
+				</Texture>
 				<Texture parentKey="Middle" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
 					<Size x="88" y="32" />
 					<Anchors>
 						<Anchor point="LEFT" relativeKey="$parent.Left" relativePoint="RIGHT" />
+						<Anchor point="RIGHT" relativeKey="$parent.Right" relativePoint="LEFT" />
 					</Anchors>
 					<TexCoords left="0.15625" right="0.84375" top="0" bottom="1" />
-				</Texture>
-				<Texture parentKey="Right" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
-					<Size x="20" y="32" />
-					<Anchors>
-						<Anchor point="LEFT" relativeKey="$parent.Middle" relativePoint="RIGHT" />
-					</Anchors>
-					<TexCoords left="0.84375" right="1" top="0" bottom="1" />
 				</Texture>
 			</Layer>
 		</Layers>
 		<Scripts>
 			<OnLoad>
+				-- Mainline-style PanelTemplates (e.g. WoW: Forever) show/hide *Active pieces; Classic uses *Disabled
+				self.LeftActive   = self.LeftActive   or self.LeftDisabled;
+				self.MiddleActive = self.MiddleActive or self.MiddleDisabled;
+				self.RightActive  = self.RightActive  or self.RightDisabled;
 				self.selectedTextY = 4;
 				self:SetFrameLevel(self:GetFrameLevel() + 4);
 				if LootReserve:GetCurrentExpansion() >= 3 then
@@ -393,8 +399,12 @@
 					SecureUnitButton_OnLoad(self, nil, function()
 						local unit = self:GetAttribute("unit");
 						if unit then
-							LootReserve.LibDD:UIDropDownMenu_Initialize(self.DropDown, function(self) UnitPopup_ShowMenu(self, "PLAYER", unit); end, "MENU");
-							LootReserve.LibDD:ToggleDropDownMenu(nil, nil, self.DropDown, "cursor", 0, 0);
+							if UnitPopup_OpenMenu then
+								UnitPopup_OpenMenu("PLAYER", { unit = unit });
+							else
+								LootReserve.LibDD:UIDropDownMenu_Initialize(self.DropDown, function(self) UnitPopup_ShowMenu(self, "PLAYER", unit); end, "MENU");
+								LootReserve.LibDD:ToggleDropDownMenu(nil, nil, self.DropDown, "cursor", 0, 0);
+							end
 						end
 					end);
 				end
@@ -766,7 +776,7 @@
 									return self:SetState(UnitIsVisible(unit) and "Follow" or "Travel", true, false);
 								end
 								
-								if not UnitInPhase(unit) then
+								if not LootReserve:UnitInPhase(unit) then
 									return self:SetState(format("%s: %s", "Phased", distText), false, false);
 								end
 								
@@ -877,9 +887,7 @@
 									local min, max, angle, distText = LootReserve:GetRange(unit, playerPos, targetPos);
 									
 									if min &lt;= 8 then
-										LootReserve:PickupContainerItem(bag, slot);
-										DropItemOnUnit(unit);
-										C_Timer.After(1, function() ClearCursor(); end);
+										LootReserve:GiveItemToUnit(unit, item, bag, slot);
 									else
 										if min &lt;= 28 then
 											FollowUnit(unit);
@@ -890,9 +898,7 @@
 									end
 								else
 									if LootReserve:CheckInteractDistance(unit, 2) then
-										LootReserve:PickupContainerItem(bag, slot);
-										DropItemOnUnit(unit);
-										C_Timer.After(1, function() ClearCursor(); end);
+										LootReserve:GiveItemToUnit(unit, item, bag, slot);
 									else
 										if LootReserve:CheckInteractDistance(unit, 4) then
 											FollowUnit(unit);

@@ -26,8 +26,10 @@ local format             = format
 local strsplit           = strsplit
 local wipe               = wipe
 local GetMouseFoci       = GetMouseFoci
-local GetItemInfo        = GetItemInfo -- removes the need to bypass own hook
-local GetItemInfoInstant = GetItemInfoInstant
+local GetItemInfo        = GetItemInfo or C_Item.GetItemInfo -- removes the need to bypass own hook
+local GetItemInfoInstant = GetItemInfoInstant or C_Item.GetItemInfoInstant
+local GetDetailedItemLevelInfo = GetDetailedItemLevelInfo or C_Item.GetDetailedItemLevelInfo
+local issecretvalue      = issecretvalue
 local UnitExists         = UnitExists
 local UnitClass          = UnitClass
 
@@ -1024,6 +1026,7 @@ function ItemDB:InitChatListener()
                                     "CHAT_MSG_TRADESKILLS", "CHAT_MSG_WHISPER", "CHAT_MSG_YELL"}
   self:RegisterEvents(self.ChatListenerFrame)
   self.ChatListenerFrame:SetScript("OnEvent", function(_, event, message)
+    if type(message) ~= "string" or issecretvalue and issecretvalue(message) then return end
     for itemString in strgmatch(message, "item[%-?%d:]+") do
       local id, suffix, uniqueID = InterpretItem(itemString)
       if id then
@@ -1039,7 +1042,7 @@ end
 function ItemDB:InitMouseoverHook()
   self.mouseoverHook = true
   if expansionsHelper.isRetail then return end
-  GameTooltip:HookScript("OnTooltipSetItem", function(tooltip)
+  local function OnTooltipSetItem(tooltip)
     if not self.mouseoverHook then return end
     
     local name, link = tooltip:GetItem()
@@ -1052,7 +1055,7 @@ function ItemDB:InitMouseoverHook()
       if item:Exists() then
         item:Cache()
       end
-    elseif TradeSkillFrame and TradeSkillFrame:IsVisible() then
+    elseif TradeSkillFrame and TradeSkillFrame:IsVisible() and TradeSkillFrame.selectedSkill and GetTradeSkillItemLink and GetTradeSkillReagentItemLink then
       if GetMouseFoci()[1]:GetName() == "TradeSkillSkillIcon" then
         local id, suffix, uniqueID = InterpretItem(GetTradeSkillItemLink(TradeSkillFrame.selectedSkill))
         if id then
@@ -1076,12 +1079,22 @@ function ItemDB:InitMouseoverHook()
         end
       end
     end
-  end)
+  end
+  if GameTooltip:HasScript("OnTooltipSetItem") then
+    GameTooltip:HookScript("OnTooltipSetItem", OnTooltipSetItem)
+  elseif TooltipDataProcessor and TooltipDataProcessor.AddTooltipPostCall and Enum.TooltipDataType then
+    -- Mainline-style tooltips (e.g. WoW: Forever) have no OnTooltipSetItem script
+    TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function(tooltip)
+      if tooltip == GameTooltip then
+        OnTooltipSetItem(tooltip)
+      end
+    end)
+  end
 end
 
 function ItemDB:InitGetItemInfoHook()
   self.GetItemInfoHook = true
-  hooksecurefunc("GetItemInfo", function(...)
+  local function handler(...)
     if not self.GetItemInfoHook then return end
     local id, suffix, uniqueID = InterpretItem(...)
     if id then
@@ -1090,7 +1103,12 @@ function ItemDB:InitGetItemInfoHook()
         item:Cache()
       end
     end
-  end)
+  end
+  if _G.GetItemInfo then
+    hooksecurefunc("GetItemInfo", handler)
+  elseif C_Item and C_Item.GetItemInfo then
+    hooksecurefunc(C_Item, "GetItemInfo", handler)
+  end
 end
 
 function ItemDB:Destructor()
