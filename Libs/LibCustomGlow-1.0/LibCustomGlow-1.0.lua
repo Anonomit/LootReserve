@@ -539,7 +539,10 @@ local function bgHide(self)
 end
 
 local function bgUpdate(self, elapsed)
-    AnimateTexCoords(self.ants, 256, 256, 48, 48, 22, elapsed, self.throttle);
+    local animateTexCoords = AnimateTexCoords or TextureUtil and TextureUtil.AnimateTexCoords;
+    if animateTexCoords then
+        animateTexCoords(self.ants, 256, 256, 48, 48, 22, elapsed, self.throttle);
+    end
     local cooldown = self:GetParent().cooldown;
     if(cooldown and cooldown:IsShown() and cooldown:GetCooldownDuration() > 3000) then
         self:SetAlpha(0.5);

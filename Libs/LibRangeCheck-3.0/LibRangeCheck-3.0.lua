@@ -3885,7 +3885,7 @@ local checkers_Interact = setmetatable({}, {
 local checkers_Action = setmetatable({}, {
   __index = function(t, actionSlot)
     local func = function(unit)
-      if IsActionInRange(actionSlot, unit) then
+      if (IsActionInRange or C_ActionBar.IsActionInRange)(actionSlot, unit) then
         return true
       end
     end

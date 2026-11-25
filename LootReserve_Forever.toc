@@ -1,0 +1,36 @@
+## Interface: 16001
+
+## Version: 2026-09-04-forever1
+## X-Min-Allowed-Version-Classic: 2026-08-27
+## X-Min-Allowed-Version-Fresh:   2026-08-27
+## X-Min-Allowed-Version-Era:     2026-08-27
+## X-Min-Allowed-Version-SoD:     2026-01-13
+
+## X-Curse-Project-ID: 390790
+## X-Wago-ID: WL6JpyGv
+
+## Category: Loot
+## Category-deDE: Beute
+## Category-esES: Botín
+## Category-esMX: Botín
+## Category-frFR: Butin
+## Category-itIT: Bottino
+## Category-koKR: 전리품
+## Category-ptBR: Saque
+## Category-ruRU: Добыча
+## Category-zhCN: 战利品
+## Category-zhTW: 戰利品
+
+## Title: LootReserve
+## Notes: Soft reserves management addon
+## IconTexture: Interface\AddOns\LootReserve\Assets\Textures\Icon
+## Author: Anonomit (Damagus-Benediction, Damage-CrusaderStrikeUS)|nOriginal addon by Tagar-NethergardeKeep
+
+## SavedVariables: LootReserveGlobalSave
+## SavedVariablesPerCharacter: LootReserveCharacterSave
+
+## OptionalDeps: Ace3, ItemCache, LibUIDropDownMenu
+## X-Embeds: Ace3, ItemCache, LibUIDropDownMenu
+
+
+addon.xml

@@ -1419,12 +1419,7 @@ function LootReserve.Server:PrepareSession()
                 end
             end
         end
-        GameTooltip             : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
-        ItemRefTooltip          : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
-        ItemRefShoppingTooltip1 : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
-        ItemRefShoppingTooltip2 : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
-        ShoppingTooltip1        : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
-        ShoppingTooltip2        : HookScript("OnTooltipSetItem", OnTooltipSetHyperlink);
+        LootReserve:HookItemTooltips(OnTooltipSetHyperlink);
     end
 
     if self.CurrentSession.Settings.ChatFallback and not self.ChatFallbackRegistered then
@@ -4088,7 +4083,9 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
                         gapExists = true;
                     elseif LootReserve:IsSamePlayer(GetMasterLootCandidate(pending.ItemIndex, playerIndex), pending.Player) then
                         GiveMasterLoot(pending.ItemIndex, playerIndex);
-                        MasterLooterFrame:Hide();
+                        if MasterLooterFrame then
+                            MasterLooterFrame:Hide();
+                        end
                         return;
                     end
                 end
@@ -4135,6 +4132,11 @@ function LootReserve.Server:MasterLootItem(item, player, multipleWinners)
     end
     LootReserve:ShowError("Failed to masterloot %s to %s: looting UI is closed or the item was not found in the loot", link, LootReserve:ColoredPlayer(player));
     ]]
+    if not LootButton_OnClick then
+        -- Clients without the Classic LootFrame code (e.g. WoW: Forever): LootSlot on a master loot slot fires OPEN_MASTER_LOOT_LIST
+        LootSlot(itemIndex); -- Now wait for OPEN_MASTER_LOOT_LIST/UPDATE_MASTER_LOOT_LIST
+        return;
+    end
     local lootIcon, lootName, lootQuantity, _, lootQuality = GetLootSlotInfo(itemIndex);
     local fake = LootReserveRollFakeMasterLoot;
     fake.slot = itemIndex;

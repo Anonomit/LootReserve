@@ -153,7 +153,7 @@ local function IsItemUsable(itemID, playerClass, isMe)
     
     local numOwned;
     if isMe then
-        numOwned = GetItemCount(itemID, true) - LootReserve:GetTradeableItemCount(itemID);
+        numOwned = (GetItemCount or C_Item.GetItemCount)(itemID, true) - LootReserve:GetTradeableItemCount(itemID);
     end
     
     -- If item starts a quest, fail if I already own the item or if the quest is already completed. Don't return true from this - it may stil be unusable if the quest is class-specific
@@ -174,6 +174,9 @@ local function IsItemUsable(itemID, playerClass, isMe)
         end
         if questDropID then -- Don't consider quest starters here since owning the item is a better indicator
             local found = false;
+            if C_QuestLog.GetLogIndexForQuestID then
+                return C_QuestLog.GetLogIndexForQuestID(questDropID) ~= nil;
+            end
             local collapsedHeaders = { };
             local i = 1;
             while GetQuestLogTitle(i) do
